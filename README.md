@@ -1,7 +1,7 @@
 # tikz-tensors
 
-One TikZ format for **tensor-network diagrams** and the **schematic pictures**
-that go with them, in one **shared theme** for figures, notes and slides.
+One TikZ format for **tensor-network diagrams**, in one **shared theme** for
+figures, notes and slides.
 
 ```latex
 \usepackage{tikz-tensors}
@@ -11,7 +11,6 @@ that go with them, in one **shared theme** for figures, notes and slides.
 |---|---|
 | ![expansion](examples/out/01-expansion.svg) | ![swap](examples/out/02-swap.svg) |
 | ![mps](examples/out/03-mps.svg) | |
-| ![exact](examples/out/04-exact.svg) | ![mean field](examples/out/05-mean-field.svg) |
 
 ## The notation
 
@@ -39,10 +38,7 @@ space.** A finite-basis object (an MPS over occupation numbers) has no wavy legs
 Exchanging two fermion legs: `\tnswap[cont|disc]{<left top>}{<right top>}{<drop>}`
 draws the crossing (the sign goes in the equation, as in example 02).
 
-Schematic parts: `\tnnucleus{(x,y)}`, `\tnelectron[<label>]{(x,y)}`,
-`\tncloud{(x,y)}{<rx>}{<ry>}[<opacity>]` (fuzzy-edged density), `\tncoulomb{(a)}{(b)}`.
-
-Labels are ordinary LaTeX math, so a picture uses exactly the glyphs of the
+Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
 equations beside it; `pdftocairo -svg` turns them into paths, so the SVG shows
 the same everywhere without the fonts installed.
 
@@ -87,8 +83,9 @@ figures. A figure page is a `standalone` document:
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
 (SVG and PDF) with LuaLaTeX and `pdftocairo`.
 
-Pin a tag (`v0.1.0`) when a project fetches this repository, so a figure
-builds the same until the project chooses to move.
+Pin a tag when a project vendors this repository, so a figure builds the same
+until the project chooses to move; the vendored `tikz-tensors.sty` names its
+version in its `\ProvidesPackage` line.
 
 ## Licence
 
