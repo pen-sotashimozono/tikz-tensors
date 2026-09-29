@@ -1,0 +1,82 @@
+name: CI
+
+# Three questions for every change, each its own check:
+#   version  did the version move exactly as the change requires, and do the
+#            rules behind that still hold (tests/test_version.py; seconds, no TeX)
+#   theme    are the generated colour files in step with theme/tokens.toml
+#   test     does everything compile with LuaLaTeX and pdfLaTeX, and look as it did
+# The rendered pages (and a diff image for any that changed) are uploaded as
+# the `rendered` artifact, so a change in appearance can be looked at, not
+# only counted.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Semantic version step
+        # On a PR: against the base branch. On main: against the previous commit.
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          base="$BASE"
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then base=HEAD~1; fi
+          python3 scripts/version.py check --base "$base"
+      - name: The version rules themselves
+        run: python3 -m unittest discover -s tests -v
+
+  theme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python3 scripts/theme.py --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: TeX-Live/setup-texlive-action@v4
+        with:
+          packages: |
+            scheme-basic
+            collection-luatex
+            collection-latexrecommended
+            collection-fontsrecommended
+            collection-pictures
+            standalone
+            xkeyval
+            currfile
+            filehook
+            gincltex
+            svn-prov
+            adjustbox
+            collectbox
+      - name: poppler (pdftoppm)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Compile and compare
+        run: tests/run.sh
+      - name: Upload the rendered pages
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rendered
+          path: tests/out/rendered/
+          if-no-files-found: ignore

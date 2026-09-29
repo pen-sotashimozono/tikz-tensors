@@ -1,0 +1,60 @@
+name: Release
+
+# A version that reaches main is released: tag v<version> (the \ProvidesPackage
+# line of tex/tikz-tensors.sty), with its CHANGELOG.md section as the notes and
+# tikz-tensors-v<version>.zip (tex/, theme/, LICENSE, README.md) attached. A
+# push that leaves the version where it was finds the release already there
+# and does nothing. workflow_dispatch with a tag releases a tag made before
+# this workflow existed; the notes still come from main's CHANGELOG.md.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tex/**"
+      - "theme/**"
+      - "CHANGELOG.md"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "An existing tag to release (v0.2.0); empty for main's version"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Package and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          ref="${INPUT_TAG:-HEAD}"
+          tag="v$(python3 scripts/version.py --ref "$ref")"
+          if [ -n "$INPUT_TAG" ] && [ "$INPUT_TAG" != "$tag" ]; then
+            echo "::error::$INPUT_TAG carries $tag in its \\ProvidesPackage line"; exit 1
+          fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "$tag is already released; nothing to do."; exit 0
+          fi
+          python3 scripts/version.py notes "$tag" > notes.md
+          mkdir -p dist
+          git archive --format=zip --prefix=tikz-tensors/ -o "dist/tikz-tensors-$tag.zip" \
+            "$ref" tex theme LICENSE README.md
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+            gh release create "$tag" "dist/tikz-tensors-$tag.zip" --verify-tag \
+              --title "$tag" --notes-file notes.md
+          else
+            gh release create "$tag" "dist/tikz-tensors-$tag.zip" --target "$(git rev-parse HEAD)" \
+              --title "$tag" --notes-file notes.md
+          fi

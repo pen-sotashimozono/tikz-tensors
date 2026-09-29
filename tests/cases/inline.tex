@@ -1,0 +1,23 @@
+% The package inside an ordinary article: loaded after xcolor with options and
+% alongside hyperref (no option clash), a diagram inline in an equation.
+\documentclass{article}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{tikz-tensors}
+\usepackage{hyperref}
+\pagestyle{empty}
+\begin{document}
+\[
+  \psi(\mathbf r_1, \mathbf r_2) \;=\;
+  \begin{tikzpicture}[baseline=-1.2cm]
+    \node[coefwide] (C) at (0,0) {$C$};
+    \node[fn] (a) at (-0.45,-1.3) {$\varphi$};
+    \node[fn] (b) at ( 0.45,-1.3) {$\varphi$};
+    \draw[disc] (C.south -| a) -- (a);
+    \draw[disc] (C.south -| b) -- (b);
+    \draw[cont] (a.south) -- ++(0,-0.8) node[leg, below] {$\mathbf r_1$};
+    \draw[cont] (b.south) -- ++(0,-0.8) node[leg, below] {$\mathbf r_2$};
+  \end{tikzpicture}
+  \quad\text{in {\color{ForestGreen}text} and {\color{ele}ele}.}
+\]
+\end{document}
