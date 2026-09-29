@@ -83,9 +83,40 @@ figures. A figure page is a `standalone` document:
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
 (SVG and PDF) with LuaLaTeX and `pdftocairo`.
 
-Pin a tag when a project vendors this repository, so a figure builds the same
-until the project chooses to move; the vendored `tikz-tensors.sty` names its
-version in its `\ProvidesPackage` line.
+## Where the real tikz-tensors is
+
+**`main` of this repository is the one canonical tikz-tensors, and it is
+always a release**: its `tex/` and `theme/` are exactly the newest tag. Every
+other copy is a pointer or a proposal.
+
+A project uses it as a **git submodule** pinned at a release, and develops it
+there, in place, while its own figures rebuild against the edit:
+
+```text
+project/.github/tools/figures/tikz-tensors   (submodule)
+  pinned at v0.2.0                      -> the project builds with a release
+  on branch <project>/<topic>, pushed   -> a proposal from that project; the
+                                           project may build with it for a while
+  PR to main, merged                    -> released as the next version; every
+                                           project moves to it when it chooses
+```
+
+Name a development branch after the project it comes from
+(`review-hfdmrg/fn-size`), so a branch says where it was born. Whether a
+proposal goes to `main` is decided separately, as a PR here; until then it is
+not tikz-tensors, only that project's variant of it.
+
+Gates that keep this true:
+
+- **`main` takes only pull requests** (ruleset: no direct push, no force push,
+  no deletion, admins included), each with `version`, `theme` and `test`
+  passing on a branch up to date with `main`.
+- **The version check** (below) makes every change to the package a new
+  version, so a merge to `main` is a release.
+- **After each merge** the Release workflow tags and releases that version and
+  confirms `main`'s package is exactly that tag (`version.py released`).
+- A project's own CI can then tell a pinned release from a proposal, and a
+  pushed commit from one that exists only on somebody's machine.
 
 ## Versions
 
@@ -108,6 +139,7 @@ docs, CI) does not move the version.
 python3 scripts/version.py                     # the current version
 python3 scripts/version.py bump minor "Why."   # move it one step; opens the CHANGELOG entry
 python3 scripts/version.py check --base origin/main
+python3 scripts/version.py released origin/main   # main's package is exactly its release
 ```
 
 CI runs `check` on every pull request: it reads which names appeared or
