@@ -5,6 +5,7 @@
     python3 scripts/version.py bump minor "Why."       # bump + CHANGELOG entry
     python3 scripts/version.py check --base origin/main
     python3 scripts/version.py notes v0.2.0            # that version's CHANGELOG body
+    python3 scripts/version.py released [origin/main]  # is that commit's package a release
 
 The version lives in one place, the \\ProvidesPackage line of
 tex/tikz-tensors.sty, which is also what a document sees in its log. Tags are
@@ -22,7 +23,11 @@ theme tokens (see `api`) -- and on how the tests render:
     nothing under tex/, theme/       -> the version must not move
 
 The bump must be exactly one step, at least that large, and CHANGELOG.md must
-open with a filled-in section for it. Standard library only.
+open with a filled-in section for it. Together with the ruleset on main (no
+direct pushes; these checks required, on a branch up to date with main) and
+the release made on merge, this keeps main's package always equal to its
+newest release, which `released` confirms after every merge. Standard library
+only.
 """
 from __future__ import annotations
 
@@ -196,6 +201,25 @@ def bump(level: str, summary: str) -> int:
     return 0
 
 
+def released(ref: str = "HEAD") -> int:
+    """ref carries a released package: tag v<version> exists and tex/, theme/
+    at ref are exactly what that tag has. On main this holds after every merge;
+    it is what lets a project take main as "the newest release"."""
+    tag = f"v{version(None if ref == 'HEAD' else ref)}"
+    if git("rev-parse", "-q", "--verify", f"refs/tags/{tag}").returncode:
+        print(f"::error::{ref} says {tag}, but there is no tag {tag}.")
+        return 1
+    diff = git("diff", "--name-only", tag, ref, "--", *PACKAGE)
+    if diff.returncode:
+        sys.exit(f"git diff {tag} {ref} failed: {diff.stderr.strip()}")
+    if diff.stdout.strip():
+        print(f"::error::{ref} says {tag}, but its package differs from that release in: "
+              + ", ".join(diff.stdout.split()))
+        return 1
+    print(f"{ref}: the package is release {tag}. OK")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command")
@@ -206,12 +230,16 @@ def main() -> int:
     c.add_argument("--base", required=True, help="commit to compare against (origin/main)")
     n = sub.add_parser("notes", help="print one version's CHANGELOG section")
     n.add_argument("tag")
+    r = sub.add_parser("released", help="the package at a commit is exactly its tagged release")
+    r.add_argument("ref", nargs="?", default="HEAD")
     parser.add_argument("--ref", help="print the version at this commit or tag instead")
     args = parser.parse_args()
     if args.command == "bump":
         return bump(args.level, args.summary)
     if args.command == "check":
         return check(args.base)
+    if args.command == "released":
+        return released(args.ref)
     if args.command == "notes":
         body = changelog_section(args.tag)
         if body is None:

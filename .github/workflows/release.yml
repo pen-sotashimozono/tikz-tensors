@@ -1,19 +1,18 @@
 name: Release
 
-# A version that reaches main is released: tag v<version> (the \ProvidesPackage
-# line of tex/tikz-tensors.sty), with its CHANGELOG.md section as the notes and
-# tikz-tensors-v<version>.zip (tex/, theme/, LICENSE, README.md) attached. A
-# push that leaves the version where it was finds the release already there
-# and does nothing. workflow_dispatch with a tag releases a tag made before
-# this workflow existed; the notes still come from main's CHANGELOG.md.
+# main is the one canonical tikz-tensors, and its package is always a release.
+# Every push to main (only a merged PR can push there: see the ruleset in the
+# README) releases a new version -- tag v<version> from the \ProvidesPackage
+# line, its CHANGELOG.md section as the notes, tikz-tensors-v<version>.zip
+# attached -- and then confirms that tex/ and theme/ on main are exactly that
+# release (`version.py released`). A push that leaves the version where it was
+# finds the release there and only confirms. workflow_dispatch with a tag
+# releases a tag made before this workflow existed; the notes still come from
+# main's CHANGELOG.md, and it never takes "Latest" from main's version.
 
 on:
   push:
     branches: [main]
-    paths:
-      - "tex/**"
-      - "theme/**"
-      - "CHANGELOG.md"
   workflow_dispatch:
     inputs:
       tag:
@@ -45,16 +44,23 @@ jobs:
             echo "::error::$INPUT_TAG carries $tag in its \\ProvidesPackage line"; exit 1
           fi
           if gh release view "$tag" >/dev/null 2>&1; then
-            echo "$tag is already released; nothing to do."; exit 0
+            echo "$tag is already released."; exit 0
           fi
           python3 scripts/version.py notes "$tag" > notes.md
           mkdir -p dist
           git archive --format=zip --prefix=tikz-tensors/ -o "dist/tikz-tensors-$tag.zip" \
             "$ref" tex theme LICENSE README.md
+          latest=true
+          [ -z "$INPUT_TAG" ] || latest=false
           if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            gh release create "$tag" "dist/tikz-tensors-$tag.zip" --verify-tag \
+            gh release create "$tag" "dist/tikz-tensors-$tag.zip" --verify-tag --latest="$latest" \
               --title "$tag" --notes-file notes.md
           else
             gh release create "$tag" "dist/tikz-tensors-$tag.zip" --target "$(git rev-parse HEAD)" \
-              --title "$tag" --notes-file notes.md
+              --latest="$latest" --title "$tag" --notes-file notes.md
           fi
+      - name: main is its release
+        if: github.event_name == 'push'
+        run: |
+          git fetch -q --tags origin
+          python3 scripts/version.py released HEAD

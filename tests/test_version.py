@@ -155,6 +155,31 @@ class VersionCheck(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("TODO", out)
 
+    # -- main is its release ------------------------------------------------
+
+    def released(self):
+        out = self.run_version("released")
+        return out.returncode, out.stdout
+
+    def test_released_needs_the_tag(self):
+        code, out = self.released()
+        self.assertEqual(code, 1)
+        self.assertIn("there is no tag", out)
+
+    def test_released_holds_when_the_package_is_the_tag(self):
+        self.git("tag", f"v{self.version()}")
+        (self.tmp / "README.md").write_text("docs move freely\n")
+        self.commit("docs")
+        self.assertEqual(self.released()[0], 0)
+
+    def test_released_fails_when_the_package_moved_without_a_release(self):
+        self.git("tag", f"v{self.version()}")
+        self.edit_sty(*self.INTERNAL)
+        self.commit("unreleased change")
+        code, out = self.released()
+        self.assertEqual(code, 1)
+        self.assertIn("differs from that release in: tex/tikz-tensors.sty", out)
+
     def test_version_at_a_ref(self):
         base = self.version()
         self.bump("minor")
