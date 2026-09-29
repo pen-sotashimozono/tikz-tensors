@@ -1,0 +1,17 @@
+% A matrix product state: arrays A on the chain, bonds (disc) between them,
+% occupation indices n_i (disc) down -- a finite basis, so no wavy legs.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \foreach \i/\l in {1/1,2/2,3/3,5/N} {
+    \node[coef] (A\i) at (1.4*\i,0) {$A$};
+    \draw[disc] (A\i) -- ++(0,-0.9) node[leg, below] {$n_{\l}$};
+  }
+  \draw[disc] (A1) -- (A2); \draw[disc] (A2) -- (A3);
+  \draw[disc] (A3) -- ++(0.55,0); \draw[disc] (A5) -- ++(-0.55,0);
+  \node at (5.6,0) {$\cdots$};
+  \node[leg, above] at (2.1,0) {$D$};
+\end{tikzpicture}
+\end{document}

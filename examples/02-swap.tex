@@ -1,0 +1,16 @@
+% Exchanging two electrons flips the sign of the wavefunction.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \node[fnwide] (a) at (0,0) {$\Psi$};
+  \tnswap{([xshift=-4.5mm]a.south)}{([xshift=4.5mm]a.south)}{1}
+  \node[leg, below] at ([xshift=-4.5mm,yshift=-10mm]a.south) {$\mathbf r_1$};
+  \node[leg, below] at ([xshift= 4.5mm,yshift=-10mm]a.south) {$\mathbf r_2$};
+  \node at (1.45,-0.35) {$= \; -$};
+  \node[fnwide] (b) at (3.0,0) {$\Psi$};
+  \draw[cont] ([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$\mathbf r_1$};
+  \draw[cont] ([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$\mathbf r_2$};
+\end{tikzpicture}
+\end{document}

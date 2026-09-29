@@ -1,0 +1,15 @@
+% Exact: electron i feels every other electron where it is (dashed Coulomb lines).
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \foreach \x in {0,...,5} {\tncloud{(\x*1.4,0)}{0.55}{0.55}[0.25]}
+  \draw[black!25, line width=2.5pt, line cap=round] (0,0) -- (7,0);
+  \coordinate (i) at (2.9,1.2);
+  \foreach \p in {(0.3,-1.0),(1.3,1.3),(4.3,-1.0),(5.5,1.2),(6.7,-0.9)} {\tncoulomb{(i)}{\p}}
+  \foreach \x in {0,...,5} {\tnnucleus{(\x*1.4,0)}}
+  \foreach \p in {(0.3,-1.0),(1.3,1.3),(4.3,-1.0),(5.5,1.2),(6.7,-0.9)} {\tnelectron{\p}}
+  \tnelectron[i]{(i)}
+\end{tikzpicture}
+\end{document}
