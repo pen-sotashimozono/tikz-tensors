@@ -1,0 +1,33 @@
+name: Bug report
+description: A diagram does not compile, or does not look as it should.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The tikz-tensors line in your .log (`Package: tikz-tensors 2026/09/29 v0.2.0 ...`).
+    validations:
+      required: true
+  - type: input
+    id: engine
+    attributes:
+      label: Engine and TeX Live
+      placeholder: lualatex, TeX Live 2026
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: A minimal document
+      description: The smallest standalone document that shows the problem.
+      render: latex
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what you expected
+      description: The error from the log, or a screenshot next to what it should look like.
+    validations:
+      required: true

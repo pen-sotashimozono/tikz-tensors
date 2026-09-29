@@ -1,0 +1,31 @@
+% Every public style and command once, side by side: the appearance test's
+% main case. tests/coverage.py fails if a style in tex/ is used nowhere under
+% tests/cases/, so a new style arrives with its picture here.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  % nodes: functions, arrays, operators
+  \node[fn]       (f)  at (0,0)    {$\varphi$};
+  \node[fnwide]   (fw) at (1.9,0)  {$\psi$};
+  \node[fntall]   (ft) at (3.7,0)  {$\chi$};
+  \node[coef]     (c)  at (5.0,0)  {$c$};
+  \node[coefwide] (cw) at (6.7,0)  {$C$};
+  \node[coeftall] (ct) at (8.4,0)  {$A$};
+  \node[op]       (o)  at (9.6,0)  {$\hat H$};
+  \node[opwide]   (ow) at (11.3,0) {$W$};
+  % legs: continuous and discrete, with labels
+  \draw[cont] (f.south) -- ++(0,-1) node[leg, below] {$\mathbf r$};
+  \draw[disc] (c.south) -- ++(0,-1) node[leg, below] {$i$};
+  \draw[disc] (f.east) -- (fw.west);
+  % a group contracting to one object
+  \draw[frame] ([shift={(-0.15,0.15)}]c.north west) rectangle ([shift={(0.15,-0.15)}]cw.south east);
+  % exchange of two legs, both kinds
+  \tnswap{([xshift=-4.5mm]fw.south)}{([xshift=4.5mm]fw.south)}{1}
+  \tnswap[disc]{([xshift=-4.5mm]ow.south)}{([xshift=4.5mm]ow.south)}{1}
+  % the named colours
+  \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,ttfg,ttmuted,ttaccent,ttwarn,ttbad}
+    \fill[\c] (\i*0.6-0.6,-2.1) rectangle ++(0.45,0.3);
+\end{tikzpicture}
+\end{document}

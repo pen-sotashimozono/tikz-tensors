@@ -87,6 +87,51 @@ Pin a tag when a project vendors this repository, so a figure builds the same
 until the project chooses to move; the vendored `tikz-tensors.sty` names its
 version in its `\ProvidesPackage` line.
 
+## Versions
+
+[Semantic versioning](https://semver.org), on what a document can refer to:
+the style names, the commands, the colour names and the theme tokens. The
+version lives only in the `\ProvidesPackage` line of `tex/tikz-tensors.sty`
+(so a document's `.log` shows it); `CHANGELOG.md` has one section per version.
+
+| step | when |
+|---|---|
+| **major** | a name is removed or renamed, or changes meaning (`cont` no longer a continuous argument) |
+| **minor** | a name is added, or a picture in `tests/reference/` changes — existing figures still compile but look different |
+| **patch** | anything else under `tex/` or `theme/`: a fix that leaves every picture as it was |
+
+Before 1.0.0 a removal is a minor step, as semver allows for 0.x (v0.2.0
+removed the schematic parts). A change outside `tex/` and `theme/` (tests,
+docs, CI) does not move the version.
+
+```sh
+python3 scripts/version.py                     # the current version
+python3 scripts/version.py bump minor "Why."   # move it one step; opens the CHANGELOG entry
+python3 scripts/version.py check --base origin/main
+```
+
+CI runs `check` on every pull request: it reads which names appeared or
+disappeared and which reference pictures changed, and fails unless the version
+moved by exactly one step, at least as large as the change needs, with a
+CHANGELOG section filled in. Merging a new version to `main` tags it
+`v<version>` and publishes a release with `tikz-tensors-v<version>.zip`.
+
+## Tests
+
+```sh
+tests/run.sh             # LuaLaTeX, pdfLaTeX, pdftoppm
+tests/run.sh --update    # accept a deliberate change in appearance
+```
+
+Every file in `examples/` and `tests/cases/` must compile with both engines
+without a warning, and every style and command must be drawn by one of them
+(`tests/coverage.py`). The LuaLaTeX pages are then rendered and compared with
+`tests/reference/*.png` (`tests/compare.py`, standard library only): a moved
+leg, a changed colour or a lost label fails, and a `-diff.png` marks it in red.
+In CI the rendered pages are the `rendered` artifact of the **CI** run.
+`tests/cases/styles.tex` shows every style side by side — a new style is
+added there.
+
 ## Licence
 
 MIT.

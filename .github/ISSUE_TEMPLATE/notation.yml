@@ -1,0 +1,16 @@
+name: Notation request
+description: A new style, shape or colour for something the notation cannot draw yet.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What it should mean
+      description: The object it stands for (a canonical-form tensor, a unitary, an environment, ...) and where it is used.
+    validations:
+      required: true
+  - type: textarea
+    id: look
+    attributes:
+      label: How it should look
+      description: A sketch, a figure from a paper (with the reference), or TikZ you use today.
