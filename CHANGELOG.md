@@ -93,6 +93,15 @@ there is no red, so `bad` is the darkest warm rather than a red.
 
 `examples/00-palette.tex` is a row per scale — the scale mixed step to step so
 its direction is visible, then the three steps with their names, hex and roles.
+A step that carries nothing is left blank rather than given a dash, and the
+chart ends with the count: 16 steps defined, 11 carrying something. The other
+five — `green2`, `yellow1` and the three purples — are scales held for a figure
+that needs a hue the rest do not have, and nothing reads them. The same count is
+in `theme/tokens.toml`, so the length of that file is not read as the size of
+the theme.
+
+`good` takes pure steps instead of a mix: `green3` on the light page (6.71:1,
+where the mix it replaces was 4.61:1) and `green1` on the dark one.
 
 `tn round` draws a node as a circle. Square against circle is this package's own
 distinction and only earns its keep where both kinds are on the page; a plain

@@ -29,6 +29,16 @@
 # One limit, stated rather than hidden: there is no red. `bad` is therefore the
 # darkest warm rather than a red, and it is told from `warn` by hue (ochre
 # against red-brown, about 30 degrees apart) as well as by weight.
+#
+# And the honest count, so that the size of this file is not read as the size of
+# the theme. Sixteen steps are defined. Eleven carry something:
+#
+#   blue1 blue2 blue3  warm1 warm2 warm3  green1 green3  yellow2 yellow3  grey
+#
+# The other five -- green2, yellow1, purple1, purple2, purple3 -- are defined
+# and unused. They are scales that exist for a figure that needs a hue the
+# others do not have, not assignments; nothing in the package reads them, and
+# examples/00-palette.tex leaves their rows blank rather than filling them in.
 
 [ramp]
 blue1   = "#809eab"   # light
@@ -57,7 +67,7 @@ muted   = "blue1 +25% black"   # secondary text,              4.57:1
 faint   = "blue1 +6% black"    # captions,                    3.04:1
 line    = "grey"               # rules, hairlines
 accent  = "blue2 +4% black"    # links, emphasis,             4.52:1
-good    = "green1 +34% black"  #                              4.61:1
+good    = "green3"             #                              6.71:1
 good-bg = "green1 +90% white"
 warn    = "yellow3"            #                              5.72:1
 warn-bg = "yellow3 +88% white"
@@ -74,7 +84,7 @@ faint   = "blue1"              #                              7.11:1
 line    = "blue3 +55% black"
 accent  = "blue2 +35% white"   #                              7.98:1
 good    = "green1"             #                              9.03:1
-good-bg = "green1 +88% black"
+good-bg = "green3 +72% black"
 warn    = "yellow2 +15% white" #                              7.75:1
 warn-bg = "yellow2 +86% black"
 bad     = "warm3 +25% white"   #                              5.05:1
