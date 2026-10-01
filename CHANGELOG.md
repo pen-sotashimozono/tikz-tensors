@@ -76,6 +76,24 @@ step 1, `edge`/`edgec` at step 3. `scripts/theme.py` resolves a step and its
 mix; restructuring moved no value, which the generated files show as eight
 added lines and nothing changed.
 
+Three more scales — green, yellow, purple — built on the ladder the two given
+ones measure out in CIELCh: step 1 near L\* 62–74 at about 40% of the chroma
+the gamut allows there, steps 2 and 3 near L\* 50–60 and 35–42 at about 85%,
+capped in absolute chroma as well, since purple's gamut is three times blue's at
+the same lightness and a fraction of it alone comes out neon. `green` is renamed
+`green1` and keeps its code; `green2` and `green3` are built under it. Yellow
+turns gold and then ochre as it darkens, which is what a yellow does — one light
+enough to stay yellow is too light to put text in.
+
+`warn` moves onto the yellow scale (`yellow3`, 5.72:1 on the light page, and
+`yellow2 +15% white` at 7.75:1 on the dark one). It and `bad` were two steps of
+the one warm scale, told apart only by weight; they are now about 30 degrees
+apart in hue. The caveat in `theme/tokens.toml` shrinks to what is still true:
+there is no red, so `bad` is the darkest warm rather than a red.
+
+`examples/00-palette.tex` is a row per scale — the scale mixed step to step so
+its direction is visible, then the three steps with their names, hex and roles.
+
 `tn round` draws a node as a circle. Square against circle is this package's own
 distinction and only earns its keep where both kinds are on the page; a plain
 tensor network has no functions in it, and much of the literature draws every

@@ -1,24 +1,22 @@
-% The whole theme, which is two scales, a green and a grey.
+% The whole theme: five scales and a grey.
 %
-% The codes are not eight separate colours. Blue runs light to dark in three
-% steps and warm runs light to dark in three, and that ordering is the thing
-% being specified: a pair that should read as a pair takes the same step on the
-% two scales -- canl and canr at step 1, edge and edgec at step 3 -- and a
-% figure that needs a stronger or weaker version of a colour moves along its
-% scale rather than reaching for a new one.
+% The codes are not loose colours. Each scale runs light to dark in three steps,
+% and that ordering is the thing being specified: a pair that should read as a
+% pair takes the same step on two scales -- canl and canr at step 1, edge and
+% edgec at step 3 -- and a figure that needs a stronger or weaker version of a
+% colour moves along its own scale rather than reaching for a new one.
 %
-% Each column is one step: the ramp of tints and shades the step is drawn from,
-% then its name, its hex, and what it carries -- the figure styles on one line
-% and the page tokens on the next. A page token is a tint or a shade rather than
-% the step itself, because a page has a background and body text and a step does
-% not always clear the contrast a reader needs; theme/tokens.toml records the
-% mix and the measured ratio for each.
+% Each row is a scale. The bar is the scale itself, mixed step to step so the
+% direction is visible; the three steps sit under it with their names, their
+% hex, and what each carries -- figure styles on one line, page tokens on the
+% next. A page token is a tint or a shade of a step rather than the step, since
+% a page has a background and body text and a step does not always clear the
+% contrast a reader needs; theme/tokens.toml records the mix and the ratio.
 %
-% The ramps are mixed by xcolor from the defined colour, not written out, so
-% this page cannot drift from theme/tokens.toml. Only the eight hex strings are
-% spelled, and those are the thing the theme starts from.
+% Everything is mixed by xcolor from the defined colours, so this page cannot
+% drift from theme/tokens.toml. Only the sixteen hex strings are spelled.
 %
-% `color=` and not a bare option, because four of these names are also styles
+% `color=` and not a bare option, because several of these names are also styles
 % (coef, centre, mpo, gate): TikZ resolves an option as a key first, so
 % \fill[gate] fills with the style.
 \documentclass[border=4pt]{standalone}
@@ -26,36 +24,58 @@
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1cm, y=1cm]
-  % the two scales, each labelled with the direction it runs
-  \foreach \lo/\hi/\name in {0/2/blue, 3.3/5.3/warm} {
-    \draw[tn line, draw=ttmuted, -{Latex[length=2mm]}]
-      (\lo*2.3,0.62) -- (\hi*2.3+1.95,0.62);
-    \node[anchor=south west, font=\scriptsize, text=ttmuted]
-      at (\lo*2.3,0.70) {\name: light to dark};
+  \def\chip{0.62}
+  \foreach \one/\two/\three/\scale/\r in {%
+    blue1/blue2/blue3/blue/0,
+    warm1/warm2/warm3/warm/1,
+    green1/green2/green3/green/2,
+    yellow1/yellow2/yellow3/yellow/3,
+    purple1/purple2/purple3/purple/4%
+  }{
+    % the scale itself, step 1 to step 2 to step 3
+    \foreach \p [count=\i from 0] in {100,83,67,50,33,17}
+      \fill[color=\one!\p!\two] (\i*\chip,-\r*2.35) rectangle ++(\chip+0.01,0.56);
+    \foreach \p [count=\i from 6] in {100,83,67,50,33,17,0}
+      \fill[color=\two!\p!\three] (\i*\chip,-\r*2.35) rectangle ++(\chip+0.01,0.56);
+    \node[anchor=east, font=\scriptsize, text=ttmuted]
+      at (-0.18,-\r*2.35+0.28) {\scale};
   }
 
-  \foreach \c/\step/\hex/\fig/\page/\x in {%
-    coef/blue1/809EAB/{coef, canl}/{faint, muted}/0,
-    ele/blue2/0082A9/{ele, gate}/{accent}/1,
-    exact/blue3/005077/{exact, edge}/{fg, dark bg}/2,
-    canr/warm1/CE7E60/{canr}/{---}/3.3,
-    nuc/warm2/B65C24/{nuc}/{warn}/4.3,
-    exchange/warm3/88451B/{exchange, edgec}/{bad}/5.3,
-    centre/green/6ABE92/{centre}/{good}/6.6,
-    mpo/grey/D2D2D3/{mpo}/{line, light bg}/7.6%
+  % the three steps of each scale, named under the bar they sit at
+  \foreach \step/\hex/\fig/\page/\x/\r in {%
+    blue1/809EAB/{coef, canl}/{faint, muted}/0/0,
+    blue2/0082A9/{ele, gate}/{accent}/6/0,
+    blue3/005077/{exact, edge}/{fg, dark bg}/12/0,
+    warm1/CE7E60/{canr}/{---}/0/1,
+    warm2/B65C24/{nuc}/{---}/6/1,
+    warm3/88451B/{exchange, edgec}/{bad}/12/1,
+    green1/6ABE92/{centre}/{good}/0/2,
+    green2/2F9262/{---}/{---}/6/2,
+    green3/1E6543/{---}/{---}/12/2,
+    yellow1/CBB387/{---}/{---}/0/3,
+    yellow2/AE8C3D/{---}/{warn, dark}/6/3,
+    yellow3/7A601E/{---}/{warn}/12/3,
+    purple1/A494C1/{---}/{---}/0/4,
+    purple2/816AB7/{---}/{---}/6/4,
+    purple3/5A4887/{---}/{---}/12/4%
   }{
-    \foreach \m [count=\j from 0] in {15,40,70,100,70!black,45!black}
-      \fill[color=\c!\m] (\x*2.3,-\j*0.62) rectangle ++(1.95,0.56);
-    % the step itself, marked where it sits in the ramp
-    \draw[tn line, draw=ttfg] (\x*2.3,-3*0.62) rectangle ++(1.95,0.56);
     \node[anchor=north west, font=\scriptsize, text=ttfg]
-      at (\x*2.3,-6*0.62-0.06) {\step};
+      at (\x*\chip,-\r*2.35-0.10) {\step};
     \node[anchor=north west, font=\ttfamily\scriptsize, text=ttmuted]
-      at (\x*2.3,-6*0.62-0.42) {\hex};
-    \node[anchor=north west, font=\scriptsize, text=ttfg,     align=left]
-      at (\x*2.3,-6*0.62-0.82) {\fig};
-    \node[anchor=north west, font=\scriptsize, text=ttmuted,  align=left]
-      at (\x*2.3,-6*0.62-1.18) {\page};
+      at (\x*\chip,-\r*2.35-0.46) {\hex};
+    \node[anchor=north west, font=\scriptsize, text=ttfg,    align=left]
+      at (\x*\chip,-\r*2.35-0.86) {\fig};
+    \node[anchor=north west, font=\scriptsize, text=ttmuted, align=left]
+      at (\x*\chip,-\r*2.35-1.22) {\page};
   }
+
+  % grey, the one scale with a single step
+  \fill[color=grey] (0,-5*2.35) rectangle ++(13*\chip+0.01,0.56);
+  \node[anchor=east, font=\scriptsize, text=ttmuted] at (-0.18,-5*2.35+0.28) {grey};
+  \node[anchor=north west, font=\scriptsize, text=ttfg]    at (0,-5*2.35-0.10) {grey};
+  \node[anchor=north west, font=\ttfamily\scriptsize, text=ttmuted]
+    at (0,-5*2.35-0.46) {D2D2D3};
+  \node[anchor=north west, font=\scriptsize, text=ttfg]    at (0,-5*2.35-0.86) {mpo};
+  \node[anchor=north west, font=\scriptsize, text=ttmuted] at (0,-5*2.35-1.22) {line, light bg};
 \end{tikzpicture}
 \end{document}
