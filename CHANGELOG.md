@@ -33,6 +33,17 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
+The reference images are rendered by `pdftocairo` rather than `pdftoppm`, which
+is why every one of them changed. poppler's Splash backend snaps a thin
+axis-aligned stroke to whole pixels without anti-aliasing, so the two horizontal
+edges of a box round independently by where each lands and can come out a pixel
+apart — a box with a heavier bottom than top. Measured on the specimen sheet:
+18 of 157 columns crossing a box had the two strokes more than half a pixel
+apart in ink, the worst 0.80 px, which at 0.8pt and 150 dpi is about half the
+stroke. With cairo, 3 of 157, median 0.004 px. It is a phase effect rather than
+a resolution one — across fourteen resolutions it flips on and off with no rule
+— so there is no dpi that fixes it; anti-aliasing does.
+
 `tests/cases/styles.tex` is a specimen sheet rather than a picture. Each public
 style and command stands on its own with the name it is there to show written
 under it, so what the file is for can be read off it. The one group kept
