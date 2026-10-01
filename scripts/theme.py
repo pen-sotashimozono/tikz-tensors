@@ -70,52 +70,61 @@ def tex() -> str:
 
 
 def palette() -> str:
-    """The chart's data: every step of the ramp and what actually names it.
+    """The chart's data: every step, and every value actually derived from it.
 
     Read out of the table rather than written beside it, so the chart cannot
-    claim a role the theme does not assign, or miss one it does.
+    claim a role the theme does not assign, or miss one it does. Nothing that is
+    not a defined value gets a patch of colour on that page -- in particular
+    there is no blend of one step into the next, because the theme has no such
+    colour: what lies between the steps is nothing, and what is derived from a
+    step is a tint or a shade of it, which is what the chips are.
     """
     order = list(RAMP)
     scales: dict[str, list[str]] = {}
     for step in order:
         scales.setdefault(step.rstrip("0123456789") or step, []).append(step)
-    figure: dict[str, list[str]] = {s: [] for s in order}
-    page: dict[str, dict[str, list[str]]] = {s: {"light": [], "dark": []} for s in order}
+    where = {s: {"figure": [], "light": [], "dark": []} for s in order}
     for section, body in RAW.items():
         if section == "ramp":
             continue
         for key, value in body.items():
             if value.startswith("#"):
                 continue
-            step = value.split()[0]
-            if section in ("light", "dark"):
-                page[step][section].append(key)
-            else:
-                figure[step].append(key)
+            parts = value.split(None, 1)
+            # The mix reaches TeX as text, and a per cent sign starts a comment
+            # there -- "+80% white" would swallow the rest of the definition.
+            step = parts[0]
+            mix = parts[1].replace("%", r"\%") if len(parts) > 1 else "pure"
+            where[step]["light" if section == "light" else
+                        "dark" if section == "dark" else "figure"].append((key, mix))
 
-    rows = []
-    for r, (_, steps) in enumerate(scales.items()):
-        for c, step in enumerate(steps):
-            light, dark = page[step]["light"], page[step]["dark"]
-            lines = ([f"light {', '.join(light)}"] if light else []) + \
-                    ([f"dark {', '.join(dark)}"] if dark else [])
-            fig = ", ".join(figure[step])
-            pag = "\\\\".join(lines)          # a TeX line break between the two modes
-            rows.append(f"    {step}/{RAMP[step][1:].upper()}/{{{fig}}}/{{{pag}}}/{c * 6}/{r}")
-    bars = []
-    for r, (name, steps) in enumerate(scales.items()):
-        ends = (steps + steps[-1:] * 2)[:3]   # a one-step scale is a flat bar
-        bars.append(f"    {'/'.join(ends)}/{name}/{r}")
-    used = [s for s in order if figure[s] or page[s]["light"] or page[s]["dark"]]
+    at = {step: (c * 6, r) for r, steps in enumerate(scales.values())
+          for c, step in enumerate(steps)}
+    rows, chips = [], []
+    for step in order:
+        c, r = at[step]
+        fig = ", ".join(k for k, _ in where[step]["figure"])
+        # Named as the dark page's, since the chart shows them as text beside
+        # chips that are the light page's.
+        dark = ", ".join(f"{k} {m}" for k, m in where[step]["dark"])
+        dark = f"dark: {dark}" if dark else ""
+        rows.append(f"    {step}/{RAMP[step][1:].upper()}/{{{fig}}}/{{{dark}}}/{c}/{r}")
+        for i, (key, mix) in enumerate(where[step]["light"]):
+            chips.append(f"    tt{key.replace('-', '')}/{{{key}}}/{{{mix}}}/{c}/{r}/{i}")
+
+    used = [s for s in order if any(where[s].values())]
     spare = [s for s in order if s not in used]
-    count = (f"{len(order)} steps defined, {len(used)} of them named by something. "
-             + (f"{', '.join(spare)} {'is' if len(spare) == 1 else 'are'} defined and unused."
-                if spare else "Every step is used."))
+    count = (f"{len(order)} steps defined, {len(used)} of them named by something"
+             + (f"; {', '.join(spare)} not." if spare else "."))
     return (f"% {HEAD}\n"
             f"% The palette chart's data. examples/00-palette.tex draws this and nothing\n"
             f"% else, so what it says about a step is what theme/tokens.toml assigns.\n"
+            f"%   \\tnpalette       step / hex / figure styles / dark tokens / column / row\n"
+            f"%   \\tnpalettechips  light colour / token / its mix / column / row / index\n"
             f"\\def\\tnpalette{{%\n" + ",\n".join(rows) + "%\n}\n"
-            f"\\def\\tnpalettescales{{%\n" + ",\n".join(bars) + "%\n}\n"
+            f"\\def\\tnpalettechips{{%\n" + ",\n".join(chips) + "%\n}\n"
+            f"\\def\\tnpalettescales{{%\n"
+            + ",\n".join(f"    {name}/{r}" for r, name in enumerate(scales)) + "%\n}\n"
             f"\\def\\tnpalettecount{{{count}}}\n")
 
 

@@ -93,6 +93,13 @@ there is no red, so `bad` is the darkest warm rather than a red.
 
 `examples/00-palette.tex` is a row per scale — the scale mixed step to step so
 its direction is visible, then the three steps with their names, hex and roles.
+No colour appears on that chart that the theme does not define. The steps are
+three discrete blocks, not a bar running one into the next: a gradient looks
+like a continuous scale, and between two steps there is nothing. What does exist
+beside a step is a tint or a shade of it — the page tokens — and those are drawn
+as chips in the colour they actually are, each labelled with the token and the
+mix that makes it.
+
 Nothing on that chart is written on it. `scripts/theme.py` generates
 `tex/tikz-tensors-palette.tex` — the scales, the steps, the hex, the roles and
 the count — out of `theme/tokens.toml`, and the example is the layout and
