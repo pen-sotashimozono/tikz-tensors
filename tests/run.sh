@@ -65,9 +65,11 @@ for pdf in "$OUT"/lualatex/*.pdf; do
   # (150, 200, 300). 180 is the cheapest of them: 2 px a stroke, references
   # 330K against 228K, compare.py about three seconds slower.
   #
-  # This fixes the widths, not the phase effect itself: a width that is not
-  # whole at 180 is ragged again, which is why the one demo of `tn line width'
-  # is 1.6pt (4 px) and not 1.8pt (4.5 px). pdftocairo anti-aliases and avoids
+  # This fixes the widths at 0.8pt, not the snapping: a width that is not whole
+  # at 180 is ragged again, and the demo of `tn line width' is 1.8pt (4.5 px),
+  # so its two strokes differ by a pixel here. That is left alone on purpose --
+  # the artefact belongs to the renderer and the figure should not be chosen to
+  # flatter it. pdftocairo anti-aliases and avoids
   # the whole business, but its anti-aliasing differs between poppler versions
   # and references made here then failed against the runner's; this test exists
   # to be reproducible, and snapping is.
