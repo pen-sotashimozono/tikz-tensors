@@ -42,15 +42,21 @@ def main() -> int:
     a = ap.parse_args()
 
     pages = changed(a.base)
+    print("### Figure preview\n")
     if not pages:
         print("No page is drawn differently from the base.")
         return 0
-    print(f"### Pages this branch draws differently\n")
     for name in pages:
         src = next((f"{d}/{name}.tex" for d in ("examples", "tests/cases")
                     if (ROOT / d / f"{name}.tex").is_file()), None)
+        url = RAW.format(repo=a.repo, sha=a.sha, name=name)
         print(f"**{name}**" + (f" — `{src}`" if src else "") + "\n")
-        print(f"![{name}]({RAW.format(repo=a.repo, sha=a.sha, name=name)})\n")
+        print(f"![{name}]({url})\n")
+        # The link in full, under the picture: a reader who cannot see the
+        # image -- or wants the file itself -- should not have to go hunting
+        # for a run summary or an artifact.
+        print(f"{url}\n")
+    print("*(updates on each push to this PR)*")
     return 0
 
 

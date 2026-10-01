@@ -8,8 +8,8 @@ name: CI
 # The rendered pages (and a diff image for any that changed) are uploaded as
 # the `rendered` artifact, so a change in appearance can be looked at, not
 # only counted. On a pull request the pages this branch draws differently are
-# also shown in the run summary, and posted as one comment that later pushes
-# edit in place, so the usual case needs no download at all.
+# posted as one comment on the PR -- the picture and the link to it -- which
+# later pushes replace, so the usual case needs no download and no detour.
 
 on:
   pull_request:
@@ -86,23 +86,38 @@ jobs:
 
       # Only after tests/run.sh has passed, because the preview links this
       # branch's committed reference images and those are the pages CI drew
-      # exactly when the comparison said so.
-      - name: Preview the pages that changed
+      # exactly when the comparison said so. The comment follows the shape the
+      # other repositories' preview workflows use: one sticky comment, found by
+      # its heading and replaced on each push.
+      - name: Collect the pages that changed
+        id: preview
         if: github.event_name == 'pull_request'
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
           SHA: ${{ github.event.pull_request.head.sha }}
-          GH_TOKEN: ${{ github.token }}
-          PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          { echo "<!-- tikz-tensors-preview -->"
-            python3 scripts/preview.py --base "$BASE" --sha "$SHA" \
-                                       --repo "$GITHUB_REPOSITORY"
-          } > preview.md
+          python3 scripts/preview.py --base "$BASE" --sha "$SHA" \
+                                     --repo "$GITHUB_REPOSITORY" > preview.md
           cat preview.md >> "$GITHUB_STEP_SUMMARY"
-          # A fork's token is read-only, so the comment is a bonus and the
-          # summary above is the part that always lands.
-          gh pr comment "$PR" --body-file preview.md --edit-last \
-            || gh pr comment "$PR" --body-file preview.md \
-            || echo "::notice::no write access for a comment; the run summary has it"
+          { echo 'body<<PREVIEW_EOF'; cat preview.md; echo PREVIEW_EOF; } >> "$GITHUB_OUTPUT"
+
+      - name: Find the existing preview comment
+        id: find-comment
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Figure preview'
+
+      - name: Post / update the preview
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: ${{ steps.preview.outputs.body }}
