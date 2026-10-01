@@ -35,9 +35,23 @@ bad     = "#f85149"
 bad-bg  = "#25171c"
 
 # Meaning, not decoration. Same in light and dark (figures keep their own white paper).
+# Every value below comes from one eight-colour palette, so a diagram, a note and
+# a slide are the same picture in three media.
 [physics]
-ele      = "#2e6fba"   # electrons, electron density, continuous (position) legs
-nuc      = "#c96a1b"   # nuclei
-coef     = "#57606a"   # coefficient arrays (tensor boxes), finite-index legs
-exchange = "#a40e26"   # exchange: the term, the hole, the sign under a swap
-exact    = "#24292f"   # exact / reference results
+ele      = "#0082a9"   # electrons, electron density, continuous (position) legs
+nuc      = "#b65c24"   # nuclei
+coef     = "#809eab"   # coefficient arrays (tensor boxes), finite-index legs
+exchange = "#88451b"   # exchange: the term, the hole, the sign under a swap
+exact    = "#005077"   # exact / reference results
+
+# Matrix-product states. The gauge is read from colour as much as from the
+# direction a triangle points, so the two canonical forms do not share one; an
+# operator on the chain stays neutral so that the state reads through it.
+[mps]
+canl   = "#809eab"   # left-canonical: isometric from the left
+canr   = "#ce7e60"   # right-canonical: isometric from the right
+centre = "#6abe92"   # the orthogonality centre, the one tensor that is not isometric
+mpo    = "#d2d2d3"   # operator tensors sitting on the chain
+gate   = "#0082a9"   # a gate, or an identity, spanning sites
+edge   = "#005077"   # a boundary tensor, where a chain is cut or terminated
+edgec  = "#88451b"   # its counterpart at the other end

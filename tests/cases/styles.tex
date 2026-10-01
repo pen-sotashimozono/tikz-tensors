@@ -24,22 +24,36 @@
   % exchange of two legs, both kinds
   \tnswap{([xshift=-4.5mm]fw.south)}{([xshift=4.5mm]fw.south)}{1}
   \tnswap[disc]{([xshift=-4.5mm]ow.south)}{([xshift=4.5mm]ow.south)}{1}
-  % matrix-product states: canonical tensors, the centre, a gate, a fixed point
+  % matrix-product states: canonical tensors, the centre, a gate, an MPO, the
+  % two fixed points
   \node[canl]   (A1) at (0,-5.0) {};
   \node[canl]   (A2) at (1.3,-5.0) {};
   \node[centre] (C)  at (2.6,-5.0) {};
   \node[canr]   (B1) at (3.9,-5.0) {};
   \node[canr]   (B2) at (5.2,-5.0) {};
   \node[env]    (EL) at (-1.1,-5.0) {};
-  \node[env]    (ER) at (6.3,-5.0) {};
+  \node[envc]   (ER) at (6.3,-5.0) {};
   \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
   \draw[bond] (B1) -- (C);   \draw[bond] (B2) -- (B1);  \draw[bond] (ER) -- (B2);
   \node[gate, minimum width=24mm] (G) at (1.95,-3.7) {$U$};
   \tngatelegs{G}{south}{A2,C}
   \foreach \n in {A1,A2,C,B1,B2} \draw[disc] (\n) -- ++(0,-0.8);
+  % an operator on the chain: one tensor per site, taking the physical legs the
+  % chain just dropped, joined to each other by its own bond, and carrying the
+  % legs on out the bottom
+  \draw[disc] (0,-5.8) -- (5.2,-5.8);
+  \foreach \n in {A1,A2,C,B1,B2} {
+    \node[mpo] (W\n) at (\n |- 0,-5.8) {};
+    \draw[disc] (W\n.south) -- ++(0,-0.6);
+  }
 
-  % the named colours
-  \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,ttfg,ttmuted,ttaccent,ttwarn,ttbad}
-    \fill[\c] (\i*0.6-0.6,-2.1) rectangle ++(0.45,0.3);
+  % The named colours: the physics ones, the MPS ones, then the page tokens.
+  % `color=` and not a bare `\fill[\c]`, because several of these names are also
+  % styles (coef, mpo, gate, centre), and TikZ resolves an option as a key before
+  % it tries it as a colour -- a bare one silently fills with the style instead.
+  \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,%
+                              canl,canr,centre,mpo,gate,edge,edgec,%
+                              ttfg,ttmuted,ttaccent,ttwarn,ttbad}
+    \fill[color=\c] (\i*0.6-0.6,-2.1) rectangle ++(0.45,0.3);
 \end{tikzpicture}
 \end{document}

@@ -18,17 +18,29 @@
 %%
 %% A matrix-product state needs four more things, since its tensors are not all the
 %% same kind of object:
-%%   canl, canr   triangle pointing the way the gauge runs: left- and right-canonical
-%%   centre       the orthogonality centre, the one tensor that is not isometric
-%%   env          a boundary fixed point, what closes an infinite chain
-%%   gate         a box over several sites (a Trotter step, one term of an MPO),
+%%   canl, canr   left- and right-canonical. The triangle points the way the gauge
+%%                runs AND carries its own colour, so the two are told apart twice
+%%   centre       the orthogonality centre: a diamond, the one tensor of the chain
+%%                that is neither isometric nor shaped like its neighbours
+%%   mpo          an operator tensor sitting on the chain, neutral so that the
+%%                state reads through it
+%%   env, envc    the boundary fixed points at the two ends, what closes an
+%%                infinite chain; outlined rather than filled, so a cap does not
+%%                read as another site
+%%   gate         a bar over several sites (a Trotter step, one term of an MPO),
 %%                sized by the caller; \tngatelegs drops its legs onto the sites
 %%   bond         a disc leg carrying the gauge direction as an arrowhead
 %% The triangles are the usual convention and they are load-bearing: a reader who
 %% cannot see which tensors are isometric cannot tell a canonical form from a
-%% picture of one.
+%% picture of one. Shape carries the meaning on its own and colour repeats it, so
+%% the diagrams survive being printed in grey.
 %%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
+%%
+%% The style names are short and unprefixed, which has one consequence worth
+%% knowing: where a style and a colour share a name (coef, centre, mpo, gate), an
+%% option written bare -- \fill[gate] -- is resolved as the style, never the
+%% colour. Say which you mean: color=gate, or draw=/fill=.
 %% Colours (ele for continuous legs and functions, the page tokens tt<name>, and
 %% the theme's other named colours) come from tikz-tensors-colors.tex, generated
 %% from theme/tokens.toml. The version is the \ProvidesPackage line below.
@@ -67,16 +79,29 @@
 }
 
 % ---- matrix-product states ----------------------------------------------------
+% Solid fills, because an MPS diagram is mostly tensors: at the pale fills the
+% single-tensor styles above use, a ten-site chain turns into ten outlines and the
+% eye finds no site. The labels stay ink rather than reversing to white -- white on
+% these fills measures 2.2--3.1:1 against the 7--9:1 ink gives -- except on the
+% gate, whose deeper teal is the one fill where the two are a wash.
 \tikzset{
   canl/.style   = {regular polygon, regular polygon sides=3,
-                   shape border rotate=-90, draw=ele, fill=ele!12,
-                   line width=0.9pt, minimum size=11mm, inner sep=0pt},
-  canr/.style   = {canl, shape border rotate=90},
-  centre/.style = {fn, fill=ele!40, line width=1.1pt},
-  env/.style    = {rectangle, rounded corners=1.5mm, draw=black!70, fill=black!8,
+                   shape border rotate=-90, draw=canl!65!black, fill=canl,
+                   line width=0.7pt, minimum size=10.5mm, inner sep=0pt,
+                   text=ttfg, font=\small},
+  canr/.style   = {canl, shape border rotate=90,
+                   draw=canr!65!black, fill=canr},
+  centre/.style = {diamond, draw=centre!65!black, fill=centre, line width=0.7pt,
+                   minimum size=9.5mm, inner sep=0pt, text=ttfg, font=\small},
+  mpo/.style    = {rectangle, rounded corners=1.2mm, draw=mpo!55!black, fill=mpo,
+                   line width=0.7pt, minimum size=7.5mm, inner sep=1pt},
+  env/.style    = {rectangle, rounded corners=1.5mm, draw=edge, fill=edge!10,
                    line width=0.9pt, minimum width=5mm, minimum height=14mm,
                    inner sep=0pt},
-  gate/.style   = {op, minimum height=7mm},
+  envc/.style   = {env, draw=edgec, fill=edgec!10},
+  gate/.style   = {rectangle, rounded corners=2.2mm, draw=gate!65!black, fill=gate,
+                   line width=0.7pt, minimum height=7mm, inner sep=3pt,
+                   text=white, font=\small},
   bond/.style   = {disc, postaction={decorate}, decoration={markings,
                    mark=at position 0.58 with {\arrow{Latex[length=1.7mm]}}}},
 }
