@@ -1,0 +1,57 @@
+% The orthogonality centre sits on a site or on a bond, and the notation has to
+% say both, because the two are one SVD apart and a method moves between them
+% every sweep.
+%
+% Above: the centre on a site. C carries a physical leg like every other tensor
+% on the chain, and is the only one that is not isometric.
+%
+% Below: the centre on a bond. Take C = U Lambda V^dagger, absorb U into the
+% site on its left and V^dagger into the site on its right, and both of those
+% become isometric -- so the chain is A A A to the left and B B to the right,
+% five sites still, and what is left over is Lambda, which lives between two
+% sites and carries no physical leg. Those are the Schmidt values across that
+% cut, which is why this form is the one to read an entanglement spectrum off.
+%
+% Same diamond for both, because it is the same object in the same role; what
+% differs is the slot it sits in, and a bond slot is narrower than a site one.
+% The right half of the lower chain stands further out than the upper one by
+% exactly the room Lambda takes: the site pitch does not leave a gap wide enough
+% for a tensor, and pretending it does would draw a bond that is not there.
+% Drawing the bond-centred form with a site-shaped tensor would say there is a
+% physical index where there is none.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[x=1.35cm]
+  % ---- the centre on a site ----------------------------------------------
+  \node[env]    (EL) at (-0.95,0) {$L$};
+  \node[canl]   (A1) at (0,0)     {$A$};
+  \node[canl]   (A2) at (1,0)     {$A$};
+  \node[centre] (C)  at (2,0)     {$C$};
+  \node[canr]   (B1) at (3,0)     {$B$};
+  \node[canr]   (B2) at (4,0)     {$B$};
+  \node[envc]   (ER) at (4.95,0)  {$R$};
+  \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
+  \draw[bond] (ER) -- (B2);  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \foreach \n/\l in {A1/1,A2/2,C/3,B1/4,B2/5}
+    \draw[disc] (\n) -- (\n |- 0,-0.95) node[leg, below] {$n_{\l}$};
+
+  % ---- the centre on the bond between sites 3 and 4 ----------------------
+  \begin{scope}[yshift=-2.6cm]
+    \node[env]        (eL) at (-0.95,0) {$L$};
+    \node[canl]       (a1) at (0,0)     {$A$};
+    \node[canl]       (a2) at (1,0)     {$A$};
+    \node[canl]       (a3) at (2,0)     {$A$};
+    \node[centrebond] (L)  at (3,0)     {$\Lambda$};
+    \node[canr]       (b1) at (4,0)     {$B$};
+    \node[canr]       (b2) at (5,0)     {$B$};
+    \node[envc]       (eR) at (5.95,0)  {$R$};
+    \draw[bond] (eL) -- (a1);  \draw[bond] (a1) -- (a2);  \draw[bond] (a2) -- (a3);
+    \draw[bond] (a3) -- (L);   \draw[bond] (b1) -- (L);
+    \draw[bond] (eR) -- (b2);  \draw[bond] (b2) -- (b1);
+    \foreach \n/\l in {a1/1,a2/2,a3/3,b1/4,b2/5}
+      \draw[disc] (\n) -- (\n |- 0,-0.95) node[leg, below] {$n_{\l}$};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

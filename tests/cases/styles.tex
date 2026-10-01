@@ -48,6 +48,17 @@
   \foreach \n in {A2,C}    \draw[disc] (G.south -| \n) -- (W\n);
   \foreach \n in {A1,A2,C,B1,B2} \draw[disc] (W\n.south) -- ++(0,-0.6);
 
+  % The centre on a bond -- the Schmidt values, no physical leg -- and the one
+  % stroke everything is drawn with: `tn line` on a path of this file's own, and
+  % `tn line width` on a scope, which moves outlines and legs together.
+  \begin{scope}[xshift=7.6cm, yshift=-4.2cm, tn line width=1.6pt]
+    \node[canl]       (Z1) at (0,0)    {};
+    \node[centrebond] (Zl) at (1.15,0) {};
+    \node[canr]       (Z2) at (2.3,0)  {};
+    \draw[bond] (Z1) -- (Zl);  \draw[bond] (Z2) -- (Zl);
+    \draw[tn line, draw=exact] (0,-0.9) -- (2.3,-0.9);
+  \end{scope}
+
   % The named colours: the physics ones, the MPS ones, then the page tokens.
   % `color=` and not a bare `\fill[\c]`, because several of these names are also
   % styles (coef, mpo, gate, centre), and TikZ resolves an option as a key before

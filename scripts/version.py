@@ -12,8 +12,8 @@ tex/tikz-tensors.sty, which is also what a document sees in its log. Tags are
 v<version>; CHANGELOG.md has one section per version, headed by its tag.
 
 `check` compares the working tree with a base commit and enforces semantic
-versioning on the package's public names -- TikZ styles, commands, colours and
-theme tokens (see `api`) -- and on how the tests render:
+versioning on the package's public names -- TikZ styles and keys, commands,
+colours and theme tokens (see `api`) -- and on how the tests render:
 
     a public name removed            -> major   (minor before 1.0.0)
     a name added, or a reference
@@ -100,7 +100,7 @@ def api(ref: str | None = None) -> set[str]:
     names: set[str] = set()
     for path in files(ref, "tex/"):
         text = read(path, ref) or ""
-        names |= {f"style '{n.strip()}'" for n in re.findall(r"([\w ]+?)/\.style", text)}
+        names |= {f"style '{n.strip()}'" for n in re.findall(r"([\w ]+?)/\.(?:style|code)", text)}
         names |= {f"command \\{n}" for n in re.findall(r"\\(?:new|provide)command\*?\{\\(\w+)\}", text)}
         names |= {f"colour {n}" for n in re.findall(r"\\definecolor\{(\w+)\}", text)}
     css = read("theme/theme.css", ref) or ""

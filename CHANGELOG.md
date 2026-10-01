@@ -33,6 +33,23 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
+The centre has two places it can sit and the notation says both. `centre` is the
+centre on a site, carrying a physical leg like its neighbours; `centrebond` is
+the same diamond, smaller, for the centre on a bond — the Schmidt values, which
+carry no physical leg. One SVD takes either form to the other, so they are one
+shape in two slots rather than two shapes, and `examples/05-centre.tex` draws
+the pair.
+
+An outline and a leg are one stroke now. Every style draws with `tn line`
+instead of carrying a width of its own, and `tn line width` (0.8pt) moves
+outlines and legs together — on a picture, a scope or a single node — so a
+figure can be set heavier without the nodes and the indices drifting apart.
+`tn line` is public too, for a path the caller draws itself.
+
+`scripts/version.py` guards keys defined with `/.code`, not only `/.style`, so a
+public key like `tn line width` counts as a public name; `tests/coverage.py`
+counts a key used with a value.
+
 ## v0.2.0 — 2026-09-29
 
 Tensor-network diagrams only. `\tnnucleus`, `\tnelectron`, `\tncloud` and

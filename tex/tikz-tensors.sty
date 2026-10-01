@@ -16,17 +16,26 @@
 %% is a coefwide C with two disc legs down to two fn phi, each with a cont leg:
 %% the numbers sit on the basis functions, which sit on space.
 %%
-%% A matrix-product state needs four more things, since its tensors are not all the
+%% A matrix-product state needs more than that, since its tensors are not all the
 %% same kind of object:
 %%   canl, canr   left- and right-canonical. The triangle points the way the gauge
 %%                runs AND carries its own colour, so the two are told apart twice
-%%   centre       the orthogonality centre: a diamond, the one tensor of the chain
-%%                that is neither isometric nor shaped like its neighbours
+%%   centre       the orthogonality centre on a site: a diamond, the one tensor
+%%                of the chain that is neither isometric nor shaped like its
+%%                neighbours, and the one carrying a physical leg of its own
+%%   centrebond   the same diamond, smaller, for the centre on a bond: the
+%%                Schmidt values between two sites, which carry no physical leg.
+%%                One SVD takes either form to the other, and the notation has to
+%%                be able to say both, so the shape is shared and only the slot
+%%                it sits in differs
 %%   mpo          an operator tensor sitting on the chain, neutral so that the
 %%                state reads through it
-%%   env, envc    the boundary fixed points at the two ends, what closes an
-%%                infinite chain; outlined rather than filled, so a cap does not
-%%                read as another site
+%%   env, envc    what closes the chain at either end, one colour each so a
+%%                picture of a cut chain says which cut it is; outlined rather
+%%                than filled, so a cap does not read as another site. In a
+%%                one-layer picture a cap is a vector, carrying one bond leg;
+%%                the transfer matrix's fixed points take the same slot once the
+%%                picture is doubled with the bra, carrying two
 %%   gate         a bar over several sites (a Trotter step, one term of an MPO),
 %%                sized by the caller; \tngatelegs drops its legs onto the sites
 %%   bond         a disc leg carrying the gauge direction as an arrowhead
@@ -36,6 +45,10 @@
 %% the diagrams survive being printed in grey.
 %%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
+%%
+%% Outlines and legs are one stroke, `tn line`, whose width is `tn line width`
+%% (0.8pt) -- settable on a picture, a scope or a node, and usable directly on a
+%% path of the caller's own.
 %%
 %% The style names are short and unprefixed, which has one consequence worth
 %% knowing: where a style and a colour share a name (coef, centre, mpo, gate), an
@@ -53,29 +66,41 @@
                 arrows.meta,calc}
 \input{tikz-tensors-colors.tex}
 
+% ---- one line width ----------------------------------------------------------
+% An outline and a leg are the same stroke in a tensor diagram: a node is not a
+% heavier object than the index it carries. So every style below draws with
+% `tn line` rather than carrying a width of its own, and `tn line width` moves
+% all of them at once -- on a picture, on a scope, or on a single node. A caller
+% drawing a path of its own uses `tn line` to match.
+\pgfkeys{/tn/line width/.initial=0.8pt}
+\tikzset{
+  tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
+  tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
+}
+
 % ---- tensor diagrams ---------------------------------------------------------
 \tikzset{
-  fn/.style       = {circle, draw=ele, fill=ele!12, line width=0.9pt,
+  fn/.style       = {circle, tn line, draw=ele, fill=ele!12,
                      minimum size=8mm, inner sep=0pt},
   fnwide/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=17mm,
                      minimum height=8mm},
   fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
                      minimum height=17mm},
-  coef/.style     = {rectangle, draw=black!80, fill=black!6, line width=0.9pt,
+  coef/.style     = {rectangle, tn line, draw=black!80, fill=black!6,
                      minimum size=7mm, inner sep=0pt},
   coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
   coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {rectangle, draw=ttfg, fill=white, line width=0.9pt,
+  op/.style       = {rectangle, tn line, draw=ttfg, fill=white,
                      minimum size=7mm, inner sep=1pt},
   opwide/.style   = {op, minimum width=17mm},
-  frame/.style    = {draw=black!50, dashed, rounded corners=2mm, line width=0.7pt},
-  cont/.style     = {draw=ele, line width=0.9pt, decorate,
+  frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},
+  cont/.style     = {tn line, draw=ele, decorate,
                      decoration={snake, amplitude=0.55mm, segment length=2.4mm,
                                  pre length=0.4mm, post length=0.8mm}},
-  disc/.style     = {draw=black!80, line width=0.9pt},
+  disc/.style     = {tn line, draw=black!80},
   leg/.style      = {font=\small, inner sep=2pt},
-  tn swap cont/.style = {draw=ele, line width=0.9pt},
-  tn swap disc/.style = {draw=black!80, line width=0.9pt},
+  tn swap cont/.style = {tn line, draw=ele},
+  tn swap disc/.style = {tn line, draw=black!80},
 }
 
 % ---- matrix-product states ----------------------------------------------------
@@ -85,25 +110,28 @@
 % these fills measures 2.2--3.1:1 against the 7--9:1 ink gives -- except on the
 % gate, whose deeper teal is the one fill where the two are a wash.
 \tikzset{
-  canl/.style   = {regular polygon, regular polygon sides=3,
-                   shape border rotate=-90, draw=canl!65!black, fill=canl,
-                   line width=0.7pt, minimum size=10.5mm, inner sep=0pt,
-                   text=ttfg, font=\small},
-  canr/.style   = {canl, shape border rotate=90,
-                   draw=canr!65!black, fill=canr},
-  centre/.style = {diamond, draw=centre!65!black, fill=centre, line width=0.7pt,
-                   minimum size=9.5mm, inner sep=0pt, text=ttfg, font=\small},
-  mpo/.style    = {rectangle, rounded corners=1.2mm, draw=mpo!55!black, fill=mpo,
-                   line width=0.7pt, minimum size=7.5mm, inner sep=1pt},
-  env/.style    = {rectangle, rounded corners=1.5mm, draw=edge, fill=edge!10,
-                   line width=0.9pt, minimum width=5mm, minimum height=14mm,
-                   inner sep=0pt},
-  envc/.style   = {env, draw=edgec, fill=edgec!10},
-  gate/.style   = {rectangle, rounded corners=2.2mm, draw=gate!65!black, fill=gate,
-                   line width=0.7pt, minimum height=7mm, inner sep=3pt,
-                   text=white, font=\small},
-  bond/.style   = {disc, postaction={decorate}, decoration={markings,
-                   mark=at position 0.58 with {\arrow{Latex[length=1.7mm]}}}},
+  canl/.style       = {regular polygon, regular polygon sides=3, tn line,
+                       shape border rotate=-90, draw=canl!65!black, fill=canl,
+                       minimum size=10.5mm, inner sep=0pt, text=ttfg,
+                       font=\small},
+  canr/.style       = {canl, shape border rotate=90,
+                       draw=canr!65!black, fill=canr},
+  centre/.style     = {diamond, tn line, draw=centre!65!black, fill=centre,
+                       minimum size=9.5mm, inner sep=0pt, text=ttfg,
+                       font=\small},
+  centrebond/.style = {centre, minimum size=6mm, font=\scriptsize},
+  mpo/.style        = {rectangle, tn line, rounded corners=1.2mm,
+                       draw=mpo!55!black, fill=mpo, minimum size=7.5mm,
+                       inner sep=1pt},
+  env/.style        = {rectangle, tn line, rounded corners=1.5mm, draw=edge,
+                       fill=edge!10, minimum width=5mm, minimum height=14mm,
+                       inner sep=0pt},
+  envc/.style       = {env, draw=edgec, fill=edgec!10},
+  gate/.style       = {rectangle, tn line, rounded corners=2.2mm,
+                       draw=gate!65!black, fill=gate, minimum height=7mm,
+                       inner sep=3pt, text=white, font=\small},
+  bond/.style       = {disc, postaction={decorate}, decoration={markings,
+                       mark=at position 0.58 with {\arrow{Latex[length=1.7mm]}}}},
 }
 
 % \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
