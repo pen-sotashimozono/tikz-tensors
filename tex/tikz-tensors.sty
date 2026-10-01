@@ -251,15 +251,7 @@
       \coordinate (tn@spot) at ($#3!\the\pgf@xa!#4$);
     \fi
     \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
-    % A hair inside the corner, not on it. A corner anchor is on the outline's
-    % path and the outline is stroked about that path, so a leg starting exactly
-    % there pokes past the edge and reads as detached -- measured at 700 dpi,
-    % three columns of leg with nothing above them. Moved an eighth of the way
-    % to the centre it is covered by the tensor, which is drawn over the edge
-    % layer, and the join closes; at this size that is about half a millimetre,
-    % so it still leaves from the corner as far as the eye is concerned.
-    \coordinate (#2\tn@i-leg) at
-      ($(#2\tn@i.\csname tn@side@\tn@sd\endcsname)!0.12!(#2\tn@i.center)$);
+    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
   }%
 }
 \makeatother
@@ -290,7 +282,13 @@
   \begin{pgfonlayer}{tnedges}%
     \foreach \tn@n in {#3}{%
       \coordinate (\tn@n-tip) at (\tn@n |- 0,\tn@bot);
-      \draw[#1] (\tn@n) -- (\tn@n-tip);%
+      % Start inside the tensor and let it cover the overlap -- nodes are drawn
+      % over the edge layer. Begun exactly on the point, the leg's own stroke
+      % ends half a line width short of where the outline's stroke ends and the
+      % join reads as a gap; begun above it, the two merge. Upward only, so a
+      % leg taken from the bottom corner of a triangle's flat side stays on that
+      % side's own line and simply continues it down.
+      \draw[#1] ($(\tn@n)+(0,2*\pgfkeysvalueof{/tn/line width})$) -- (\tn@n-tip);%
     }%
   \end{pgfonlayer}%
 }

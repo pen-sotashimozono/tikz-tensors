@@ -114,19 +114,19 @@ is 7.6mm and the arrowhead sits in open bond. Neither the shape nor the notation
 changes; the line `\tnchain` is given is simply longer, which is the one knob
 that reaches this.
 
-The examples take their physical indices from the centre again. `\tnlegs` still
-offers `c`, `l` and `r`, but a triangle's flat side is vertical, so a leg from
-its bottom corner continues that side as one straight line and the tensor reads
-as a flag on a pole.
+A physical index is the triangle's own outermost line carried on down. `\tnlegs`
+takes `l` and `r` at the bottom corner of a canl or a canr triangle's flat side,
+and since that side is vertical the index continues it as one straight stroke
+rather than sprouting from anywhere. The two gauges mirror each other in the
+index as well as in the shape, and `c` is still there for a box, a circle or a
+diamond, which have no such line to continue.
 
-A site's connection point sits a little inside the corner rather than on it. A
-corner anchor is on the outline's path and the outline is stroked about that
-path, so a leg starting exactly there pokes half a line width past the edge: at
-700 dpi, three columns of leg with nothing above them, which reads as a leg
-detached from its tensor. `\tnchain` moves the point an eighth of the way to the
-centre — about half a millimetre at this size, so it still leaves from the
-corner as far as the eye is concerned — and the tensor, drawn over the edge
-layer, covers the overlap.
+The join is closed by starting the index inside the tensor, which covers the
+overlap because nodes are drawn over the edge layer. Begun exactly on the
+corner, the index's stroke ends half a line width short of where the outline's
+stroke ends and the join reads as a gap. The overlap is upward only — moving the
+point toward the centre instead would close the gap but take the index off the
+flat side's line, which is the whole point of taking it from there.
 
 Every outline in a diagram is one ink, not only the ones no preset had
 overridden. `tn fill` keeps the default outline and sets only the fill, so a
