@@ -59,7 +59,13 @@ class VersionCheck(unittest.TestCase):
 
     NEW_STYLE = ("  leg/.style", "  unitary/.style = {coef, diamond},\n  leg/.style")
     NO_OPWIDE = ("  opwide/.style   = {op, minimum width=17mm},\n", "")
-    INTERNAL = ("line width=0.7pt", "line width=0.8pt")
+    # A change under tex/ that adds and removes no public name. It anchors on
+    # \NeedsTeXFormat and adds a comment, rather than rewriting a value inside a
+    # style: the styles are the thing under development, and a fixture that
+    # quotes one of their numbers breaks when that number moves, which says
+    # nothing about the rule being tested.
+    INTERNAL = ("\\NeedsTeXFormat{LaTeX2e}",
+                "% an internal change: nothing public added or removed\n\\NeedsTeXFormat{LaTeX2e}")
 
     # -- nothing to release -------------------------------------------------
 
