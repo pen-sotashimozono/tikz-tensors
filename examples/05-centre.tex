@@ -17,41 +17,46 @@
 % The right half of the lower chain stands further out than the upper one by
 % exactly the room Lambda takes: the site pitch does not leave a gap wide enough
 % for a tensor, and pretending it does would draw a bond that is not there.
-% Drawing the bond-centred form with a site-shaped tensor would say there is a
-% physical index where there is none.
+%
+% Finite, so the chain simply stops: the outer bonds are one-dimensional and
+% carry nothing, and a picture of a finite state should not put an object there.
+%
+% The physical legs leave each triangle at the bottom corner of its flat side --
+% \tnlegs{l} on the left-canonical ones, {r} on the right-canonical -- so the
+% two gauges mirror each other in the legs as well as in the shape.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1.35cm]
   % ---- the centre on a site ----------------------------------------------
-  \node[env]    (EL) at (-0.95,0) {$L$};
-  \node[canl]   (A1) at (0,0)     {$A$};
-  \node[canl]   (A2) at (1,0)     {$A$};
-  \node[centre] (C)  at (2,0)     {$C$};
-  \node[canr]   (B1) at (3,0)     {$B$};
-  \node[canr]   (B2) at (4,0)     {$B$};
-  \node[envc]   (ER) at (4.95,0)  {$R$};
-  \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
-  \draw[bond] (ER) -- (B2);  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
-  \foreach \n/\l in {A1/1,A2/2,C/3,B1/4,B2/5}
-    \draw[disc] (\n) -- (\n |- 0,-0.95) node[leg, below] {$n_{\l}$};
+  \node[canl]   (A1) at (0,0) {$A$};
+  \node[canl]   (A2) at (1,0) {$A$};
+  \node[centre] (C)  at (2,0) {$C$};
+  \node[canr]   (B1) at (3,0) {$B$};
+  \node[canr]   (B2) at (4,0) {$B$};
+  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
+  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \tnlegs{l}{-0.95}{A1,A2}  \tnlegs{c}{-0.95}{C}  \tnlegs{r}{-0.95}{B1,B2}
+  \foreach \p/\l in {{A1.corner 3}/1, {A2.corner 3}/2, {C}/3,
+                     {B1.corner 2}/4, {B2.corner 2}/5}
+    \node[leg, below] at (\p |- 0,-0.95) {$n_{\l}$};
 
   % ---- the centre on the bond between sites 3 and 4 ----------------------
   \begin{scope}[yshift=-2.6cm]
-    \node[env]        (eL) at (-0.95,0) {$L$};
-    \node[canl]       (a1) at (0,0)     {$A$};
-    \node[canl]       (a2) at (1,0)     {$A$};
-    \node[canl]       (a3) at (2,0)     {$A$};
-    \node[centrebond] (L)  at (3,0)     {$\Lambda$};
-    \node[canr]       (b1) at (4,0)     {$B$};
-    \node[canr]       (b2) at (5,0)     {$B$};
-    \node[envc]       (eR) at (5.95,0)  {$R$};
-    \draw[bond] (eL) -- (a1);  \draw[bond] (a1) -- (a2);  \draw[bond] (a2) -- (a3);
+    \node[canl]       (a1) at (0,0) {$A$};
+    \node[canl]       (a2) at (1,0) {$A$};
+    \node[canl]       (a3) at (2,0) {$A$};
+    \node[centrebond] (L)  at (3,0) {$\Lambda$};
+    \node[canr]       (b1) at (4,0) {$B$};
+    \node[canr]       (b2) at (5,0) {$B$};
+    \draw[bond] (a1) -- (a2);  \draw[bond] (a2) -- (a3);
     \draw[bond] (a3) -- (L);   \draw[bond] (b1) -- (L);
-    \draw[bond] (eR) -- (b2);  \draw[bond] (b2) -- (b1);
-    \foreach \n/\l in {a1/1,a2/2,a3/3,b1/4,b2/5}
-      \draw[disc] (\n) -- (\n |- 0,-0.95) node[leg, below] {$n_{\l}$};
+    \draw[bond] (b2) -- (b1);
+    \tnlegs{l}{-0.95}{a1,a2,a3}  \tnlegs{r}{-0.95}{b1,b2}
+    \foreach \p/\l in {{a1.corner 3}/1, {a2.corner 3}/2, {a3.corner 3}/3,
+                       {b1.corner 2}/4, {b2.corner 2}/5}
+      \node[leg, below] at (\p |- 0,-0.95) {$n_{\l}$};
   \end{scope}
 \end{tikzpicture}
 \end{document}

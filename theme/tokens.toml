@@ -103,15 +103,13 @@ exchange = "warm3"   # exchange: the term, the hole, the sign under a swap
 exact    = "blue3"   # exact / reference results
 
 # Matrix-product states. The gauge is read from colour as much as from the
-# direction a triangle points, so the two canonical forms do not share one --
-# they take step 1 of the two given scales, and the boundaries take step 3, so
-# each pair reads as a pair. An operator on the chain stays neutral so that the
-# state reads through it.
+# direction a triangle points, so the two canonical forms do not share one:
+# they take step 1 of the two given scales, which makes them a pair. An
+# operator on the chain stays neutral so that the state reads through it, and a
+# gate takes a hue nothing else does, because it is neither.
 [mps]
 canl   = "blue1"    # left-canonical: isometric from the left
 canr   = "warm1"    # right-canonical: isometric from the right
 centre = "green1"   # the orthogonality centre, on a site or on a bond
 mpo    = "grey2"    # operator tensors sitting on the chain
-gate   = "blue2"    # a gate, or an identity, spanning sites
-edge   = "blue3"    # a boundary tensor, where a chain is cut or terminated
-edgec  = "warm3"    # its counterpart at the other end
+gate   = "purple1"  # a gate over one site or several

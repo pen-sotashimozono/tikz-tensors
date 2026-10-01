@@ -1,49 +1,54 @@
-% A matrix product state in mixed canonical form, with a two-site gate about to
-% be applied: one step of TEBD. The triangles say which tensors are isometric --
-% canl to the left of the centre, canr to the right -- and the arrows on the
-% bonds say which way the gauge runs. The centre is the one tensor that is not
-% isometric, and it is also the one drawn as a diamond: shape and colour both
-% single it out, which is the point, because the norm and every local
-% expectation value can be read off it alone.
+% A finite matrix product state in mixed canonical form, with a two-site gate
+% about to be applied: one step of TEBD. The triangles say which tensors are
+% isometric -- canl to the left of the centre, canr to the right -- and the
+% arrows on the bonds say which way the gauge runs. The centre is the one
+% tensor that is not isometric, and it is also the one drawn as a diamond:
+% shape and colour both single it out, which is the point, because the norm and
+% every local expectation value can be read off it alone.
 %
-% L and R close the two open bond indices, and they are vectors, not the
-% transfer matrix's fixed points: this picture is one layer, a ket, so a cap
-% here carries one bond leg. The fixed points occupy the same slot once the
-% picture is doubled with the bra, where each of them carries two.
+% Finite, so the chain simply stops. The outer bonds of the first and last
+% tensors are one-dimensional and carry nothing, and a picture of a finite
+% state should not put an object there.
+%
+% The physical legs leave each triangle at the bottom corner of its flat side,
+% which is \tnlegs{l} to the left of the centre and \tnlegs{r} to the right:
+% the two gauges then mirror each other in the legs as well as in the shape.
+% The centre is a diamond and takes {c}, from its own border.
 %
 % The page reads downward in the order the parts are applied: the state, then
 % the gate on the physical legs of the two sites it acts on -- the physical
 % indices, not the bonds -- then the legs that come out of it, which end level
-% with the three that passed the gate by, because they are the same kind of
-% index at the same stage.
+% with the three that passed the gate by.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1.35cm]
-  % the chain: isometric to both sides, orthogonality centre in the middle
-  \node[env]    (EL) at (-0.95,0) {$L$};
-  \node[canl]   (A1) at (0,0)     {$A$};
-  \node[canl]   (A2) at (1,0)     {$A$};
-  \node[centre] (C)  at (2,0)     {$C$};
-  \node[canr]   (B1) at (3,0)     {$B$};
-  \node[canr]   (B2) at (4,0)     {$B$};
-  \node[envc]   (ER) at (4.95,0)  {$R$};
+  \node[canl]   (A1) at (0,0) {$A$};
+  \node[canl]   (A2) at (1,0) {$A$};
+  \node[centre] (C)  at (2,0) {$C$};
+  \node[canr]   (B1) at (3,0) {$B$};
+  \node[canr]   (B2) at (4,0) {$B$};
 
   % bonds, carrying the gauge direction: everything points at the centre
-  \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
-  \draw[bond] (ER) -- (B2);  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
+  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
   \node[leg, above=1pt] at (0.5,0.25) {$D$};
 
-  % the gate, on the physical legs of the two sites it acts on
-  \node[gate, minimum width=23mm] (U) at (2.5,-1.15) {$e^{-i\,\delta t\,\hat h}$};
-  \tngatelegs{U}{north}{C,B1}
+  % the gate, sized and placed from the two sites it acts on
+  \tngate{U}{$e^{-i\,\delta t\,\hat h}$}{C,B1}{-1.15}
+  \tngatelegs{U}{north}{c}{C}
+  \tngatelegs{U}{north}{r}{B1}
 
-  % physical legs, all ending level: through the gate where there is one,
-  % straight past it where there is not
-  \foreach \n/\l in {A1/1,A2/2,B2/5}
-    \draw[disc] (\n) -- (\n |- 0,-2.3) node[leg, below] {$n_{\l}$};
-  \foreach \n/\l in {C/3,B1/4}
-    \draw[disc] (U.south -| \n) -- (\n |- 0,-2.3) node[leg, below] {$n_{\l}$};
+  % physical legs, all ending level: from the corner of each triangle, from the
+  % border of the diamond, and through the gate where there is one
+  \tnlegs{l}{-2.3}{A1,A2}
+  \tnlegs{r}{-2.3}{B2}
+  \draw[disc] (U.south -| C) -- (U.south -| C |- 0,-2.3);
+  \draw[disc] (U.south -| B1.corner 2) -- (U.south -| B1.corner 2 |- 0,-2.3);
+
+  \foreach \p/\l in {{A1.corner 3}/1, {A2.corner 3}/2, {C}/3,
+                     {B1.corner 2}/4, {B2.corner 2}/5}
+    \node[leg, below] at (\p |- 0,-2.3) {$n_{\l}$};
 \end{tikzpicture}
 \end{document}

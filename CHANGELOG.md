@@ -33,6 +33,36 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
+A physical leg can leave a tensor two ways and `\tnlegs` says which: `{c}` from
+the centre, clipped at the node's border — the only thing a box, a circle or a
+diamond can do — or `{l}` and `{r}` from the bottom corner of a canl or a canr
+triangle's flat side, so the two gauges mirror each other in the legs as well as
+in the shape. Those are `corner 3` and `corner 2`: the two triangles are one
+shape at a 180° turn, so no single index names both, and `south west` sits on
+the edge above the vertex rather than on it. Every leg in one call ends at the
+same depth.
+
+`\tngate` sizes and places a gate from the sites it acts on, so no width is
+written by hand and a gate cannot drift off its sites when the chain is
+respaced. One site gives a small box, several a bar. It measures centres, not
+legs, so the default padding (6mm) clears a leg taken from a triangle's corner,
+which at the default 10.5mm sits 4.55mm off centre.
+
+The gate takes `purple1` with ink text — a light step in the chain's own
+register, and a hue nothing else uses, since a gate is neither a state tensor
+nor an operator on the chain. It was `blue2` with white text: a saturated fill
+in a picture of pale ones, and 2.98:1 for ink or 4.41:1 for white, against
+4.75:1 for ink on `purple1`.
+
+`tn arrows` turns the arrowhead on a `bond` off, for a picture that is not about
+the gauge; `scripts/version.py` guards a key defined with `/.is if` as it
+already guards `/.style` and `/.code`.
+
+`env` and `envc` are gone, and with them the `edge` and `edgec` colours that
+nothing else named. The examples are finite chains: the outer bonds are
+one-dimensional and carry nothing, and a picture of a finite state should not
+put an object there.
+
 The centre has two places it can sit and the notation says both. `centre` is the
 centre on a site, carrying a physical leg like its neighbours; `centrebond` is
 the same diamond, smaller, for the centre on a bond — the Schmidt values, which
