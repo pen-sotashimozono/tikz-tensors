@@ -141,7 +141,14 @@
 % ink by default: a tensor is not a different kind of mark from its index, and
 % an outline in its own colour should be something a preset says on purpose. It
 % draws rather than leaving `draw' unset, because a node with no draw is not
-% drawn at all and a bare tn node has to be a tensor you can see. tn fill is the
+% drawn at all and a bare tn node has to be a tensor you can see.
+%
+% outer sep=0pt, because a bond would otherwise stop short of the tensor it runs
+% to. TikZ keeps a path half a line width clear of a node's border so that it
+% meets the outside of the stroke rather than overlapping it -- but `minimum
+% size' already counts the stroke, so the border IS the outside of it, and the
+% half width is added to a clearance that is already there. Measured at 700 dpi
+% on two canl triangles: a one-pixel gap between the tensor and its bond. tn fill is the
 % solid convention -- a step of a scale, outlined in a darker shade of itself --
 % and it keeps that default outline, so the colour of a tensor is its fill and
 % every outline in a diagram is the one ink -- which is the rule holding in a
@@ -149,7 +156,7 @@
 % takes one as its argument, and a node takes draw= like any TikZ node.
 \tikzset{
   tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
-                      text=ttfg},
+                      outer sep=0pt, text=ttfg},
   tn fill/.style   = {draw=stroke, fill=#1},
   tn fill/.default = grey2,
   tn edge/.style   = {tn line, draw=#1},

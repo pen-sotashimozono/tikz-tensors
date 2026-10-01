@@ -121,6 +121,14 @@ rather than sprouting from anywhere. The two gauges mirror each other in the
 index as well as in the shape, and `c` is still there for a box, a circle or a
 diamond, which have no such line to continue.
 
+A bond reaches the tensor it runs to. `tn node` sets `outer sep=0pt`: TikZ keeps
+a path half a line width clear of a node's border so that it meets the outside
+of the stroke rather than overlapping it, but `minimum size` already counts the
+stroke, so the border *is* the outside of it and the clearance is added twice.
+Measured at 700 dpi on two canl triangles, a one-pixel gap between the tensor
+and its bond; after, one continuous run of ink. Same cause as the index not
+lying on the edge — the shape's nominal boundary is not the line that is drawn.
+
 The connection point is on the line that is drawn, not on the shape's outer
 boundary. A corner anchor is the second of those: `minimum size` counts the
 stroke, so the path sits half a line width inside the anchor, and an index
