@@ -57,7 +57,7 @@
   % canl and canr say "isometric from the left" and "from the right", which is
   % a statement about a chain; centre is the one tensor that is neither. Alone
   % they would be three shapes with nothing to be read against.
-  \tnchain{A}{(4.6,-4.0)}{(9.8,-4.0)}{canl//c, canl//c, centre//c,
+  \tnchain{A}{(4.6,-4.0)}{(11.4,-4.0)}{canl//c, canl//c, centre//c,
                                       canr//c, canr//c}
   \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (A3)}
   \tnbond[gauge]{(A4) -- (A3)}  \tnbond[gauge]{(A5) -- (A4)}
@@ -72,7 +72,7 @@
   \tnbond[disc]{(A1-leg-tip) -- (A5-leg-tip)}
   \tnlegs{7mm}{A1-leg-tip,A2-leg-tip,A3-leg-tip,A4-leg-tip,A5-leg-tip}
   \foreach \i in {1,...,5} \node[mpo] at (A\i-leg-tip) {};
-  \spec{7.2}{-7.45}{canl, canr, centre, mpo, gate, gauge\\%
+  \spec{8.0}{-7.45}{canl, canr, centre, mpo, gate, gauge\\%
     \textbackslash tnchain, \textbackslash tnbond, \textbackslash tnlegs,
     \textbackslash tngate, \textbackslash tnput, \textbackslash tnmid}
 
@@ -80,14 +80,14 @@
   % Three tensors and the indices between them, out of tn node, tn fill and
   % tn edge and nothing else. No state, no operator, no gauge -- most networks
   % have no such distinction to make, and this is what the package is for them.
-  \node[tn node, tn fill=blue1, circle] (N1) at (11.4,-4.0) {$A$};
-  \node[tn node]                        (N2) at (12.9,-4.9) {$B$};
-  \node[tn node, tn fill=warm1]         (N3) at (11.4,-5.8) {$C$};
+  \node[tn node, tn fill=blue1, circle] (N1) at (13.4,-4.0) {$A$};
+  \node[tn node]                        (N2) at (14.9,-4.9) {$B$};
+  \node[tn node, tn fill=warm1]         (N3) at (13.4,-5.8) {$C$};
   \tnbond[tn edge]{(N1) -- (N2)}
   \tnbond[tn edge]{(N2) -- (N3)}
   \tnbond[tn edge]{(N3) -- (N1)}
   \tnbond[tn edge=exact]{(N2) -- ++(1.0,0)}
-  \spec{12.2}{-6.4}{tn node, tn fill, tn edge}
+  \spec{14.2}{-6.4}{tn node, tn fill, tn edge}
 
   % ---- the two that are easier to see on their own ---------------------
   \tnchain{Y}{(0.4,-6.4)}{(2.4,-6.4)}{canl//c, centrebond//c, canr//c}

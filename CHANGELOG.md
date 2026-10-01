@@ -107,6 +107,18 @@ it now spans the indices it acts on rather than the sites' centres, and the gate
 in `04-canonical` is narrower and sits over its two legs — 3.9% of drawn pixels.
 `05-centre` is byte-identical, which is the check that nothing else moved.
 
+The chains are drawn at a wider pitch. A bond meets a triangle at its apex,
+which is a point, and at the old pitch the gap from that tip to the next tensor
+was 3.5mm with a 1.7mm arrowhead wedged into it. At 1.3 times the pitch the gap
+is 7.6mm and the arrowhead sits in open bond. Neither the shape nor the notation
+changes; the line `\tnchain` is given is simply longer, which is the one knob
+that reaches this.
+
+The examples take their physical indices from the centre again. `\tnlegs` still
+offers `c`, `l` and `r`, but a triangle's flat side is vertical, so a leg from
+its bottom corner continues that side as one straight line and the tensor reads
+as a flag on a pole.
+
 A site's connection point sits a little inside the corner rather than on it. A
 corner anchor is on the outline's path and the outline is stroked about that
 path, so a leg starting exactly there pokes half a line width past the edge: at
