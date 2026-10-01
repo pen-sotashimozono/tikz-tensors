@@ -69,7 +69,59 @@ def tex() -> str:
     return "\n".join(lines) + "\n"
 
 
-OUT = {ROOT / "theme/theme.css": css(), ROOT / "tex/tikz-tensors-colors.tex": tex()}
+def palette() -> str:
+    """The chart's data: every step of the ramp and what actually names it.
+
+    Read out of the table rather than written beside it, so the chart cannot
+    claim a role the theme does not assign, or miss one it does.
+    """
+    order = list(RAMP)
+    scales: dict[str, list[str]] = {}
+    for step in order:
+        scales.setdefault(step.rstrip("0123456789") or step, []).append(step)
+    figure: dict[str, list[str]] = {s: [] for s in order}
+    page: dict[str, dict[str, list[str]]] = {s: {"light": [], "dark": []} for s in order}
+    for section, body in RAW.items():
+        if section == "ramp":
+            continue
+        for key, value in body.items():
+            if value.startswith("#"):
+                continue
+            step = value.split()[0]
+            if section in ("light", "dark"):
+                page[step][section].append(key)
+            else:
+                figure[step].append(key)
+
+    rows = []
+    for r, (_, steps) in enumerate(scales.items()):
+        for c, step in enumerate(steps):
+            light, dark = page[step]["light"], page[step]["dark"]
+            lines = ([f"light {', '.join(light)}"] if light else []) + \
+                    ([f"dark {', '.join(dark)}"] if dark else [])
+            fig = ", ".join(figure[step])
+            pag = "\\\\".join(lines)          # a TeX line break between the two modes
+            rows.append(f"    {step}/{RAMP[step][1:].upper()}/{{{fig}}}/{{{pag}}}/{c * 6}/{r}")
+    bars = []
+    for r, (name, steps) in enumerate(scales.items()):
+        ends = (steps + steps[-1:] * 2)[:3]   # a one-step scale is a flat bar
+        bars.append(f"    {'/'.join(ends)}/{name}/{r}")
+    used = [s for s in order if figure[s] or page[s]["light"] or page[s]["dark"]]
+    spare = [s for s in order if s not in used]
+    count = (f"{len(order)} steps defined, {len(used)} of them named by something. "
+             + (f"{', '.join(spare)} {'is' if len(spare) == 1 else 'are'} defined and unused."
+                if spare else "Every step is used."))
+    return (f"% {HEAD}\n"
+            f"% The palette chart's data. examples/00-palette.tex draws this and nothing\n"
+            f"% else, so what it says about a step is what theme/tokens.toml assigns.\n"
+            f"\\def\\tnpalette{{%\n" + ",\n".join(rows) + "%\n}\n"
+            f"\\def\\tnpalettescales{{%\n" + ",\n".join(bars) + "%\n}\n"
+            f"\\def\\tnpalettecount{{{count}}}\n")
+
+
+OUT = {ROOT / "theme/theme.css": css(),
+       ROOT / "tex/tikz-tensors-colors.tex": tex(),
+       ROOT / "tex/tikz-tensors-palette.tex": palette()}
 
 if __name__ == "__main__":
     stale = [p for p, s in OUT.items() if not p.exists() or p.read_text() != s]

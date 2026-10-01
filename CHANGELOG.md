@@ -93,12 +93,19 @@ there is no red, so `bad` is the darkest warm rather than a red.
 
 `examples/00-palette.tex` is a row per scale — the scale mixed step to step so
 its direction is visible, then the three steps with their names, hex and roles.
-A step that carries nothing is left blank rather than given a dash, and the
-chart ends with the count: 16 steps defined, 11 carrying something. The other
-five — `green2`, `yellow1` and the three purples — are scales held for a figure
-that needs a hue the rest do not have, and nothing reads them. The same count is
-in `theme/tokens.toml`, so the length of that file is not read as the size of
-the theme.
+Nothing on that chart is written on it. `scripts/theme.py` generates
+`tex/tikz-tensors-palette.tex` — the scales, the steps, the hex, the roles and
+the count — out of `theme/tokens.toml`, and the example is the layout and
+nothing else, so the chart can only say what the table assigns.
+`scripts/theme.py --check` covers it, which the `theme` job already runs.
+
+The first hand-written version of those captions was incomplete in five places:
+`blue1` also carries `soft` and the dark `fg`, `blue3` also carries the dark
+`card`, `soft` and `line`, `warm3` and `green1` also carry a `-bg`. A step that
+nothing names is blank, and the generated count says how many: 16 steps defined,
+11 named by something, `green2`, `yellow1` and the three purples unused. Every
+step does exist as a colour — `\definecolor` in the TeX and a custom property in
+the CSS — so an unused one is callable, not a label with nothing behind it.
 
 `good` takes pure steps instead of a mix: `green3` on the light page (6.71:1,
 where the mix it replaces was 4.61:1) and `green1` on the dark one.
