@@ -2,41 +2,56 @@
 # and, later, slides. scripts/theme.py writes theme/theme.css and
 # tex/tikz-tensors-colors.tex from this file; edit here, never there.
 #
-# Base: the GitHub-style palette of the slide storyboards (light and dark).
-# The physics colours carry meaning and are the same in every medium:
-# a blue electron is an electron on a slide, in a note and in a diagram.
+# Everything descends from eight colours:
+#
+#   809eab  blue-grey    6abe92  green       ce7e60  terracotta  0082a9  teal
+#   005077  navy         88451b  brown       b65c24  orange      d2d2d3  grey
+#
+# The figure sections below spend them pure. The page sections take tints and
+# shades of the same eight, because a page has a background and body text and a
+# pure colour does not always clear the contrast a reader needs: every value in
+# [light] and [dark] is one of the eight mixed toward white or black, and the
+# comment on each says which one and how far. examples/00-palette.tex draws the
+# whole map.
+#
+# One limit worth stating rather than hiding: the eight carry no red and no
+# yellow, so `warn` and `bad` are the same warm family and differ by weight, not
+# by hue. A page must not separate those two by colour alone.
 
 [light]
-bg      = "#fafafa"   # page background
-card    = "#ffffff"   # cards, figure paper
-soft    = "#f6f8fa"   # table heads, subtle fills
-fg      = "#24292f"   # text
-muted   = "#57606a"   # secondary text
-faint   = "#8b949e"   # tertiary text, captions
-line    = "#e2e5e9"   # rules, hairlines
-accent  = "#0366d6"   # links, emphasis
-warn    = "#9a6700"
-warn-bg = "#fff8c5"
-bad     = "#a40e26"
-bad-bg  = "#ffebe9"
+bg      = "#fafafa"   # grey   +88% white -- page background
+card    = "#ffffff"   #                      cards, figure paper
+soft    = "#f2f5f7"   # blue-grey +90% white -- table heads, subtle fills
+fg      = "#00344d"   # navy   +35% black -- text,            12.59:1 on bg
+muted   = "#607680"   # blue-grey +25% black -- secondary text, 4.57:1
+faint   = "#7895a1"   # blue-grey  +6% black -- captions,       3.04:1
+line    = "#d2d2d3"   # grey   pure       -- rules, hairlines
+accent  = "#007da2"   # teal    +4% black -- links, emphasis,   4.52:1
+good    = "#467d60"   # green  +34% black --                    4.61:1
+good-bg = "#f0f8f4"   # green  +90% white
+warn    = "#b45b24"   # orange  +1% black --                    4.51:1
+warn-bg = "#f8efe9"   # orange +90% white
+bad     = "#88451b"   # brown  pure       --                    6.90:1
+bad-bg  = "#f1e9e4"   # brown  +88% white
 
 [dark]
-bg      = "#0d1117"
-card    = "#161b22"
-soft    = "#1c2128"
-fg      = "#e6edf3"
-muted   = "#9198a1"
-faint   = "#6e7681"
-line    = "#30363d"
-accent  = "#4493f8"
-warn    = "#d29922"
-warn-bg = "#272115"
-bad     = "#f85149"
-bad-bg  = "#25171c"
+bg      = "#00080c"   # navy   +90% black
+card    = "#000d13"   # navy   +84% black
+soft    = "#00121a"   # navy   +78% black
+fg      = "#e6ecee"   # blue-grey +80% white --                16.92:1 on bg
+muted   = "#a0b6c0"   # blue-grey +25% white --                 9.56:1
+faint   = "#809eab"   # blue-grey pure       --                 7.11:1
+line    = "#002436"   # navy   +55% black
+accent  = "#59aec7"   # teal   +35% white --                    7.98:1
+good    = "#6abe92"   # green  pure       --                    9.03:1
+good-bg = "#0d1712"   # green  +88% black
+warn    = "#cc8d66"   # orange +30% white --                    7.28:1
+warn-bg = "#190d05"   # orange +86% black
+bad     = "#a67454"   # brown  +25% white --                    5.05:1
+bad-bg  = "#130a04"   # brown  +86% black
 
-# Meaning, not decoration. Same in light and dark (figures keep their own white paper).
-# Every value below comes from one eight-colour palette, so a diagram, a note and
-# a slide are the same picture in three media.
+# Meaning, not decoration, and the eight colours pure. Same in light and dark
+# (figures keep their own white paper).
 [physics]
 ele      = "#0082a9"   # electrons, electron density, continuous (position) legs
 nuc      = "#b65c24"   # nuclei
@@ -50,7 +65,7 @@ exact    = "#005077"   # exact / reference results
 [mps]
 canl   = "#809eab"   # left-canonical: isometric from the left
 canr   = "#ce7e60"   # right-canonical: isometric from the right
-centre = "#6abe92"   # the orthogonality centre, the one tensor that is not isometric
+centre = "#6abe92"   # the orthogonality centre, on a site or on a bond
 mpo    = "#d2d2d3"   # operator tensors sitting on the chain
 gate   = "#0082a9"   # a gate, or an identity, spanning sites
 edge   = "#005077"   # a boundary tensor, where a chain is cut or terminated

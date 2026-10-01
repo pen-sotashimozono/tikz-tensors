@@ -1,16 +1,22 @@
-% Exchanging two electrons flips the sign of the wavefunction.
+% Exchanging two fermions flips the sign of the amplitude.
+%
+% Straight legs, so these are finite indices: two modes of a basis, i and j,
+% rather than two positions. Psi is then an array of numbers -- coefwide, not a
+% function of position -- and the statement is the antisymmetry of that array.
+% The wavy form of the same picture, where the arguments are continuous, is the
+% expansion in 01; tests/cases/styles.tex draws \tnswap both ways.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
-  \node[fnwide] (a) at (0,0) {$\Psi$};
-  \tnswap{([xshift=-4.5mm]a.south)}{([xshift=4.5mm]a.south)}{1}
-  \node[leg, below] at ([xshift=-4.5mm,yshift=-10mm]a.south) {$\mathbf r_1$};
-  \node[leg, below] at ([xshift= 4.5mm,yshift=-10mm]a.south) {$\mathbf r_2$};
+  \node[coefwide] (a) at (0,0) {$\Psi$};
+  \tnswap[disc]{([xshift=-4.5mm]a.south)}{([xshift=4.5mm]a.south)}{1}
+  \node[leg, below] at ([xshift=-4.5mm,yshift=-10mm]a.south) {$i$};
+  \node[leg, below] at ([xshift= 4.5mm,yshift=-10mm]a.south) {$j$};
   \node at (1.45,-0.35) {$= \; -$};
-  \node[fnwide] (b) at (3.0,0) {$\Psi$};
-  \draw[cont] ([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$\mathbf r_1$};
-  \draw[cont] ([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$\mathbf r_2$};
+  \node[coefwide] (b) at (3.0,0) {$\Psi$};
+  \draw[disc] ([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$i$};
+  \draw[disc] ([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$j$};
 \end{tikzpicture}
 \end{document}

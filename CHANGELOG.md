@@ -50,6 +50,29 @@ figure can be set heavier without the nodes and the indices drifting apart.
 public key like `tn line width` counts as a public name; `tests/coverage.py`
 counts a key used with a value.
 
+The page tokens go too. `[light]` and `[dark]` were a GitHub-style palette
+chosen apart from the figures; every value in them is now one of the eight
+mixed toward white or black, with the mix and the measured contrast written
+beside it. The text tokens clear WCAG AA on their own background — `fg` 12.59:1,
+`muted` 4.57:1, `accent` 4.52:1, `good` 4.61:1, `warn` 4.51:1, `bad` 6.90:1 in
+light — which is why they are tints and shades rather than the pure colours: at
+full strength the blue-grey is 2.72:1 and the green 2.14:1 on a near-white page.
+`good` and `good-bg` join `warn` and `bad`, so the green is spent on a page as
+well as in a figure. One limit is stated in the file rather than hidden: the
+eight carry no red and no yellow, so `warn` and `bad` are the same warm family
+and differ by weight, not hue, and a page must not separate them by colour
+alone.
+
+`examples/00-palette.tex` draws the map: a ramp per colour, the hex, and what
+each one carries in figures and on a page. The ramps are mixed by xcolor from
+the defined colour, so the page cannot drift from `theme/tokens.toml`.
+
+`examples/02-swap.tex` exchanges two finite indices instead of two positions,
+so its legs are straight. Wavy legs mean a continuous argument, and drawing a
+swap of positions with straight ones would have contradicted the notation the
+package opens with; the wavy form stays in `01-expansion`, and
+`tests/cases/styles.tex` draws `\tnswap` both ways.
+
 ## v0.2.0 — 2026-09-29
 
 Tensor-network diagrams only. `\tnnucleus`, `\tnelectron`, `\tncloud` and

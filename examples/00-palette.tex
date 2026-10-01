@@ -1,0 +1,45 @@
+% The whole theme, which is eight colours and nothing else.
+%
+% Each column is one of the eight: the pure colour in the middle, the tints
+% above it and the shades below, which is the range every other value in the
+% theme is drawn from. Under it, the hex, then what the colour carries -- the
+% figure styles on one line and the page tokens on the next. A page token is a
+% tint or a shade rather than the pure colour, because a page has a background
+% and body text and the pure colour does not always clear the contrast a reader
+% needs; theme/tokens.toml records the mix and the measured ratio for each.
+%
+% The ramps are mixed by xcolor from the defined colour, not written out, so
+% this page cannot drift from theme/tokens.toml. Only the eight hex strings are
+% spelled, and those are the thing the theme starts from.
+%
+% `color=` and not a bare option, because four of these names are also styles
+% (coef, centre, mpo, gate): TikZ resolves an option as a key first, so
+% \fill[gate] fills with the style.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[x=1cm, y=1cm]
+  \foreach \c/\hex/\fig/\page [count=\i from 0] in {%
+    coef/809EAB/{coef, canl}/{faint, muted},
+    centre/6ABE92/{centre}/{good},
+    canr/CE7E60/{canr}/{---},
+    ele/0082A9/{ele, gate}/{accent},
+    exact/005077/{exact, edge}/{fg, dark bg},
+    exchange/88451B/{exchange, edgec}/{bad},
+    nuc/B65C24/{nuc}/{warn},
+    mpo/D2D2D3/{mpo}/{line, light bg}%
+  }{
+    \foreach \m [count=\j from 0] in {15,40,70,100,70!black,45!black}
+      \fill[color=\c!\m] (\i*2.4,-\j*0.62) rectangle ++(1.95,0.56);
+    % the pure colour, marked where it sits in the ramp
+    \draw[tn line, draw=ttfg] (\i*2.4,-3*0.62) rectangle ++(1.95,0.56);
+    \node[anchor=north west, font=\ttfamily\scriptsize, text=ttfg]
+      at (\i*2.4,-6*0.62-0.08) {\hex};
+    \node[anchor=north west, font=\scriptsize, text=ttfg,  align=left]
+      at (\i*2.4,-6*0.62-0.46) {\fig};
+    \node[anchor=north west, font=\scriptsize, text=ttmuted, align=left]
+      at (\i*2.4,-6*0.62-0.84) {\page};
+  }
+\end{tikzpicture}
+\end{document}
