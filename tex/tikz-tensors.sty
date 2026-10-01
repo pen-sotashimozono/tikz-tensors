@@ -25,8 +25,11 @@
 %%
 %% A matrix-product state needs more than that, since its tensors are not all the
 %% same kind of object:
-%%   canl, canr   left- and right-canonical. The triangle points the way the gauge
-%%                runs AND carries its own colour, so the two are told apart twice
+%%   canl, canr   left- and right-canonical. The shape points the way the gauge
+%%                runs AND carries its own colour, so the two are told apart
+%%                twice. Its point is cut off: a bond then meets a flat edge
+%%                rather than a vertex, which leaves the arrowhead somewhere to
+%%                sit instead of jammed against a tip
 %%   centre       the orthogonality centre on a site: a diamond, the one tensor
 %%                of the chain that is neither isometric nor shaped like its
 %%                neighbours, and the one carrying a physical leg of its own
@@ -47,9 +50,9 @@
 %%                what is being said: which way the gauge runs in a canonical
 %%                form. `tn arrows' is on by default and turns those arrowheads
 %%                off, for the same picture with the direction left unstated
-%% The triangles are the usual convention and they are load-bearing: a reader who
-%% cannot see which tensors are isometric cannot tell a canonical form from a
-%% picture of one. Shape carries the meaning on its own and colour repeats it, so
+%% Pointing the way the gauge runs is the usual convention and it is
+%% load-bearing: a reader who cannot see which tensors are isometric cannot tell
+%% a canonical form from a picture of one. Shape carries the meaning on its own and colour repeats it, so
 %% the diagrams survive being printed in grey.
 %%
 %% Square or circle is this package's own distinction, and it is only worth
@@ -184,9 +187,9 @@
 % no site. The labels stay ink rather than reversing to white -- white on these
 % fills measures 2.2--3.1:1 against the 7--9:1 ink gives.
 \tikzset{
-  canl/.style       = {tn node, tn fill=canl, regular polygon,
-                       regular polygon sides=3, shape border rotate=-90,
-                       minimum size=10.5mm, font=\small},
+  canl/.style       = {tn node, tn fill=canl, trapezium, trapezium angle=62,
+                       shape border rotate=270, minimum width=9.5mm,
+                       minimum height=6mm, inner sep=1pt, font=\small},
   canr/.style       = {canl, tn fill=canr, shape border rotate=90},
   centre/.style     = {tn node, tn fill=centre, diamond, minimum size=9.5mm,
                        font=\small},
@@ -227,13 +230,14 @@
 % turned, or given another tensor, is one line edited in one place.
 %
 % <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
-% or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
-% at a 180 degree turn, so no single index names both, and `south west' is on
-% the edge above the vertex rather than on it), and `c' is the node's own south,
-% which is what a box, a circle or a diamond takes.
+% or a canr tensor's wide side, and `c' is the node's own south, which is what a
+% box, a circle or a diamond takes. The anchor names read backwards -- canl's is
+% `bottom right corner' and canr's is `bottom left corner' -- because the shape
+% is rotated under them, so they name a corner of the unrotated trapezium rather
+% than the corner you see.
 \makeatletter
-\def\tn@side@l{corner 3}
-\def\tn@side@r{corner 2}
+\def\tn@side@l{bottom right corner}
+\def\tn@side@r{bottom left corner}
 \def\tn@side@c{south}
 \newcount\tn@cnt
 \newcommand{\tnchain}[5][]{%
