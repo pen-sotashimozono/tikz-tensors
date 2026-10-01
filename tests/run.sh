@@ -55,25 +55,23 @@ done
 python3 tests/coverage.py || fail=1
 
 for pdf in "$OUT"/lualatex/*.pdf; do
-  # pdftoppm, and the asymmetry it draws is accepted on purpose. poppler's
-  # Splash backend snaps a thin axis-aligned stroke to whole pixels without
-  # anti-aliasing, so the two horizontal edges of a box round independently by
-  # where each lands and can come out a pixel apart. Measured on the specimen
-  # sheet: 18 of the 157 columns crossing a box have their two strokes more
-  # than half a pixel apart in ink, the worst 0.80 px. It is a phase effect,
-  # not a resolution one -- across fourteen resolutions the same page flips on
-  # and off with no rule -- so no choice of dpi avoids it.
+  # 180 dpi, because poppler's Splash backend snaps a thin axis-aligned stroke
+  # to whole pixels without anti-aliasing: where a stroke is not a whole number
+  # of them, two strokes of the same width round differently by where each
+  # lands. At 150 dpi 0.8pt is 1.67 px and the five legs of 05-centre came out
+  # 0.8, 0.8, 1.6, 1.6, 1.6 in ink -- half of them twice the weight of the
+  # others, plainly visible. 0.8pt is whole at every multiple of 90, and
+  # measured there the legs are uniform (180, 270, 360) and ragged between
+  # (150, 200, 300). 180 is the cheapest of them: 2 px a stroke, references
+  # 330K against 228K, compare.py about three seconds slower.
   #
-  # pdftocairo anti-aliases instead and cuts that to 3 of 157, but it was tried
-  # and reverted: its anti-aliasing is not the same across poppler versions, so
-  # references rendered here failed against the runner's by 1.1 to 2.5 per cent
-  # of drawn pixels, over the 1 per cent limit, on six of the eight pages. This
-  # test exists to be reproducible across machines, and snapping is reproducible
-  # where anti-aliasing is not.
-  #
-  # Nothing a document shows is affected either way: build.sh gives the
-  # documents SVG and PDF, and these PNGs exist only to be compared.
-  pdftoppm -r 150 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
+  # This fixes the widths, not the phase effect itself: a width that is not
+  # whole at 180 is ragged again, which is why the one demo of `tn line width'
+  # is 1.6pt (4 px) and not 1.8pt (4.5 px). pdftocairo anti-aliases and avoids
+  # the whole business, but its anti-aliasing differs between poppler versions
+  # and references made here then failed against the runner's; this test exists
+  # to be reproducible, and snapping is.
+  pdftoppm -r 180 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
 done
 python3 tests/compare.py "$OUT/rendered" "$@" || fail=1
 exit "$fail"

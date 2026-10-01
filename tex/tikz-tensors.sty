@@ -142,12 +142,14 @@
 % draws rather than leaving `draw' unset, because a node with no draw is not
 % drawn at all and a bare tn node has to be a tensor you can see. tn fill is the
 % solid convention -- a step of a scale, outlined in a darker shade of itself --
-% and it replaces that default outline. A colour can of course be given: tn edge
+% and it keeps that default outline, so the colour of a tensor is its fill and
+% every outline in a diagram is the one ink -- which is the rule holding in a
+% picture rather than only where no preset has overridden it. A colour can of course be given: tn edge
 % takes one as its argument, and a node takes draw= like any TikZ node.
 \tikzset{
   tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
                       text=ttfg},
-  tn fill/.style   = {draw=#1!65!black, fill=#1},
+  tn fill/.style   = {draw=stroke, fill=#1},
   tn fill/.default = grey2,
   tn edge/.style   = {tn line, draw=#1},
   tn edge/.default = stroke,
@@ -192,7 +194,7 @@
   mpo/.style        = {tn node, tn fill=mpo, rectangle, rounded corners=1.2mm,
                        minimum size=7.5mm, inner sep=1pt},
   gate/.style       = {tn node, rectangle, rounded corners=1.2mm,
-                       draw=gate!85!black, fill=gate!25, minimum size=7.5mm,
+                       draw=stroke, fill=gate!25, minimum size=7.5mm,
                        inner sep=3pt, font=\small},
   gauge/.style      = {disc, postaction={decorate}, decoration={markings,
                        mark=at position 0.58 with

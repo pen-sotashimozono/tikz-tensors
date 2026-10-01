@@ -107,6 +107,21 @@ it now spans the indices it acts on rather than the sites' centres, and the gate
 in `04-canonical` is narrower and sits over its two legs — 3.9% of drawn pixels.
 `05-centre` is byte-identical, which is the check that nothing else moved.
 
+Every outline in a diagram is one ink, not only the ones no preset had
+overridden. `tn fill` keeps the default outline and sets only the fill, so a
+tensor's colour is its fill and the stroke is the same as the index it carries —
+which is the rule holding in a picture of a chain rather than only in the
+abstract.
+
+The reference images are rendered at 180 dpi. Splash snaps a thin axis-aligned
+stroke to whole pixels, so where a stroke is not a whole number of them two
+strokes of the same width round differently: at 150 dpi the five legs of
+`05-centre` came out 0.8, 0.8, 1.6, 1.6, 1.6 in ink — half of them twice the
+weight of the others, plainly visible. 0.8pt is whole at every multiple of 90,
+and measured there the legs are uniform (180, 270, 360) and ragged between (150,
+200, 300). This fixes the widths, not the phase effect itself, so the one demo
+of `tn line width` is 1.6pt (4 px at 180) rather than 1.8pt (4.5 px).
+
 A tensor's outline and an index are drawn in one ink by default. The theme's
 `[figure] stroke` names it, `tn node` and `tn edge` both take it, and a preset
 that means something by its colour says so for itself. It is `grey3`, which is
