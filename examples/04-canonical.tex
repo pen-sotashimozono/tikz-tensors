@@ -4,42 +4,46 @@
 % bonds say which way the gauge runs. The centre is the one tensor that is not
 % isometric, and it is also the one drawn as a diamond: shape and colour both
 % single it out, which is the point, because the norm and every local
-% expectation value can be read off it alone. The caps are the fixed points
-% that close an infinite chain, one colour each end so a picture of a cut chain
-% says which cut it is.
+% expectation value can be read off it alone.
 %
-% The gate sits on the physical legs, which is the side they point to; it is the
-% physical indices it acts on, not the bonds.
+% L and R close the two open bond indices, and they are vectors, not the
+% transfer matrix's fixed points: this picture is one layer, a ket, so a cap
+% here carries one bond leg. The fixed points occupy the same slot once the
+% picture is doubled with the bra, where each of them carries two.
+%
+% The page reads downward in the order the parts are applied: the state, then
+% the gate on the physical legs of the two sites it acts on -- the physical
+% indices, not the bonds -- then the legs that come out of it, which end level
+% with the three that passed the gate by, because they are the same kind of
+% index at the same stage.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1.35cm]
   % the chain: isometric to both sides, orthogonality centre in the middle
-  \node[env]    (EL) at (-0.9,0) {};
-  \node[canl]   (A1) at (0,0)    {$A$};
-  \node[canl]   (A2) at (1,0)    {$A$};
-  \node[centre] (C)  at (2,0)    {$C$};
-  \node[canr]   (B1) at (3,0)    {$B$};
-  \node[canr]   (B2) at (4,0)    {$B$};
-  \node[envc]   (ER) at (4.9,0)  {};
+  \node[env]    (EL) at (-0.95,0) {$L$};
+  \node[canl]   (A1) at (0,0)     {$A$};
+  \node[canl]   (A2) at (1,0)     {$A$};
+  \node[centre] (C)  at (2,0)     {$C$};
+  \node[canr]   (B1) at (3,0)     {$B$};
+  \node[canr]   (B2) at (4,0)     {$B$};
+  \node[envc]   (ER) at (4.95,0)  {$R$};
 
   % bonds, carrying the gauge direction: everything points at the centre
   \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
   \draw[bond] (ER) -- (B2);  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \node[leg, above=1pt] at (0.5,0.25) {$D$};
 
   % the gate, on the physical legs of the two sites it acts on
-  \node[gate, minimum width=23mm] (U) at (2.5,-1.1) {$e^{-i\,\delta t\,\hat h}$};
+  \node[gate, minimum width=23mm] (U) at (2.5,-1.15) {$e^{-i\,\delta t\,\hat h}$};
   \tngatelegs{U}{north}{C,B1}
 
-  % physical legs: through the gate where there is one, straight down elsewhere
+  % physical legs, all ending level: through the gate where there is one,
+  % straight past it where there is not
   \foreach \n/\l in {A1/1,A2/2,B2/5}
-    \draw[disc] (\n) -- ++(0,-2.1) node[leg, below] {$n_{\l}$};
+    \draw[disc] (\n) -- (\n |- 0,-2.3) node[leg, below] {$n_{\l}$};
   \foreach \n/\l in {C/3,B1/4}
-    \draw[disc] (U.south -| \n) -- ++(0,-0.55) node[leg, below] {$n_{\l}$};
-
-  \node[leg, above=1pt] at (0.5,0.25) {$D$};
-  \node[leg] at (-0.9,-0.75) {$\mathcal{E}_{\mathrm{L}}$};
-  \node[leg] at (4.9,-0.75)  {$\mathcal{E}_{\mathrm{R}}$};
+    \draw[disc] (U.south -| \n) -- (\n |- 0,-2.3) node[leg, below] {$n_{\l}$};
 \end{tikzpicture}
 \end{document}
