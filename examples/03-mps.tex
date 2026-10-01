@@ -18,20 +18,20 @@
 \begin{tikzpicture}
   \foreach \i/\l in {1/1,2/2,3/3,5/N} {
     \node[coef] (A\i) at (1.4*\i,0) {$A$};
-    \draw[disc] (A\i) -- ++(0,-0.9) node[leg, below] {$n_{\l}$};
+    \tnbond[disc]{(A\i) -- ++(0,-0.9)} \node[leg, below] at (A\i |- 0,-0.9) {$n_{\l}$};
   }
-  \draw[disc] (A1) -- (A2); \draw[disc] (A2) -- (A3);
-  \draw[disc] (A3) -- ++(0.55,0); \draw[disc] (A5) -- ++(-0.55,0);
+  \tnbond[disc]{(A1) -- (A2)} \tnbond[disc]{(A2) -- (A3)}
+  \tnbond[disc]{(A3) -- ++(0.55,0)} \tnbond[disc]{(A5) -- ++(-0.55,0)}
   \node at (5.6,0) {$\cdots$};
   \node[leg, above] at (2.1,0) {$D$};
 
   \begin{scope}[yshift=-2.4cm]
     \foreach \i/\l in {1/1,2/2,3/3,5/N} {
       \node[coef, tn round] (B\i) at (1.4*\i,0) {$A$};
-      \draw[disc] (B\i) -- ++(0,-0.9) node[leg, below] {$n_{\l}$};
+      \tnbond[disc]{(B\i) -- ++(0,-0.9)} \node[leg, below] at (B\i |- 0,-0.9) {$n_{\l}$};
     }
-    \draw[disc] (B1) -- (B2); \draw[disc] (B2) -- (B3);
-    \draw[disc] (B3) -- ++(0.55,0); \draw[disc] (B5) -- ++(-0.55,0);
+    \tnbond[disc]{(B1) -- (B2)} \tnbond[disc]{(B2) -- (B3)}
+    \tnbond[disc]{(B3) -- ++(0.55,0)} \tnbond[disc]{(B5) -- ++(-0.55,0)}
     \node at (5.6,0) {$\cdots$};
     \node[leg, above] at (2.1,0) {$D$};
   \end{scope}

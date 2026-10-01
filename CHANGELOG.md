@@ -33,6 +33,23 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
+A tensor is drawn over the index it carries, and that is now the package's job
+rather than the caller's. Every edge `\tnbond`, `\tnlegs`, `\tngatelegs` and
+`\tnswap` draws goes on a layer beneath the nodes, so the rule holds whatever
+order a file is written in — before, a leg drawn after a node was drawn across
+it, which is what happened to the operator row in the style sheet. (`\pgfsetlayers`
+is global: `main` stays on top, `tnedges` is added under it.)
+
+`\tnbond` takes the whole path, so an index can end on a node, on a coordinate,
+or on nothing at all: `\tnbond{(A1) -- (A2)}`, `\tnbond{(A3) -- ++(0.55,0)}`.
+An open index needs no far end, and the finite chains in the examples use that
+for their outer indices — drawn inward, so the arrowhead runs toward the centre
+like every other bond.
+
+The gate is pale: `gate!25` with ink, outlined in `gate!85!black`. The state
+tensors keep the fills they had. A gate is applied *to* the state and should
+read behind it, and at equal weight the two competed.
+
 A physical leg can leave a tensor two ways and `\tnlegs` says which: `{c}` from
 the centre, clipped at the node's border — the only thing a box, a circle or a
 diamond can do — or `{l}` and `{r}` from the bottom corner of a canl or a canr

@@ -49,6 +49,14 @@
 %% a node style and the shape is a circle, the colour and meaning unchanged.
 %% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
 %%
+%% Every edge is drawn under the nodes, by \tnbond, \tnlegs, \tngatelegs and
+%% \tnswap: a tensor covers the index it carries whatever order the file is
+%% written in. \tnbond takes the whole path, so an index can end on a node, on a
+%% coordinate, or on nothing at all -- an open index needs no far end. A `node'
+%% written inside that path rides the layer with it, so a label that has to stay
+%% readable where it crosses a tensor belongs in a \node of its own; a raw
+%% \draw is on the main layer and is the caller's to place.
+%%
 %% A physical leg is \tnlegs, and where it leaves a tensor is a choice the
 %% notation has to be able to make both ways:
 %%   \tnlegs{c}{<y>}{<nodes>}   from the centre, clipped at the node's border --
@@ -81,6 +89,19 @@
 \usetikzlibrary{decorations.pathmorphing,decorations.markings,shapes.geometric,
                 arrows.meta,calc}
 \input{tikz-tensors-colors.tex}
+
+% ---- edges go under nodes, always -------------------------------------------
+% A tensor is drawn over the index it carries, never under it. Left to the order
+% of the source that holds only while nobody adds a line after a node, and the
+% moment a leg is drawn to a coordinate that happens to sit inside a tensor it
+% is drawn across it. So every edge this package draws goes on a layer beneath
+% the nodes, and the rule holds whatever order the file is written in.
+%
+% \pgfsetlayers is global, so this orders every picture in the document, not only
+% the diagrams: `main' stays on top, which is pgf's own default, and `tnedges'
+% is added under it. A document that sets its own layers should include both.
+\pgfdeclarelayer{tnedges}
+\pgfsetlayers{tnedges,main}
 
 % ---- one line width ----------------------------------------------------------
 % An outline and a leg are the same stroke in a tensor diagram: a node is not a
@@ -143,28 +164,23 @@
                        draw=mpo!55!black, fill=mpo, minimum size=7.5mm,
                        inner sep=1pt},
   gate/.style       = {rectangle, tn line, rounded corners=1.2mm,
-                       draw=gate!60!black, fill=gate, minimum size=7.5mm,
+                       draw=gate!85!black, fill=gate!25, minimum size=7.5mm,
                        inner sep=3pt, text=ttfg, font=\small},
   bond/.style       = {disc, postaction={decorate}, decoration={markings,
                        mark=at position 0.58 with
                          {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
 }
 
-% \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
-% Two legs that start at <left top> and <right top> and end <drop> lower,
-% exchanged: short straight stubs of <kind> (cont or disc) at both ends, joined
-% by a smooth crossing (a snake decoration on a diagonal reads as noise).
-\makeatletter
-\newcommand{\tnswap}[4][cont]{%
-  \path #2 coordinate (tn@l) #3 coordinate (tn@r);
-  \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
-  \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
-  \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
-  \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
-  \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
-  \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
-}
-\makeatother
+% \tnbond[<style>]{<path>}
+% One edge, drawn under the nodes. The path is written out in full, so it can
+% end wherever it needs to -- on a node, on a coordinate, or on nothing:
+%   \tnbond{(A1) -- (A2)}            a bond between two tensors
+%   \tnbond{(A3) -- ++(0.55,0)}      an open index, with no other end
+%   \tnbond[disc]{(W.south) -- ++(0,-0.6)}
+% Nothing here needs a tensor at the far end, because an index that leaves the
+% diagram is an index like any other.
+\newcommand{\tnbond}[2][bond]{%
+  \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
 % \tnlegs[<kind>]{<side>}{<target y>}{<nodes, comma separated>}
 % A physical leg from each node down to <target y>, all ending level. <side> is
@@ -179,10 +195,12 @@
 \def\tn@side@l{.corner 3}
 \def\tn@side@r{.corner 2}
 \newcommand{\tnlegs}[4][disc]{%
-  \foreach \tn@n in {#4}{%
-    \edef\tn@c{\tn@n\csname tn@side@#2\endcsname}%
-    \draw[#1] (\tn@c) -- (\tn@c |- 0,#3);%
-  }%
+  \begin{pgfonlayer}{tnedges}%
+    \foreach \tn@n in {#4}{%
+      \edef\tn@c{\tn@n\csname tn@side@#2\endcsname}%
+      \draw[#1] (\tn@c) -- (\tn@c |- 0,#3);%
+    }%
+  \end{pgfonlayer}%
 }
 \makeatother
 
@@ -219,10 +237,30 @@
 % leave the tensor rather than under its centre.
 \makeatletter
 \newcommand{\tngatelegs}[5][disc]{%
-  \foreach \tn@n in {#5}{%
-    \edef\tn@c{\tn@n\csname tn@side@#4\endcsname}%
-    \draw[#1] (#2.#3 -| \tn@c) -- (\tn@c);%
-  }%
+  \begin{pgfonlayer}{tnedges}%
+    \foreach \tn@n in {#5}{%
+      \edef\tn@c{\tn@n\csname tn@side@#4\endcsname}%
+      \draw[#1] (#2.#3 -| \tn@c) -- (\tn@c);%
+    }%
+  \end{pgfonlayer}%
+}
+\makeatother
+
+% \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
+% Two legs that start at <left top> and <right top> and end <drop> lower,
+% exchanged: short straight stubs of <kind> (cont or disc) at both ends, joined
+% by a smooth crossing (a snake decoration on a diagonal reads as noise).
+\makeatletter
+\newcommand{\tnswap}[4][cont]{%
+  \begin{pgfonlayer}{tnedges}%
+    \path #2 coordinate (tn@l) #3 coordinate (tn@r);
+    \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
+    \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
+    \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
+    \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
+    \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
+    \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+  \end{pgfonlayer}%
 }
 \makeatother
 

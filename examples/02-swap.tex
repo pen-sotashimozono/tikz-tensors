@@ -16,7 +16,7 @@
   \node[leg, below] at ([xshift= 4.5mm,yshift=-10mm]a.south) {$j$};
   \node at (1.45,-0.35) {$= \; -$};
   \node[coefwide] (b) at (3.0,0) {$\Psi$};
-  \draw[disc] ([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$i$};
-  \draw[disc] ([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$j$};
+  \tnbond[disc]{([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$i$}}
+  \tnbond[disc]{([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$j$}}
 \end{tikzpicture}
 \end{document}

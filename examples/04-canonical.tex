@@ -6,9 +6,9 @@
 % shape and colour both single it out, which is the point, because the norm and
 % every local expectation value can be read off it alone.
 %
-% Finite, so the chain simply stops. The outer bonds of the first and last
-% tensors are one-dimensional and carry nothing, and a picture of a finite
-% state should not put an object there.
+% Finite, so the chain simply stops: the outer indices are open, drawn as stubs
+% with nothing at the far end, because an index that leaves the diagram is an
+% index like any other and does not need a tensor to be drawn.
 %
 % The physical legs leave each triangle at the bottom corner of its flat side,
 % which is \tnlegs{l} to the left of the centre and \tnlegs{r} to the right:
@@ -31,8 +31,14 @@
   \node[canr]   (B2) at (4,0) {$B$};
 
   % bonds, carrying the gauge direction: everything points at the centre
-  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
-  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
+  \tnbond{(B2) -- (B1)}  \tnbond{(B1) -- (C)}
+  % The outer indices of a finite chain: open, with nothing at the far end.
+  % Drawn inward, because the arrowhead says which way the gauge runs and these
+  % run toward the centre like every other bond -- a stub written outward would
+  % put the only two arrows in the picture the wrong way round.
+  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond{([xshift=5mm]B2.east) -- (B2)}
   \node[leg, above=1pt] at (0.5,0.25) {$D$};
 
   % the gate, sized and placed from the two sites it acts on
@@ -44,8 +50,8 @@
   % border of the diamond, and through the gate where there is one
   \tnlegs{l}{-2.3}{A1,A2}
   \tnlegs{r}{-2.3}{B2}
-  \draw[disc] (U.south -| C) -- (U.south -| C |- 0,-2.3);
-  \draw[disc] (U.south -| B1.corner 2) -- (U.south -| B1.corner 2 |- 0,-2.3);
+  \tnbond[disc]{(U.south -| C) -- (U.south -| C |- 0,-2.3)}
+  \tnbond[disc]{(U.south -| B1.corner 2) -- (U.south -| B1.corner 2 |- 0,-2.3)}
 
   \foreach \p/\l in {{A1.corner 3}/1, {A2.corner 3}/2, {C}/3,
                      {B1.corner 2}/4, {B2.corner 2}/5}

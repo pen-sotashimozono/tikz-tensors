@@ -18,8 +18,9 @@
 % exactly the room Lambda takes: the site pitch does not leave a gap wide enough
 % for a tensor, and pretending it does would draw a bond that is not there.
 %
-% Finite, so the chain simply stops: the outer bonds are one-dimensional and
-% carry nothing, and a picture of a finite state should not put an object there.
+% Finite, so the chain simply stops: the outer indices are open, drawn as stubs
+% with nothing at the far end, and drawn inward so their arrowheads run toward
+% the centre like every other bond.
 %
 % The physical legs leave each triangle at the bottom corner of its flat side --
 % \tnlegs{l} on the left-canonical ones, {r} on the right-canonical -- so the
@@ -35,8 +36,10 @@
   \node[centre] (C)  at (2,0) {$C$};
   \node[canr]   (B1) at (3,0) {$B$};
   \node[canr]   (B2) at (4,0) {$B$};
-  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
-  \draw[bond] (B2) -- (B1);  \draw[bond] (B1) -- (C);
+  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
+  \tnbond{(B2) -- (B1)}  \tnbond{(B1) -- (C)}
+  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond{([xshift=5mm]B2.east) -- (B2)}
   \tnlegs{l}{-0.95}{A1,A2}  \tnlegs{c}{-0.95}{C}  \tnlegs{r}{-0.95}{B1,B2}
   \foreach \p/\l in {{A1.corner 3}/1, {A2.corner 3}/2, {C}/3,
                      {B1.corner 2}/4, {B2.corner 2}/5}
@@ -50,9 +53,11 @@
     \node[centrebond] (L)  at (3,0) {$\Lambda$};
     \node[canr]       (b1) at (4,0) {$B$};
     \node[canr]       (b2) at (5,0) {$B$};
-    \draw[bond] (a1) -- (a2);  \draw[bond] (a2) -- (a3);
-    \draw[bond] (a3) -- (L);   \draw[bond] (b1) -- (L);
-    \draw[bond] (b2) -- (b1);
+    \tnbond{(a1) -- (a2)}  \tnbond{(a2) -- (a3)}
+    \tnbond{(a3) -- (L)}   \tnbond{(b1) -- (L)}
+    \tnbond{(b2) -- (b1)}
+    \tnbond{([xshift=-5mm]a1.west) -- (a1)}
+    \tnbond{([xshift=5mm]b2.east) -- (b2)}
     \tnlegs{l}{-0.95}{a1,a2,a3}  \tnlegs{r}{-0.95}{b1,b2}
     \foreach \p/\l in {{a1.corner 3}/1, {a2.corner 3}/2, {a3.corner 3}/3,
                        {b1.corner 2}/4, {b2.corner 2}/5}

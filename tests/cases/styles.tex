@@ -16,9 +16,9 @@
   \node[op]       (o)  at (9.6,0)  {$\hat H$};
   \node[opwide]   (ow) at (11.3,0) {$W$};
   % legs: continuous and discrete, with labels
-  \draw[cont] (f.south) -- ++(0,-1) node[leg, below] {$\mathbf r$};
-  \draw[disc] (c.south) -- ++(0,-1) node[leg, below] {$i$};
-  \draw[disc] (f.east) -- (fw.west);
+  \tnbond[cont]{(f.south) -- ++(0,-1) node[leg, below] {$\mathbf r$}}
+  \tnbond[disc]{(c.south) -- ++(0,-1) node[leg, below] {$i$}}
+  \tnbond[disc]{(f.east) -- (fw.west)}
   % a group contracting to one object
   \draw[frame] ([shift={(-0.15,0.15)}]c.north west) rectangle ([shift={(0.15,-0.15)}]cw.south east);
   % exchange of two legs, both kinds
@@ -39,20 +39,24 @@
   \node[centre] (C)  at (2.6,-4.2)  {};
   \node[canr]   (B1) at (3.9,-4.2)  {};
   \node[canr]   (B2) at (5.2,-4.2)  {};
-  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
-  \draw[bond] (B1) -- (C);   \draw[bond] (B2) -- (B1);
+  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
+  \tnbond{(B1) -- (C)}   \tnbond{(B2) -- (B1)}
+  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond{([xshift=5mm]B2.east) -- (B2)}
   \tngate{G}{$U$}{A2,C}{-5.5}
   \tngatelegs{G}{north}{l}{A2}
   \tngatelegs{G}{north}{c}{C}
-  % the operator's own bond first, so that the tensors cover it
-  \draw[disc] (A1.corner 3 |- 0,-6.8) -- (B2.corner 2 |- 0,-6.8);
+  % An operator on the chain. Its own bond and the legs into it are edges, so
+  % they go under its tensors however this file is ordered -- which is the point
+  % of the layer: the \node calls below come last and still cover the lines.
+  \tnbond[disc]{(A1.corner 3 |- 0,-6.8) -- (B2.corner 2 |- 0,-6.8)}
+  \tnlegs{l}{-6.8}{A1}  \tnlegs{r}{-6.8}{B1,B2}
+  \tnbond[disc]{(G.south -| A2.corner 3) -- (A2.corner 3 |- 0,-6.8)}
+  \tnbond[disc]{(G.south -| C) -- (C |- 0,-6.8)}
+  \foreach \p in {{A1.corner 3},{A2.corner 3},{C},{B1.corner 2},{B2.corner 2}}
+    \tnbond[disc]{(\p |- 0,-6.8) -- (\p |- 0,-7.7)};
   \foreach \p in {{A1.corner 3},{A2.corner 3},{C},{B1.corner 2},{B2.corner 2}}
     \node[mpo] at (\p |- 0,-6.8) {};
-  \tnlegs{l}{-6.8}{A1}  \tnlegs{r}{-6.8}{B1,B2}
-  \draw[disc] (G.south -| A2.corner 3) -- (A2.corner 3 |- 0,-6.8);
-  \draw[disc] (G.south -| C) -- (C |- 0,-6.8);
-  \foreach \p in {{A1.corner 3},{A2.corner 3},{C},{B1.corner 2},{B2.corner 2}}
-    \draw[disc] (\p |- 0,-7.18) -- ++(0,-0.5);
 
   % A chain with the gauge left unstated -- `tn arrows=false' draws the same
   % bond without its arrowhead -- a one-site gate, the centre on a bond, and the
@@ -62,7 +66,7 @@
     \node[canl]       (Y1) at (0,0)    {};
     \node[centrebond] (Yl) at (1.15,0) {};
     \node[canr]       (Y2) at (2.3,0)  {};
-    \draw[bond] (Y1) -- (Yl);  \draw[bond] (Y2) -- (Yl);
+    \tnbond{(Y1) -- (Yl)}  \tnbond{(Y2) -- (Yl)}
     \tngate{V}{$V$}{Y1}{-1.4}
     \tngatelegs{V}{north}{l}{Y1}
     \tnlegs{r}{-1.4}{Y2}
@@ -70,7 +74,7 @@
   \begin{scope}[xshift=7.8cm, yshift=-6.6cm, tn line width=1.6pt]
     \node[canl] (Z1) at (0,0)   {};
     \node[canr] (Z2) at (1.8,0) {};
-    \draw[bond] (Z1) -- (Z2);
+    \tnbond{(Z1) -- (Z2)}
     \draw[tn line, draw=exact] (0,-0.8) -- (2.3,-0.8);
   \end{scope}
 
