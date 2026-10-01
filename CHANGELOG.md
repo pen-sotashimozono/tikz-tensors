@@ -5,6 +5,19 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.3.0 — 2026-10-01
+
+What a matrix-product state needs that the earlier notation could not say. Its
+tensors are not all the same kind of object, and a picture that draws them alike
+is a picture of a canonical form rather than one: `canl` and `canr` are the
+triangles pointing the way the gauge runs, `centre` is the one tensor that is not
+isometric, and `bond` carries the direction as an arrowhead on the leg.
+
+Also `env`, a boundary fixed point, which is what closes an infinite chain; and
+`gate`, a box over several sites — a Trotter step, one term of an MPO — sized by
+the caller, with `\tngatelegs` dropping its legs straight onto the sites so that
+it can span any number of them.
+
 ## v0.2.0 — 2026-09-29
 
 Tensor-network diagrams only. `\tnnucleus`, `\tnelectron`, `\tncloud` and
