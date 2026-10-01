@@ -240,16 +240,16 @@
 % the edge above the vertex rather than on it), and `c' is the node's own south,
 % which is what a box, a circle or a diamond takes.
 \makeatletter
-% A corner anchor is on the shape's OUTER boundary, not on the line that is
-% drawn: `minimum size' counts the stroke, so the path sits half a line width
-% inside the anchor. Measured at 600 dpi on a canl triangle -- the anchor lands
-% at x 66, the drawn edge at 68-72 -- which is why a leg placed on the anchor
-% runs beside the triangle's own edge instead of continuing it, a step of half
-% a stroke. So each side names its anchor and the shift back onto the path.
-\def\tn@side@l{corner 3}  \def\tn@dx@l{1}  \def\tn@dy@l{0}
-\def\tn@side@r{corner 2}  \def\tn@dx@r{-1} \def\tn@dy@r{0}
-\def\tn@side@c{south}     \def\tn@dx@c{0}  \def\tn@dy@c{1}
-\newcount\tn@cnt \newdimen\tn@hw
+% An anchor lands on the line that is drawn only because `tn node' sets
+% outer sep=0pt. With TikZ's default, outer sep is half a line width and it is
+% added to every anchor as well as to the border, so a corner anchor sits that
+% far outside the stroke and an index placed on it runs beside the tensor's own
+% edge instead of along it. Measured on a canl triangle: corner 3 at -7.86884pt
+% with the default and -7.46884pt without, exactly half a width apart.
+\def\tn@side@l{corner 3}
+\def\tn@side@r{corner 2}
+\def\tn@side@c{south}
+\newcount\tn@cnt
 \newcommand{\tnchain}[5][]{%
   \global\tn@cnt=0
   \foreach \tn@z in {#5}{\global\advance\tn@cnt by 1}%
@@ -264,11 +264,7 @@
       \coordinate (tn@spot) at ($#3!\the\pgf@xa!#4$);
     \fi
     \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
-    \pgfmathsetlength{\tn@hw}{0.5*\pgfkeysvalueof{/tn/line width}}%
-    \pgf@process{\pgfpointanchor{#2\tn@i}{\csname tn@side@\tn@sd\endcsname}}%
-    \advance\pgf@x by \csname tn@dx@\tn@sd\endcsname\tn@hw
-    \advance\pgf@y by \csname tn@dy@\tn@sd\endcsname\tn@hw
-    \pgfcoordinate{#2\tn@i-leg}{\pgfqpoint{\pgf@x}{\pgf@y}}%
+    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
   }%
 }
 \makeatother

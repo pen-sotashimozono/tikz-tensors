@@ -129,14 +129,15 @@ Measured at 700 dpi on two canl triangles, a one-pixel gap between the tensor
 and its bond; after, one continuous run of ink. Same cause as the index not
 lying on the edge — the shape's nominal boundary is not the line that is drawn.
 
-The connection point is on the line that is drawn, not on the shape's outer
-boundary. A corner anchor is the second of those: `minimum size` counts the
-stroke, so the path sits half a line width inside the anchor, and an index
-placed on the anchor runs *beside* the triangle's own edge rather than
-continuing it. Measured at 600 dpi on a canl triangle: the anchor lands at x 66
-and the drawn edge at 68–72. Each side now names its anchor and the shift back
-onto the path, and the test is the obvious one — extend the index upward past
-the top of the tensor and it covers the edge with no black showing beside it.
+An anchor lands on the line that is drawn, which is what `outer sep=0pt` buys
+besides the bond join: TikZ's default outer sep is half a line width and it is
+added to every anchor as well as to the border, so a corner anchor sat that far
+outside the stroke and an index placed on it ran beside the tensor's own edge
+rather than along it. Measured on a canl triangle: `corner 3` at −7.86884pt with
+the default and −7.46884pt without, exactly half a width apart. One cause, two
+symptoms, one fix. The test is the obvious one — extend the index upward past
+the top of the tensor and it covers the edge with no black showing beside it,
+at the examples' own scaling as well as at none.
 
 The join is closed by starting the index inside the tensor, which covers the
 overlap because nodes are drawn over the edge layer. Begun exactly on the
