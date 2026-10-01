@@ -7,7 +7,9 @@ name: CI
 #   test     does everything compile with LuaLaTeX and pdfLaTeX, and look as it did
 # The rendered pages (and a diff image for any that changed) are uploaded as
 # the `rendered` artifact, so a change in appearance can be looked at, not
-# only counted.
+# only counted. On a pull request the pages this branch draws differently are
+# also shown in the run summary, and posted as one comment that later pushes
+# edit in place, so the usual case needs no download at all.
 
 on:
   pull_request:
@@ -17,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -80,3 +83,26 @@ jobs:
           name: rendered
           path: tests/out/rendered/
           if-no-files-found: ignore
+
+      # Only after tests/run.sh has passed, because the preview links this
+      # branch's committed reference images and those are the pages CI drew
+      # exactly when the comparison said so.
+      - name: Preview the pages that changed
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          { echo "<!-- tikz-tensors-preview -->"
+            python3 scripts/preview.py --base "$BASE" --sha "$SHA" \
+                                       --repo "$GITHUB_REPOSITORY"
+          } > preview.md
+          cat preview.md >> "$GITHUB_STEP_SUMMARY"
+          # A fork's token is read-only, so the comment is a bonus and the
+          # summary above is the part that always lands.
+          gh pr comment "$PR" --body-file preview.md --edit-last \
+            || gh pr comment "$PR" --body-file preview.md \
+            || echo "::notice::no write access for a comment; the run summary has it"
