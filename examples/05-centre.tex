@@ -26,8 +26,8 @@
 \begin{document}
 \begin{tikzpicture}[x=1.35cm]
   % ---- the centre on a site ----------------------------------------------
-  \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
-                            canr/$B$/r, canr/$B$/r}
+  \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/c, canl/$A$/c, centre/$C$/c,
+                            canr/$B$/c, canr/$B$/c}
   \tnbond[gauge]{(S1) -- (S2)}  \tnbond[gauge]{(S2) -- (S3)}
   \tnbond[gauge]{(S5) -- (S4)}  \tnbond[gauge]{(S4) -- (S3)}
   \tnbond[gauge]{([xshift=-5mm]S1.west) -- (S1)}
@@ -38,8 +38,8 @@
   % ---- the centre on the bond between sites 3 and 4 ----------------------
   % One slot longer, and placed from the line above rather than from scratch.
   \tnchain{T}{($(S1)+(0,-2.6)$)}{($(S5)+(1,-2.6)$)}%
-             {canl/$A$/l, canl/$A$/l, canl/$A$/l,
-              centrebond/$\Lambda$/c, canr/$B$/r, canr/$B$/r}
+             {canl/$A$/c, canl/$A$/c, canl/$A$/c,
+              centrebond/$\Lambda$/c, canr/$B$/c, canr/$B$/c}
   \tnbond[gauge]{(T1) -- (T2)}  \tnbond[gauge]{(T2) -- (T3)}
   \tnbond[gauge]{(T3) -- (T4)}  \tnbond[gauge]{(T5) -- (T4)}
   \tnbond[gauge]{(T6) -- (T5)}

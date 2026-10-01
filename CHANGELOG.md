@@ -116,17 +116,6 @@ centre — about half a millimetre at this size, so it still leaves from the
 corner as far as the eye is concerned — and the tensor, drawn over the edge
 layer, covers the overlap.
 
-`canl` and `canr` have their point cut off. A bond was attaching to the apex of
-a triangle — a vertex, not an edge — so the line appeared to balance on a needle
-and the arrowhead landed in the sliver between that tip and the next tensor,
-reading as one blob with it. They are trapezia now: the bond meets a flat edge
-at both ends and the arrowhead has somewhere to sit. Rounding the tip instead
-was tried and does almost nothing, since the attachment is still a point.
-
-The shape still points the way the gauge runs, which is the part that is
-load-bearing — a reader who cannot see which tensors are isometric cannot tell a
-canonical form from a picture of one.
-
 Every outline in a diagram is one ink, not only the ones no preset had
 overridden. `tn fill` keeps the default outline and sets only the fill, so a
 tensor's colour is its fill and the stroke is the same as the index it carries —

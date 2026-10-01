@@ -57,8 +57,8 @@
   % canl and canr say "isometric from the left" and "from the right", which is
   % a statement about a chain; centre is the one tensor that is neither. Alone
   % they would be three shapes with nothing to be read against.
-  \tnchain{A}{(4.6,-4.0)}{(9.8,-4.0)}{canl//l, canl//l, centre//c,
-                                      canr//r, canr//r}
+  \tnchain{A}{(4.6,-4.0)}{(9.8,-4.0)}{canl//c, canl//c, centre//c,
+                                      canr//c, canr//c}
   \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (A3)}
   \tnbond[gauge]{(A4) -- (A3)}  \tnbond[gauge]{(A5) -- (A4)}
   \tnbond[gauge]{([xshift=-5mm]A1.west) -- (A1)}
@@ -90,9 +90,9 @@
   \spec{12.2}{-6.4}{tn node, tn fill, tn edge}
 
   % ---- the two that are easier to see on their own ---------------------
-  \tnchain{Y}{(0.4,-6.4)}{(2.4,-6.4)}{canl//l, centrebond//c, canr//r}
+  \tnchain{Y}{(0.4,-6.4)}{(2.4,-6.4)}{canl//c, centrebond//c, canr//c}
   \tnbond[gauge]{(Y1) -- (Y2)}  \tnbond[gauge]{(Y3) -- (Y2)}          \spec{1.4}{-6.95}{centrebond}
-  \tnchain{V}{(0.9,-8.3)}{(0.9,-8.3)}{canl//l}
+  \tnchain{V}{(0.9,-8.3)}{(0.9,-8.3)}{canl//c}
   \tnlegs{12mm}{V1-leg}
   \tngate{W}{$V$}{V1-leg}{4mm}                           \spec{0.9}{-10.1}{\textbackslash tngate,
                                                              one site}
