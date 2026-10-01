@@ -97,12 +97,13 @@
 }
 \makeatother
 
-% \tngatelegs[<kind>]{<gate node>}{<site nodes, comma separated>}
-% A leg from the gate down to each site, dropped straight so that the gate can
+% \tngatelegs[<kind>]{<gate node>}{<anchor>}{<site nodes, comma separated>}
+% A leg from the gate to each site, dropped straight from <anchor> (south when
+% the gate sits above the sites, north when it sits below) so that the gate can
 % span any number of them without the legs splaying.
 \makeatletter
-\newcommand{\tngatelegs}[3][disc]{%
-  \foreach \tn@site in {#3} {\draw[#1] (#2.south -| \tn@site) -- (\tn@site);}%
+\newcommand{\tngatelegs}[4][disc]{%
+  \foreach \tn@site in {#4} {\draw[#1] (#2.#3 -| \tn@site) -- (\tn@site);}%
 }
 \makeatother
 

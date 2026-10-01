@@ -15,8 +15,8 @@ isometric, and `bond` carries the direction as an arrowhead on the leg.
 
 Also `env`, a boundary fixed point, which is what closes an infinite chain; and
 `gate`, a box over several sites — a Trotter step, one term of an MPO — sized by
-the caller, with `\tngatelegs` dropping its legs straight onto the sites so that
-it can span any number of them.
+the caller, with `\tngatelegs` dropping its legs straight onto the sites, from
+whichever side the gate is on, so that it can span any number of them.
 
 ## v0.2.0 — 2026-09-29
 

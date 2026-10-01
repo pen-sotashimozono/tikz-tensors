@@ -35,7 +35,7 @@
   \draw[bond] (EL) -- (A1);  \draw[bond] (A1) -- (A2);  \draw[bond] (A2) -- (C);
   \draw[bond] (B1) -- (C);   \draw[bond] (B2) -- (B1);  \draw[bond] (ER) -- (B2);
   \node[gate, minimum width=24mm] (G) at (1.95,-3.7) {$U$};
-  \tngatelegs{G}{A2,C}
+  \tngatelegs{G}{south}{A2,C}
   \foreach \n in {A1,A2,C,B1,B2} \draw[disc] (\n) -- ++(0,-0.8);
 
   % the named colours
