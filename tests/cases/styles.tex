@@ -35,9 +35,9 @@
   % ---- edges and what goes on them -------------------------------------
   \tnbond[cont]{(0,-2.2) -- (0.9,-2.2)}                  \spec{0.45}{-2.4}{cont}
   \tnbond[disc]{(1.7,-2.2) -- (2.6,-2.2)}                \spec{2.15}{-2.4}{disc}
-  \tnbond{(3.4,-2.2) -- (4.3,-2.2)}                      \spec{3.85}{-2.4}{bond}
+  \tnbond[gauge]{(3.4,-2.2) -- (4.3,-2.2)}                      \spec{3.85}{-2.4}{gauge}
   \begin{scope}[tn arrows=false]
-    \tnbond{(5.1,-2.2) -- (6.0,-2.2)}                    \spec{5.55}{-2.4}{tn arrows=false}
+    \tnbond[gauge]{(5.1,-2.2) -- (6.0,-2.2)}                    \spec{5.55}{-2.4}{tn arrows=false}
   \end{scope}
   \tnbond[disc]{(7.0,-2.2) -- (7.9,-2.2) node[leg, right] {$i$}}
                                                          \spec{7.45}{-2.4}{leg}
@@ -62,10 +62,10 @@
   \node[centre] (C)  at (7.2,-4.0) {};
   \node[canr]   (B1) at (8.5,-4.0) {};
   \node[canr]   (B2) at (9.8,-4.0) {};
-  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
-  \tnbond{(B1) -- (C)}   \tnbond{(B2) -- (B1)}
-  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
-  \tnbond{([xshift=5mm]B2.east) -- (B2)}
+  \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (C)}
+  \tnbond[gauge]{(B1) -- (C)}   \tnbond[gauge]{(B2) -- (B1)}
+  \tnbond[gauge]{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond[gauge]{([xshift=5mm]B2.east) -- (B2)}
   \tngate{G}{$U$}{A2,C}{-5.3}
   \tngatelegs{G}{north}{l}{A2}
   \tngatelegs{G}{north}{c}{C}
@@ -80,15 +80,28 @@
     \tnbond[disc]{(\p |- 0,-6.6) -- (\p |- 0,-7.4)};
   \foreach \p in {{A1.corner 3},{A2.corner 3},{C},{B1.corner 2},{B2.corner 2}}
     \node[mpo] at (\p |- 0,-6.6) {};
-  \spec{7.2}{-7.6}{canl, canr, centre, mpo, gate, bond\\%
+  \spec{7.2}{-7.6}{canl, canr, centre, mpo, gate, gauge\\%
     \textbackslash tnbond, \textbackslash tnlegs, \textbackslash tngate,
     \textbackslash tngatelegs}
+
+  % ---- the network before any of the names above exist ------------------
+  % Three tensors and the indices between them, out of tn node, tn fill and
+  % tn edge and nothing else. No state, no operator, no gauge -- most networks
+  % have no such distinction to make, and this is what the package is for them.
+  \node[tn node, tn fill=blue1, circle] (N1) at (11.4,-4.0) {$A$};
+  \node[tn node]                        (N2) at (12.9,-4.9) {$B$};
+  \node[tn node, tn fill=warm1]         (N3) at (11.4,-5.8) {$C$};
+  \tnbond[tn edge]{(N1) -- (N2)}
+  \tnbond[tn edge]{(N2) -- (N3)}
+  \tnbond[tn edge]{(N3) -- (N1)}
+  \tnbond[tn edge=exact]{(N2) -- ++(1.0,0)}
+  \spec{12.2}{-6.4}{tn node, tn fill, tn edge}
 
   % ---- the two that are easier to see on their own ---------------------
   \node[canl]       (Y1) at (0.4,-6.4) {};
   \node[centrebond] (Yl) at (1.4,-6.4) {};
   \node[canr]       (Y2) at (2.4,-6.4) {};
-  \tnbond{(Y1) -- (Yl)}  \tnbond{(Y2) -- (Yl)}           \spec{1.4}{-6.95}{centrebond}
+  \tnbond[gauge]{(Y1) -- (Yl)}  \tnbond[gauge]{(Y2) -- (Yl)}           \spec{1.4}{-6.95}{centrebond}
   \node[canl] (V1) at (0.9,-8.3) {};
   \tngate{V}{$V$}{V1}{-9.2}
   \tngatelegs{V}{north}{l}{V1}                           \spec{0.9}{-9.6}{\textbackslash tngate,

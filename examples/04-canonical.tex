@@ -31,14 +31,14 @@
   \node[canr]   (B2) at (4,0) {$B$};
 
   % bonds, carrying the gauge direction: everything points at the centre
-  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
-  \tnbond{(B2) -- (B1)}  \tnbond{(B1) -- (C)}
+  \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (C)}
+  \tnbond[gauge]{(B2) -- (B1)}  \tnbond[gauge]{(B1) -- (C)}
   % The outer indices of a finite chain: open, with nothing at the far end.
   % Drawn inward, because the arrowhead says which way the gauge runs and these
   % run toward the centre like every other bond -- a stub written outward would
   % put the only two arrows in the picture the wrong way round.
-  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
-  \tnbond{([xshift=5mm]B2.east) -- (B2)}
+  \tnbond[gauge]{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond[gauge]{([xshift=5mm]B2.east) -- (B2)}
   \node[leg, above=1pt] at (0.5,0.25) {$D$};
 
   % the gate, sized and placed from the two sites it acts on

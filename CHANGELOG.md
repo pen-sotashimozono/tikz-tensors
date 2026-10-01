@@ -77,6 +77,24 @@ The gate is pale: `gate!25` with ink, outlined in `gate!85!black`. The state
 tensors keep the fills they had. A gate is applied *to* the state and should
 read behind it, and at equal weight the two competed.
 
+A network is nodes and edges, and those come first: `tn node` is a tensor,
+`tn edge` an index, `tn fill` the solid-colour convention. A diagram can be
+drawn out of those three with no notion of what is a state and what is an
+operator — which is the normal case, since most networks have no such
+distinction — and every name below them is a preset built on them, for the cases
+that do. `tn node` draws an ink outline rather than leaving `draw` unset,
+because a node with no `draw` is not drawn at all.
+
+One consequence, visible in `01-expansion`, `02-swap` and `03-mps`: `tn node`
+carries `text=ttfg`, so a tensor's label is the theme's ink everywhere rather
+than plain black in some presets and ink in others.
+
+`bond` is gone and `gauge` takes its place. A bond does not have a direction —
+it is an index, and an index is just an index — so the plain `disc` is the bond,
+`\tnbond`'s default is `disc`, and `gauge` is for a picture where the direction
+is known and is part of what is being said. `tn arrows` still turns those
+arrowheads off.
+
 A physical leg can leave a tensor two ways and `\tnlegs` says which: `{c}` from
 the centre, clipped at the node's border — the only thing a box, a circle or a
 diamond can do — or `{l}` and `{r}` from the bottom corner of a canl or a canr

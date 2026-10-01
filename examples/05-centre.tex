@@ -36,10 +36,10 @@
   \node[centre] (C)  at (2,0) {$C$};
   \node[canr]   (B1) at (3,0) {$B$};
   \node[canr]   (B2) at (4,0) {$B$};
-  \tnbond{(A1) -- (A2)}  \tnbond{(A2) -- (C)}
-  \tnbond{(B2) -- (B1)}  \tnbond{(B1) -- (C)}
-  \tnbond{([xshift=-5mm]A1.west) -- (A1)}
-  \tnbond{([xshift=5mm]B2.east) -- (B2)}
+  \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (C)}
+  \tnbond[gauge]{(B2) -- (B1)}  \tnbond[gauge]{(B1) -- (C)}
+  \tnbond[gauge]{([xshift=-5mm]A1.west) -- (A1)}
+  \tnbond[gauge]{([xshift=5mm]B2.east) -- (B2)}
   \tnlegs{l}{-0.95}{A1,A2}  \tnlegs{c}{-0.95}{C}  \tnlegs{r}{-0.95}{B1,B2}
   \foreach \p/\l in {{A1.corner 3}/1, {A2.corner 3}/2, {C}/3,
                      {B1.corner 2}/4, {B2.corner 2}/5}
@@ -53,11 +53,11 @@
     \node[centrebond] (L)  at (3,0) {$\Lambda$};
     \node[canr]       (b1) at (4,0) {$B$};
     \node[canr]       (b2) at (5,0) {$B$};
-    \tnbond{(a1) -- (a2)}  \tnbond{(a2) -- (a3)}
-    \tnbond{(a3) -- (L)}   \tnbond{(b1) -- (L)}
-    \tnbond{(b2) -- (b1)}
-    \tnbond{([xshift=-5mm]a1.west) -- (a1)}
-    \tnbond{([xshift=5mm]b2.east) -- (b2)}
+    \tnbond[gauge]{(a1) -- (a2)}  \tnbond[gauge]{(a2) -- (a3)}
+    \tnbond[gauge]{(a3) -- (L)}   \tnbond[gauge]{(b1) -- (L)}
+    \tnbond[gauge]{(b2) -- (b1)}
+    \tnbond[gauge]{([xshift=-5mm]a1.west) -- (a1)}
+    \tnbond[gauge]{([xshift=5mm]b2.east) -- (b2)}
     \tnlegs{l}{-0.95}{a1,a2,a3}  \tnlegs{r}{-0.95}{b1,b2}
     \foreach \p/\l in {{a1.corner 3}/1, {a2.corner 3}/2, {a3.corner 3}/3,
                        {b1.corner 2}/4, {b2.corner 2}/5}

@@ -3,6 +3,13 @@
 %%
 %%   \usepackage{tikz-tensors}
 %%
+%% A network is nodes and edges, and those are the two things the package
+%% defines before anything else: `tn node' is a tensor, `tn edge' is an index,
+%% `tn fill' is the solid colour convention. A diagram can be drawn out of those
+%% three alone, with no notion of what is a state and what is an operator --
+%% which is the normal case, since most networks have no such distinction to
+%% make. Everything named below is a preset built on them, for the cases that do.
+%%
 %% The notation distinguishes what a leg carries:
 %%   cont   wavy leg, electron colour: a continuous argument (r, r_1, x)
 %%   disc   plain line: a finite index (i, mu, a bond)
@@ -33,10 +40,13 @@
 %%   gate         a box over one site or several (a Trotter step, one term of an
 %%                MPO). \tngate sizes and places it from the sites themselves,
 %%                so no width is written by hand, and \tngatelegs drops its legs
-%%   bond         a disc leg carrying the gauge direction as an arrowhead. The
-%%                arrowhead is `tn arrows', on by default: off leaves the same
-%%                bond with the direction unstated, for a picture that is not
-%%                about the gauge
+%%   gauge        a disc that carries a direction, as an arrowhead. A bond does
+%%                not have one in general -- it is an index, and an index is
+%%                just an index -- so the plain `disc' is the bond, and `gauge'
+%%                is for a picture where the direction is known and is part of
+%%                what is being said: which way the gauge runs in a canonical
+%%                form. `tn arrows' is on by default and turns those arrowheads
+%%                off, for the same picture with the direction left unstated
 %% The triangles are the usual convention and they are load-bearing: a reader who
 %% cannot see which tensors are isometric cannot tell a canonical form from a
 %% picture of one. Shape carries the meaning on its own and colour repeats it, so
@@ -118,55 +128,75 @@
   tn arrows/.is if    = tnarrows,
 }
 
-% ---- tensor diagrams ---------------------------------------------------------
+% ---- a network is nodes and edges --------------------------------------------
+% These three are the network itself. Everything after them is a preset, and a
+% diagram that has no use for the vocabulary below can be drawn out of these
+% alone, with no notion of what is an operator and what is a state:
+%
+%   \node[tn node, tn fill=blue1, circle] (a) at (0,0) {$A$};
+%   \node[tn node] (b) at (2,0) {$B$};            % a box: the plain tensor
+%   \tnbond[tn edge]{(a) -- (b)}                  % an index between them
+%   \tnbond[tn edge=exact]{(b) -- ++(1,0)}        % one in a colour of its own
+%
+% tn node is what every tensor shares -- one stroke, an ink outline, an ink
+% label, no inner padding -- and the shape is TikZ's, a rectangle unless another
+% is asked for. It draws in ink rather than leaving `draw' unset, because a node
+% with no draw is not drawn at all and a bare tn node has to be a tensor you can
+% see. tn fill is the solid convention: a step of a scale, outlined in a darker
+% shade of itself, and it replaces the ink outline. tn edge is an index, in ink
+% unless given a colour.
 \tikzset{
-  fn/.style       = {circle, tn line, draw=ele, fill=ele!12,
-                     minimum size=8mm, inner sep=0pt},
+  tn node/.style   = {tn line, draw=ttfg, minimum size=9mm, inner sep=0pt,
+                      text=ttfg},
+  tn fill/.style   = {draw=#1!65!black, fill=#1},
+  tn fill/.default = grey2,
+  tn edge/.style   = {tn line, draw=#1},
+  tn edge/.default = black!80,
+}
+
+% ---- presets: what a tensor is, and what its index carries -------------------
+\tikzset{
+  fn/.style       = {tn node, circle, draw=ele, fill=ele!12, minimum size=8mm},
   fnwide/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=17mm,
                      minimum height=8mm},
   fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
                      minimum height=17mm},
-  coef/.style     = {rectangle, tn line, draw=black!80, fill=black!6,
-                     minimum size=7mm, inner sep=0pt},
+  coef/.style     = {tn node, rectangle, draw=black!80, fill=black!6,
+                     minimum size=7mm},
   coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
   coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {rectangle, tn line, draw=ttfg, fill=white,
+  op/.style       = {tn node, rectangle, draw=ttfg, fill=white,
                      minimum size=7mm, inner sep=1pt},
   opwide/.style   = {op, minimum width=17mm},
   frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},
-  cont/.style     = {tn line, draw=ele, decorate,
+  cont/.style     = {tn edge=ele, decorate,
                      decoration={snake, amplitude=0.55mm, segment length=2.4mm,
                                  pre length=0.4mm, post length=0.8mm}},
-  disc/.style     = {tn line, draw=black!80},
+  disc/.style     = {tn edge},
   leg/.style      = {font=\small, inner sep=2pt},
-  tn swap cont/.style = {tn line, draw=ele},
-  tn swap disc/.style = {tn line, draw=black!80},
+  tn swap cont/.style = {tn edge=ele},
+  tn swap disc/.style = {tn edge},
 }
 
-% ---- matrix-product states ----------------------------------------------------
+% ---- presets: matrix-product states ------------------------------------------
 % Solid fills, because an MPS diagram is mostly tensors: at the pale fills the
-% single-tensor styles above use, a ten-site chain turns into ten outlines and the
-% eye finds no site. The labels stay ink rather than reversing to white -- white on
-% these fills measures 2.2--3.1:1 against the 7--9:1 ink gives -- except on the
-% gate, whose deeper teal is the one fill where the two are a wash.
+% presets above use, a ten-site chain turns into ten outlines and the eye finds
+% no site. The labels stay ink rather than reversing to white -- white on these
+% fills measures 2.2--3.1:1 against the 7--9:1 ink gives.
 \tikzset{
-  canl/.style       = {regular polygon, regular polygon sides=3, tn line,
-                       shape border rotate=-90, draw=canl!65!black, fill=canl,
-                       minimum size=10.5mm, inner sep=0pt, text=ttfg,
-                       font=\small},
-  canr/.style       = {canl, shape border rotate=90,
-                       draw=canr!65!black, fill=canr},
-  centre/.style     = {diamond, tn line, draw=centre!65!black, fill=centre,
-                       minimum size=9.5mm, inner sep=0pt, text=ttfg,
+  canl/.style       = {tn node, tn fill=canl, regular polygon,
+                       regular polygon sides=3, shape border rotate=-90,
+                       minimum size=10.5mm, font=\small},
+  canr/.style       = {canl, tn fill=canr, shape border rotate=90},
+  centre/.style     = {tn node, tn fill=centre, diamond, minimum size=9.5mm,
                        font=\small},
   centrebond/.style = {centre, minimum size=6mm, font=\scriptsize},
-  mpo/.style        = {rectangle, tn line, rounded corners=1.2mm,
-                       draw=mpo!55!black, fill=mpo, minimum size=7.5mm,
-                       inner sep=1pt},
-  gate/.style       = {rectangle, tn line, rounded corners=1.2mm,
+  mpo/.style        = {tn node, tn fill=mpo, rectangle, rounded corners=1.2mm,
+                       minimum size=7.5mm, inner sep=1pt},
+  gate/.style       = {tn node, rectangle, rounded corners=1.2mm,
                        draw=gate!85!black, fill=gate!25, minimum size=7.5mm,
-                       inner sep=3pt, text=ttfg, font=\small},
-  bond/.style       = {disc, postaction={decorate}, decoration={markings,
+                       inner sep=3pt, font=\small},
+  gauge/.style      = {disc, postaction={decorate}, decoration={markings,
                        mark=at position 0.58 with
                          {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
 }
@@ -174,12 +204,14 @@
 % \tnbond[<style>]{<path>}
 % One edge, drawn under the nodes. The path is written out in full, so it can
 % end wherever it needs to -- on a node, on a coordinate, or on nothing:
-%   \tnbond{(A1) -- (A2)}            a bond between two tensors
-%   \tnbond{(A3) -- ++(0.55,0)}      an open index, with no other end
-%   \tnbond[disc]{(W.south) -- ++(0,-0.6)}
+%   \tnbond{(A1) -- (A2)}             a bond between two tensors
+%   \tnbond{(A3) -- ++(0.55,0)}       an open index, with no other end
+%   \tnbond[gauge]{(A1) -- (A2)}      one whose direction is known
+%   \tnbond[cont]{(p.south) -- ++(0,-0.9)}
 % Nothing here needs a tensor at the far end, because an index that leaves the
-% diagram is an index like any other.
-\newcommand{\tnbond}[2][bond]{%
+% diagram is an index like any other. The default is `disc', an index with no
+% direction, because that is what an index is unless something says otherwise.
+\newcommand{\tnbond}[2][disc]{%
   \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
 % \tnlegs[<kind>]{<side>}{<target y>}{<nodes, comma separated>}
