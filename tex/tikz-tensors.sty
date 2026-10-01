@@ -67,16 +67,12 @@
 %% readable where it crosses a tensor belongs in a \node of its own; a raw
 %% \draw is on the main layer and is the caller's to place.
 %%
-%% A physical leg is \tnlegs, and where it leaves a tensor is a choice the
-%% notation has to be able to make both ways:
-%%   \tnlegs{c}{<y>}{<nodes>}   from the centre, clipped at the node's border --
-%%                              the only option for a box, a circle or a diamond
-%%   \tnlegs{l}{<y>}{<nodes>}   from the bottom corner of a left-canonical
-%%   \tnlegs{r}{<y>}{<nodes>}   triangle's flat side, and of a right-canonical
-%%                              one's: the leg then sits off the site's centre,
-%%                              mirrored between the two gauges
-%% Every leg in one call ends at the same depth, so a row of them lines up
-%% whatever it started from.
+%% Where a tensor's index leaves it is said once, by \tnchain, which places a
+%% row and gives each site a <name>-leg coordinate. Everything that connects to
+%% that site -- its own leg, a gate's leg, an operator row under it -- connects
+%% to that coordinate, so the point exists in one place and cannot be spelled
+%% two ways. \tnlegs, \tngate and \tngatelegs all take points, not nodes and a
+%% side.
 %%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
 %%
@@ -214,40 +210,60 @@
 \newcommand{\tnbond}[2][disc]{%
   \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
-% \tnlegs[<kind>]{<side>}{<target y>}{<nodes, comma separated>}
-% A physical leg from each node down to <target y>, all ending level. <side> is
-% where it leaves the tensor: `c' from the centre, clipped at the border, which
-% is what a box or a diamond takes; `l' and `r' from the bottom corner of a
-% canl or a canr triangle's flat side. The corner is corner 3 of the one and
-% corner 2 of the other -- they are the same shape at a 180 degree turn, so no
-% single index names both, and `south west' is on the edge above the vertex
-% rather than on it.
+% \tnchain[<pitch>]{<prefix>}{<origin>}{<style/label/side, ...>}
+% Place a row of tensors and say, once, where each one's physical index leaves
+% it. Site i becomes the node <prefix>i and the coordinate <prefix>i-leg, which
+% is the point every later command connects to: the legs, the gate's legs, an
+% operator row below. Before this the connection point was respelled at every
+% use -- `A2.corner 3' written out in the legs, again in the gate's legs, again
+% in the operator's bond -- and three spellings of one point are three chances
+% to disagree with each other.
+%
+%   \tnchain[1]{S}{(0,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
+%   \tnbond[gauge]{(S1) -- (S2)}
+%   \tnlegs{-2}{S1-leg,S2-leg,S3-leg}
+%
+% <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
+% or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
+% at a 180 degree turn, so no single index names both, and `south west' is on
+% the edge above the vertex rather than on it), and `c' is the node's own south,
+% which is what a box, a circle or a diamond takes.
 \makeatletter
-\def\tn@side@c{}
-\def\tn@side@l{.corner 3}
-\def\tn@side@r{.corner 2}
-\newcommand{\tnlegs}[4][disc]{%
+\def\tn@side@l{corner 3}
+\def\tn@side@r{corner 2}
+\def\tn@side@c{south}
+\newcommand{\tnchain}[4][1]{%
+  \foreach \tn@sty/\tn@lab/\tn@sd [count=\tn@n from 1] in {#4}{%
+    \pgfmathsetmacro{\tn@dx}{(\tn@n-1)*(#1)}%
+    \node[\tn@sty] (#2\tn@n) at ($#3 + (\tn@dx,0)$) {\tn@lab};
+    \coordinate (#2\tn@n-leg) at (#2\tn@n.\csname tn@side@\tn@sd\endcsname);
+  }%
+}
+\makeatother
+
+% \tnlegs[<kind>]{<target y>}{<points>}
+% A physical leg from each point down to <target y>, all ending level whatever
+% each started from. The points are \tnchain's -leg coordinates, or any
+% coordinate a caller has: the side is already settled where the point was
+% defined, so it is not an argument here and cannot be given twice differently.
+\makeatletter
+\newcommand{\tnlegs}[3][disc]{%
   \begin{pgfonlayer}{tnedges}%
-    \foreach \tn@n in {#4}{%
-      \edef\tn@c{\tn@n\csname tn@side@#2\endcsname}%
-      \draw[#1] (\tn@c) -- (\tn@c |- 0,#3);%
-    }%
+    \foreach \tn@n in {#3}{\draw[#1] (\tn@n) -- (\tn@n |- 0,#2);}%
   \end{pgfonlayer}%
 }
 \makeatother
 
-% \tngate[<padding>]{<node name>}{<label>}{<sites>}{<y>}
-% A gate over those sites, at that height, as wide as they span plus <padding>
-% at each end and centred on them. One site is a small box, several a bar; the
-% caller writes no width, so a gate cannot drift off the sites it acts on when
-% the chain is respaced.
-%
-% It measures the sites' centres, not their legs, so the default padding has to
-% clear a leg taken from a triangle's corner: at the default 10.5mm the corner
-% is 4.55mm off centre, and 6mm leaves it 1.45mm inside the box.
+% \tngate[<padding>]{<node name>}{<label>}{<points>}{<y>}
+% A gate over those points, at that height, as wide as they span plus <padding>
+% at each end and centred on them. One point gives a small box, several a bar;
+% the caller writes no width, so a gate cannot drift off what it acts on when
+% the row is respaced. It measures the points themselves -- the -leg
+% coordinates, where the indices actually are -- so the padding is only what
+% looks right and does not have to allow for a corner.
 \makeatletter
 \newdimen\tn@x \newdimen\tn@lo \newdimen\tn@hi
-\newcommand{\tngate}[5][6mm]{%
+\newcommand{\tngate}[5][4mm]{%
   \global\tn@lo=\maxdimen \global\tn@hi=-\maxdimen
   \foreach \tn@s in {#4}{%
     \pgfextractx{\tn@x}{\pgfpointanchor{\tn@s}{center}}%
@@ -261,19 +277,15 @@
 }
 \makeatother
 
-% \tngatelegs[<kind>]{<gate node>}{<anchor>}{<side>}{<sites>}
-% A leg from the gate to each site, dropped straight from <anchor> (south when
-% the gate sits above the sites, north when it sits below) so that the gate can
-% span any number of them without the legs splaying. <side> is as \tnlegs reads
-% it, so the gate's legs meet the sites' physical legs where those actually
-% leave the tensor rather than under its centre.
+% \tngatelegs[<kind>]{<gate node>}{<anchor>}{<points>}
+% A leg from the gate to each point, dropped straight from <anchor> (south when
+% the gate sits above, north when it sits below) so that it can span any number
+% of them without the legs splaying. The points are the same -leg coordinates
+% the sites' own legs use, so the two meet by construction.
 \makeatletter
-\newcommand{\tngatelegs}[5][disc]{%
+\newcommand{\tngatelegs}[4][disc]{%
   \begin{pgfonlayer}{tnedges}%
-    \foreach \tn@n in {#5}{%
-      \edef\tn@c{\tn@n\csname tn@side@#4\endcsname}%
-      \draw[#1] (#2.#3 -| \tn@c) -- (\tn@c);%
-    }%
+    \foreach \tn@n in {#4}{\draw[#1] (#2.#3 -| \tn@n) -- (\tn@n);}%
   \end{pgfonlayer}%
 }
 \makeatother

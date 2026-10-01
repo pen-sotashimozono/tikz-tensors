@@ -77,6 +77,23 @@ The gate is pale: `gate!25` with ink, outlined in `gate!85!black`. The state
 tensors keep the fills they had. A gate is applied *to* the state and should
 read behind it, and at equal weight the two competed.
 
+`\tnchain` places a row of tensors and says, once, where each one's index
+leaves it: site i becomes the node `<prefix>i` and the coordinate
+`<prefix>i-leg`, and everything that connects to that site — its own leg, a
+gate's leg, an operator row beneath it — connects to that coordinate.
+`\tnlegs`, `\tngate` and `\tngatelegs` take points now, not a node and a side.
+
+The point was that a connection was being re-derived at every use. Counted
+across the two examples and the specimen sheet before: 27 spellings of a corner
+anchor and 40 literal site coordinates, with one site's connection point written
+out four separate times. After: no corner anchors at all, and the only literal
+coordinates left are where a specimen sits on the sheet.
+
+One picture moves because of it. `\tngate` measures the points it is given, so
+it now spans the indices it acts on rather than the sites' centres, and the gate
+in `04-canonical` is narrower and sits over its two legs — 3.9% of drawn pixels.
+`05-centre` is byte-identical, which is the check that nothing else moved.
+
 A network is nodes and edges, and those come first: `tn node` is a tensor,
 `tn edge` an index, `tn fill` the solid-colour convention. A diagram can be
 drawn out of those three with no notion of what is a state and what is an
