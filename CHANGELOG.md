@@ -107,6 +107,15 @@ it now spans the indices it acts on rather than the sites' centres, and the gate
 in `04-canonical` is narrower and sits over its two legs — 3.9% of drawn pixels.
 `05-centre` is byte-identical, which is the check that nothing else moved.
 
+A site's connection point sits a little inside the corner rather than on it. A
+corner anchor is on the outline's path and the outline is stroked about that
+path, so a leg starting exactly there pokes half a line width past the edge: at
+700 dpi, three columns of leg with nothing above them, which reads as a leg
+detached from its tensor. `\tnchain` moves the point an eighth of the way to the
+centre — about half a millimetre at this size, so it still leaves from the
+corner as far as the eye is concerned — and the tensor, drawn over the edge
+layer, covers the overlap.
+
 `canl` and `canr` have their point cut off. A bond was attaching to the apex of
 a triangle — a vertex, not an edge — so the line appeared to balance on a needle
 and the arrowhead landed in the sliver between that tip and the next tensor,

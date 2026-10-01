@@ -254,7 +254,15 @@
       \coordinate (tn@spot) at ($#3!\the\pgf@xa!#4$);
     \fi
     \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
-    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
+    % A hair inside the corner, not on it. A corner anchor is on the outline's
+    % path and the outline is stroked about that path, so a leg starting exactly
+    % there pokes past the edge and reads as detached -- measured at 700 dpi,
+    % three columns of leg with nothing above them. Moved an eighth of the way
+    % to the centre it is covered by the tensor, which is drawn over the edge
+    % layer, and the join closes; at this size that is about half a millimetre,
+    % so it still leaves from the corner as far as the eye is concerned.
+    \coordinate (#2\tn@i-leg) at
+      ($(#2\tn@i.\csname tn@side@\tn@sd\endcsname)!0.12!(#2\tn@i.center)$);
   }%
 }
 \makeatother
