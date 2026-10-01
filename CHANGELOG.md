@@ -33,6 +33,19 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
+`tests/cases/styles.tex` is a specimen sheet rather than a picture. Each public
+style and command stands on its own with the name it is there to show written
+under it, so what the file is for can be read off it. The one group kept
+together is the chain, because a triangle alone says nothing — "isometric from
+this side" needs the other side and the centre to be read against. What was
+there before had `tn arrows=false`, a one-site gate and `centrebond` welded into
+a single chain with a gate `V` on it, which looked like a diagram making a claim
+and was only three unrelated coverage needs sharing a picture.
+
+`tests/coverage.py` now says what its match cannot prove: it is textual, so
+where a style and a colour share a name (`coef`, `centre`, `mpo`, `gate`) the
+colour's swatch satisfies the style.
+
 A tensor is drawn over the index it carries, and that is now the package's job
 rather than the caller's. Every edge `\tnbond`, `\tnlegs`, `\tngatelegs` and
 `\tnswap` draws goes on a layer beneath the nodes, so the rule holds whatever
