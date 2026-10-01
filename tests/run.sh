@@ -8,7 +8,7 @@
 #    warning from LaTeX or a package and the log naming this version of the
 #    package (the \ProvidesPackage line, as scripts/version.py reads it).
 # 2. tests/coverage.py: every style and command in tex/ is used by some case.
-# 3. The LuaLaTeX pages, rendered by pdftocairo, match tests/reference/*.png
+# 3. The LuaLaTeX pages, rendered by pdftoppm, match tests/reference/*.png
 #    (tests/compare.py). A deliberate change in appearance is --update plus a
 #    minor version step, which scripts/version.py check enforces.
 #
@@ -55,17 +55,25 @@ done
 python3 tests/coverage.py || fail=1
 
 for pdf in "$OUT"/lualatex/*.pdf; do
-  # pdftocairo, not pdftoppm. poppler's own Splash backend snaps a thin
-  # axis-aligned stroke to whole pixels and does not anti-alias it, so the two
-  # horizontal edges of a box round independently by where each lands and can
-  # come out a pixel apart -- a box with a heavier bottom than top. It is a
-  # phase effect, not a resolution one: measured on one page at fourteen
-  # resolutions it flips on and off with no rule (clean at 150, 180, 330, 360;
-  # a pixel out at 240, 270, 300, 450), and it depends on where the box sits,
-  # so no choice of dpi is safe for every figure. Cairo anti-aliases instead
-  # and the two edges agree to a few per cent. Both write 8-bit RGB at the same
-  # size, so compare.py and the references carry over unchanged.
-  pdftocairo -png -r 150 -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
+  # pdftoppm, and the asymmetry it draws is accepted on purpose. poppler's
+  # Splash backend snaps a thin axis-aligned stroke to whole pixels without
+  # anti-aliasing, so the two horizontal edges of a box round independently by
+  # where each lands and can come out a pixel apart. Measured on the specimen
+  # sheet: 18 of the 157 columns crossing a box have their two strokes more
+  # than half a pixel apart in ink, the worst 0.80 px. It is a phase effect,
+  # not a resolution one -- across fourteen resolutions the same page flips on
+  # and off with no rule -- so no choice of dpi avoids it.
+  #
+  # pdftocairo anti-aliases instead and cuts that to 3 of 157, but it was tried
+  # and reverted: its anti-aliasing is not the same across poppler versions, so
+  # references rendered here failed against the runner's by 1.1 to 2.5 per cent
+  # of drawn pixels, over the 1 per cent limit, on six of the eight pages. This
+  # test exists to be reproducible across machines, and snapping is reproducible
+  # where anti-aliasing is not.
+  #
+  # Nothing a document shows is affected either way: build.sh gives the
+  # documents SVG and PDF, and these PNGs exist only to be compared.
+  pdftoppm -r 150 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
 done
 python3 tests/compare.py "$OUT/rendered" "$@" || fail=1
 exit "$fail"

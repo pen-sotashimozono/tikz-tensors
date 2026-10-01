@@ -3,7 +3,7 @@
 
     python3 tests/compare.py <rendered dir> [--update]
 
-Every <name>.png in the rendered directory (pdftocairo -png output) is compared
+Every <name>.png in the rendered directory (pdftoppm -png output) is compared
 with tests/reference/<name>.png. A page passes when it has the same size and
 at most TOLERANCE of its drawn pixels (not white in either image) differ by
 more than THRESHOLD levels in some colour channel, so a blue that turns grey
@@ -15,7 +15,7 @@ fails, <name>-diff.png beside it shows the reference faintly, with differing
 pixels in red. --update copies the rendered pages over the references.
 
 Writes a Markdown table to $GITHUB_STEP_SUMMARY when set. Standard library
-only: a decoder for the 8-bit RGB / greyscale PNGs pdftocairo writes, and an
+only: a decoder for the 8-bit RGB / greyscale PNGs pdftoppm writes, and an
 encoder.
 """
 from __future__ import annotations
@@ -46,7 +46,7 @@ def read_png(path: pathlib.Path) -> tuple[int, int, bytearray]:
             width, height, depth, colour, _, _, interlace = struct.unpack(">IIBBBBB", body)
             if depth != 8 or colour not in (0, 2) or interlace:
                 raise ValueError(f"{path}: expected 8-bit RGB or greyscale, non-interlaced "
-                                 f"(as pdftocairo -png writes)")
+                                 f"(as pdftoppm -png writes)")
             n = 3 if colour == 2 else 1
         elif kind == b"IDAT":
             idat += body

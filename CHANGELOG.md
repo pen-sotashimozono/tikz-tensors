@@ -33,16 +33,19 @@ colour (`coef`, `centre`, `mpo`, `gate`): TikZ resolves a bare option as a key
 before it tries it as a colour, so `\fill[gate]` fills with the *style*. Write
 `color=gate`, or `draw=`/`fill=`.
 
-The reference images are rendered by `pdftocairo` rather than `pdftoppm`, which
-is why every one of them changed. poppler's Splash backend snaps a thin
-axis-aligned stroke to whole pixels without anti-aliasing, so the two horizontal
-edges of a box round independently by where each lands and can come out a pixel
-apart — a box with a heavier bottom than top. Measured on the specimen sheet:
-18 of 157 columns crossing a box had the two strokes more than half a pixel
-apart in ink, the worst 0.80 px, which at 0.8pt and 150 dpi is about half the
-stroke. With cairo, 3 of 157, median 0.004 px. It is a phase effect rather than
-a resolution one — across fourteen resolutions it flips on and off with no rule
-— so there is no dpi that fixes it; anti-aliasing does.
+The uneven outlines a box can show in the rendered test PNGs are recorded in
+`tests/run.sh` rather than fixed, because the fix was measured and was worse.
+TikZ is not the source: the PDF carries one line width per stroked path, so
+there is no top-against-bottom to get wrong. poppler's Splash backend snaps a
+thin axis-aligned stroke to whole pixels without anti-aliasing, so the two
+edges of a box round independently by where each lands — 18 of the 157 columns
+crossing a box on the specimen sheet have their strokes more than half a pixel
+apart in ink, the worst 0.80 px. It is a phase effect, not a resolution one, so
+no dpi avoids it. `pdftocairo` cuts it to 3 of 157, but its anti-aliasing
+differs between poppler versions and the references then failed against the
+runner's render on six of eight pages; this test exists to be reproducible, and
+snapping is. Nothing a document shows is affected either way — `build.sh` gives
+the documents SVG and PDF, and these PNGs exist only to be compared.
 
 `tests/cases/styles.tex` is a specimen sheet rather than a picture. Each public
 style and command stands on its own with the name it is there to show written
