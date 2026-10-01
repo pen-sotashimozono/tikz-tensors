@@ -57,27 +57,24 @@
   % canl and canr say "isometric from the left" and "from the right", which is
   % a statement about a chain; centre is the one tensor that is neither. Alone
   % they would be three shapes with nothing to be read against.
-  \tnchain[1.3]{A}{(4.6,-4.0)}{canl//l, canl//l, centre//c, canr//r, canr//r}
+  \tnchain{A}{(4.6,-4.0)}{(9.8,-4.0)}{canl//l, canl//l, centre//c,
+                                      canr//r, canr//r}
   \tnbond[gauge]{(A1) -- (A2)}  \tnbond[gauge]{(A2) -- (A3)}
   \tnbond[gauge]{(A4) -- (A3)}  \tnbond[gauge]{(A5) -- (A4)}
   \tnbond[gauge]{([xshift=-5mm]A1.west) -- (A1)}
   \tnbond[gauge]{([xshift=5mm]A5.east) -- (A5)}
-  \tngate{G}{$U$}{A2-leg,A3-leg}{-5.3}
-  \tngatelegs{G}{north}{A2-leg,A3-leg}
-  % An operator on the chain. Its bond and the legs into it are drawn before its
-  % tensors here and would be drawn across them without the edge layer; the
-  % \node calls come last on purpose, and the lines still go under. Every x is a
-  % -leg coordinate, so no connection point is spelled twice.
-  \tnbond[disc]{(A1-leg |- 0,-6.6) -- (A5-leg |- 0,-6.6)}
-  \tnlegs{-6.6}{A1-leg,A4-leg,A5-leg}
-  \tnbond[disc]{(G.south -| A2-leg) -- (A2-leg |- 0,-6.6)}
-  \tnbond[disc]{(G.south -| A3-leg) -- (A3-leg |- 0,-6.6)}
-  \foreach \i in {1,...,5}
-    \tnbond[disc]{(A\i-leg |- 0,-6.6) -- (A\i-leg |- 0,-7.4)};
-  \foreach \i in {1,...,5} \node[mpo] at (A\i-leg |- 0,-6.6) {};
-  \spec{7.2}{-7.6}{canl, canr, centre, mpo, gate, gauge\\%
+  % The indices run the whole way down to the operator; the gate is put on two
+  % of them and covers them, because a node is drawn over an edge. The operator
+  % row sits on the tips, and its own bond and out-legs are measured from those,
+  % so no height in this block is written as a coordinate.
+  \tnlegs{20mm}{A1-leg,A2-leg,A3-leg,A4-leg,A5-leg}
+  \tngate{G}{$U$}{A2-leg,A3-leg}{7mm}
+  \tnbond[disc]{(A1-leg-tip) -- (A5-leg-tip)}
+  \tnlegs{7mm}{A1-leg-tip,A2-leg-tip,A3-leg-tip,A4-leg-tip,A5-leg-tip}
+  \foreach \i in {1,...,5} \node[mpo] at (A\i-leg-tip) {};
+  \spec{7.2}{-7.45}{canl, canr, centre, mpo, gate, gauge\\%
     \textbackslash tnchain, \textbackslash tnbond, \textbackslash tnlegs,
-    \textbackslash tngate, \textbackslash tngatelegs}
+    \textbackslash tngate, \textbackslash tnput, \textbackslash tnmid}
 
   % ---- the network before any of the names above exist ------------------
   % Three tensors and the indices between them, out of tn node, tn fill and
@@ -93,11 +90,11 @@
   \spec{12.2}{-6.4}{tn node, tn fill, tn edge}
 
   % ---- the two that are easier to see on their own ---------------------
-  \tnchain{Y}{(0.4,-6.4)}{canl//l, centrebond//c, canr//r}
+  \tnchain{Y}{(0.4,-6.4)}{(2.4,-6.4)}{canl//l, centrebond//c, canr//r}
   \tnbond[gauge]{(Y1) -- (Y2)}  \tnbond[gauge]{(Y3) -- (Y2)}          \spec{1.4}{-6.95}{centrebond}
-  \tnchain{V}{(0.9,-8.3)}{canl//l}
-  \tngate{W}{$V$}{V1-leg}{-9.2}
-  \tngatelegs{W}{north}{V1-leg}                          \spec{0.9}{-9.6}{\textbackslash tngate,
+  \tnchain{V}{(0.9,-8.3)}{(0.9,-8.3)}{canl//l}
+  \tnlegs{12mm}{V1-leg}
+  \tngate{W}{$V$}{V1-leg}{4mm}                           \spec{0.9}{-10.1}{\textbackslash tngate,
                                                              one site}
 
   % ---- the named colours -----------------------------------------------

@@ -77,8 +77,9 @@ The gate is pale: `gate!25` with ink, outlined in `gate!85!black`. The state
 tensors keep the fills they had. A gate is applied *to* the state and should
 read behind it, and at equal weight the two competed.
 
-`\tnchain` places a row of tensors and says, once, where each one's index
-leaves it: site i becomes the node `<prefix>i` and the coordinate
+`\tnchain` takes a line and puts the tensors on it — evenly between its two
+ends, or stepped along it by a given pitch — and says, once, where each one's
+index leaves it: site i becomes the node `<prefix>i` and the coordinate
 `<prefix>i-leg`, and everything that connects to that site — its own leg, a
 gate's leg, an operator row beneath it — connects to that coordinate.
 `\tnlegs`, `\tngate` and `\tngatelegs` take points now, not a node and a side.
@@ -88,6 +89,18 @@ across the two examples and the specimen sheet before: 27 spellings of a corner
 anchor and 40 literal site coordinates, with one site's connection point written
 out four separate times. After: no corner anchors at all, and the only literal
 coordinates left are where a specimen sits on the sheet.
+
+`\tnlegs` and `\tngate` take a drop rather than a height, so nothing in a
+picture is a y to be worked out; `\tnput` and `\tnmid` place a label by what it
+labels — above this tensor, below that index's end, midway along this bond —
+rather than at a coordinate. `04-canonical` is down to the two coordinates of
+its one line and `05-centre` to those plus two offsets from them; before this
+pass there were 40 literal coordinates across the two examples and the specimen
+sheet.
+
+`\tngatelegs` is gone. A gate needs no legs: the indices run past it and a node
+covers an edge, so a gate placed on them interrupts them, which is what applying
+one looks like and is one fewer thing to keep in step.
 
 One picture moves because of it. `\tngate` measures the points it is given, so
 it now spans the indices it acts on rather than the sites' centres, and the gate

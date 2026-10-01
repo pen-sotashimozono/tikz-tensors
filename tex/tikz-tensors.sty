@@ -38,8 +38,8 @@
 %%   mpo          an operator tensor sitting on the chain, neutral so that the
 %%                state reads through it
 %%   gate         a box over one site or several (a Trotter step, one term of an
-%%                MPO). \tngate sizes and places it from the sites themselves,
-%%                so no width is written by hand, and \tngatelegs drops its legs
+%%                MPO). \tngate sizes and places it from the indices themselves,
+%%                so no width is written by hand, and it needs no legs
 %%   gauge        a disc that carries a direction, as an arrowhead. A bond does
 %%                not have one in general -- it is an index, and an index is
 %%                just an index -- so the plain `disc' is the bond, and `gauge'
@@ -59,7 +59,7 @@
 %% a node style and the shape is a circle, the colour and meaning unchanged.
 %% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
 %%
-%% Every edge is drawn under the nodes, by \tnbond, \tnlegs, \tngatelegs and
+%% Every edge is drawn under the nodes, by \tnbond, \tnlegs and
 %% \tnswap: a tensor covers the index it carries whatever order the file is
 %% written in. \tnbond takes the whole path, so an index can end on a node, on a
 %% coordinate, or on nothing at all -- an open index needs no far end. A `node'
@@ -71,8 +71,8 @@
 %% row and gives each site a <name>-leg coordinate. Everything that connects to
 %% that site -- its own leg, a gate's leg, an operator row under it -- connects
 %% to that coordinate, so the point exists in one place and cannot be spelled
-%% two ways. \tnlegs, \tngate and \tngatelegs all take points, not nodes and a
-%% side.
+%% two ways. \tnlegs and \tngate take points, and a label is placed by \tnput
+%% and \tnmid in terms of what it labels rather than as a coordinate.
 %%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
 %%
@@ -210,18 +210,17 @@
 \newcommand{\tnbond}[2][disc]{%
   \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
-% \tnchain[<pitch>]{<prefix>}{<origin>}{<style/label/side, ...>}
-% Place a row of tensors and say, once, where each one's physical index leaves
-% it. Site i becomes the node <prefix>i and the coordinate <prefix>i-leg, which
-% is the point every later command connects to: the legs, the gate's legs, an
-% operator row below. Before this the connection point was respelled at every
-% use -- `A2.corner 3' written out in the legs, again in the gate's legs, again
-% in the operator's bond -- and three spellings of one point are three chances
-% to disagree with each other.
+% \tnchain[<pitch>]{<prefix>}{<from>}{<to>}{<style/label/side, ...>}
+% Draw one line and put the tensors on it. Without <pitch> they are spread
+% evenly from <from> to <to>, first and last on the ends; with it they start at
+% <from> and step by <pitch>, and <to> only gives the direction. Site i becomes
+% the node <prefix>i and the coordinate <prefix>i-leg, the point where its
+% physical index leaves it and the point everything else connects to.
 %
-%   \tnchain[1]{S}{(0,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
-%   \tnbond[gauge]{(S1) -- (S2)}
-%   \tnlegs{-2}{S1-leg,S2-leg,S3-leg}
+%   \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
+%
+% Two coordinates for a row, and none per site: a row that is respaced, or
+% turned, or given another tensor, is one line edited in one place.
 %
 % <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
 % or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
@@ -232,63 +231,85 @@
 \def\tn@side@l{corner 3}
 \def\tn@side@r{corner 2}
 \def\tn@side@c{south}
-\newcommand{\tnchain}[4][1]{%
-  \foreach \tn@sty/\tn@lab/\tn@sd [count=\tn@n from 1] in {#4}{%
-    \pgfmathsetmacro{\tn@dx}{(\tn@n-1)*(#1)}%
-    \node[\tn@sty] (#2\tn@n) at ($#3 + (\tn@dx,0)$) {\tn@lab};
-    \coordinate (#2\tn@n-leg) at (#2\tn@n.\csname tn@side@\tn@sd\endcsname);
+\newcount\tn@cnt
+\newcommand{\tnchain}[5][]{%
+  \global\tn@cnt=0
+  \foreach \tn@z in {#5}{\global\advance\tn@cnt by 1}%
+  \foreach \tn@sty/\tn@lab/\tn@sd [count=\tn@i from 1] in {#5}{%
+    \ifx\relax#1\relax
+      \ifnum\tn@cnt>1
+        \pgfmathsetmacro{\tn@t}{(\tn@i-1)/(\the\tn@cnt-1)}%
+      \else \def\tn@t{0}\fi
+      \coordinate (tn@spot) at ($#3!\tn@t!#4$);
+    \else
+      \pgfmathsetlength{\pgf@xa}{(\tn@i-1)*(#1)}%
+      \coordinate (tn@spot) at ($#3!\the\pgf@xa!#4$);
+    \fi
+    \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
+    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
   }%
 }
 \makeatother
 
-% \tnlegs[<kind>]{<target y>}{<points>}
-% A physical leg from each point down to <target y>, all ending level whatever
-% each started from. The points are \tnchain's -leg coordinates, or any
-% coordinate a caller has: the side is already settled where the point was
-% defined, so it is not an argument here and cannot be given twice differently.
+% \tnlegs[<kind>]{<drop>}{<points>}
+% A physical index from each point, every one ending <drop> below the lowest of
+% them, so a row of legs is level whatever each started from -- a diamond hangs
+% lower than a triangle's corner, and the drop is a rule rather than a y to be
+% written out. <drop> is a length (16mm, 1.6cm), like \tngate's padding and
+% unlike the line \tnchain is given, which is a pair of coordinates. Each leg's far end becomes <point>-tip, which is where a label
+% for that index goes.
 \makeatletter
+\newdimen\tn@x \newdimen\tn@y \newdimen\tn@lo \newdimen\tn@hi
+\newcommand{\tn@spanx}[1]{% min and max x of a list of points
+  \global\tn@lo=\maxdimen \global\tn@hi=-\maxdimen
+  \foreach \tn@s in {#1}{%
+    \pgfextractx{\tn@x}{\pgfpointanchor{\tn@s}{center}}%
+    \ifdim\tn@x<\tn@lo \global\tn@lo=\tn@x \fi
+    \ifdim\tn@x>\tn@hi \global\tn@hi=\tn@x \fi}}
+\newcommand{\tn@lowy}[1]{% the lowest y of a list of points
+  \global\tn@lo=\maxdimen
+  \foreach \tn@s in {#1}{%
+    \pgfextracty{\tn@y}{\pgfpointanchor{\tn@s}{center}}%
+    \ifdim\tn@y<\tn@lo \global\tn@lo=\tn@y \fi}}
 \newcommand{\tnlegs}[3][disc]{%
+  \tn@lowy{#3}%
+  \pgfmathsetlength{\pgf@yb}{\tn@lo-(#2)}\edef\tn@bot{\the\pgf@yb}%
   \begin{pgfonlayer}{tnedges}%
-    \foreach \tn@n in {#3}{\draw[#1] (\tn@n) -- (\tn@n |- 0,#2);}%
+    \foreach \tn@n in {#3}{%
+      \coordinate (\tn@n-tip) at (\tn@n |- 0,\tn@bot);
+      \draw[#1] (\tn@n) -- (\tn@n-tip);%
+    }%
   \end{pgfonlayer}%
 }
 \makeatother
 
-% \tngate[<padding>]{<node name>}{<label>}{<points>}{<y>}
-% A gate over those points, at that height, as wide as they span plus <padding>
-% at each end and centred on them. One point gives a small box, several a bar;
-% the caller writes no width, so a gate cannot drift off what it acts on when
-% the row is respaced. It measures the points themselves -- the -leg
-% coordinates, where the indices actually are -- so the padding is only what
-% looks right and does not have to allow for a corner.
+% \tngate[<padding>]{<node name>}{<label>}{<points>}{<drop>}
+% A gate on those indices, <drop> below the lowest of them (a length, as in
+% \tnlegs), as wide as they span plus <padding> at each end and centred on them. One point gives a small
+% box, several a bar. It needs no legs of its own: a node is drawn over an
+% edge, so a gate placed on indices that run past it interrupts them, which is
+% what applying a gate to those indices looks like.
 \makeatletter
-\newdimen\tn@x \newdimen\tn@lo \newdimen\tn@hi
 \newcommand{\tngate}[5][4mm]{%
-  \global\tn@lo=\maxdimen \global\tn@hi=-\maxdimen
-  \foreach \tn@s in {#4}{%
-    \pgfextractx{\tn@x}{\pgfpointanchor{\tn@s}{center}}%
-    \ifdim\tn@x<\tn@lo \global\tn@lo=\tn@x \fi
-    \ifdim\tn@x>\tn@hi \global\tn@hi=\tn@x \fi
-  }%
+  \tn@spanx{#4}%
   \pgfmathsetlength{\pgf@xb}{\tn@hi-\tn@lo+2*(#1)}%
   \pgfmathsetlength{\pgf@xc}{(\tn@lo+\tn@hi)/2}%
   \edef\tn@wd{\the\pgf@xb}\edef\tn@md{\the\pgf@xc}%
-  \node[gate, minimum width=\tn@wd] (#2) at (\tn@md,#5) {#3};%
+  \tn@lowy{#4}%
+  \pgfmathsetlength{\pgf@yb}{\tn@lo-(#5)}%
+  \node[gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
 }
 \makeatother
 
-% \tngatelegs[<kind>]{<gate node>}{<anchor>}{<points>}
-% A leg from the gate to each point, dropped straight from <anchor> (south when
-% the gate sits above, north when it sits below) so that it can span any number
-% of them without the legs splaying. The points are the same -leg coordinates
-% the sites' own legs use, so the two meet by construction.
-\makeatletter
-\newcommand{\tngatelegs}[4][disc]{%
-  \begin{pgfonlayer}{tnedges}%
-    \foreach \tn@n in {#4}{\draw[#1] (#2.#3 -| \tn@n) -- (\tn@n);}%
-  \end{pgfonlayer}%
-}
-\makeatother
+% \tnput[<placement>]{<point>}{<text>}      text on or beside one point
+% \tnmid[<placement>]{<a>}{<b>}{<text>}     text midway between two points
+% Where a label goes is said in terms of what it labels -- above this tensor,
+% below that index's end, midway along this bond -- and never as a coordinate,
+% because a coordinate written for a label is a coordinate that has to be
+% re-found every time the thing it labels moves. <placement> is TikZ's: above,
+% below, left, right, center, and any of them with a distance.
+\newcommand{\tnput}[3][above]{\node[leg, #1] at (#2) {#3};}
+\newcommand{\tnmid}[4][above]{\node[leg, #1] at ($(#2)!0.5!(#3)$) {#4};}
 
 % \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
