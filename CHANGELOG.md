@@ -107,6 +107,14 @@ it now spans the indices it acts on rather than the sites' centres, and the gate
 in `04-canonical` is narrower and sits over its two legs — 3.9% of drawn pixels.
 `05-centre` is byte-identical, which is the check that nothing else moved.
 
+A tensor's outline and an index are drawn in one ink by default. The theme's
+`[figure] stroke` names it, `tn node` and `tn edge` both take it, and a preset
+that means something by its colour says so for itself. It is `grey3`, which is
+`black!80` to the pixel — so the edges do not move, only the outlines that were
+in the page's text ink: 1187 pixels of the specimen sheet change from `#00344d`
+to `#333333`, and the 553 that stay are the labels. `grey3` was the last step
+that nothing named, so the count on the palette chart goes to 14 of 18.
+
 A network is nodes and edges, and those come first: `tn node` is a tensor,
 `tn edge` an index, `tn fill` the solid-colour convention. A diagram can be
 drawn out of those three with no notion of what is a state and what is an

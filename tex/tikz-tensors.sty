@@ -134,20 +134,23 @@
 %   \tnbond[tn edge]{(a) -- (b)}                  % an index between them
 %   \tnbond[tn edge=exact]{(b) -- ++(1,0)}        % one in a colour of its own
 %
-% tn node is what every tensor shares -- one stroke, an ink outline, an ink
-% label, no inner padding -- and the shape is TikZ's, a rectangle unless another
-% is asked for. It draws in ink rather than leaving `draw' unset, because a node
-% with no draw is not drawn at all and a bare tn node has to be a tensor you can
-% see. tn fill is the solid convention: a step of a scale, outlined in a darker
-% shade of itself, and it replaces the ink outline. tn edge is an index, in ink
-% unless given a colour.
+% tn node is what every tensor shares -- one stroke, no inner padding -- and the
+% shape is TikZ's, a rectangle unless another is asked for. Its outline is the
+% theme's `stroke' and so is tn edge's, so a tensor and the index it carries are drawn in one
+% ink by default: a tensor is not a different kind of mark from its index, and
+% an outline in its own colour should be something a preset says on purpose. It
+% draws rather than leaving `draw' unset, because a node with no draw is not
+% drawn at all and a bare tn node has to be a tensor you can see. tn fill is the
+% solid convention -- a step of a scale, outlined in a darker shade of itself --
+% and it replaces that default outline. A colour can of course be given: tn edge
+% takes one as its argument, and a node takes draw= like any TikZ node.
 \tikzset{
-  tn node/.style   = {tn line, draw=ttfg, minimum size=9mm, inner sep=0pt,
+  tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
                       text=ttfg},
   tn fill/.style   = {draw=#1!65!black, fill=#1},
   tn fill/.default = grey2,
   tn edge/.style   = {tn line, draw=#1},
-  tn edge/.default = black!80,
+  tn edge/.default = stroke,
 }
 
 % ---- presets: what a tensor is, and what its index carries -------------------
@@ -157,11 +160,10 @@
                      minimum height=8mm},
   fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
                      minimum height=17mm},
-  coef/.style     = {tn node, rectangle, draw=black!80, fill=black!6,
-                     minimum size=7mm},
+  coef/.style     = {tn node, rectangle, fill=black!6, minimum size=7mm},
   coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
   coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {tn node, rectangle, draw=ttfg, fill=white,
+  op/.style       = {tn node, rectangle, fill=white,
                      minimum size=7mm, inner sep=1pt},
   opwide/.style   = {op, minimum width=17mm},
   frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},

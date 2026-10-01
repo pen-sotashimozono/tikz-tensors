@@ -93,6 +93,13 @@ warn-bg = "yellow2 +86% black"
 bad     = "warm3 +25% white"   #                              5.05:1
 bad-bg  = "warm3 +86% black"
 
+# What a diagram is drawn in when nothing says otherwise. One value for a
+# tensor's outline and for an index, because a tensor is not a different kind of
+# mark from the index it carries; a preset that means something by its colour
+# says so for itself.
+[figure]
+stroke = "grey3"
+
 # Meaning, not decoration, and a step of a scale taken whole. Same in light and
 # dark (figures keep their own white paper).
 [physics]
