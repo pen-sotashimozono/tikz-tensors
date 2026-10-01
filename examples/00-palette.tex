@@ -1,12 +1,18 @@
-% The whole theme, which is eight colours and nothing else.
+% The whole theme, which is two scales, a green and a grey.
 %
-% Each column is one of the eight: the pure colour in the middle, the tints
-% above it and the shades below, which is the range every other value in the
-% theme is drawn from. Under it, the hex, then what the colour carries -- the
-% figure styles on one line and the page tokens on the next. A page token is a
-% tint or a shade rather than the pure colour, because a page has a background
-% and body text and the pure colour does not always clear the contrast a reader
-% needs; theme/tokens.toml records the mix and the measured ratio for each.
+% The codes are not eight separate colours. Blue runs light to dark in three
+% steps and warm runs light to dark in three, and that ordering is the thing
+% being specified: a pair that should read as a pair takes the same step on the
+% two scales -- canl and canr at step 1, edge and edgec at step 3 -- and a
+% figure that needs a stronger or weaker version of a colour moves along its
+% scale rather than reaching for a new one.
+%
+% Each column is one step: the ramp of tints and shades the step is drawn from,
+% then its name, its hex, and what it carries -- the figure styles on one line
+% and the page tokens on the next. A page token is a tint or a shade rather than
+% the step itself, because a page has a background and body text and a step does
+% not always clear the contrast a reader needs; theme/tokens.toml records the
+% mix and the measured ratio for each.
 %
 % The ramps are mixed by xcolor from the defined colour, not written out, so
 % this page cannot drift from theme/tokens.toml. Only the eight hex strings are
@@ -20,26 +26,36 @@
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1cm, y=1cm]
-  \foreach \c/\hex/\fig/\page [count=\i from 0] in {%
-    coef/809EAB/{coef, canl}/{faint, muted},
-    centre/6ABE92/{centre}/{good},
-    canr/CE7E60/{canr}/{---},
-    ele/0082A9/{ele, gate}/{accent},
-    exact/005077/{exact, edge}/{fg, dark bg},
-    exchange/88451B/{exchange, edgec}/{bad},
-    nuc/B65C24/{nuc}/{warn},
-    mpo/D2D2D3/{mpo}/{line, light bg}%
+  % the two scales, each labelled with the direction it runs
+  \foreach \lo/\hi/\name in {0/2/blue, 3.3/5.3/warm} {
+    \draw[tn line, draw=ttmuted, -{Latex[length=2mm]}]
+      (\lo*2.3,0.62) -- (\hi*2.3+1.95,0.62);
+    \node[anchor=south west, font=\scriptsize, text=ttmuted]
+      at (\lo*2.3,0.70) {\name: light to dark};
+  }
+
+  \foreach \c/\step/\hex/\fig/\page/\x in {%
+    coef/blue1/809EAB/{coef, canl}/{faint, muted}/0,
+    ele/blue2/0082A9/{ele, gate}/{accent}/1,
+    exact/blue3/005077/{exact, edge}/{fg, dark bg}/2,
+    canr/warm1/CE7E60/{canr}/{---}/3.3,
+    nuc/warm2/B65C24/{nuc}/{warn}/4.3,
+    exchange/warm3/88451B/{exchange, edgec}/{bad}/5.3,
+    centre/green/6ABE92/{centre}/{good}/6.6,
+    mpo/grey/D2D2D3/{mpo}/{line, light bg}/7.6%
   }{
     \foreach \m [count=\j from 0] in {15,40,70,100,70!black,45!black}
-      \fill[color=\c!\m] (\i*2.4,-\j*0.62) rectangle ++(1.95,0.56);
-    % the pure colour, marked where it sits in the ramp
-    \draw[tn line, draw=ttfg] (\i*2.4,-3*0.62) rectangle ++(1.95,0.56);
-    \node[anchor=north west, font=\ttfamily\scriptsize, text=ttfg]
-      at (\i*2.4,-6*0.62-0.08) {\hex};
-    \node[anchor=north west, font=\scriptsize, text=ttfg,  align=left]
-      at (\i*2.4,-6*0.62-0.46) {\fig};
-    \node[anchor=north west, font=\scriptsize, text=ttmuted, align=left]
-      at (\i*2.4,-6*0.62-0.84) {\page};
+      \fill[color=\c!\m] (\x*2.3,-\j*0.62) rectangle ++(1.95,0.56);
+    % the step itself, marked where it sits in the ramp
+    \draw[tn line, draw=ttfg] (\x*2.3,-3*0.62) rectangle ++(1.95,0.56);
+    \node[anchor=north west, font=\scriptsize, text=ttfg]
+      at (\x*2.3,-6*0.62-0.06) {\step};
+    \node[anchor=north west, font=\ttfamily\scriptsize, text=ttmuted]
+      at (\x*2.3,-6*0.62-0.42) {\hex};
+    \node[anchor=north west, font=\scriptsize, text=ttfg,     align=left]
+      at (\x*2.3,-6*0.62-0.82) {\fig};
+    \node[anchor=north west, font=\scriptsize, text=ttmuted,  align=left]
+      at (\x*2.3,-6*0.62-1.18) {\page};
   }
 \end{tikzpicture}
 \end{document}

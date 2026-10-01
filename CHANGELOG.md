@@ -67,6 +67,23 @@ alone.
 each one carries in figures and on a page. The ramps are mixed by xcolor from
 the defined colour, so the page cannot drift from `theme/tokens.toml`.
 
+The codes are two scales, not eight colours, and `[ramp]` now says so: blue in
+three steps light to dark, warm in three, plus a green and a grey. Every other
+value names a step — `blue2`, `warm3 +25% white` — and no hex is written twice,
+so a code is written once and a meaning is an assignment onto it. A pair that
+should read as a pair takes the same step on the two scales: `canl`/`canr` at
+step 1, `edge`/`edgec` at step 3. `scripts/theme.py` resolves a step and its
+mix; restructuring moved no value, which the generated files show as eight
+added lines and nothing changed.
+
+`tn round` draws a node as a circle. Square against circle is this package's own
+distinction and only earns its keep where both kinds are on the page; a plain
+tensor network has no functions in it, and much of the literature draws every
+tensor there as a circle. `examples/03-mps.tex` draws one chain both ways —
+same style, same colour, same meaning. Shape still carries meaning in a
+canonical form, where a triangle says isometric and a diamond says centre, and
+`tn round` does not touch that.
+
 `examples/02-swap.tex` exchanges two finite indices instead of two positions,
 so its legs are straight. Wavy legs mean a continuous argument, and drawing a
 swap of positions with straight ones would have contradicted the notation the

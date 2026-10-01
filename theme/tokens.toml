@@ -2,71 +2,84 @@
 # and, later, slides. scripts/theme.py writes theme/theme.css and
 # tex/tikz-tensors-colors.tex from this file; edit here, never there.
 #
-# Everything descends from eight colours:
+# [ramp] is where the colour codes live, and they are two scales rather than
+# eight separate colours: a blue from light to dark, a warm from light to dark,
+# plus one green and one grey. Everything below names a step on a scale --
+# blue2, warm3 -- and never repeats a hex, so a code is written once and a
+# meaning is an assignment onto it. A pair that should read as a pair takes the
+# same step on the two scales: canl/canr at step 1, edge/edgec at step 3.
 #
-#   809eab  blue-grey    6abe92  green       ce7e60  terracotta  0082a9  teal
-#   005077  navy         88451b  brown       b65c24  orange      d2d2d3  grey
-#
-# The figure sections below spend them pure. The page sections take tints and
-# shades of the same eight, because a page has a background and body text and a
-# pure colour does not always clear the contrast a reader needs: every value in
-# [light] and [dark] is one of the eight mixed toward white or black, and the
-# comment on each says which one and how far. examples/00-palette.tex draws the
+# The page sections take tints and shades of the same steps, because a page has
+# a background and body text and a step does not always clear the contrast a
+# reader needs. Each of those values is written as `step +NN% white|black`, and
+# the comment carries the ratio it measures. examples/00-palette.tex draws the
 # whole map.
 #
-# One limit worth stating rather than hiding: the eight carry no red and no
-# yellow, so `warn` and `bad` are the same warm family and differ by weight, not
+# One limit worth stating rather than hiding: there is no red and no yellow, so
+# `warn` and `bad` are two steps of the one warm scale and differ by weight, not
 # by hue. A page must not separate those two by colour alone.
 
+[ramp]
+blue1 = "#809eab"   # light
+blue2 = "#0082a9"
+blue3 = "#005077"   # dark
+warm1 = "#ce7e60"   # light
+warm2 = "#b65c24"
+warm3 = "#88451b"   # dark
+green = "#6abe92"
+grey  = "#d2d2d3"
+
 [light]
-bg      = "#fafafa"   # grey   +88% white -- page background
-card    = "#ffffff"   #                      cards, figure paper
-soft    = "#f2f5f7"   # blue-grey +90% white -- table heads, subtle fills
-fg      = "#00344d"   # navy   +35% black -- text,            12.59:1 on bg
-muted   = "#607680"   # blue-grey +25% black -- secondary text, 4.57:1
-faint   = "#7895a1"   # blue-grey  +6% black -- captions,       3.04:1
-line    = "#d2d2d3"   # grey   pure       -- rules, hairlines
-accent  = "#007da2"   # teal    +4% black -- links, emphasis,   4.52:1
-good    = "#467d60"   # green  +34% black --                    4.61:1
-good-bg = "#f0f8f4"   # green  +90% white
-warn    = "#b45b24"   # orange  +1% black --                    4.51:1
-warn-bg = "#f8efe9"   # orange +90% white
-bad     = "#88451b"   # brown  pure       --                    6.90:1
-bad-bg  = "#f1e9e4"   # brown  +88% white
+bg      = "grey +88% white"   # page background
+card    = "#ffffff"           # cards, figure paper -- the one value off a scale
+soft    = "blue1 +90% white"  # table heads, subtle fills
+fg      = "blue3 +35% black"  # text,                       12.59:1 on bg
+muted   = "blue1 +25% black"  # secondary text,              4.57:1
+faint   = "blue1 +6% black"   # captions,                    3.04:1
+line    = "grey"              # rules, hairlines
+accent  = "blue2 +4% black"   # links, emphasis,             4.52:1
+good    = "green +34% black"  #                              4.61:1
+good-bg = "green +90% white"
+warn    = "warm2 +1% black"   #                              4.51:1
+warn-bg = "warm2 +90% white"
+bad     = "warm3"             #                              6.90:1
+bad-bg  = "warm3 +88% white"
 
 [dark]
-bg      = "#00080c"   # navy   +90% black
-card    = "#000d13"   # navy   +84% black
-soft    = "#00121a"   # navy   +78% black
-fg      = "#e6ecee"   # blue-grey +80% white --                16.92:1 on bg
-muted   = "#a0b6c0"   # blue-grey +25% white --                 9.56:1
-faint   = "#809eab"   # blue-grey pure       --                 7.11:1
-line    = "#002436"   # navy   +55% black
-accent  = "#59aec7"   # teal   +35% white --                    7.98:1
-good    = "#6abe92"   # green  pure       --                    9.03:1
-good-bg = "#0d1712"   # green  +88% black
-warn    = "#cc8d66"   # orange +30% white --                    7.28:1
-warn-bg = "#190d05"   # orange +86% black
-bad     = "#a67454"   # brown  +25% white --                    5.05:1
-bad-bg  = "#130a04"   # brown  +86% black
+bg      = "blue3 +90% black"
+card    = "blue3 +84% black"
+soft    = "blue3 +78% black"
+fg      = "blue1 +80% white"  #                             16.92:1 on bg
+muted   = "blue1 +25% white"  #                              9.56:1
+faint   = "blue1"             #                              7.11:1
+line    = "blue3 +55% black"
+accent  = "blue2 +35% white"  #                              7.98:1
+good    = "green"             #                              9.03:1
+good-bg = "green +88% black"
+warn    = "warm2 +30% white"  #                              7.28:1
+warn-bg = "warm2 +86% black"
+bad     = "warm3 +25% white"  #                              5.05:1
+bad-bg  = "warm3 +86% black"
 
-# Meaning, not decoration, and the eight colours pure. Same in light and dark
-# (figures keep their own white paper).
+# Meaning, not decoration, and a step of a scale taken whole. Same in light and
+# dark (figures keep their own white paper).
 [physics]
-ele      = "#0082a9"   # electrons, electron density, continuous (position) legs
-nuc      = "#b65c24"   # nuclei
-coef     = "#809eab"   # coefficient arrays (tensor boxes), finite-index legs
-exchange = "#88451b"   # exchange: the term, the hole, the sign under a swap
-exact    = "#005077"   # exact / reference results
+ele      = "blue2"   # electrons, electron density, continuous (position) legs
+nuc      = "warm2"   # nuclei
+coef     = "blue1"   # coefficient arrays (tensor boxes), finite-index legs
+exchange = "warm3"   # exchange: the term, the hole, the sign under a swap
+exact    = "blue3"   # exact / reference results
 
 # Matrix-product states. The gauge is read from colour as much as from the
-# direction a triangle points, so the two canonical forms do not share one; an
-# operator on the chain stays neutral so that the state reads through it.
+# direction a triangle points, so the two canonical forms do not share one --
+# they take step 1 of the two scales, and the boundaries take step 3, so each
+# pair reads as a pair. An operator on the chain stays neutral so that the
+# state reads through it.
 [mps]
-canl   = "#809eab"   # left-canonical: isometric from the left
-canr   = "#ce7e60"   # right-canonical: isometric from the right
-centre = "#6abe92"   # the orthogonality centre, on a site or on a bond
-mpo    = "#d2d2d3"   # operator tensors sitting on the chain
-gate   = "#0082a9"   # a gate, or an identity, spanning sites
-edge   = "#005077"   # a boundary tensor, where a chain is cut or terminated
-edgec  = "#88451b"   # its counterpart at the other end
+canl   = "blue1"   # left-canonical: isometric from the left
+canr   = "warm1"   # right-canonical: isometric from the right
+centre = "green"   # the orthogonality centre, on a site or on a bond
+mpo    = "grey"    # operator tensors sitting on the chain
+gate   = "blue2"   # a gate, or an identity, spanning sites
+edge   = "blue3"   # a boundary tensor, where a chain is cut or terminated
+edgec  = "warm3"   # its counterpart at the other end

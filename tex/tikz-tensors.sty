@@ -44,6 +44,13 @@
 %% picture of one. Shape carries the meaning on its own and colour repeats it, so
 %% the diagrams survive being printed in grey.
 %%
+%% Square or circle is this package's own distinction, and it is only worth
+%% keeping where both kinds are on the page. A diagram with no functions in it --
+%% a plain tensor network -- has nothing to confuse, and much of the literature
+%% draws every tensor there as a circle. `tn round' is that convention: add it to
+%% a node style and the shape is a circle, the colour and meaning unchanged.
+%% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
+%%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
 %%
 %% Outlines and legs are one stroke, `tn line`, whose width is `tn line width`
@@ -76,6 +83,7 @@
 \tikzset{
   tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
   tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
+  tn round/.style     = {circle},
 }
 
 % ---- tensor diagrams ---------------------------------------------------------
