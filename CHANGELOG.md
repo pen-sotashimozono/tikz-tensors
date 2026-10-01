@@ -121,6 +121,15 @@ rather than sprouting from anywhere. The two gauges mirror each other in the
 index as well as in the shape, and `c` is still there for a box, a circle or a
 diamond, which have no such line to continue.
 
+The connection point is on the line that is drawn, not on the shape's outer
+boundary. A corner anchor is the second of those: `minimum size` counts the
+stroke, so the path sits half a line width inside the anchor, and an index
+placed on the anchor runs *beside* the triangle's own edge rather than
+continuing it. Measured at 600 dpi on a canl triangle: the anchor lands at x 66
+and the drawn edge at 68–72. Each side now names its anchor and the shift back
+onto the path, and the test is the obvious one — extend the index upward past
+the top of the tensor and it covers the edge with no black showing beside it.
+
 The join is closed by starting the index inside the tensor, which covers the
 overlap because nodes are drawn over the edge layer. Begun exactly on the
 corner, the index's stroke ends half a line width short of where the outline's
