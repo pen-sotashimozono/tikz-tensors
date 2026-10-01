@@ -10,7 +10,8 @@
 # A figure that wants a stronger version of a colour moves along its own scale
 # instead of reaching for a new one.
 #
-# blue and warm are the given codes. green, yellow and purple are built on the
+# blue and warm are the given codes. grey is the neutral one: paper, a hairline
+# grey, ink. green, yellow and purple are built on the
 # ladder those two measure out, in CIELCh: step 1 near L* 62-74 at about 40% of
 # the chroma the gamut allows there, step 2 near L* 50-60 and step 3 near L* 35-42
 # at about 85%, capped in absolute chroma as well -- purple's gamut is three
@@ -56,16 +57,18 @@ yellow3 = "#7a601e"   # dark  -- ochre
 purple1 = "#a494c1"   # light
 purple2 = "#816ab7"
 purple3 = "#5a4887"   # dark
-grey    = "#d2d2d3"   # the one scale with a single step
+grey1   = "#ffffff"   # light -- paper
+grey2   = "#d2d2d3"
+grey3   = "#333333"   # dark  -- ink
 
 [light]
-bg      = "grey +88% white"    # page background
-card    = "#ffffff"            # cards, figure paper -- the one value off a scale
+bg      = "grey2 +88% white"    # page background
+card    = "grey1"              # cards, figure paper
 soft    = "blue1 +90% white"   # table heads, subtle fills
 fg      = "blue3 +35% black"   # text,                       12.59:1 on bg
 muted   = "blue1 +25% black"   # secondary text,              4.57:1
 faint   = "blue1 +6% black"    # captions,                    3.04:1
-line    = "grey"               # rules, hairlines
+line    = "grey2"              # rules, hairlines
 accent  = "blue2 +4% black"    # links, emphasis,             4.52:1
 good    = "green3"             #                              6.71:1
 good-bg = "green1 +90% white"
@@ -108,7 +111,7 @@ exact    = "blue3"   # exact / reference results
 canl   = "blue1"    # left-canonical: isometric from the left
 canr   = "warm1"    # right-canonical: isometric from the right
 centre = "green1"   # the orthogonality centre, on a site or on a bond
-mpo    = "grey"     # operator tensors sitting on the chain
+mpo    = "grey2"    # operator tensors sitting on the chain
 gate   = "blue2"    # a gate, or an identity, spanning sites
 edge   = "blue3"    # a boundary tensor, where a chain is cut or terminated
 edgec  = "warm3"    # its counterpart at the other end

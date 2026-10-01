@@ -76,6 +76,13 @@ step 1, `edge`/`edgec` at step 3. `scripts/theme.py` resolves a step and its
 mix; restructuring moved no value, which the generated files show as eight
 added lines and nothing changed.
 
+Grey becomes a scale too: `grey1` paper white, `grey2` the hairline grey that
+was simply `grey`, `grey3` ink `#333333`. That removes the last literal from the
+table — `card` was `#ffffff` written out, the one value off a scale — and
+`scripts/theme.py` now refuses a literal outright: every value must name a step,
+which is what makes "a code is written once" an invariant rather than a habit.
+`grey3` is defined and unused.
+
 Three more scales — green, yellow, purple — built on the ladder the two given
 ones measure out in CIELCh: step 1 near L\* 62–74 at about 40% of the chroma
 the gamut allows there, steps 2 and 3 near L\* 50–60 and 35–42 at about 85%,

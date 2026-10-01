@@ -10,11 +10,11 @@ dark under prefers-color-scheme and [data-theme="dark"], so a page switches by
 tokens alone; the TeX file defines one xcolor per token as tt<name>, plus the
 physics colours under their short names (ele, nuc, ...) that diagrams use.
 
-A value is either a literal "#rrggbb" or a reference to a step of [ramp],
-optionally mixed: "blue2", "blue3 +35% black", "green +90% white". Resolving
-them here is what lets a colour code be written once: the scales hold the
-codes, and everything else is an assignment onto them, so moving a scale moves
-every figure and every page that named it.
+A value names a step of [ramp], optionally mixed: "blue2", "blue3 +35% black",
+"green1 +90% white". A literal "#rrggbb" outside [ramp] is an error. That is
+what lets a colour code be written once: the scales hold the codes, everything
+else is an assignment onto them, and moving a scale moves every figure and
+every page that named it.
 """
 import pathlib
 import re
@@ -28,13 +28,16 @@ MIX = re.compile(r"^(\w+)(?:\s*\+\s*(\d+)%\s*(white|black))?$")
 
 
 def resolve(value: str, ramp: dict) -> str:
-    """A literal, or a step of the ramp, optionally mixed toward white or black."""
-    if value.startswith("#"):
-        return value
+    """A step of the ramp, optionally mixed toward white or black.
+
+    A literal #rrggbb is refused rather than passed through: every colour the
+    theme uses has to come from a step, which is what keeps a code written in
+    one place. Paper and ink are steps of the grey scale for that reason.
+    """
     m = MIX.match(value.strip())
     if not m or m.group(1) not in ramp:
-        sys.exit(f"theme/tokens.toml: {value!r} is neither a #rrggbb nor a step of "
-                 f"[ramp] ({', '.join(sorted(ramp))}), optionally '+NN% white|black'")
+        sys.exit(f"theme/tokens.toml: {value!r} does not name a step of [ramp] "
+                 f"({', '.join(sorted(ramp))}), optionally '+NN% white|black'")
     step, pct, towards = m.group(1), m.group(2), m.group(3)
     rgb = [int(ramp[step][i:i + 2], 16) for i in (1, 3, 5)]
     if pct:
@@ -44,7 +47,9 @@ def resolve(value: str, ramp: dict) -> str:
 
 
 RAMP = RAW.get("ramp", {})
-T = {name: {k: resolve(v, RAMP) for k, v in section.items()}
+# [ramp] holds the codes themselves; every other section names them.
+T = {name: dict(section) if name == "ramp"
+     else {k: resolve(v, RAMP) for k, v in section.items()}
      for name, section in RAW.items()}
 
 
@@ -88,8 +93,6 @@ def palette() -> str:
         if section == "ramp":
             continue
         for key, value in body.items():
-            if value.startswith("#"):
-                continue
             parts = value.split(None, 1)
             # The mix reaches TeX as text, and a per cent sign starts a comment
             # there -- "+80% white" would swallow the rest of the definition.

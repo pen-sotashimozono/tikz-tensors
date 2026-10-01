@@ -25,6 +25,9 @@
 % tokens have no chip because the TeX side of the theme defines colours for the
 % light page only; theme/theme.css carries both.
 %
+% Every block and chip is outlined, because the grey scale starts at paper
+% white: an unoutlined white block would be a claim with nothing to see.
+%
 % A step that nothing names is left blank and the count at the foot says how
 % many those are. `color=` and not a bare option, because several step names are
 % also styles (coef, centre, mpo, gate): TikZ resolves an option as a key first,
@@ -44,7 +47,8 @@
 
   % the steps: three blocks, discrete, because three is how many there are
   \foreach \step/\hex/\fig/\dark/\x/\r in \tnpalette {
-    \fill[color=\step] (\x*\col,-\r*\pitch) rectangle ++(\wide,0.56);
+    \filldraw[color=\step, draw=ttline, tn line]
+      (\x*\col,-\r*\pitch) rectangle ++(\wide,0.56);
     \node[anchor=north west, font=\scriptsize, text=ttfg]
       at (\x*\col,-\r*\pitch-0.10) {\step};
     \node[anchor=north west, font=\ttfamily\scriptsize, text=ttmuted]
