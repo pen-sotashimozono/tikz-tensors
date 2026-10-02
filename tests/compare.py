@@ -8,7 +8,7 @@ with tests/reference/<name>.svg as a drawing, not as text and not as pixels:
 
 - a page is the set of things it draws: every <path> outside <defs>, with its
   paint (fill, stroke, width), and every glyph placed by <use>, taken by the
-  shape of the glyph it points at rather than by its id, which pdftocairo
+  outline of the glyph it points at rather than by its id, which pdftocairo
   numbers in the order it meets them;
 - two of them are the same thing when everything but their numbers agrees and
   every number is within EPSILON (in pt): a path that moved a hair is the same
@@ -42,8 +42,12 @@ TOLERANCE = 0.01      # fraction of the things drawn
 SVG = "{http://www.w3.org/2000/svg}"
 XLINK = "{http://www.w3.org/1999/xlink}href"
 NUMBER = re.compile(r"-?\d+(?:\.\d+)?(?:e-?\d+)?")
-PAINT = ("fill", "fill-rule", "fill-opacity", "stroke", "stroke-width",
-         "stroke-opacity", "stroke-dasharray", "stroke-linecap", "stroke-linejoin")
+# What a thing is drawn in. The colours and the kinds are part of what it is;
+# the widths and opacities are numbers like its coordinates, compared within
+# EPSILON, because TeX writes them to as many digits as its version likes
+# (0.79701 in one TeX Live, 0.797 in the next).
+KINDS = ("fill", "fill-rule", "stroke", "stroke-linecap", "stroke-linejoin")
+MEASURES = ("stroke-width", "fill-opacity", "stroke-opacity", "stroke-dasharray")
 
 
 def split(text: str) -> tuple[str, tuple[float, ...]]:
@@ -64,25 +68,26 @@ def drawing(path: pathlib.Path) -> tuple[tuple[float, float], dict]:
     glyphs = {}
     for g in root.iter(f"{SVG}g"):
         if g.get("id", "").startswith("glyph"):
-            shape = " ".join(p.get("d", "") for p in g.iter(f"{SVG}path"))
-            glyphs[g.get("id")] = NUMBER.sub(lambda m: f"{float(m.group()):.2f}", shape)
+            glyphs[g.get("id")] = split(" ".join(p.get("d", "") for p in g.iter(f"{SVG}path")))
     things = collections.defaultdict(list)
 
     def walk(node, inherited):
         if node.tag == f"{SVG}defs":
             return
         paint = dict(inherited)
-        for k in PAINT:
+        for k in KINDS + MEASURES:
             if node.get(k) is not None:
-                paint[k] = colour(node.get(k)) if "fill" in k or "stroke" == k else node.get(k)
-        style = ";".join(f"{k}={paint[k]}" for k in sorted(paint))
+                paint[k] = colour(node.get(k)) if k in ("fill", "stroke") else node.get(k)
+        style = ";".join(f"{k}={paint[k]}" for k in KINDS if k in paint)
+        measures = " ".join(f"{k}={paint[k]}" for k in MEASURES if k in paint)
+        mskel, mnums = split(measures)
         if node.tag == f"{SVG}path":
             skel, nums = split((node.get("transform") or "") + "|" + node.get("d", ""))
-            things[f"path {style} {skel}"].append(nums)
+            things[f"path {style} {mskel} {skel}"].append(mnums + nums)
         elif node.tag == f"{SVG}use":
-            ref = (node.get(XLINK) or "").lstrip("#")
-            things[f"glyph {style} {glyphs.get(ref, ref)}"].append(
-                (float(node.get("x", 0)), float(node.get("y", 0))))
+            gskel, gnums = glyphs.get((node.get(XLINK) or "").lstrip("#"), ("?", ()))
+            things[f"glyph {style} {mskel} {gskel}"].append(
+                mnums + gnums + (float(node.get("x", 0)), float(node.get("y", 0))))
         for child in node:
             walk(child, paint)
 

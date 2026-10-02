@@ -18,8 +18,9 @@
 #    plus a minor version step, which scripts/version.py check enforces.
 #
 # CI runs each step as its own job (.github/workflows/ci.yml): the two engines
-# on two runners, the rules with no TeX at all, and the comparison on the
-# LuaLaTeX job's PDFs. Run with no step, this does all of them in order.
+# on two runners, the rules with no TeX at all, and the comparison, in the job
+# named test, on the LuaLaTeX job's PDFs. Run with no step, this does all of
+# them in order.
 #
 # Output goes to tests/out/ (gitignored): <engine>/<name>.pdf and .log, and
 # rendered/<name>.svg with a <name>-diff.txt beside any page that changed.

@@ -45,10 +45,10 @@ Outside the package (no version step of its own, carried here):
   in a diff and shown as it is by GitHub. A page that fails gets a
   `-diff.txt` of what is only on one side.
 - **CI is split by role**, each job on its own runner: `rules` (coverage and
-  the figure rules, no TeX), `compile` (one runner per engine), `appearance`
-  (the comparison and the preview, from the LuaLaTeX job's PDFs), and `test`,
-  which only says all three passed — so the check the ruleset on `main`
-  requires keeps its name. `tests/run.sh` takes the same steps as arguments
+  the figure rules, no TeX), `compile` (one runner per engine), and `test`,
+  which waits for those, says whether they passed, and compares the pictures
+  and posts the preview from the LuaLaTeX job's PDFs — so the check the
+  ruleset on `main` requires keeps its name and its meaning. `tests/run.sh` takes the same steps as arguments
   (`compile <engine>`, `rules`, `compare`) and runs them all with none.
 - `examples/out/` is no longer committed: the README shows the reference
   SVGs, which are the same pictures.

@@ -8,11 +8,11 @@ name: CI
 #               example follow the figure rules (no TeX needed)
 #   compile     does everything compile, with no warning -- once per engine,
 #               LuaLaTeX and pdfLaTeX on runners of their own
-#   appearance  do the LuaLaTeX pages draw what tests/reference/*.svg draws
-#               (from the compile job's PDFs; no TeX needed)
-#   test        all of the last four passed. It is one job only so that the
-#               name the ruleset on main requires keeps meaning "the tests"
-#               however the work under it is split.
+#   test        the rules and both compiles passed, and the LuaLaTeX pages
+#               draw what tests/reference/*.svg draws (from the compile job's
+#               PDFs; no TeX needed). It is the check the ruleset on main
+#               requires, so it runs even when a job it waits on failed --
+#               a required check that is skipped counts as passed.
 # The rendered pages (and a diff list for any that changed) are uploaded as
 # the `rendered` artifact. On a pull request the pages this branch draws
 # differently are posted as one comment -- the pictures and the links to them
@@ -99,10 +99,17 @@ jobs:
           path: tests/out/${{ matrix.engine }}/
           if-no-files-found: ignore
 
-  appearance:
-    needs: compile
+  test:
+    needs: [rules, compile]
+    if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: The rules and both compiles passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "rules, compile: $RESULTS"
+          for r in $RESULTS; do [ "$r" = success ] || exit 1; done
       # Deep, because the preview step below diffs against the base commit, and
       # the default single-commit fetch does not have it -- the same reason the
       # version job asks for it.
@@ -163,14 +170,3 @@ jobs:
           edit-mode: replace
           body: ${{ steps.preview.outputs.body }}
 
-  test:
-    needs: [rules, compile, appearance]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Every test job passed
-        env:
-          RESULTS: ${{ join(needs.*.result, ' ') }}
-        run: |
-          echo "rules, compile, appearance: $RESULTS"
-          for r in $RESULTS; do [ "$r" = success ] || exit 1; done

@@ -223,8 +223,8 @@ without a warning, every style and command must be drawn by one of them
 and compared with `tests/reference/*.svg` as drawings (`tests/compare.py`,
 standard library only): path by path and glyph by glyph, numbers within a
 quarter of a point. A moved leg, a changed colour or a lost label fails, and a
-`-diff.txt` lists what differs. In CI each of those is its own job, and the
-rendered pages are the `rendered` artifact of the run.
+`-diff.txt` lists what differs. In CI each of those is its own job, the comparison in the one named
+`test`, and the rendered pages are the `rendered` artifact of the run.
 `tests/cases/styles.tex` shows every style side by side — a new style is
 added there.
 
