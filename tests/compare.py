@@ -106,8 +106,16 @@ def unmatched(ref: dict, new: dict) -> tuple[list[str], list[str], int]:
             else:
                 left.append(nums)
         short = key if len(key) < 100 else key[:97] + "..."
-        only_ref += [f"{short} {n[:6]}" for n in left]
-        only_new += [f"{short} {n[:6]}" for n in b]
+        for nums in left:
+            # how far it is from the nearest thing of its kind on the other side
+            near = min((max(abs(x - y) for x, y in zip(nums, o)), i)
+                       for o in b if len(o) == len(nums)
+                       for i in [max(range(len(nums)), key=lambda j: abs(nums[j] - o[j]))]) \
+                if any(len(o) == len(nums) for o in b) else None
+            where = (f" nearest differs by {near[0]:.3f} at number {near[1]}"
+                     if near else " nothing of its kind on the other side")
+            only_ref.append(f"{short}{where}")
+        only_new += [f"{short} {n[:8]}" for n in b]
     return only_ref, only_new, total
 
 
