@@ -1,15 +1,15 @@
-% One-site TDVP, the forward half of a step: the effective Hamiltonian of the
-% site the centre is on, applied to the centre.
+% The single-site effective Hamiltonian, applied to the centre: H_eff AC.
 %
 % The state is in mixed canonical form with its centre AC on this site, so
 % everything to the left of it contracts into L and everything to the right
-% into R, and the tensor-network part of the Schroedinger equation is local:
-% i dAC/dt is this picture. The integrator exponentiates it, AC moves one
-% step, and the sweep goes on.
+% into R. One-site DMRG finds the lowest eigenvector of this operator, one-site
+% TDVP integrates i dAC/dt = H_eff AC with it, VUMPS solves for its fixed
+% point; the picture is the same in all three, which is why it is named for
+% what it is rather than for any of them.
 %
 % The bra layer is empty, and its three indices are the free ones -- the
-% result is a tensor shaped like AC, which is what an equation for AC needs.
-% Each ends at the border the tensor in that slot would have.
+% result is a tensor shaped like AC. Each ends at the border the tensor in that
+% slot would have.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}

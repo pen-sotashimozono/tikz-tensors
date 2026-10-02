@@ -40,7 +40,7 @@ layers down, at one pitch the package owns, with an `env` (the rest of the
 network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 ```latex
-\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-dmrg.tex
+\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-heff-two-site.tex
 \tnlayer{H}{op}{mpo/$W$, mpo/$W$}
 \tnconnect{H}
 \tnopen{up}{H-op-1, H-op-2}

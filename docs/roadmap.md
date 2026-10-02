@@ -9,6 +9,11 @@ algorithm needs, and the **rules and the checker** that leave one way to use it.
 
 Nothing here is released. It is a proposal, to be cut into minor versions.
 
+The examples are a test of the vocabulary, not a catalogue of algorithms: each
+draws one object an algorithm uses (an effective Hamiltonian, a transfer-matrix
+fixed point, an expectation value) and is named for that object, so that one
+file serves every algorithm that uses it.
+
 ## Where the freedom is today
 
 The examples already agree on colour and shape — the canonical-form palette is
@@ -17,7 +22,7 @@ the current examples:
 
 | file | lengths written by hand | raw `\node` / `\draw` |
 |---|---|---|
-| `06-dmrg` | `\tnGap`, `\tnThetaY`, `\tnThetaH`, `7mm`, `31mm` | `\tikzset{env/...}` local style |
+| `06-dmrg` (now `06-heff-two-site`) | `\tnGap`, `\tnThetaY`, `\tnThetaH`, `7mm`, `31mm` | `\tikzset{env/...}` local style |
 | `07-fixed-point` | `34mm`, `44mm`, `10.5mm`, `14.5mm`, `0.95`, `1.6`, `1.05`, `1.45`, `3.5`, `4.4`, `6.4cm`, `4.8cm` | 12 raw `\node`s, `=` placed by hand |
 | `08-tebd` | `x=1.45cm`, `52mm`, `92mm`, `9 ... 79 mm`, `7.6cm` | local `\tebdchain` macro |
 | `09-expectation` | `x=1.25cm`, `-4.15`, `8mm`, `28.5mm`, `-2.2`, `9mm` | raw `\node[op]` |
@@ -130,7 +135,7 @@ touches off the lint ratchet.
 | phase | adds | examples |
 |---|---|---|
 | 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step — **done** | — |
-| 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; TDVP site and bond, fixed point (`10`–`12`) |
+| 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; single-site and bond H_eff, fixed point (`10`–`12`) |
 | 2 | fused index, cap, delta | MPO × MPS, zip-up, density matrix, sampling |
 | 3 | `iso` at any angle, tree placement | SVD/QR, TTN, MERA |
 | 4 | grid, env corner/edge | PEPS, simple update, CTMRG, TRG, HOTRG |

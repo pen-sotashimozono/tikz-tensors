@@ -33,11 +33,13 @@ yellow (`gate` = `yellow1`). Purple for the environment, which is large and
 should recede; yellow for the gate, which is the thing being applied. Every page
 with a gate on it is redrawn.
 
-`examples/06-dmrg.tex` and `examples/09-expectation.tex` are rewritten on
-stacks with no length and no coordinate in them, and come off the lint ratchet.
-New: `10-tdvp-site` and `11-tdvp-bond`, the two halves of a one-site TDVP step,
-and `12-fixed-point`, the left fixed point of a uniform MPS as an equation of two
-stacks. `07-fixed-point` stays as it is: it compares two places the physical
+`examples/06-dmrg.tex` is rewritten on stacks as `06-heff-two-site`, and
+`examples/09-expectation.tex` in place; neither has a length or a coordinate in
+it, and both come off the lint ratchet. New: `10-heff-single-site` and
+`11-heff-bond`, the single-site and bond effective Hamiltonians, and
+`12-fixed-point`, the left fixed point of a uniform MPS as an equation of two
+stacks. Examples are named for the object they draw, not the algorithm that
+uses it: one H_eff serves DMRG, TDVP and VUMPS alike. `07-fixed-point` stays as it is: it compares two places the physical
 index can leave a triangle, and a stack takes it from the centre.
 
 ## v0.4.0 — 2026-10-02
