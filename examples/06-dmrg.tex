@@ -8,8 +8,15 @@
 % swept up -- because that is what they are: everything on one side, contracted.
 % Between them sit the two MPO tensors of the sites being optimised.
 %
-% The four indices below end at one depth and are spaced to take a tensor, and
-% the four above do the same, because that is what this object is for: the
+% Every index is the same length and they end at one depth above and one below,
+% because nothing here is said by how long a line is: the four below are what
+% the operator takes and the four above are what it returns, and a leg drawn
+% longer than its neighbour only asks the reader why. The gap left under them is
+% the room the two-site tensor needs, and it is the only space in the picture
+% that means anything.
+%
+% The four indices below are spaced to take a tensor, and the four above do the
+% same, because that is what this object is for: the
 % two-site wavefunction Theta, with legs (a, sigma_1, sigma_2, b), drops into
 % the gap underneath and the picture closes into H_eff Theta. The space is left
 % empty on purpose -- drawing Theta in would make this a picture of one
@@ -36,23 +43,23 @@
   % the four indices below, at one depth: Theta's legs. The block's two bond
   % indices leave from the corners of its flat side and carry that side
   % straight down, as a site's physical index does.
-  \tnbond[disc]{(L.corner 3) -- (L.corner 3 |- 0,-1.5)}
-  \tnbond[disc]{(W1.south)   -- (W1.south  |- 0,-1.5)}
-  \tnbond[disc]{(W2.south)   -- (W2.south  |- 0,-1.5)}
-  \tnbond[disc]{(R.corner 2) -- (R.corner 2 |- 0,-1.5)}
-  \tnput[below]{L.corner 3 |- 0,-1.5}{$a$}
-  \tnput[below]{W1.south |- 0,-1.5}{$\sigma_1$}
-  \tnput[below]{W2.south |- 0,-1.5}{$\sigma_2$}
-  \tnput[below]{R.corner 2 |- 0,-1.5}{$b$}
+  \tnbond[disc]{(L.corner 3) -- (L.corner 3 |- 0,-0.78)}
+  \tnbond[disc]{(W1.south)   -- (W1.south  |- 0,-0.78)}
+  \tnbond[disc]{(W2.south)   -- (W2.south  |- 0,-0.78)}
+  \tnbond[disc]{(R.corner 2) -- (R.corner 2 |- 0,-0.78)}
+  \tnput[below]{L.corner 3 |- 0,-0.78}{$a$}
+  \tnput[below]{W1.south |- 0,-0.78}{$\sigma_1$}
+  \tnput[below]{W2.south |- 0,-0.78}{$\sigma_2$}
+  \tnput[below]{R.corner 2 |- 0,-0.78}{$b$}
 
   % and the four above, which is what it returns
-  \tnbond[disc]{(L.corner 2) -- (L.corner 2 |- 0,1.5)}
-  \tnbond[disc]{(W1.north)   -- (W1.north  |- 0,1.5)}
-  \tnbond[disc]{(W2.north)   -- (W2.north  |- 0,1.5)}
-  \tnbond[disc]{(R.corner 3) -- (R.corner 3 |- 0,1.5)}
-  \tnput[above]{L.corner 2 |- 0,1.5}{$a'$}
-  \tnput[above]{W1.north |- 0,1.5}{$\sigma_1'$}
-  \tnput[above]{W2.north |- 0,1.5}{$\sigma_2'$}
-  \tnput[above]{R.corner 3 |- 0,1.5}{$b'$}
+  \tnbond[disc]{(L.corner 2) -- (L.corner 2 |- 0,0.78)}
+  \tnbond[disc]{(W1.north)   -- (W1.north  |- 0,0.78)}
+  \tnbond[disc]{(W2.north)   -- (W2.north  |- 0,0.78)}
+  \tnbond[disc]{(R.corner 3) -- (R.corner 3 |- 0,0.78)}
+  \tnput[above]{L.corner 2 |- 0,0.78}{$a'$}
+  \tnput[above]{W1.north |- 0,0.78}{$\sigma_1'$}
+  \tnput[above]{W2.north |- 0,0.78}{$\sigma_2'$}
+  \tnput[above]{R.corner 3 |- 0,0.78}{$b'$}
 \end{tikzpicture}
 \end{document}
