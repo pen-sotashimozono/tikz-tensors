@@ -17,23 +17,17 @@
   \tnstack{T}{1}{a, b}
   \tnlayer{T}{a}{coef/$T$}
   \tnlayer{T}{b}{|}
-  \tnopen{left}{T-a-1}
-  \tnopen{right}{T-a-1}
-  \tnopen{down}{T-a-1}
-  \tnput[above]{T-a-1-left}{$i$}
-  \tnput[above]{T-a-1-right}{$j$}
-  \tnput[below]{T-a-1-down}{$k$}
+  \tnopen[label=$i$]{left}{T-a-1}
+  \tnopen[label=$j$]{right}{T-a-1}
+  \tnopen[label=$k$]{down}{T-a-1}
   \tnapprox
   \tnstack{K}{3}{a, b}
   \tnlayer{K}{a}{coef/$A$, delta/, coef/$B$}
   \tnlayer{K}{b}{., coef/$C$, .}
   \tnconnect{K}
-  \tnopen{left}{K-a-1}
-  \tnopen{right}{K-a-3}
-  \tnopen{down}{K-b-2}
-  \tnput[above]{K-a-1-left}{$i$}
-  \tnput[above]{K-a-3-right}{$j$}
-  \tnput[below]{K-b-2-down}{$k$}
+  \tnopen[label=$i$]{left}{K-a-1}
+  \tnopen[label=$j$]{right}{K-a-3}
+  \tnopen[label=$k$]{down}{K-b-2}
   \tnmid{K-a-1}{K-a-2}{$r$}
 \end{tikzpicture}
 \end{document}

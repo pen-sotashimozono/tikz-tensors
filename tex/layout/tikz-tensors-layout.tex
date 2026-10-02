@@ -1,0 +1,198 @@
+% tikz-tensors-layout.tex -- the abstract layout. What every layout provides;
+% the record of each tensor a layout places, its ports, and which of them are
+% taken; and the commands a figure uses on any layout -- \tnconnect, \tnopen,
+% \tnjoin, \tnopenswap -- each of which hands its work to the layout that
+% placed the tensors.
+%
+% A layout is a kind of block of the canvas: a stack, a tree, a grid. A kind is
+% declared with \tn@kind{<kind>}{<parent>} and implements operations as macros
+% \tn@<kind>@<op>. An operation a kind does not define is its parent's (a tree
+% is a stack that sizes and routes its own way), and one that no kind in the
+% chain defines is an error naming both. The operations:
+%
+%   geometry{<block>}              its pitch and rise (a layout of slots)
+%   connect{<block>}               every index the layout implies, styled by
+%                                  \tn@along and \tn@down
+%   openblock{<style>}{<block>}    every free index of the block toward \tn@dir
+%   opennode{<style>}{<tensor>}    the tensor's own indices toward \tn@dir
+%   join{<style>}{<port>}{<port>}  one index between two ports
+%   openswap{<style>}{<tensor>}    its two indices down, crossed
+%   vport{<tensor>}{up|down}       the port up or down in column \tn@cx
+%
+% A new layout is a file that declares its kind, a command that places a block
+% (\tn@block, tikz-tensors-canvas.tex), places its tensors (\tn@place,
+% tikz-tensors-nodes.tex) and records them (\tn@record below), and the
+% operations it supports. Nothing outside the file needs to change.
+
+% ---- kinds and operations ----------------------------------------------------
+\def\tn@kind#1#2{\tn@set{kind@#1@parent}{#2}}
+% \tn@op{<block>}{<op>}<arguments>: the operation of the block's kind
+\def\tn@op#1#2{%
+  \ifcsname tn@#1@kind\endcsname\else
+    \PackageError{tikz-tensors}{`#1' is not a stack, tree or grid}{}\fi
+  \edef\tn@opkind{\tn@get{#1@kind}}%
+  \expandafter\tn@resolve\expandafter{\tn@opkind}{#2}\tn@fn}
+\def\tn@resolve#1#2{%
+  \ifcsname tn@#1@#2\endcsname
+    \expandafter\let\expandafter\tn@fn\csname tn@#1@#2\endcsname
+  \else
+    \edef\tn@rpk{\tn@get{kind@#1@parent}}%
+    \ifx\tn@rpk\@empty
+      \PackageError{tikz-tensors}{A \tn@opkind\space cannot do `#2'}{}%
+      \let\tn@fn\relax
+    \else \expandafter\tn@resolve\expandafter{\tn@rpk}{#2}\fi
+  \fi}
+% the operation of the block a tensor is in
+\def\tn@nop#1#2{\edef\tn@nopb{\tn@get{n@#1@s}}\tn@op{\tn@nopb}{#2}}
+
+% ---- the record of a tensor --------------------------------------------------
+% \tn@record{<tensor>}{<block>}{<a>}{<b>}{<k>}{<kb>}
+% What a layout knows of a tensor once it is placed: its block, the sites a..b
+% across and the layers (or rows) k..kb down that it covers. Its type's index
+% properties are kept by \tn@place. Each block placed is a new generation, so
+% that a name used again in a later picture is a new tensor with free ports.
+\newcount\tn@gen
+\def\tn@record#1#2#3#4#5#6{%
+  \tn@set{n@#1@s}{#2}\tn@set{n@#1@a}{#3}\tn@set{n@#1@b}{#4}%
+  \tn@set{n@#1@k}{#5}\tn@set{n@#1@kb}{#6}\tn@set{n@#1@g}{\the\tn@gen}}
+\def\tn@newblock#1#2{% block, kind
+  \global\advance\tn@gen by 1
+  \tn@set{#1@kind}{#2}\tn@set{#1@g}{\the\tn@gen}}
+\def\tn@isnode#1#2{% is <#1> a tensor placed by a layout? else an error for <#2>
+  \ifcsname tn@n@#1@s\endcsname\else
+    \PackageError{tikz-tensors}{#2: `#1' is not a tensor on a stack, tree or
+      grid}{}\fi}
+
+% ---- ports -------------------------------------------------------------------
+% A tensor's indices are ports: on a side (up, down, left, right on a stack;
+% the four directions of the lattice and down on a grid), and where on that
+% side -- the column or layer, in lattice units. A port is a point just inside
+% the tensor, where an index starts, and the border the index crosses.
+%
+% Each port is drawn once. \tn@use marks one taken; \tn@ifused asks; \tn@free
+% is an error if it is taken, for the commands that name a port themselves.
+% A layout opening every free index of a block skips the taken ones, so an
+% index joined by hand is not opened as well.
+\def\tn@key#1{\pgfmathsetmacro\tn@kk{#1}}
+\def\tn@use#1#2#3{\tn@key{#3}\tn@set{u@\tn@get{n@#1@g}@#1@#2@\tn@kk}{1}}
+\def\tn@ifused#1#2#3{\tn@key{#3}%
+  \ifcsname tn@u@\tn@get{n@#1@g}@#1@#2@\tn@kk\endcsname
+    \def\tn@isused{1}\else\def\tn@isused{0}\fi}
+\def\tn@free#1#2#3#4{%
+  \tn@ifused{#1}{#2}{#3}%
+  \ifnum\tn@isused=1
+    \PackageError{tikz-tensors}{#4: the index of `#1' on its #2 side (at
+      \tn@kk) is drawn already}{An index is drawn once, by \string\tnconnect,
+      \string\tnopen or \string\tnjoin.}\fi}
+
+% A height inside tensor #1 at every site it covers, as \tn@ay: its middle,
+% unless it is a triangle pointing up or down, which is only as tall as its
+% middle near its apex -- then just inside its base.
+\def\tn@inner#1{%
+  \edef\tn@one{\tn@get{n@#1@one}}%
+  \ifx\tn@one\tn@sup \tn@anc{#1}{south}\tn@len\tn@ay{\tn@ay+\tn@inset}%
+  \else\ifx\tn@one\tn@sdown \tn@anc{#1}{north}\tn@len\tn@ay{\tn@ay-\tn@inset}%
+  \else \tn@anc{#1}{center}\fi\fi}
+% \tn@hport{<tensor>}{left|right}: its port on that side, as \tn@px (where the
+% index starts) and \tn@pe (the x of the border); the height is the layer's.
+\def\tn@hport#1#2{%
+  \edef\tn@t{#2}%
+  \ifx\tn@t\tn@sright
+    \tn@anc{#1}{east}\let\tn@pe\tn@ax \tn@len\tn@px{\tn@ax-\tn@inset}%
+  \else
+    \tn@anc{#1}{west}\let\tn@pe\tn@ax \tn@len\tn@px{\tn@ax+\tn@inset}%
+  \fi}
+% \tn@vport{<tensor>}{up|down}: its port on that side in column \tn@cx, as
+% \tn@px, \tn@py (where the index starts) and \tn@pe (the y of the border) --
+% the layout's operation, since where a column meets a tensor is the layout's.
+\def\tn@vport#1#2{\tn@nop{#1}{vport}{#1}{#2}}
+
+% ---- what a figure writes --------------------------------------------------------
+% \tnconnect[along=<style>, down=<style>, apart={<layer>, ...}]{<block>}
+% Every index the layout implies, and nothing else; what that is, is each
+% layout's to say (tikz-tensors-stack.tex, tikz-tensors-grid.tex). along=
+% styles the indices along the layers (or the lattice), down= the ones down
+% the sites, so that a canonical form's bonds carry arrows and its physical
+% indices do not; both are tn edge unless said. apart= names layers whose
+% tensors sit side by side without an index between them.
+\pgfkeys{/tn/connect/.is family, /tn/connect/along/.initial=tn edge,
+         /tn/connect/down/.initial=tn edge, /tn/connect/apart/.initial=}
+\newcommand{\tnconnect}[2][]{%
+  \pgfkeys{/tn/connect/.cd, along=tn edge, down=tn edge, apart=, #1}%
+  \pgfkeysgetvalue{/tn/connect/apart}\tn@apart
+  \pgfkeysgetvalue{/tn/connect/along}\tn@along
+  \pgfkeysgetvalue{/tn/connect/down}\tn@down
+  \tn@op{#2}{connect}{#2}}
+
+% \tnopen[edge=<style>, label=<text>, labels={<text>, ...}]{<direction>}{<item>, ...}
+% Open indices toward <direction>. An item is a tensor -- its own indices that
+% way -- or a block -- every free index of it that way. Where each ends, and
+% the coordinate it leaves there, is the layout's to say. edge= is the edge
+% type (tn edge unless said). label= puts a label at the end of each index,
+% beyond it -- below one opened down, above one up, left and right of one
+% opened sideways -- with #1 standing for its number among the indices this
+% command opens, in order: label=$\sigma_{#1}$. labels= gives them one by one,
+% in the same order, for numbering that is not 1, 2, 3: labels={$n_1$, $n_N$}.
+\pgfkeys{/tn/open/.is family,
+  /tn/open/edge/.initial=tn edge,
+  /tn/open/label/.code={\gdef\tn@olab##1{#1}\gdef\tn@olmode{t}},
+  /tn/open/labels/.code={\gdef\tn@olabs{#1}\gdef\tn@olmode{l}}}
+\newcount\tn@ocount
+\def\tn@olt{t}\def\tn@oll{l}
+\def\tn@openkeys#1{%
+  \gdef\tn@olmode{}\global\tn@ocount=0
+  \pgfkeys{/tn/open/.cd, edge=tn edge, #1}%
+  \pgfkeysgetvalue{/tn/open/edge}\tn@oedge}
+% A layout calls this on the coordinate at the end of each index it opens.
+\def\tn@openlabel#1{%
+  \global\advance\tn@ocount by 1
+  \ifx\tn@dir\tn@sdown \def\tn@olpos{below}%
+  \else\ifx\tn@dir\tn@sup \def\tn@olpos{above}%
+  \else \let\tn@olpos\tn@dir \fi\fi
+  \ifx\tn@olmode\tn@olt
+    \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@olab{\the\tn@ocount}}%
+  \else\ifx\tn@olmode\tn@oll
+    \global\let\tn@lpick\@empty
+    \foreach \tn@x [count=\tn@xc] in \tn@olabs{%
+      \ifnum\tn@xc=\tn@ocount \global\let\tn@lpick\tn@x \fi}%
+    \ifx\tn@lpick\@empty
+      \PackageError{tikz-tensors}{\string\tnopen: more indices than labels}{}%
+    \else \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@lpick}\fi
+  \fi\fi}
+\newcommand{\tnopen}[3][]{%
+  \tn@openkeys{#1}%
+  \edef\tn@dir{#2}%
+  \foreach \tn@it in {#3}{%
+    \ifcsname tn@\tn@it @kind\endcsname
+      \expandafter\tn@op\expandafter{\tn@it}{openblock}{\tn@oedge}{\tn@it}%
+    \else
+      \tn@isnode{\tn@it}{\string\tnopen}%
+      \expandafter\tn@nop\expandafter{\tn@it}{opennode}{\tn@oedge}{\tn@it}%
+    \fi}}
+
+% \tnopenswap[edge=<style>, label=..., labels=...]{<tensor>}
+% The two indices down from a tensor across two sites, exchanged on the way: a
+% swap of two fermion legs. The keys are \tnopen's.
+\newcommand{\tnopenswap}[2][]{%
+  \tn@openkeys{#1}\def\tn@dir{down}%
+  \tn@isnode{#2}{\string\tnopenswap}\tn@nop{#2}{openswap}{\tn@oedge}{#2}}
+
+% \tnjoin[edge=<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
+% One index between two ports the layout does not join: the bond that closes
+% a periodic chain, a trace, a bond that skips over its neighbours. Both
+% tensors are in one block; <n> picks the port on that side when there are
+% several, the first unless said. How it runs is the layout's to say. It is
+% drawn from the first port to the second, which is the way an arrow on it
+% points; a port that is drawn already is an error.
+\def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
+\pgfkeys{/tn/join/.is family, /tn/join/edge/.initial=tn edge}
+\newcommand{\tnjoin}[3][]{%
+  \pgfkeys{/tn/join/.cd, edge=tn edge, #1}\pgfkeysgetvalue{/tn/join/edge}\tn@jedge
+  \tn@pspec#2:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
+  \edef\tn@ja{\tn@get{n@\tn@pn @s}}%
+  \tn@pspec#3:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
+  \edef\tn@jb{\tn@get{n@\tn@pn @s}}%
+  \ifx\tn@ja\tn@jb\else
+    \PackageError{tikz-tensors}{\string\tnjoin: `#2' and `#3' are in two
+      blocks}{An index is joined inside one stack, tree or grid.}\fi
+  \tn@op{\tn@ja}{join}{\tn@jedge}{#2}{#3}}

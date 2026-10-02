@@ -18,8 +18,7 @@
   \tnstack{P}{5}{ket}
   \tnlayer{P}{ket}{3*coef/$A$, dots, coef/$A$}
   \tnconnect{P}
-  \tnopen{down}{P}
+  \tnopen[labels={$n_1$, $n_2$, $n_3$, $n_N$}]{down}{P}
   \tnmid{P-ket-1}{P-ket-2}{$D$}
-  \foreach \i/\n in {1/1, 2/2, 3/3, 5/N} \tnput[below]{P-\i-down}{$n_{\n}$};
 \end{tikzpicture}
 \end{document}

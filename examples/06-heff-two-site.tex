@@ -25,15 +25,11 @@
   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
   \tnlayer{H}{op}{2*mpo/$W$}
   \tnconnect{H}
-  \tnopen{up}{H-op-1, H-op-2}
-  \tnopen{down}{H-op-1, H-op-2}
-  \tnput[above]{H-left-ket}{$a'$}
-  \tnput[above]{H-op-1-up}{$\sigma_1'$}
-  \tnput[above]{H-op-2-up}{$\sigma_2'$}
-  \tnput[above]{H-right-ket}{$b'$}
-  \tnput[below]{H-left-bra}{$a$}
-  \tnput[below]{H-op-1-down}{$\sigma_1$}
-  \tnput[below]{H-op-2-down}{$\sigma_2$}
-  \tnput[below]{H-right-bra}{$b$}
+  \tnopen[label=$\sigma_{#1}'$]{up}{H-op-1, H-op-2}
+  \tnopen[label=$\sigma_{#1}$]{down}{H-op-1, H-op-2}
+  \tnput[above]{H-ket-left}{$a'$}
+  \tnput[above]{H-ket-right}{$b'$}
+  \tnput[below]{H-bra-left}{$a$}
+  \tnput[below]{H-bra-right}{$b$}
 \end{tikzpicture}
 \end{document}

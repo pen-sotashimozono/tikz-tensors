@@ -4,26 +4,32 @@
 %%   \usepackage{tikz-tensors}
 %%
 %% A network is nodes and edges, and the package defines what they look like and
-%% where they go -- never what they mean. It is a set of modules, each a file
-%% in this directory, each using only the ones above it:
+%% where they go -- never what they mean. It is a set of modules, in three
+%% folders of this directory, each module using only what is loaded before it:
 %%
-%%   core      the one stroke, the edge layer, the tokens every distance is
-%%             made of (\tnset), and the primitives: tn node, tn edge, \tnbond
-%%   colors    the theme's named colours (generated from theme/tokens.toml)
-%%   nodes     node types -- tn box, tn circle, tn capsule, tn rounded, the
-%%             triangles, tn diamond, tn dot; their sizes; the properties a
-%%             layout reads off a type (tn leg anchor, tn points, tn single);
-%%             tn gate and tn env, the two named for a structure
-%%   edges     edge types -- tn wavy, tn arrow, tn double -- and the routes an
-%%             edge takes: straight, turning corners, crossing
-%%   canvas    where a block goes: left to right on a row, \tneq, \tnapprox,
-%%             \tnbreak
-%%   stack     the lattice: \tnstack, \tnlayer (<n>*<entry> repeats), and the
-%%             record of what is where
-%%   connect   contraction: a tensor's ports, and \tnconnect, \tnopen,
-%%             \tnopenswap, \tnjoin
-%%   grid      the two-dimensional lattice: \tngrid
-%%   labels    tn label, \tnput, \tnmid
+%%   core/     what everything stands on
+%%     core      the one stroke, the edge layer, the tokens every distance is
+%%               made of (\tnset), and the primitives: tn node, tn edge, \tnbond
+%%     canvas    where a block goes: left to right on a row, \tneq, \tnapprox,
+%%               \tnbreak
+%%   style/    what a tensor and an index look like
+%%     colors    the theme's named colours (generated from theme/tokens.toml)
+%%     nodes     node types -- the shapes, their sizes, and the properties a
+%%               layout reads off a type (tn leg anchor, tn points, tn single);
+%%               tn gate and tn env, the two named for a structure
+%%     edges     edge types -- tn wavy, tn arrow, tn double -- and the routes
+%%     labels    tn label, \tnput, \tnmid
+%%   layout/   where tensors go and how they are contracted
+%%     layout    the abstract layout: the record of a tensor, its ports and
+%%               which are taken, and \tnconnect, \tnopen, \tnopenswap,
+%%               \tnjoin, which hand their work to the layout of the block
+%%     stack     \tnstack, \tnlayer: sites across, layers down
+%%     tree      \tnstack[tree]: a stack drawn as a tree
+%%     grid      \tngrid: a square lattice turned by 45 degrees
+%%
+%% A new layout is one more file in layout/ (see tikz-tensors-layout.tex for
+%% what it has to provide); a new node or edge type is a style on tn node or
+%% tn edge, in a user's own notation or in style/.
 %%
 %% What a shape stands for -- that a triangle is an isometry and a diamond the
 %% orthogonality centre, that a wavy leg is a continuous argument -- is a
@@ -37,20 +43,21 @@
 %% the style, never the colour. Say which you mean: color=gate, or draw=/fill=.
 %% The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/02 v0.9.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/02 v0.10.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
 \usetikzlibrary{decorations.pathmorphing,decorations.markings,shapes.geometric,
                 arrows.meta,calc}
 \input{tikz-tensors-core.tex}
+\input{tikz-tensors-canvas.tex}
 \input{tikz-tensors-colors.tex}
 \input{tikz-tensors-nodes.tex}
 \input{tikz-tensors-edges.tex}
-\input{tikz-tensors-canvas.tex}
-\input{tikz-tensors-stack.tex}
-\input{tikz-tensors-connect.tex}
-\input{tikz-tensors-grid.tex}
 \input{tikz-tensors-labels.tex}
+\input{tikz-tensors-layout.tex}
+\input{tikz-tensors-stack.tex}
+\input{tikz-tensors-tree.tex}
+\input{tikz-tensors-grid.tex}
 
 \endinput

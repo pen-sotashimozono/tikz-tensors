@@ -34,8 +34,8 @@
   \tnlayer{S}{g3}{2*|, gate/$U(\delta t)$/2, |}
   \tnlayer{S}{g4}{3*|, gate/$U(\delta t)$/2}
   \tnconnect[along=gauge]{S}
-  \tnopen[gauge]{left}{S-ket-1}
-  \tnopen[gauge]{right}{S-ket-5}
+  \tnopen[edge=gauge]{left}{S-ket-1}
+  \tnopen[edge=gauge]{right}{S-ket-5}
   \tnopen{down}{S}
   \tnmid[right]{S-g2-6-slot}{S-g3-6-slot}{$O(\delta t^2)$ a step}
   \tnbreak
@@ -50,8 +50,8 @@
   \tnlayer{T}{g7}{|, gate/{$U(\delta t/2)$}/2, 2*|}
   \tnlayer{T}{g8}{gate/{$U(\delta t/2)$}/2, 3*|}
   \tnconnect[along=gauge]{T}
-  \tnopen[gauge]{left}{T-ket-1}
-  \tnopen[gauge]{right}{T-ket-5}
+  \tnopen[edge=gauge]{left}{T-ket-1}
+  \tnopen[edge=gauge]{right}{T-ket-5}
   \tnopen{down}{T}
   \tnmid[right]{T-g4-6-slot}{T-g5-6-slot}{$O(\delta t^3)$ a step}
 \end{tikzpicture}

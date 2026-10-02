@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write theme/theme.css and tex/tikz-tensors-colors.tex from theme/tokens.toml.
+"""Write theme/theme.css and tex/style/tikz-tensors-colors.tex from theme/tokens.toml.
 
     python3 scripts/theme.py            # regenerate both
     python3 scripts/theme.py --check    # fail if either is out of date (CI)
@@ -132,8 +132,8 @@ def palette() -> str:
 
 
 OUT = {ROOT / "theme/theme.css": css(),
-       ROOT / "tex/tikz-tensors-colors.tex": tex(),
-       ROOT / "tex/tikz-tensors-palette.tex": palette()}
+       ROOT / "tex/style/tikz-tensors-colors.tex": tex(),
+       ROOT / "tex/style/tikz-tensors-palette.tex": palette()}
 
 if __name__ == "__main__":
     stale = [p for p, s in OUT.items() if not p.exists() or p.read_text() != s]

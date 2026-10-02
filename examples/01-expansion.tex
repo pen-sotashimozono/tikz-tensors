@@ -17,20 +17,16 @@
   \tnlayer{X}{array}{coefwide/$C$/2}
   \tnlayer{X}{basis}{2*fn/$\varphi$}
   \tnconnect[apart=basis]{X}
-  \tnopen[cont]{down}{X}
+  \tnopen[edge=cont, label=$\mathbf r_{#1}$]{down}{X}
   \tnmid[left]{X-array-1-slot}{X-basis-1-slot}{$i$}
   \tnmid[right]{X-array-2-slot}{X-basis-2-slot}{$j$}
-  \tnput[below]{X-1-down}{$\mathbf r_1$}
-  \tnput[below]{X-2-down}{$\mathbf r_2$}
   \tnapprox
   \tnstack{Y}{2}{array, basis}
   \tnlayer{Y}{array}{2*coef/$c$}
   \tnlayer{Y}{basis}{2*fn/$\varphi$}
   \tnconnect[apart={array, basis}]{Y}
-  \tnopen[cont]{down}{Y}
+  \tnopen[edge=cont, label=$\mathbf r_{#1}$]{down}{Y}
   \tnmid[left]{Y-array-1-slot}{Y-basis-1-slot}{$i$}
   \tnmid[right]{Y-array-2-slot}{Y-basis-2-slot}{$j$}
-  \tnput[below]{Y-1-down}{$\mathbf r_1$}
-  \tnput[below]{Y-2-down}{$\mathbf r_2$}
 \end{tikzpicture}
 \end{document}

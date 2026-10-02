@@ -32,10 +32,8 @@
     \tnstack{X}{3}{ket}
     \tnlayer{X}{ket}{fn/$\varphi$, coef/$C$, fn/$\varphi$}
     \tnconnect{X}
-    \tnopen[cont]{left}{X-ket-1}
-    \tnopen[cont]{right}{X-ket-3}
-    \tnput[left]{X-ket-1-left}{$\mathbf r_1$}
-    \tnput[right]{X-ket-3-right}{$\mathbf r_2$}
+    \tnopen[edge=cont, label=$\mathbf r_1$]{left}{X-ket-1}
+    \tnopen[edge=cont, label=$\mathbf r_2$]{right}{X-ket-3}
   \end{tikzpicture}
   \quad\text{along the line.}
 \]

@@ -16,8 +16,7 @@
   \tnstack{P}{4}{ket}
   \tnlayer{P}{ket}{4*coef/$A$}
   \tnconnect{P}
-  \tnopen{down}{P}
+  \tnopen[label=$\sigma_{#1}$]{down}{P}
   \tnjoin{P-ket-1:left}{P-ket-4:right}
-  \foreach \i in {1,...,4} \tnput[below]{P-\i-down}{$\sigma_{\i}$};
 \end{tikzpicture}
 \end{document}

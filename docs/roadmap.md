@@ -143,6 +143,7 @@ touches off the lint ratchet.
 | 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`17`–`19`), |
 | 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, HOTRG (`20`–`23`); TRG still needs diagonal indices |
 | 4½ | modules (core, nodes, edges, canvas, stack, connect, grid, labels); a tensor's indices as ports; `\tnjoin`; `<n>*` in a layer; `\tnset`; the coordinate commands removed — **done** (v0.9.0) | periodic MPS (`24`) |
+| 4¾ | folders (`core/`, `style/`, `layout/`); the abstract layout, with stack, tree and grid as layouts; ports recorded once drawn — **done** (v0.10.0) | the grid on `\tnconnect`/`\tnopen` (`20`, `21`); TRG is next: a layout of its own |
 | 5 | machine learning | neural networks as diagrams: what is a tensor (weights, feature maps) and what is not (activations) |
 
 ## What a figure looks like after phase 1
