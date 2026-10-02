@@ -4,48 +4,45 @@
 % Everything to the left of the two active sites has been contracted into L and
 % everything to the right into R, so each carries three indices and no more --
 % the bra's bond, the Hamiltonian's bond, the ket's bond. Between them sit the
-% two MPO tensors of the sites being optimised, each with a physical index in
-% from below and out above.
+% two MPO tensors of the sites being optimised.
 %
-% Read it as a matrix: the four indices below and to the lower sides are what it
-% acts on, the four above and to the upper sides are what it returns, and the
-% eigenvector of that matrix is the two-site wavefunction. Nothing in the
-% picture is the state itself -- that is the point of the form, and why the
-% solver never sees the sites that were contracted away.
+% The four indices below end at one depth and are spaced to take a tensor, and
+% the four above do the same, because that is what this object is for: the
+% two-site wavefunction Theta, with legs (a, sigma_1, sigma_2, b), drops into
+% the gap underneath and the picture closes into H_eff Theta. The space is left
+% empty on purpose -- drawing Theta in would make this a picture of one
+% application rather than of the operator.
+%
+% Nothing here is the state. That is the point of the form, and why the solver
+% never sees the sites that were contracted away: it works in the four indices
+% left over, not in the length of the chain.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
-\begin{tikzpicture}[x=1.3cm]
-  \node[tn node, minimum width=7mm, minimum height=24mm] (L) at (0,0)   {$L$};
-  \node[tn node, minimum width=7mm, minimum height=24mm] (R) at (3.4,0) {$R$};
-  \node[mpo] (W1) at (1.3,0) {$W$};
-  \node[mpo] (W2) at (2.1,0) {$W$};
+\begin{tikzpicture}
+  \node[tn node, minimum width=7mm, minimum height=22mm] (L) at (0,0)   {$L$};
+  \node[tn node, minimum width=7mm, minimum height=22mm] (R) at (3.3,0) {$R$};
+  \node[mpo] (W1) at (1.15,0) {$W$};
+  \node[mpo] (W2) at (2.15,0) {$W$};
 
-  % the Hamiltonian's own bond, straight through the middle
+  % the Hamiltonian's own bond: short, because its length says nothing
   \tnbond[disc]{(L) -- (W1)}  \tnbond[disc]{(W1) -- (W2)}  \tnbond[disc]{(W2) -- (R)}
 
-  % the bra's bonds above and the ket's below, free at both ends because the
-  % state itself is not in this picture
-  \coordinate (ap) at ([yshift=9mm,xshift=7mm]L.east);
-  \coordinate (am) at ([yshift=-9mm,xshift=7mm]L.east);
-  \coordinate (bp) at ([yshift=9mm,xshift=-7mm]R.west);
-  \coordinate (bm) at ([yshift=-9mm,xshift=-7mm]R.west);
-  \tnbond[disc]{([yshift=9mm]L.east) -- (ap)}
-  \tnbond[disc]{([yshift=-9mm]L.east) -- (am)}
-  \tnbond[disc]{([yshift=9mm]R.west) -- (bp)}
-  \tnbond[disc]{([yshift=-9mm]R.west) -- (bm)}
-  \tnput[right]{ap}{$a'$}  \tnput[right]{am}{$a$}
-  \tnput[left]{bp}{$b'$}   \tnput[left]{bm}{$b$}
+  % the four indices below, at one depth and evenly spaced: Theta's legs
+  \tnbond[disc]{([yshift=-7mm]L.east) -| (0.5,-1.55)}
+  \tnbond[disc]{(W1.south) -- (1.15,-1.55)}
+  \tnbond[disc]{(W2.south) -- (2.15,-1.55)}
+  \tnbond[disc]{([yshift=-7mm]R.west) -| (2.8,-1.55)}
+  \tnput[below]{0.5,-1.55}{$a$}        \tnput[below]{1.15,-1.55}{$\sigma_1$}
+  \tnput[below]{2.15,-1.55}{$\sigma_2$} \tnput[below]{2.8,-1.55}{$b$}
 
-  % the physical indices of the two sites: in from below, out above
-  \foreach \n/\i in {W1/1, W2/2} {
-    \coordinate (\n u) at ([yshift=11mm]\n.north);
-    \coordinate (\n d) at ([yshift=-11mm]\n.south);
-    \tnbond[disc]{(\n.north) -- (\n u)}
-    \tnbond[disc]{(\n.south) -- (\n d)}
-  }
-  \tnput[above]{W1u}{$\sigma_1'$}  \tnput[above]{W2u}{$\sigma_2'$}
-  \tnput[below]{W1d}{$\sigma_1$}   \tnput[below]{W2d}{$\sigma_2$}
+  % and the four above, which is what it returns
+  \tnbond[disc]{([yshift=7mm]L.east) -| (0.5,1.55)}
+  \tnbond[disc]{(W1.north) -- (1.15,1.55)}
+  \tnbond[disc]{(W2.north) -- (2.15,1.55)}
+  \tnbond[disc]{([yshift=7mm]R.west) -| (2.8,1.55)}
+  \tnput[above]{0.5,1.55}{$a'$}         \tnput[above]{1.15,1.55}{$\sigma_1'$}
+  \tnput[above]{2.15,1.55}{$\sigma_2'$} \tnput[above]{2.8,1.55}{$b'$}
 \end{tikzpicture}
 \end{document}

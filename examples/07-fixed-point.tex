@@ -1,40 +1,61 @@
-% The left fixed point of a uniform MPS: l E = lambda l, where E is one column
-% of the transfer matrix.
+% Two fixed-point equations for a uniform MPS, one above the other.
 %
-% E is not drawn as a thing of its own, because it is not one -- it is the ket
-% tensor A and its conjugate stacked and joined along the physical index, and
-% the picture says that more plainly than the letter does. l carries two bond
-% indices, one into each layer, which is why it is drawn tall rather than as a
-% site: it lives in the doubled space, not on the chain.
+% Above: the transfer matrix. E is not drawn as a thing of its own, because it
+% is not one -- it is the ket tensor A and its conjugate stacked and joined
+% along the physical index, and the picture says that more plainly than the
+% letter does. l carries two bond indices, one into each layer, which is why it
+% is drawn tall rather than as a site: it lives in the doubled space. Solve
+% l E = lambda l and you have what an infinite chain needs in place of an end,
+% the boundary that reproduces itself under one more site.
 %
-% A is left-canonical, so the same triangle as in the chain; the lower row is
-% its conjugate and is the same tensor, which is why it is the same shape. The
-% physical index between them is the contraction that makes E a map from the
-% doubled bond space to itself, and it continues both tensors' own flat sides,
-% so the column reads as one object.
+% Below: the same column with the Hamiltonian's MPO tensor between the layers.
+% L now carries three indices, one per layer, and the equation is drawn in the
+% same eigenvalue form.
 %
-% Solve it and you have what an infinite chain needs in place of an end: the
-% boundary that reproduces itself under one more site.
+% That form is the honest one only block by block. An MPO for a local
+% Hamiltonian is upper triangular with ones on the diagonal, so its transfer
+% matrix has eigenvalue one with a Jordan block: the equation holds as drawn
+% within a diagonal block, and the block that carries the extensive part needs
+% the energy per site subtracted and is solved as a geometric sum rather than as
+% an eigenvector. The picture is the contraction, not the solver.
+%
+% The physical indices leave from the centres here rather than from a flat side,
+% so that the two layers and the MPO between them line up in one column.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
-\begin{tikzpicture}[x=1.3cm]
-  % ---- l E --------------------------------------------------------------
+\begin{tikzpicture}
+  % ---- the transfer matrix: l E = lambda l -------------------------------
   \node[tn node, minimum width=7mm, minimum height=28mm] (l) at (0,0) {$l$};
-  \node[canl] (A)  at (1.25,0.85)  {$A$};
-  \node[canl] (Ab) at (1.25,-0.85) {$\bar A$};
+  \node[canl] (A)  at (1.5,0.85)  {$A$};
+  \node[canl] (Ab) at (1.5,-0.85) {$\bar A$};
+  \tnbond[disc]{(l.east |- A) -- (A)}   \tnbond[disc]{(l.east |- Ab) -- (Ab)}
+  \tnbond[disc]{(A.south) -- (Ab.north)}
+  \tnbond[disc]{(A) -- ++(0.95,0)}      \tnbond[disc]{(Ab) -- ++(0.95,0)}
 
-  \tnbond[disc]{(l.east |- A) -- (A)}
-  \tnbond[disc]{(l.east |- Ab) -- (Ab)}
-  \tnbond[disc]{(A.corner 3) -- (Ab.corner 2)}
-  \tnbond[disc]{(A) -- ++(0.5,0)}
-  \tnbond[disc]{(Ab) -- ++(0.5,0)}
+  \node at (3.5,0) {$=\;\lambda$};
+  \node[tn node, minimum width=7mm, minimum height=28mm] (r) at (4.4,0) {$l$};
+  \tnbond[disc]{([yshift=8.5mm]r.east) -- ++(0.95,0)}
+  \tnbond[disc]{([yshift=-8.5mm]r.east) -- ++(0.95,0)}
 
-  % ---- = lambda l -------------------------------------------------------
-  \node at (2.45,0) {$=\;\lambda$};
-  \node[tn node, minimum width=7mm, minimum height=28mm] (r) at (3.25,0) {$l$};
-  \tnbond[disc]{([yshift=8.5mm]r.east) -- ++(0.5,0)}
-  \tnbond[disc]{([yshift=-8.5mm]r.east) -- ++(0.5,0)}
+  % ---- the Hamiltonian's transfer matrix: L E_W = lambda L ---------------
+  \begin{scope}[yshift=-3.6cm]
+    \node[tn node, minimum width=7mm, minimum height=28mm] (L) at (0,0) {$L$};
+    \node[canl] (B)  at (1.5,0.85)  {$A$};
+    \node[mpo]  (W)  at (1.5,0)     {$W$};
+    \node[canl] (Bb) at (1.5,-0.85) {$\bar A$};
+    \tnbond[disc]{(L.east |- B) -- (B)}   \tnbond[disc]{(L) -- (W)}
+    \tnbond[disc]{(L.east |- Bb) -- (Bb)}
+    \tnbond[disc]{(B.south) -- (W.north)} \tnbond[disc]{(W.south) -- (Bb.north)}
+    \tnbond[disc]{(B) -- ++(0.95,0)}      \tnbond[disc]{(W) -- ++(0.95,0)}
+    \tnbond[disc]{(Bb) -- ++(0.95,0)}
+
+    \node at (3.5,0) {$=\;\lambda$};
+    \node[tn node, minimum width=7mm, minimum height=28mm] (Lr) at (4.4,0) {$L$};
+    \tnbond[disc]{([yshift=8.5mm]Lr.east) -- ++(0.95,0)}
+    \tnbond[disc]{(Lr.east) -- ++(0.95,0)}
+    \tnbond[disc]{([yshift=-8.5mm]Lr.east) -- ++(0.95,0)}
+  \end{scope}
 \end{tikzpicture}
 \end{document}

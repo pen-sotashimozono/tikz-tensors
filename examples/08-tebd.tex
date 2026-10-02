@@ -1,40 +1,72 @@
-% One Trotter step of TEBD: the nearest-neighbour terms of the Hamiltonian do
-% not commute, so the step is split into the odd bonds and then the even ones,
-% and each half is a row of two-site gates that do commute among themselves.
+% TEBD on a finite chain, to first order in the Trotter splitting and then to
+% second.
 %
-% The tensors are plain arrays rather than the canonical triangles, because a
-% Trotter step does not care which way the gauge runs -- it is applied to the
-% physical indices and the gauge is restored afterwards, by the truncation that
-% is not drawn here.
+% The state is drawn in a definite mixed canonical form and not as six anonymous
+% arrays, because which tensors are isometric is what makes the truncation after
+% each gate cheap and controlled: with the orthogonality centre where it is, the
+% singular values on the bond being cut are the Schmidt values, and discarding
+% the smallest of them is the best rank-D approximation. A picture that leaves
+% the gauge unsaid leaves that out.
 %
-% No gate has legs of its own. The physical indices run the whole way down and
-% a gate is laid on the ones it acts on; a tensor is drawn over an index, so it
-% interrupts them, which is what applying it means. Read downward: the state,
-% the odd bonds, the even bonds, and the indices that come out are the same
-% indices that went in.
+% Finite, so the chain stops: the outer bonds are open and carry nothing.
+%
+% First order splits exp(-i dt H) into the odd bonds and then the even ones, and
+% the error per step is O(dt^2) because the two halves do not commute. Second
+% order symmetrises it -- half a step of odd, a full step of even, half a step of
+% odd again -- and the error becomes O(dt^3) per step. The cost is one more row
+% of gates, which is what the two pictures differ by.
+%
+% No gate has legs of its own. The physical indices run the whole way down and a
+% gate is laid on the ones it acts on; a tensor is drawn over an index, so it
+% interrupts them, which is what applying it means.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}[x=1.25cm]
-  \tnchain{S}{(0,0)}{(5,0)}{coef/$A$/c, coef/$A$/c, coef/$A$/c,
-                            coef/$A$/c, coef/$A$/c, coef/$A$/c}
-  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,...,5}{
-    \tnbond[disc]{(S\i) -- (S\j)}%
+  % ---- first order ------------------------------------------------------
+  \tnchain{S}{(0,0)}{(5,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
+                            canr/$B$/r, canr/$B$/r, canr/$B$/r}
+  % the gauge runs toward the orthogonality centre from both sides
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,2}{
+    \tnbond[gauge]{(S\i) -- (S\j)}%
   }
-  \tnbond[disc]{([xshift=-5mm]S1.west) -- (S1)}
-  \tnbond[disc]{([xshift=5mm]S6.east) -- (S6)}
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {3,4,5}{
+    \tnbond[gauge]{(S\j) -- (S\i)}%
+  }
+  \tnbond[gauge]{([xshift=-5mm]S1.west) -- (S1)}
+  \tnbond[gauge]{([xshift=5mm]S6.east) -- (S6)}
+  \tnlegs{32mm}{S1-leg,S2-leg,S3-leg,S4-leg,S5-leg,S6-leg}
+  \tngate{Oa}{$U$}{S1-leg,S2-leg}{8mm}
+  \tngate{Ob}{$U$}{S3-leg,S4-leg}{8mm}
+  \tngate{Oc}{$U$}{S5-leg,S6-leg}{8mm}
+  \tngate{Ea}{$U$}{S2-leg,S3-leg}{21mm}
+  \tngate{Eb}{$U$}{S4-leg,S5-leg}{21mm}
+  \node[leg, anchor=west] at (5.75,-1.1) {first order, $O(\delta t^2)$ a step};
 
-  % the physical indices, the whole way down
-  \tnlegs{34mm}{S1-leg,S2-leg,S3-leg,S4-leg,S5-leg,S6-leg}
-
-  % the odd bonds, then the even ones
-  \tngate{Oa}{$U$}{S1-leg,S2-leg}{9mm}
-  \tngate{Ob}{$U$}{S3-leg,S4-leg}{9mm}
-  \tngate{Oc}{$U$}{S5-leg,S6-leg}{9mm}
-  \tngate{Ea}{$U$}{S2-leg,S3-leg}{22mm}
-  \tngate{Eb}{$U$}{S4-leg,S5-leg}{22mm}
-
-  \foreach \i in {1,...,6}{ \tnput[below]{S\i-leg-tip}{$n_{\i}$}}
+  % ---- second order -----------------------------------------------------
+  \begin{scope}[yshift=-5.6cm]
+    \tnchain{T}{(0,0)}{(5,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
+                              canr/$B$/r, canr/$B$/r, canr/$B$/r}
+    % the gauge runs toward the orthogonality centre from both sides
+    \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,2}{
+      \tnbond[gauge]{(T\i) -- (T\j)}%
+    }
+    \foreach \i [evaluate=\i as \j using int(\i+1)] in {3,4,5}{
+      \tnbond[gauge]{(T\j) -- (T\i)}%
+    }
+    \tnbond[gauge]{([xshift=-5mm]T1.west) -- (T1)}
+    \tnbond[gauge]{([xshift=5mm]T6.east) -- (T6)}
+    \tnlegs{45mm}{T1-leg,T2-leg,T3-leg,T4-leg,T5-leg,T6-leg}
+    \tngate{Pa}{$U^{1/2}$}{T1-leg,T2-leg}{8mm}
+    \tngate{Pb}{$U^{1/2}$}{T3-leg,T4-leg}{8mm}
+    \tngate{Pc}{$U^{1/2}$}{T5-leg,T6-leg}{8mm}
+    \tngate{Fa}{$U$}{T2-leg,T3-leg}{21mm}
+    \tngate{Fb}{$U$}{T4-leg,T5-leg}{21mm}
+    \tngate{Qa}{$U^{1/2}$}{T1-leg,T2-leg}{34mm}
+    \tngate{Qb}{$U^{1/2}$}{T3-leg,T4-leg}{34mm}
+    \tngate{Qc}{$U^{1/2}$}{T5-leg,T6-leg}{34mm}
+    \node[leg, anchor=west] at (5.75,-1.7) {second order, $O(\delta t^3)$ a step};
+  \end{scope}
 \end{tikzpicture}
 \end{document}
