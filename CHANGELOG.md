@@ -12,7 +12,8 @@ Trees, MERA and the decompositions, on the same grid; and a neural network, roug
 Roadmap phase 3. New examples: `17-svd-qr` (T = U S V† and T = Q R on one
 tensor of a chain), `18-ttn` (a tree on four sites, the centre at the root),
 `19-mera` (two layers of a binary MERA on eight sites) and `20-neural-network`
-(a perceptron next to an MPS classifier).
+(the tensor structure of an ordinary perceptron: a layer of units is an index,
+the weights between two layers a matrix, the batch an index left open).
 
 - **Triangles pointing up and down.** `tn triangle up` and `tn triangle down`
   stretch to the sites they span, so an isometry of a tree or a MERA is as

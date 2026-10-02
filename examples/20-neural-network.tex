@@ -1,21 +1,21 @@
-% A neural network, as far as a tensor diagram can say it.
+% The tensor structure of an ordinary neural network: a three-layer perceptron,
+% x -> W1 -> sigma -> W2 -> sigma -> W3 -> y.
 %
-% Above: a three-layer perceptron, x -> W1 -> sigma -> W2 -> sigma -> W3. Every
-% weight matrix is a tensor with two indices, and applying it is a contraction:
-% the index between x and W1 is the input, the ones after are hidden units,
-% and the open index at the end is the output. The activations are the part
-% that is not a tensor network. sigma acts on each component of its index on
-% its own, so it keeps the index -- but it is not linear, and contracting
-% through it is not a sum. That is what the dashed circle says: a map on an
-% index, not a tensor. Take the activations out and the whole network
-% contracts to one matrix.
+% The usual picture of a network is a graph of neurons, a dot per unit and a
+% line per weight. A tensor diagram turns that inside out: a whole layer of
+% units is one index, whose dimension is the width of the layer, and the
+% weights between two layers are one tensor with two indices, a matrix.
+% Applying a layer is contracting it: i is the input layer, h and h' the
+% hidden ones, and the open index y the output. The batch is one more index
+% on x, n, which nothing contracts, so it is still open at the end.
 %
-% Below: what a tensor network does instead (Stoudenmire and Schwab, 2016).
-% Each input x_j goes through a fixed local feature map phi, a small vector,
-% and the model is one tensor W of all of them, kept as an MPS with the label
-% index l on the centre. The nonlinearity is all in phi, before anything is
-% contracted; everything after is linear in W, and so is trained by the same
-% sweeps as DMRG.
+% The activations are the part that is not a tensor network. sigma acts on
+% each unit of its layer on its own, so it keeps the index -- but it is not
+% linear, and contracting through it is not a sum. That is what the dashed
+% circle says: a map on an index, not a tensor. Take the activations out and
+% the whole network contracts to one matrix. The biases are not drawn: Wx + b
+% is a sum, not a contraction, and the usual way to draw one is to give x a
+% constant component 1 and fold b into W.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
@@ -26,16 +26,11 @@
   \tnlayer{N}{net}{coef/$x$, coef/$W_1$, act/$\sigma$, coef/$W_2$, act/$\sigma$, coef/$W_3$}
   \tnconnect{N}
   \tnopen{right}{N}
+  \tnopen{down}{N-net-1}
   \tnmid{N-net-1}{N-net-2}{$i$}
   \tnmid{N-net-2}{N-net-3}{$h$}
+  \tnmid{N-net-4}{N-net-5}{$h'$}
   \tnput[above]{N-net-right}{$y$}
-  \tnbreak
-  \tnstack{F}{5}{model, features}
-  \tnlayer{F}{model}{canl/$A$, canl/$A$, centre/$W^{\ell}$, canr/$B$, canr/$B$}
-  \tnlayer{F}{features}{basis/$\phi$, basis/$\phi$, basis/$\phi$, basis/$\phi$, basis/$\phi$}
-  \tnconnect[along=gauge, apart=features]{F}
-  \tnopen{up}{F-model-3}
-  \tnput[above]{F-model-3-up}{$\ell$}
-  \foreach \i in {1,...,5} \tnput[below]{F-features-\i.south}{$x_{\i}$};
+  \tnput[below]{N-net-1-down}{$n$}
 \end{tikzpicture}
 \end{document}
