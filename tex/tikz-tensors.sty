@@ -578,17 +578,20 @@
   }%
 }
 
-% \tneq[<factor>]
-% An equals sign after everything drawn so far, centred on y = 0 like the
-% stacks, with <factor> after it if there is one (\tneq[$\lambda$]); the next
-% stack starts after it.
-\newcommand{\tneq}[1][]{%
+% \tneq[<factor>]       an equals sign
+% \tnapprox[<factor>]   an approximately-equals sign
+% After everything drawn so far, centred on y = 0 like the stacks, with
+% <factor> after it if there is one (\tneq[$\lambda$]); the next stack starts
+% after it.
+\newcommand{\tn@rel}[2]{%
   \node[anchor=west, inner sep=0pt] (tn@eq) at
-    ($(\the\tn@right,0)+(\tn@gap,0)$) {$=$\ifx\relax#1\relax\else\hspace{0.3em}#1\fi};
+    ($(\the\tn@right,0)+(\tn@gap,0)$) {$#1$\ifx\relax#2\relax\else\hspace{0.3em}#2\fi};
   \pgfextractx{\tn@d}{\pgfpointanchor{tn@eq}{east}}%
   \global\tn@cursor=\tn@d \global\advance\tn@cursor by \tn@gap\relax
   \global\tn@right=\tn@cursor
 }
+\newcommand{\tneq}[1][]{\tn@rel{=}{#1}}
+\newcommand{\tnapprox}[1][]{\tn@rel{\approx}{#1}}
 \makeatother
 
 \endinput

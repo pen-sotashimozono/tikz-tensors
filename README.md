@@ -62,8 +62,8 @@ network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 `\tnlayer` takes one entry per slot: `<style>/<label>`, `<style>/<label>/<span>`
 for a tensor across several, `.` for an empty slot, `-` for one the layer's
-index runs through. `\tneq[$\lambda$]` writes an equals sign and the next
-stack goes after it. `tests/lint.py` holds the examples to these rules
+index runs through. `\tneq[$\lambda$]` (or `\tnapprox`) writes an equals sign and the
+next stack goes after it. `tests/lint.py` holds the examples to these rules
 (`docs/roadmap.md`).
 
 Exchanging two fermion legs: `\tnswap[<edge style>]{<left top>}{<right top>}{<drop>}`

@@ -72,7 +72,10 @@ with a gate on it is redrawn.
 it, and both come off the lint ratchet. New: `10-heff-single-site` and
 `11-heff-bond`, the single-site and bond effective Hamiltonians, and
 `12-fixed-point`, the left fixed point of a uniform MPS as an equation of two
-stacks. Examples are named for the object they draw, not the algorithm that
+stacks. `13-low-rank` is a five-site tensor and its MPS approximation,
+side by side: one entry spanning five slots is exactly as wide as five sites, so
+the two share their width, their columns and the depth of every index without
+the file saying so. `\tnapprox` is `\tneq` with an approximately-equals sign. Examples are named for the object they draw, not the algorithm that
 uses it: one H_eff serves DMRG, TDVP and VUMPS alike. `07-fixed-point` stays as it is: it compares two places the physical
 index can leave a triangle, and a stack takes it from the centre.
 
