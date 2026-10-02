@@ -39,12 +39,11 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{E}{5}{ket, gate, op, adj, bra}
-  \tnlayer{E}{ket}{coef/$A$, coef/$A$, coef/$A$, coef/$A$, coef/$A$}
-  \tnlayer{E}{gate}{., gate/$U$/2, ., .}
-  \tnlayer{E}{op}{., ., op/$\hat O$, ., .}
-  \tnlayer{E}{adj}{., gate/$U^{\dagger}$/2, ., .}
-  \tnlayer{E}{bra}{coef/$\bar A$, coef/$\bar A$, coef/$\bar A$, coef/$\bar A$,
-                   coef/$\bar A$}
+  \tnlayer{E}{ket}{5*coef/$A$}
+  \tnlayer{E}{gate}{., gate/$U$/2, 2*.}
+  \tnlayer{E}{op}{2*., op/$\hat O$, 2*.}
+  \tnlayer{E}{adj}{., gate/$U^{\dagger}$/2, 2*.}
+  \tnlayer{E}{bra}{5*coef/$\bar A$}
   \tnconnect{E}
 \end{tikzpicture}
 \end{document}

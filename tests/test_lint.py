@@ -49,9 +49,11 @@ class Rules(unittest.TestCase):
     def test_raw_tikz_and_tex(self):
         for text in (r"\node[op] (O) at (A) {$O$};", r"\draw (A) -- (B);",
                      r"\begin{scope}", r"\end{scope}", r"\tikzset{x/.style={}}",
-                     r"\pgfmathtruncatemacro{\c}{\b+1}"):
+                     r"\pgfmathtruncatemacro{\c}{\b+1}", r"\tnbond{(A1) -- (A2)}",
+                     r"\tnset{pitch=20mm}"):
             self.assertIn("command", self.body(text), text)
         self.assertNotIn("command", self.body(r"\tnodes{A}"))
+        self.assertNotIn("command", self.body(r"\tnjoin{A-ket-1:left}{A-ket-4:right}"))
 
     def test_the_frame(self):
         self.assertIn("frame", self.rules(

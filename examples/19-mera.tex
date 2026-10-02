@@ -25,16 +25,14 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack[tree]{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
-  \tnlayer{M}{top}{., ., ., ., ., ., ., centre/$\tau$/2, ., ., ., ., ., ., .}
+  \tnlayer{M}{top}{7*., centre/$\tau$/2, 7*.}
   \tnlayer{M}{w4}{iso/$w$/16}
-  \tnlayer{M}{w3}{iso/$w$/8, iso/$w$/8}
-  \tnlayer{M}{u3}{., ., ., ., disentangler/$u$/8, ., ., ., .}
-  \tnlayer{M}{w2}{iso/$w$/4, iso/$w$/4, iso/$w$/4, iso/$w$/4}
-  \tnlayer{M}{u2}{., ., disentangler/$u$/4, disentangler/$u$/4, disentangler/$u$/4, ., .}
-  \tnlayer{M}{w1}{iso/$w$/2, iso/$w$/2, iso/$w$/2, iso/$w$/2,
-                   iso/$w$/2, iso/$w$/2, iso/$w$/2, iso/$w$/2}
-  \tnlayer{M}{u1}{., disentangler/$u$/2, disentangler/$u$/2, disentangler/$u$/2, disentangler/$u$/2,
-                   disentangler/$u$/2, disentangler/$u$/2, disentangler/$u$/2, .}
+  \tnlayer{M}{w3}{2*iso/$w$/8}
+  \tnlayer{M}{u3}{4*., disentangler/$u$/8, 4*.}
+  \tnlayer{M}{w2}{4*iso/$w$/4}
+  \tnlayer{M}{u2}{2*., 3*disentangler/$u$/4, 2*.}
+  \tnlayer{M}{w1}{8*iso/$w$/2}
+  \tnlayer{M}{u1}{., 7*disentangler/$u$/2, .}
   \tnconnect[apart={top, w4, w3, u3, w2, u2, w1, u1}]{M}
   \tnopen{down}{M}
 \end{tikzpicture}

@@ -23,7 +23,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket}
-  \tnlayer{S}{ket}{canl/$A$, canl/$A$, centre/$C$, canr/$B$, canr/$B$}
+  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
   \tnconnect[along=gauge]{S}
   \tnopen[gauge]{left}{S-ket-1}
   \tnopen[gauge]{right}{S-ket-5}
@@ -31,8 +31,7 @@
   \foreach \i in {1,...,5} \tnput[below]{S-\i-down}{$n_{\i}$};
   \tnbreak
   \tnstack{T}{6}{ket}
-  \tnlayer{T}{ket}{canl/$A$, canl/$A$, canl/$A$, centrebond/$\Lambda$,
-                   canr/$B$, canr/$B$}
+  \tnlayer{T}{ket}{3*canl/$A$, centrebond/$\Lambda$, 2*canr/$B$}
   \tnconnect[along=gauge]{T}
   \tnopen[gauge]{left}{T-ket-1}
   \tnopen[gauge]{right}{T-ket-6}

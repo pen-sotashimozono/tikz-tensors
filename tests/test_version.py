@@ -45,10 +45,10 @@ class VersionCheck(unittest.TestCase):
         return out.returncode, out.stdout
 
     def edit_sty(self, old, new):
-        sty = self.tmp / "tex/tikz-tensors.sty"
-        text = sty.read_text()
-        self.assertIn(old, text)
-        sty.write_text(text.replace(old, new, 1))
+        """Replace <old> in the one file of the package (tex/) that has it."""
+        files = [p for p in sorted((self.tmp / "tex").iterdir()) if old in p.read_text()]
+        self.assertEqual(len(files), 1, old)
+        files[0].write_text(files[0].read_text().replace(old, new, 1))
 
     def bump(self, level, summary="Why."):
         out = self.run_version("bump", level, summary)
@@ -57,7 +57,7 @@ class VersionCheck(unittest.TestCase):
     def version(self):
         return self.run_version().stdout.strip()
 
-    NEW_STYLE = ("  tn label/.style", "  tn hexagon/.style = {tn node, regular polygon},\n  tn label/.style")
+    NEW_STYLE = ("  tn small/.style", "  tn hexagon/.style = {tn node, regular polygon},\n  tn small/.style")
     NO_SMALL = ("  tn small/.style          = {minimum size=6mm, font=\\scriptsize},\n", "")
     # A change under tex/ that adds and removes no public name. It anchors on
     # \NeedsTeXFormat and adds a comment, rather than rewriting a value inside a
@@ -113,7 +113,7 @@ class VersionCheck(unittest.TestCase):
         code, out = self.check()
         self.assertEqual(code, 1)
         self.assertIn("removes style 'tn small'", out)
-        self.git("checkout", "CHANGELOG.md", "tex/tikz-tensors.sty")
+        self.git("checkout", "CHANGELOG.md", "tex/")
         self.edit_sty(*self.NO_SMALL)
         self.bump("minor")
         self.assertEqual(self.check()[0], 0)

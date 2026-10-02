@@ -17,14 +17,14 @@
 \begin{tikzpicture}
   \tnstack{P}{2}{state, legs}
   \tnlayer{P}{state}{coefwide/$\Psi$/2}
-  \tnlayer{P}{legs}{|, |}
+  \tnlayer{P}{legs}{2*|}
   \tnopenswap[disc]{P-state-1}
   \tnput[below]{P-state-1-down-1}{$i$}
   \tnput[below]{P-state-1-down-2}{$j$}
   \tneq[$-$]
   \tnstack{Q}{2}{state, legs}
   \tnlayer{Q}{state}{coefwide/$\Psi$/2}
-  \tnlayer{Q}{legs}{|, |}
+  \tnlayer{Q}{legs}{2*|}
   \tnopen{down}{Q}
   \tnput[below]{Q-1-down}{$i$}
   \tnput[below]{Q-2-down}{$j$}

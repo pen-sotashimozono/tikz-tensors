@@ -5,6 +5,48 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.9.0 — 2026-10-02
+
+The package as modules; a tensor's indices as ports; `\tnjoin`, `<n>*`, `\tnset`.
+
+`tikz-tensors.sty` is now a loader for nine modules in `tex/`, each a file,
+each using only the ones above it: `core` (the stroke, the edge layer, the
+tokens, `tn node`, `tn edge`, `\tnbond`), `colors`, `nodes` (node types and
+the properties a layout reads off them), `edges` (edge types and routes),
+`canvas` (rows, relations, `\tnbreak`), `stack`, `connect` (contraction),
+`grid` and `labels`. Splitting the file changed no picture.
+
+A tensor's indices are ports. A layout records where each tensor is; its type
+says where an index leaves it; every index -- along a layer, down a site,
+round the corner of a tree, open, or joined by hand -- starts at a port. An
+index opened from the apex of a triangle now starts just inside its base, like
+the triangle's other indices; it is hidden under the triangle (`23-hotrg`
+renders identically at 300 dpi, but its reference changes).
+
+New:
+- `\tnjoin[<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}` joins two
+  ports the lattice does not: a periodic chain, a trace, a bond that skips
+  its neighbours. Two ports facing each other on one line with nothing between
+  are joined straight; any other index leaves each port by half a step into
+  the gutter beside it (between two columns or two layers, where no tensor
+  sits) and runs along gutters, so it never passes through or under a tensor.
+  Example `24-periodic-mps`.
+- `<n>*<entry>` in `\tnlayer`: an entry repeated, `4*canl/$A$`, `7*.`. The
+  linter requires it for every run of like entries (rule `repeat`), so a layer
+  has one spelling; every example is rewritten that way.
+- `\tnset{<token>=<length>, ...}` sets the package's spacing (pitch, rise,
+  slot, stub, gap, ...) and line width, for a notation file; a figure cannot
+  (the linter forbids it there, and `\tnbond`).
+
+`0*<entry>` is an error (a run is one entry or more).
+
+Fixed: two neighbouring `-` slots are now joined (they were left apart).
+
+Removed (before 1.0, so a minor step): `\tnchain`, `\tnrow`, `\tnlegs`,
+`\tngate`, which placed tensors by coordinates and which no example used since
+v0.6.0; the stack does all of it. `\tnswap` is internal now; `\tnopenswap`
+draws the crossing.
+
 ## v0.8.0 — 2026-10-02
 
 Two-dimensional networks: PEPS, simple update, CTMRG, HOTRG.

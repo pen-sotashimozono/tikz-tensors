@@ -20,8 +20,8 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{Z}{5}{ket, op}
-  \tnlayer{Z}{ket}{., ., coef/$C$/1/2, canr/$B$, canr/$B$}
-  \tnlayer{Z}{op}{canl/$\tilde A$, canl/$\tilde A$, ., mpo/$W$, mpo/$W$}
+  \tnlayer{Z}{ket}{2*., coef/$C$/1/2, 2*canr/$B$}
+  \tnlayer{Z}{op}{2*canl/$\tilde A$, ., 2*mpo/$W$}
   \tnconnect{Z}
   \tnopen{down}{Z}
   \foreach \i in {1,...,5} \tnput[below]{Z-\i-down}{$\sigma_{\i}$};

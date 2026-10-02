@@ -1,0 +1,59 @@
+% tikz-tensors-edges.tex -- edge types, and the routes an edge takes.
+%
+% An edge type is a TikZ style built on `tn edge': what the line looks like.
+%   tn edge    plain (with a colour: tn edge=exact)
+%   tn wavy    a wave, undecorated where it has to turn
+%   tn arrow   an arrowhead part way along; `tn arrows=false' turns every one
+%              off, and which way it points is the route's to say
+%   tn double  two indices fused into one
+% A user's own type is a style of the same kind. Where an edge goes is not the
+% type's business: a route below takes any type, and the layouts choose the
+% route -- a figure never does.
+\tikzset{
+  tn wavy/.style   = {tn edge, decorate,
+                      decoration={snake, amplitude=0.55mm,
+                                  segment length=2.4mm, pre length=0.4mm,
+                                  post length=0.8mm}},
+  tn arrow/.style  = {tn edge, postaction={decorate},
+                      decoration={markings, mark=at position 0.58 with
+                        {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn double/.style = {tn edge, double=grey1, double distance=1.2pt},
+}
+
+% ---- routes -----------------------------------------------------------------
+% Every route is drawn by \tnbond, so under the nodes. Coordinates are lengths
+% (the layouts work in them), x before y.
+%
+% \tn@line{<style>}{<x1>}{<y1>}{<x2>}{<y2>}     straight, from 1 to 2
+\def\tn@line#1#2#3#4#5{\tnbond[#1]{(#2,#3) -- (#4,#5)}}
+% \tn@turns{<style>}{<path>}   a path of straight runs, its corners rounded as
+% little as reads as one line turning rather than two lines meeting
+\def\tn@turns#1#2{\tnbond[#1, rounded corners=1.5pt]{#2}}
+% \tn@bond{<style>}{<x left>}{<x right>}{<y>}{<points of left>}{<of right>}
+% Straight along a layer, its direction taken from the shapes it joins: away
+% from one pointing right, into one pointing left, so that in a canonical form
+% every arrow runs toward the centre. Anything else is drawn left to right.
+\def\tn@bond#1#2#3#4#5#6{%
+  \edef\tn@pa{#5}\edef\tn@pb{#6}%
+  \def\tn@rev{0}%
+  \ifx\tn@pb\tn@sleft \ifx\tn@pa\tn@sright\else\def\tn@rev{1}\fi\fi
+  \ifx\tn@pa\tn@sleft \ifx\tn@pb\tn@sright\else\def\tn@rev{1}\fi\fi
+  \ifnum\tn@rev=1 \tn@line{#1}{#3}{#4}{#2}{#4}%
+  \else \tn@line{#1}{#2}{#4}{#3}{#4}\fi}
+
+% \tn@swap{<style>}{<left top>}{<right top>}{<drop>}
+% Two legs that start at <left top> and <right top> and end <drop> lower,
+% exchanged: short straight stubs in <style> at both ends, joined by a smooth
+% crossing in the same style undecorated (a wavy line on a diagonal reads as
+% noise).
+\def\tn@swap#1#2#3#4{%
+  \begin{pgfonlayer}{tnedges}%
+    \path #2 coordinate (tn@l) #3 coordinate (tn@r);
+    \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
+    \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
+    \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
+    \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
+    \draw[#1, decorate=false] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
+    \draw[#1, decorate=false] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+  \end{pgfonlayer}%
+}

@@ -1,0 +1,16 @@
+% tikz-tensors-labels.tex -- text on a diagram, placed by what it labels.
+
+\tikzset{tn label/.style = {font=\small, inner sep=2pt}}
+
+% \tnput[<placement>]{<point>}{<text>}      text on or beside one point
+% \tnmid[<placement>]{<a>}{<b>}{<text>}     text midway between two points
+% Where a label goes is said in terms of what it labels -- above this tensor,
+% below that index's end, midway along this bond -- and never as a coordinate,
+% because a coordinate written for a label is a coordinate that has to be
+% re-found every time the thing it labels moves. <placement> is TikZ's: above,
+% below, left, right, center, and any of them with a distance.
+% A label counts as drawn when the next equals sign is placed.
+\newcommand{\tnput}[3][above]{\node[tn label, #1] (tn@lab) at (#2) {#3};%
+  \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
+\newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};%
+  \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}

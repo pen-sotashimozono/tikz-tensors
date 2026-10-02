@@ -12,15 +12,15 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{X}{5}{ket, op}
-  \tnlayer{X}{ket}{coef/$A$, coef/$A$, coef/$A$, coef/$A$, coef/$A$}
-  \tnlayer{X}{op}{mpo/$W$, mpo/$W$, mpo/$W$, mpo/$W$, mpo/$W$}
+  \tnlayer{X}{ket}{5*coef/$A$}
+  \tnlayer{X}{op}{5*mpo/$W$}
   \tnconnect{X}
   \tnopen{down}{X}
   \tnmid{X-ket-1}{X-ket-2}{$D$}
   \tnmid{X-op-1}{X-op-2}{$\chi$}
   \tneq
   \tnstack{Y}{5}{ket}
-  \tnlayer{Y}{ket}{coef/$B$, coef/$B$, coef/$B$, coef/$B$, coef/$B$}
+  \tnlayer{Y}{ket}{5*coef/$B$}
   \tnconnect[along=fused]{Y}
   \tnopen{down}{Y}
   \tnmid{Y-ket-1}{Y-ket-2}{$D\chi$}

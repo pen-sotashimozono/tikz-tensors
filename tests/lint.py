@@ -22,7 +22,13 @@ What is checked, on the file with its comments and its math removed:
             (fill=, draw=, minimum width=, xshift=, anchor=, ...)
   command   no raw TikZ or TeX: \\node, \\draw, \\path, scope, \\tikzset,
             \\newcommand, \\def, \\pgfmath... -- a pattern a figure needs is a
-            command in tex/
+            command in tex/; and not the package's own escape hatches,
+            \\tnbond (a path written out) and \\tnset (the tokens, which are a
+            notation's to change)
+
+  repeat    a run of like entries in a \\tnlayer is written once, <n>*<entry>,
+            and the whole run in one: 3*canl/$A$, never canl/$A$, canl/$A$,
+            canl/$A$ or 2*canl/$A$, canl/$A$ -- so a layer has one spelling
 
 Rules 5 and 6 of the roadmap (fixed names, one order of statements) are not
 checked yet: they are about commands that do not exist yet, and are added here
@@ -63,7 +69,7 @@ RULES = [
         r"|line width)\s*=")),
     ("command", re.compile(
         r"\\(?:node|draw|path|fill|filldraw|coordinate|clip|matrix"
-        r"|tikzset|newcommand|renewcommand|def|let|edef|gdef"
+        r"|tikzset|newcommand|renewcommand|def|let|edef|gdef|tnbond|tnset"
         r"|pgf[a-z]*)(?![A-Za-z@])"
         r"|\\(?:begin|end)\{(?:scope|pgfonlayer)\}")),
 ]
@@ -119,7 +125,65 @@ def lint(path):
         for rule, pattern in RULES:
             for m in pattern.finditer(text):
                 found.append((n, rule, m.group(0).strip()))
+    found += repeats(body)
     found.sort(key=lambda f: f[0])
+    return found
+
+
+def groups(text, start, count):
+    """The next <count> brace groups of text from <start>, and where they end."""
+    out, i = [], start
+    for _ in range(count):
+        while i < len(text) and text[i].isspace():
+            i += 1
+        if i >= len(text) or text[i] != "{":
+            return None, i
+        depth, j = 0, i
+        while j < len(text):
+            depth += {"{": 1, "}": -1}.get(text[j], 0)
+            if depth == 0:
+                break
+            j += 1
+        out.append(text[i + 1:j])
+        i = j + 1
+    return out, i
+
+
+def entries(text):
+    """A \\tnlayer list split at its top-level commas, each as (count, entry)."""
+    parts, depth, cur = [], 0, ""
+    for c in text:
+        depth += {"{": 1, "}": -1}.get(c, 0)
+        if c == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += c
+    parts.append(cur)
+    out = []
+    for p in (" ".join(p.split()) for p in parts):
+        m = re.match(r"(\d+)\s*\*\s*(.*)", p)
+        out.append((int(m.group(1)), m.group(2), True) if m else (1, p, False))
+    return out
+
+
+def repeats(body):
+    """Runs of like entries in a \\tnlayer not written as one <n>*<entry>."""
+    found = []
+    text = "\n".join(s for _, s in body)
+    starts = [n for n, s in body for _ in [0] for _ in s + "\n"]
+    for m in re.finditer(r"\\tnlayer(?![A-Za-z@])", text):
+        args, _ = groups(text, m.end(), 3)
+        if args is None:
+            continue
+        n = starts[m.start()]
+        layer = entries(args[2])
+        for (k, e, star), (_, f, _) in zip(layer, layer[1:] + [(0, None, False)]):
+            if e == f:
+                found.append((n, "repeat", f"{e}, {f} -- one run, written <n>*{e}"))
+        for k, e, star in layer:
+            if star and k < 2:
+                found.append((n, "repeat", f"{k}*{e} -- a run is two or more"))
     return found
 
 
