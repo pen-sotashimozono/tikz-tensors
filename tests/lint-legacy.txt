@@ -2,10 +2,3 @@
 # and so exempt from them. This list only shrinks: an example comes off it in
 # the change that rewrites it on the package's commands, and lint.py fails on a
 # listed file that already passes.
-examples/01-expansion.tex
-examples/02-swap.tex
-examples/03-mps.tex
-examples/04-canonical.tex
-examples/05-centre.tex
-examples/07-fixed-point.tex
-examples/08-tebd.tex

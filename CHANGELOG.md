@@ -5,6 +5,65 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.6.0 — 2026-10-02
+
+Every example on the grid, and what MPO times MPS needs.
+
+**Every example is on the grid now**, and the lint ratchet is empty:
+`tests/lint-legacy.txt` lists nothing, and no example has a length, a
+coordinate or a raw TikZ command in it. The ones written by hand are rewritten
+on stacks and named for what they draw:
+
+| was | is |
+|---|---|
+| `01`–`05` | the same names, rewritten |
+| `07-fixed-point` (two conventions side by side) and `12-fixed-point` | `07-fixed-point`: both fixed-point equations, the physical index from the flat side |
+| `08-tebd` | `08-trotter-sweep` |
+| `13-low-rank` | `12-low-rank` |
+
+New, for what the product of an MPO and an MPS needs (roadmap phase 2):
+`13-mpo-mps` (the naive product, with fused bonds), `14-zip-up` (the sweep
+caught halfway, its zipper two layers tall), `15-cp` (a CP decomposition, the
+shared index a copy tensor) and `16-sampling` (an amplitude, every index closed
+by a basis vector).
+
+What the grid learned to do for them:
+
+- **Rows.** `\tnbreak` starts a row under everything drawn. A stack after a
+  stack, with no relation between them, stands beside it.
+- **More slot kinds.** `|` is a slot the site's index runs through, so the
+  sites a gate does not touch run on past it and every index ends at one
+  depth; `dots` is the dots of a chain that goes on.
+- **Tensors across layers.** `<style>/<label>/<span>/<down>` is as tall as
+  the layers it covers and has an index into each — the zipper of zip-up.
+- **Opening a whole stack.** `\tnopen{down}{S}` opens every site's index from
+  its lowest tensor (`S-<i>-down`), and left/right every layer's.
+  `\tnopenswap` opens two crossed, which is 02.
+- **Arrows from the shapes.** A bond is drawn border to border, and one that
+  carries a direction takes it from the triangles it joins: `tn points`, which
+  the triangles set. Every arrow of a canonical form points at the centre
+  without being written, and an open bond at either end points in.
+- **Connect options.** `\tnconnect` takes `along=` and `down=` separately, so
+  bonds carry arrows and physical indices do not, and `apart=` for layers whose
+  tensors have no index between them.
+- **New shapes.** `tn dot`, a copy tensor; `tn double`, two indices fused into
+  one. The notation calls them `delta` and `fused`, and a basis vector `basis`
+  (a small circle).
+
+Geometry changes, so every stack figure is redrawn:
+
+- The pitch across is 18 mm, so a triangle set across in its slot leaves room
+  for a bond and an arrowhead before the next tensor. Down, layers stay 15 mm
+  apart (`rise`).
+- A stack without an environment keeps its end slots as far as their borders,
+  so an index opened at either end never runs into the relation sign beside it.
+- A label counts as drawn when the next sign is placed.
+
+One trap is documented rather than removed: a style with a comma in it, or a
+label with a slash, goes in braces (`{coef, circle}/$A$`,
+`gate/{$U(\delta t/2)$}/2`), and the dots are `dots`, not `...`, which
+`\foreach` reads as a range.
+
 ## v0.5.0 — 2026-10-02
 
 Stacks: a figure of an algorithm drawn on a grid the package owns, so that two

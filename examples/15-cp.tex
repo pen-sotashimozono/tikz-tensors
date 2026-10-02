@@ -1,0 +1,39 @@
+% A rank-R CP decomposition of a three-index tensor:
+%   T_ijk = sum_r A_ir B_jr C_kr.
+%
+% The sum over the one shared index r is a copy tensor -- diagonal in all three
+% of its indices, a delta -- and that is the ink dot: it has no label, because
+% there is nothing in it but the identity. Every factor matrix meets it on r,
+% and the three original indices are the three open ones.
+%
+% The left-hand side is a stack of the same two layers with T in the first and
+% `|' in the second, so its index k runs to the same depth as C's.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{T}{1}{a, b}
+  \tnlayer{T}{a}{coef/$T$}
+  \tnlayer{T}{b}{|}
+  \tnopen{left}{T-a-1}
+  \tnopen{right}{T-a-1}
+  \tnopen{down}{T-a-1}
+  \tnput[above]{T-a-1-left}{$i$}
+  \tnput[above]{T-a-1-right}{$j$}
+  \tnput[below]{T-a-1-down}{$k$}
+  \tnapprox
+  \tnstack{K}{3}{a, b}
+  \tnlayer{K}{a}{coef/$A$, delta/, coef/$B$}
+  \tnlayer{K}{b}{., coef/$C$, .}
+  \tnconnect{K}
+  \tnopen{left}{K-a-1}
+  \tnopen{right}{K-a-3}
+  \tnopen{down}{K-b-2}
+  \tnput[above]{K-a-1-left}{$i$}
+  \tnput[above]{K-a-3-right}{$j$}
+  \tnput[below]{K-b-2-down}{$k$}
+  \tnmid{K-a-1}{K-a-2}{$r$}
+\end{tikzpicture}
+\end{document}

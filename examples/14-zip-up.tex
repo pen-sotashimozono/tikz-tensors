@@ -1,0 +1,29 @@
+% Zip-up: an MPO applied to an MPS and compressed in one sweep, caught in the
+% middle of it.
+%
+% The MPS comes in right-canonical, B. Left of the zipper, the sweep is done:
+% each step contracted one W into one B, split the result by a truncated SVD,
+% and left the left factor behind -- the new MPS, isometric, A tilde. The
+% zipper C carries the rest of what has been contracted: one index to the left
+% into the new MPS, one into each layer on the right, where B and W have not
+% been touched yet, and the physical index of its site. Next step it absorbs
+% the B and W of site 4 and splits again.
+%
+% C is one entry across both layers of its site, so it is as tall as they are
+% and has an index into each, which is what makes it the seam between the two
+% halves. It is drawn as a plain array because that is what it is: neither
+% half of the gauge.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{Z}{5}{ket, op}
+  \tnlayer{Z}{ket}{., ., coef/$C$/1/2, canr/$B$, canr/$B$}
+  \tnlayer{Z}{op}{canl/$\tilde A$, canl/$\tilde A$, ., mpo/$W$, mpo/$W$}
+  \tnconnect{Z}
+  \tnopen{down}{Z}
+  \foreach \i in {1,...,5} \tnput[below]{Z-\i-down}{$\sigma_{\i}$};
+\end{tikzpicture}
+\end{document}

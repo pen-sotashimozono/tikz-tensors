@@ -14,7 +14,10 @@
 %   an operator tensor on a chain is a neutral rounded box, a gate a light
 %   yellow one, an environment block light purple;
 %   a finite index is a plain line, and one whose direction is part of what is
-%   being said -- which way the gauge runs -- carries an arrowhead.
+%   being said -- which way the gauge runs -- carries an arrowhead;
+%   two indices fused into one (a bond of dimension D times chi) are a double
+%   line; a copy tensor, diagonal in all its indices, is an ink dot; a basis
+%   vector closing an index is a small circle.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
@@ -39,4 +42,7 @@
   disc/.style       = {tn edge},
   gauge/.style      = {tn arrow},
   leg/.style        = {tn label},
+  fused/.style      = {tn double},
+  delta/.style      = {tn dot},
+  basis/.style      = {tn circle, tn small},
 }

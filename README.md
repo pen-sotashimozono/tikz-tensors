@@ -60,10 +60,33 @@ network, contracted) at either end. Nothing in it is a length or a coordinate:
 \tnopen{up}{H-op-1, H-op-2}
 ```
 
-`\tnlayer` takes one entry per slot: `<style>/<label>`, `<style>/<label>/<span>`
-for a tensor across several, `.` for an empty slot, `-` for one the layer's
-index runs through. `\tneq[$\lambda$]` (or `\tnapprox`) writes an equals sign and the
-next stack goes after it. `tests/lint.py` holds the examples to these rules
+`\tnlayer` takes one entry per slot:
+
+| entry | is |
+|---|---|
+| `<style>/<label>` | a tensor in the slot |
+| `<style>/<label>/<span>` | one tensor across `<span>` sites |
+| `<style>/<label>/<span>/<down>` | … and down `<down>` layers, with an index into each |
+| `.` | an empty slot |
+| `-` | the layer's index runs through |
+| `\|` | the site's index runs through (a gate's layer, room for a crossing) |
+| `dots` | the dots of a chain that goes on |
+
+A style with a comma, or a label with a slash, goes in braces:
+`{coef, circle}/$A$`, `gate/{$U(\delta t/2)$}/2`.
+
+- `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
+  a bond with an arrow takes its direction from the triangles it joins, so a
+  canonical form's arrows all point at the centre without being written.
+- `\tnopen{<up|down|left|right>}{<tensor or stack>, …}` opens indices; given a
+  stack, every site (or layer) at once. `\tnopenswap` opens two crossed.
+- `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
+  it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
+- A triangle's physical index leaves from the corner of its flat side
+  (`tn leg anchor`), and the triangle is set across so that corner is on the
+  site's line.
+
+Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`).
 
 Exchanging two fermion legs: `\tnswap[<edge style>]{<left top>}{<right top>}{<drop>}`

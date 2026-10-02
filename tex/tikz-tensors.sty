@@ -68,7 +68,7 @@
 %% colour. Say which you mean: color=gate, or draw=/fill=. The version is the
 %% \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/02 v0.5.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/02 v0.6.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
@@ -147,10 +147,14 @@
 % otherwise. A triangle says a corner of its flat side -- the index continues
 % that side's own line rather than leaving from the middle of a slanted edge,
 % which is how a canonical form is read -- and a stack sets the triangle in its
-% slot so that the corner, not the centre, is on the site's line.
+% slot so that the corner, not the centre, is on the site's line. `tn points'
+% says which way a shape points (the triangles: right, left), and a bond that
+% carries a direction takes it from there.
 \makeatletter
 \gdef\tn@legat{center}
-\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}}}
+\gdef\tn@pts{}
+\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
+         tn points/.code={\gdef\tn@pts{#1}}}
 \makeatother
 % Each shape carries the size at which it reads as the same weight as the
 % others -- a triangle has to be larger than a box to hold a label, a diamond a
@@ -167,14 +171,15 @@
   tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
                               shape border rotate=-90, fill=grey1,
                               minimum size=10.5mm, font=\small,
-                              tn leg anchor=corner 3},
+                              tn leg anchor=corner 3, tn points=right},
   tn triangle left/.style  = {tn triangle right, shape border rotate=90,
-                              tn leg anchor=corner 2},
+                              tn leg anchor=corner 2, tn points=left},
   tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
                               font=\small},
   tn wide/.style           = {minimum width=17mm},
   tn tall/.style           = {minimum height=17mm},
   tn small/.style          = {minimum size=6mm, font=\scriptsize},
+  tn dot/.style            = {tn node, circle, fill=stroke, minimum size=1.8mm},
   tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
   tn wavy/.style           = {tn edge, decorate,
                               decoration={snake, amplitude=0.55mm,
@@ -183,6 +188,7 @@
   tn arrow/.style          = {tn edge, postaction={decorate},
                               decoration={markings, mark=at position 0.58 with
                                 {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn double/.style         = {tn edge, double=grey1, double distance=1.2pt},
   tn label/.style          = {font=\small, inner sep=2pt},
   tn gate/.style           = {tn rounded, inner sep=3pt, font=\small},
 }
@@ -338,8 +344,13 @@
 % because a coordinate written for a label is a coordinate that has to be
 % re-found every time the thing it labels moves. <placement> is TikZ's: above,
 % below, left, right, center, and any of them with a distance.
-\newcommand{\tnput}[3][above]{\node[tn label, #1] at (#2) {#3};}
-\newcommand{\tnmid}[4][above]{\node[tn label, #1] at ($(#2)!0.5!(#3)$) {#4};}
+% A label counts as drawn when the next equals sign is placed.
+\makeatletter
+\newcommand{\tnput}[3][above]{\node[tn label, #1] (tn@lab) at (#2) {#3};%
+  \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
+\newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};%
+  \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
+\makeatother
 
 % \tnswap[<style>]{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
@@ -366,7 +377,9 @@
 % slots, n sites across and a list of named layers down (ket, op, bra, ...), at
 % one pitch both ways, and a tensor is put in a slot rather than at a point.
 % Every distance below is one of these tokens, never a figure's own:
-%   pitch   between neighbouring sites, and between neighbouring layers
+%   pitch   between neighbouring sites: room for a triangle set across in
+%           its slot, the bond after its apex, and an arrowhead on that bond
+%   rise    between neighbouring layers
 %   slot    the size of a tensor that is not there: an open index ends at the
 %           border an absent tensor of this size would have, so a gap in a
 %           picture is the shape of what is missing from it
@@ -374,25 +387,33 @@
 %           border of the next slot is nearer than that (a triangle set across
 %           to put its corner on the line reaches most of the way there)
 %   envw    the width of an environment block
-%   gap     the space either side of an equals sign
+%   gap     the space either side of an equals sign; twice it between rows
 \makeatletter
-\def\tn@pitch{15mm}
+\def\tn@pitch{18mm}
+\def\tn@rise{15mm}
 \def\tn@slot{9mm}
 \def\tn@stub{4mm}
 \def\tn@envw{7mm}
 \def\tn@gap{4mm}
-\newdimen\tn@cursor \newdimen\tn@right \newdimen\tn@d \newcount\tn@c
-% Stacks are placed left to right from a cursor, which every picture starts at
-% the origin; \tneq moves it past what has been drawn.
+\def\tn@inset{1.6pt}  % how far a bond runs under the tensor it meets
+\newdimen\tn@cursor \newdimen\tn@right \newdimen\tn@line@y \newdimen\tn@d
+\newcount\tn@c \newcount\tn@brk \newcount\tn@fresh \newcount\tn@afterrel
+% Stacks are placed left to right from a cursor, on a row centred on y = 0;
+% \tneq moves the cursor past what has been drawn, \tnbreak starts a row below.
 \tikzset{every picture/.append style={execute at begin picture={%
-  \global\tn@cursor=0pt \global\tn@right=0pt}}}
+  \global\tn@cursor=0pt \global\tn@right=0pt \global\tn@line@y=0pt
+  \global\tn@brk=0 \global\tn@fresh=1 \global\tn@afterrel=0 }}}
 \def\tn@set#1#2{\expandafter\xdef\csname tn@#1\endcsname{#2}}
 \def\tn@get#1{\csname tn@#1\endcsname}
 \def\tn@len#1#2{\pgfmathsetlength\tn@d{#2}\edef#1{\the\tn@d}}
 \def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@pitch}}
-\def\tn@layy#1#2{\tn@len\tn@ly{((\tn@get{#1@L}+1)/2-(#2))*\tn@pitch}}
+\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@rise}}
 \def\tn@reach#1{\tn@len\tn@e{#1}\ifdim\tn@e>\tn@right \global\tn@right=\tn@e\fi}
 \def\tn@line#1#2#3#4#5{\tnbond[#1]{(#2,#3) -- (#4,#5)}}
+% Where an anchor of a node is, as \tn@ax and \tn@ay.
+\def\tn@anc#1#2{%
+  \pgf@process{\pgfpointanchor{#1}{#2}}%
+  \edef\tn@ax{\the\pgf@x}\edef\tn@ay{\the\pgf@y}}
 
 % The block at either end of a stack: the rest of the network, already
 % contracted -- the L and R of an effective Hamiltonian, the fixed points of a
@@ -403,12 +424,19 @@
 
 % \tnstack[left=<label>, right=<label>]{<name>}{<sites>}{<layers>}
 % A grid of <sites> slots across and the <layers> down, top to bottom, placed
-% at the cursor and centred on the line y = 0, so that the stacks of an
-% equation line up. left= and right= put an environment at either end.
+% after what is already on the row (an equals sign, or another stack, whose
+% end slot and its own keep them a pitch apart) and centred on the row, so that
+% the stacks of an equation line up. left= and right= put an environment at
+% either end. Without one, the
+% stack keeps the slot beyond its end as far as that slot's border, which is
+% where an open index there ends -- so an index opened later never runs into
+% the equals sign before it.
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
 %
-% The environment is the node <name>-left or <name>-right.
+% The environment is the node <name>-left or <name>-right. Every slot, and the
+% ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
+% is what a label for something that is not a tensor is placed on.
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
          /tn/stack/right/.initial=}
 \newcommand{\tnstack}[4][]{%
@@ -419,212 +447,408 @@
   \tn@set{#2@layers}{#4}%
   \global\tn@c=0
   \foreach \tn@l in {#4}{%
-    \global\advance\tn@c by 1 \tn@set{#2@k@\tn@l}{\the\tn@c}}%
+    \global\advance\tn@c by 1
+    \tn@set{#2@k@\tn@l}{\the\tn@c}\tn@set{#2@name@\the\tn@c}{\tn@l}}%
   \tn@set{#2@L}{\the\tn@c}%
+  % A stack that follows another with nothing between them stands beside it.
+  \ifnum\tn@fresh=0 \ifnum\tn@afterrel=0
+    \global\tn@cursor=\tn@right
+  \fi\fi
+  \global\tn@fresh=0 \global\tn@afterrel=0
+  % A row after \tnbreak hangs its top a row gap under everything drawn so far.
+  \ifnum\tn@brk=1
+    \tn@anc{current bounding box}{south}\tn@d=\tn@ay\relax%
+    \tn@len\tn@yz{\the\tn@d-2*\tn@gap-(\tn@get{#2@L}-1)/2*\tn@rise-\tn@slot/2}%
+    \global\tn@line@y=\tn@yz \global\tn@brk=0
+  \fi
+  \tn@set{#2@y0}{\the\tn@line@y}%
   \ifx\tn@envl\@empty
     \tn@set{#2@hasl}{0}%
-    \tn@len\tn@xz{\the\tn@cursor+\tn@slot/2-\tn@pitch}%
+    \tn@len\tn@xz{\the\tn@cursor-\tn@slot/2}%
   \else
     \tn@set{#2@hasl}{1}%
     \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
   \fi
   \tn@set{#2@x0}{\tn@xz}%
-  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@pitch+\tn@slot}%
+  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@rise+\tn@slot}%
   \ifx\tn@envl\@empty\else
-    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,0) {\tn@envl};
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
   \fi
   \ifx\tn@envr\@empty
     \tn@set{#2@hasr}{0}%
-    \tn@colx{#2}{#3}\tn@reach{\tn@cx+\tn@slot/2}%
+    \tn@colx{#2}{#3+1}\tn@reach{\tn@cx-\tn@slot/2}%
   \else
     \tn@set{#2@hasr}{1}%
     \tn@colx{#2}{#3+1}%
-    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,0) {\tn@envr};
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};
     \tn@reach{\tn@cx+\tn@envw/2}%
   \fi
+  \pgfmathtruncatemacro\tn@nn{#3+1}%
+  \foreach \tn@l in {#4}{%
+    \tn@layy{#2}{\tn@get{#2@k@\tn@l}}%
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \tn@colx{#2}{\tn@i}%
+      \path[overlay] (\tn@cx,\tn@ly) coordinate (#2-\tn@l-\tn@i-slot);}}%
 }
+
+% \tnbreak
+% Start a new row: the next stack goes at the left margin, under everything
+% drawn so far. Two rows of one picture are two equations, or the same one
+% drawn two ways.
+\newcommand{\tnbreak}{%
+  \global\tn@brk=1 \global\tn@cursor=0pt \global\tn@right=0pt
+  \global\tn@fresh=1}
 
 % \tnlayer{<stack>}{<layer>}{<entry>, ...}
 % The layer's slots, left to right, one entry each:
-%   <style>/<label>          a tensor in that slot
-%   <style>/<label>/<span>   one tensor across <span> slots: a gate, a two-site
-%                            tensor. It is as wide as the slots it covers
-%   .                        nothing: the slot is empty
-%   -                        nothing, but the index of the layer runs through
-% The tensor of site i is the node <stack>-<layer>-i; one that spans is named
-% by its first site.
-\def\tn@entry#1/#2/#3/#4\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}\def\tn@span{#3}}
-\def\tn@dot{.}\def\tn@dash{-}
+%   <style>/<label>                 a tensor in that slot
+%   <style>/<label>/<span>          one tensor across <span> slots: a gate, a
+%                                   two-site tensor, as wide as the slots
+%   <style>/<label>/<span>/<down>   ... and down <down> layers, as tall as
+%                                   they are, with an index into each: the
+%                                   zipper of zip-up. The layers below leave
+%                                   its slots as `.'
+%   .                               nothing: the slot is empty
+%   -                               nothing, but the layer's index runs
+%                                   through, along the layer
+%   |                               nothing, but the site's index runs
+%                                   through, down the site
+%   dots                            the dots of a chain that goes on (not `...'
+%                                   which \foreach reads as a range)
+% A style with a comma in it goes in braces, {coef, circle}/$A$, and so does a
+% label with a slash in it, gate/{$U(\delta t/2)$}/2. The tensor of
+% site i is the node <stack>-<layer>-i; one that spans is named by its first
+% site and its top layer.
+\def\tn@entry#1/#2/#3/#4/#5\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}%
+  \def\tn@span{#3}\def\tn@vspan{#4}}
+\def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
+\def\tn@cdots{dots}
+\def\tn@sleft{left}\def\tn@sright{right}
 % A tensor in a slot: centred on the slot, or, when its shape gives its leg an
 % anchor of its own, moved across so that the anchor is on the site's line. A
-% probe of the same shape, drawn nowhere, measures how far.
+% probe of the same shape, drawn nowhere, measures how far. Which way the shape
+% points is kept with the node, for the arrows of \tnconnect and \tnopen.
 \def\tn@center{center}
 \def\tn@place#1#2#3#4#5{%
-  \gdef\tn@legat{center}%
+  \gdef\tn@legat{center}\gdef\tn@pts{}%
   \begingroup\tikzset{#1}\endgroup
+  \tn@set{n@#2@pt}{\tn@pts}%
   \ifx\tn@legat\tn@center
     \node[#1] (#2) at (#3,#4) {#5};
   \else
     \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
-    \pgfextractx{\tn@d}{\pgfpointanchor{tn@probe}{\tn@legat}}%
+    \tn@anc{tn@probe}{\tn@legat}\tn@d=\tn@ax\relax%
     \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};
   \fi}
 \newcommand{\tnlayer}[3]{%
   \ifcsname tn@#1@k@#2\endcsname\else
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
+  \edef\tn@k{\tn@get{#1@k@#2}}%
   \global\tn@c=1
   \foreach \tn@e in {#3}{%
-    \expandafter\tn@entry\tn@e////\tn@end
+    \expandafter\tn@entry\tn@e/////\tn@end
     \edef\tn@i{\the\tn@c}%
     \ifx\tn@span\@empty \def\tn@span{1}\fi
-    \ifx\tn@sty\tn@dot
-    \else\ifx\tn@sty\tn@dash
+    \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
+    \ifx\tn@sty\tn@cdot
+    \else\ifx\tn@sty\tn@cE
       \tn@set{#1@o@#2@\tn@i}{-}%
+    \else\ifx\tn@sty\tn@cB
+      \tn@set{#1@o@#2@\tn@i}{|}%
+    \else\ifx\tn@sty\tn@cdots
+      \tn@set{#1@o@#2@\tn@i}{D}%
+      \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
+      \node[tn label] at (\tn@cx,\tn@ly) {$\cdots$};
     \else
-      \tn@layy{#1}{\tn@get{#1@k@#2}}%
+      \tn@layy{#1}{\tn@k+(\tn@vspan-1)/2}%
       \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
       \tn@len\tn@w{(\tn@span-1)*\tn@pitch+\tn@slot}%
-      \edef\tn@opt{\tn@sty\ifnum\tn@span>1 , minimum width=\tn@w\fi}%
+      \tn@len\tn@hh{(\tn@vspan-1)*\tn@rise+\tn@slot}%
+      \edef\tn@opt{\tn@sty\ifnum\tn@span>1 , minimum width=\tn@w\fi
+                   \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
       \edef\tn@nm{#1-#2-\tn@i}%
       \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
       \pgfmathtruncatemacro\tn@last{\tn@i+\tn@span-1}%
+      \pgfmathtruncatemacro\tn@kb{\tn@k+\tn@vspan-1}%
       \tn@set{n@\tn@nm @s}{#1}\tn@set{n@\tn@nm @l}{#2}%
+      \tn@set{n@\tn@nm @k}{\tn@k}\tn@set{n@\tn@nm @kb}{\tn@kb}%
       \tn@set{n@\tn@nm @a}{\tn@i}\tn@set{n@\tn@nm @b}{\tn@last}%
-      \foreach \tn@j in {\tn@i,...,\tn@last}{\tn@set{#1@o@#2@\tn@j}{\tn@nm}}%
-    \fi\fi
+      \foreach \tn@q in {\tn@k,...,\tn@kb}{%
+        \foreach \tn@j in {\tn@i,...,\tn@last}{%
+          \tn@set{#1@o@\tn@get{#1@name@\tn@q}@\tn@j}{\tn@nm}}}%
+    \fi\fi\fi\fi
     \global\advance\tn@c by \tn@span\relax
   }%
 }
 
-% What occupies slot <i> of a layer: a node's name, `-', L or R for the
-% environments at columns 0 and n+1, or nothing.
+% What occupies slot <i> of a layer, and what kind of thing that is:
+%   0 nothing  1 a tensor (its name)  2 `-'  3 `|'  4 `dots'
+%   5 the environment on the left (column 0)  6 on the right (column n+1)
 \def\tn@occ#1#2#3{%
   \ifnum#3=0 \ifnum\tn@get{#1@hasl}=1 \def\tn@o{L}\else\def\tn@o{}\fi
   \else\ifnum#3>\tn@get{#1@n} \ifnum\tn@get{#1@hasr}=1 \def\tn@o{R}\else\def\tn@o{}\fi
   \else\ifcsname tn@#1@o@#2@#3\endcsname \edef\tn@o{\tn@get{#1@o@#2@#3}}%
-  \else\def\tn@o{}\fi\fi\fi}
+  \else\def\tn@o{}\fi\fi\fi
+  \ifx\tn@o\@empty\def\tn@kd{0}%
+  \else\ifx\tn@o\tn@cE\def\tn@kd{2}%
+  \else\ifx\tn@o\tn@cB\def\tn@kd{3}%
+  \else\ifx\tn@o\tn@cD\def\tn@kd{4}%
+  \else\ifx\tn@o\tn@cL\def\tn@kd{5}%
+  \else\ifx\tn@o\tn@cR\def\tn@kd{6}%
+  \else\def\tn@kd{1}\fi\fi\fi\fi\fi\fi}
 
-% \tnconnect[<style>]{<stack>}
+% From slot <k> of a site, step by <step> through every `|' -- the site's
+% index running through -- and leave the first layer that is not one in
+% \tn@kw, which may be just off the grid.
+\def\tn@walk#1#2#3#4{\pgfmathtruncatemacro\tn@kw{#3}\tn@walkstep{#1}{#2}{#4}}
+\def\tn@walkstep#1#2#3{%
+  \let\tn@next\relax
+  \ifnum\tn@kw>0 \ifnum\tn@kw>\tn@get{#1@L}\else
+    \edef\tn@ln{\tn@get{#1@name@\tn@kw}}%
+    \tn@occ{#1}{\tn@ln}{#2}%
+    \ifnum\tn@kd=3
+      \pgfmathtruncatemacro\tn@kw{\tn@kw+(#3)}%
+      \def\tn@next{\tn@walkstep{#1}{#2}{#3}}%
+    \fi
+  \fi\fi
+  \tn@next}
+
+% A bond that carries a direction takes it from the triangles it joins: away
+% from one pointing right, into one pointing left, so that in a canonical form
+% every arrow runs toward the centre. Anything else is drawn left to right.
+\def\tn@bond#1#2#3#4#5#6{% style, x left, x right, y, points of left, of right
+  \edef\tn@pa{#5}\edef\tn@pb{#6}%
+  \def\tn@rev{0}%
+  \ifx\tn@pb\tn@sleft \ifx\tn@pa\tn@sright\else\def\tn@rev{1}\fi\fi
+  \ifx\tn@pa\tn@sleft \ifx\tn@pb\tn@sright\else\def\tn@rev{1}\fi\fi
+  \ifnum\tn@rev=1 \tn@line{#1}{#3}{#4}{#2}{#4}%
+  \else \tn@line{#1}{#2}{#4}{#3}{#4}\fi}
+
+% \tnconnect[along=<style>, down=<style>, apart={<layer>, ...}]{<stack>}
 % Every index the grid implies, and nothing else: along a layer between
-% neighbouring slots that are both filled, down a site from its first tensor to
-% its last (through the ones between, which cover it), and from an environment
-% into each layer -- to the tensor there, or, if the slot is empty, to the
-% border that tensor would have. That end is <stack>-left-<layer> or
-% <stack>-right-<layer>. An index that leaves the grid anywhere else is open,
-% and is \tnopen's.
-\newcommand{\tnconnect}[2][tn edge]{%
+% neighbouring slots that are both filled (or `-'), border to border; down a
+% site from its first tensor to its last, through the ones between, which cover
+% it; from an environment into each layer -- to the tensor there, or, if the
+% slot is empty, to the border that tensor would have, which is the coordinate
+% <stack>-left-<layer> or <stack>-right-<layer>; and up to the dots of a chain
+% that goes on. An index that leaves the grid anywhere else is open, and is
+% \tnopen's. along= styles the indices along the layers, down= the ones down
+% the sites, so that a canonical form's bonds carry arrows and its physical
+% indices do not; both are tn edge unless said. apart= names layers whose
+% tensors sit side by side without an index between them -- a product, or
+% the basis functions of different electrons.
+\pgfkeys{/tn/connect/.is family, /tn/connect/along/.initial=tn edge,
+         /tn/connect/down/.initial=tn edge, /tn/connect/apart/.initial=}
+\newcommand{\tnconnect}[2][]{%
+  \pgfkeys{/tn/connect/.cd, along=tn edge, down=tn edge, apart=, #1}%
+  \pgfkeysgetvalue{/tn/connect/apart}\tn@apart
+  \foreach \tn@l in \tn@apart{\tn@set{#2@apart@\tn@l}{1}}%
+  \pgfkeysgetvalue{/tn/connect/along}\tn@along
+  \pgfkeysgetvalue{/tn/connect/down}\tn@down
   \edef\tn@ls{\tn@get{#2@layers}}%
   \pgfmathtruncatemacro\tn@nn{\tn@get{#2@n}}%
   \foreach \tn@l in \tn@ls{%
     \tn@layy{#2}{\tn@get{#2@k@\tn@l}}\let\tn@y\tn@ly
+    \ifcsname tn@#2@apart@\tn@l\endcsname\else
     \foreach \tn@i in {0,...,\tn@nn}{%
       \pgfmathtruncatemacro\tn@j{\tn@i+1}%
-      \tn@occ{#2}{\tn@l}{\tn@i}\let\tn@oa\tn@o
-      \tn@occ{#2}{\tn@l}{\tn@j}\let\tn@ob\tn@o
+      \tn@occ{#2}{\tn@l}{\tn@i}\let\tn@oa\tn@o \let\tn@ka\tn@kd
+      \tn@occ{#2}{\tn@l}{\tn@j}\let\tn@ob\tn@o \let\tn@kb\tn@kd
       \tn@colx{#2}{\tn@i}\let\tn@xa\tn@cx
       \tn@colx{#2}{\tn@j}\let\tn@xb\tn@cx
-      \ifx\tn@oa\@empty
-        \def\tn@t{R}\ifx\tn@ob\tn@t
-          \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
-          \tn@line{#1}{\tn@xb}{\tn@y}{\tn@xa}{\tn@y}%
-          \coordinate (#2-right-\tn@l) at (\tn@xa,\tn@y);
-        \fi
-      \else\ifx\tn@ob\@empty
-        \def\tn@t{L}\ifx\tn@oa\tn@t
-          \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
-          \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
-          \coordinate (#2-left-\tn@l) at (\tn@xb,\tn@y);
-          \tn@reach{\tn@xb}%
-        \fi
-      \else\ifx\tn@oa\tn@ob
-      \else
-        \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
-      \fi\fi\fi
-    }%
+      \tn@hlink{\tn@along}{#2}%
+    }\fi
   }%
   \ifnum\tn@nn>0
   \foreach \tn@i in {1,...,\tn@nn}{%
-    \gdef\tn@top{0}\gdef\tn@bot{0}%
+    \gdef\tn@first{}\gdef\tn@lastn{}%
     \foreach \tn@l in \tn@ls{%
       \tn@occ{#2}{\tn@l}{\tn@i}%
-      \ifx\tn@o\@empty\else\ifx\tn@o\tn@dash\else
-        \ifnum\tn@top=0 \xdef\tn@top{\tn@get{#2@k@\tn@l}}\fi
-        \xdef\tn@bot{\tn@get{#2@k@\tn@l}}%
-      \fi\fi}%
-    \ifnum\tn@top<\tn@bot
+      \ifnum\tn@kd=1
+        \ifx\tn@first\@empty \xdef\tn@first{\tn@o}\fi
+        \xdef\tn@lastn{\tn@o}%
+      \fi}%
+    \ifx\tn@first\tn@lastn\else
       \tn@colx{#2}{\tn@i}%
-      \tn@layy{#2}{\tn@top}\let\tn@ya\tn@ly
-      \tn@layy{#2}{\tn@bot}%
-      \tn@line{#1}{\tn@cx}{\tn@ya}{\tn@cx}{\tn@ly}%
+      \tn@anc{\tn@first}{center}\tn@d=\tn@ay\relax\edef\tn@ya{\the\tn@d}%
+      \tn@anc{\tn@lastn}{center}\tn@d=\tn@ay\relax\edef\tn@yb{\the\tn@d}%
+      \tn@line{\tn@down}{\tn@cx}{\tn@ya}{\tn@cx}{\tn@yb}%
     \fi
-    \gdef\tn@top{0}%
   }%
   \fi
 }
-
-% \tnopen[<style>]{<direction>}{<node>, ...}
-% An open index from each tensor, up, down, left or right, ending at the border
-% the tensor in the next slot would have, and at least `stub' beyond its own
-% border. Its end is <node>-<direction>; a
-% tensor across several slots has one up or down per site,
-% <node>-<direction>-1, -2, ...
-\newcommand{\tnopen}[3][tn edge]{%
-  \foreach \tn@nm in {#3}{%
-    \edef\tn@s{\tn@get{n@\tn@nm @s}}\edef\tn@l{\tn@get{n@\tn@nm @l}}%
-    \edef\tn@a{\tn@get{n@\tn@nm @a}}\edef\tn@b{\tn@get{n@\tn@nm @b}}%
-    \edef\tn@k{\tn@get{\tn@s @k@\tn@l}}%
-    \tn@layy{\tn@s}{\tn@k}\let\tn@y\tn@ly
-    \def\tn@t{right}\edef\tn@dir{#2}%
-    \ifx\tn@dir\tn@t
-      \tn@colx{\tn@s}{\tn@b}\let\tn@xa\tn@cx
-      \tn@colx{\tn@s}{\tn@b+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
-      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{east}}%
-      \tn@len\tn@xc{\the\tn@d+\tn@stub}%
-      \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
+% One pair of neighbouring slots along a layer.
+\def\tn@hlink#1#2{%
+  \ifx\tn@oa\tn@ob\else
+  \def\tn@sa{0}\def\tn@sb{0}%
+  \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\fi
+  \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\fi
+  \ifnum\tn@sa\tn@sb=11
+    % a bond: from the right border of the one to the left border of the other
+    \def\tn@pa{}\def\tn@pb{}%
+    \ifnum\tn@ka=1
+      \tn@anc{\tn@oa}{east}\tn@d=\tn@ax\relax%
+      \tn@len\tn@xa{\the\tn@d-\tn@inset}\edef\tn@pa{\tn@get{n@\tn@oa @pt}}\fi
+    \ifnum\tn@kb=1
+      \tn@anc{\tn@ob}{west}\tn@d=\tn@ax\relax%
+      \tn@len\tn@xb{\the\tn@d+\tn@inset}\edef\tn@pb{\tn@get{n@\tn@ob @pt}}\fi
+    \tn@bond{#1}{\tn@xa}{\tn@xb}{\tn@y}{\tn@pa}{\tn@pb}%
+  \else
+    \ifnum\tn@ka=5 \ifnum\tn@sb=0 \ifnum\tn@kb=4 \else
+      \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
       \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
-      \coordinate (\tn@nm-right) at (\tn@xb,\tn@y);
+      \coordinate (#2-left-\tn@l) at (\tn@xb,\tn@y);
       \tn@reach{\tn@xb}%
-    \fi
-    \def\tn@t{left}\ifx\tn@dir\tn@t
-      \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
-      \tn@colx{\tn@s}{\tn@a-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
-      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{west}}%
-      \tn@len\tn@xc{\the\tn@d-\tn@stub}%
-      \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
+    \fi\fi\fi
+    \ifnum\tn@kb=6 \ifnum\tn@sa=0 \ifnum\tn@ka=4 \else
+      \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
+      \tn@line{#1}{\tn@xb}{\tn@y}{\tn@xa}{\tn@y}%
+      \coordinate (#2-right-\tn@l) at (\tn@xa,\tn@y);
+    \fi\fi\fi
+    \ifnum\tn@ka\tn@kb=14
+      \tn@anc{\tn@oa}{east}\tn@d=\tn@ax\relax%
+      \tn@len\tn@xa{\the\tn@d-\tn@inset}\tn@len\tn@xb{\tn@xb-\tn@slot/2}%
       \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
-      \coordinate (\tn@nm-left) at (\tn@xb,\tn@y);
     \fi
-    \def\tn@t{up}\ifx\tn@dir\tn@t \tn@layy{\tn@s}{\tn@k-1}%
-      \tn@len\tn@yb{\tn@ly-\tn@slot/2}\fi
-    \def\tn@t{down}\ifx\tn@dir\tn@t \tn@layy{\tn@s}{\tn@k+1}%
-      \tn@len\tn@yb{\tn@ly+\tn@slot/2}\fi
-    \def\tn@t{up}\ifx\tn@dir\tn@t \def\tn@v{1}\else
-    \def\tn@t{down}\ifx\tn@dir\tn@t \def\tn@v{1}\else\def\tn@v{0}\fi\fi
-    \ifnum\tn@v=1
-      \foreach \tn@i [count=\tn@m] in {\tn@a,...,\tn@b}{%
-        \tn@colx{\tn@s}{\tn@i}%
-        \tn@line{#1}{\tn@cx}{\tn@y}{\tn@cx}{\tn@yb}%
-        \ifnum\tn@a=\tn@b
-          \coordinate (\tn@nm-\tn@dir) at (\tn@cx,\tn@yb);
-        \else
-          \coordinate (\tn@nm-\tn@dir-\tn@m) at (\tn@cx,\tn@yb);
-        \fi
-      }%
+    \ifnum\tn@ka\tn@kb=41
+      \tn@anc{\tn@ob}{west}\tn@d=\tn@ax\relax%
+      \tn@len\tn@xb{\the\tn@d+\tn@inset}\tn@len\tn@xa{\tn@xa+\tn@slot/2}%
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
     \fi
-  }%
-}
+  \fi\fi}
+
+% \tnopen[<style>]{<direction>}{<item>, ...}
+% Open indices, up, down, left or right. An index ends at the border the tensor
+% in the next slot would have -- past any `|', where the site's index runs on --
+% and shows at least `stub' beyond its own tensor. An item is
+%   a tensor   its own index that way, one per site it spans up or down and one
+%              per layer it spans left or right. The end is <node>-<direction>,
+%              or <node>-<direction>-1, -2, ... when there are several
+%   a stack    every site's index from its lowest tensor (down) or highest
+%              (up), ending at <stack>-<i>-down / -up; or every layer's index
+%              from its last tensor (right) or first (left), ending at
+%              <stack>-<layer>-right / -left
+% A horizontal index that carries a direction takes it from its triangle, as in
+% \tnconnect: an open bond of a canonical form points in.
+\newcommand{\tnopen}[3][tn edge]{%
+  \edef\tn@dir{#2}%
+  \foreach \tn@it in {#3}{%
+    \ifcsname tn@\tn@it @n\endcsname \tn@openstack{#1}{\tn@it}%
+    \else \tn@opennode{#1}{\tn@it}\fi}}
+% one index across, from tensor #2 at height #3, ending at coordinate #4
+\def\tn@hopen#1#2#3#4{%
+  \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@pt{\tn@get{n@#2@pt}}%
+  \ifx\tn@dir\tn@sright
+    \tn@anc{#2}{east}\tn@d=\tn@ax\relax%
+    \tn@len\tn@xa{\the\tn@d-\tn@inset}\tn@len\tn@xc{\the\tn@d+\tn@stub}%
+    \tn@colx{\tn@s}{\tn@get{n@#2@b}+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
+    \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
+    \tn@reach{\tn@xb}%
+    \ifx\tn@pt\tn@sleft \tn@line{#1}{\tn@xb}{#3}{\tn@xa}{#3}%
+    \else \tn@line{#1}{\tn@xa}{#3}{\tn@xb}{#3}\fi
+  \else
+    \tn@anc{#2}{west}\tn@d=\tn@ax\relax%
+    \tn@len\tn@xa{\the\tn@d+\tn@inset}\tn@len\tn@xc{\the\tn@d-\tn@stub}%
+    \tn@colx{\tn@s}{\tn@get{n@#2@a}-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
+    \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
+    \ifx\tn@pt\tn@sright \tn@line{#1}{\tn@xb}{#3}{\tn@xa}{#3}%
+    \else \tn@line{#1}{\tn@xa}{#3}{\tn@xb}{#3}\fi
+  \fi
+  \coordinate (#4) at (\tn@xb,#3);}
+% one index up or down, from tensor #2 on site #3, ending at coordinate #4
+\def\tn@vopen#1#2#3#4{%
+  \edef\tn@s{\tn@get{n@#2@s}}%
+  \def\tn@t{down}%
+  \ifx\tn@dir\tn@t
+    \tn@walk{\tn@s}{#3}{\tn@get{n@#2@kb}+1}{1}%
+    \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly+\tn@slot/2}%
+  \else
+    \tn@walk{\tn@s}{#3}{\tn@get{n@#2@k}-1}{-1}%
+    \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly-\tn@slot/2}%
+  \fi
+  \tn@colx{\tn@s}{#3}%
+  \tn@anc{#2}{center}\tn@d=\tn@ay\relax%
+  \tn@line{#1}{\tn@cx}{\the\tn@d}{\tn@cx}{\tn@yb}%
+  \coordinate (#4) at (\tn@cx,\tn@yb);}
+\def\tn@isv{0}
+\def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
+  \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
+\def\tn@opennode#1#2{%
+  \tn@vdir
+  \edef\tn@s{\tn@get{n@#2@s}}%
+  \ifnum\tn@isv=1
+    \edef\tn@a{\tn@get{n@#2@a}}\edef\tn@b{\tn@get{n@#2@b}}%
+    \foreach \tn@i [count=\tn@m] in {\tn@a,...,\tn@b}{%
+      \ifnum\tn@a=\tn@b \tn@vopen{#1}{#2}{\tn@i}{#2-\tn@dir}%
+      \else \tn@vopen{#1}{#2}{\tn@i}{#2-\tn@dir-\tn@m}\fi}%
+  \else
+    \edef\tn@ka{\tn@get{n@#2@k}}\edef\tn@kb{\tn@get{n@#2@kb}}%
+    \foreach \tn@q [count=\tn@m] in {\tn@ka,...,\tn@kb}{%
+      \tn@layy{\tn@s}{\tn@q}%
+      \ifnum\tn@ka=\tn@kb \tn@hopen{#1}{#2}{\tn@ly}{#2-\tn@dir}%
+      \else \tn@hopen{#1}{#2}{\tn@ly}{#2-\tn@dir-\tn@m}\fi}%
+  \fi}
+\def\tn@openstack#1#2{%
+  \tn@vdir
+  \edef\tn@ls{\tn@get{#2@layers}}%
+  \pgfmathtruncatemacro\tn@nn{\tn@get{#2@n}}%
+  \ifnum\tn@isv=1
+    \foreach \tn@i in {1,...,\tn@nn}{%
+      \gdef\tn@first{}\gdef\tn@lastn{}%
+      \foreach \tn@l in \tn@ls{%
+        \tn@occ{#2}{\tn@l}{\tn@i}%
+        \ifnum\tn@kd=1
+          \ifx\tn@first\@empty \xdef\tn@first{\tn@o}\fi
+          \xdef\tn@lastn{\tn@o}%
+        \fi}%
+      \def\tn@t{down}%
+      \ifx\tn@dir\tn@t \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else
+        \tn@vopen{#1}{\tn@pick}{\tn@i}{#2-\tn@i-\tn@dir}\fi}%
+  \else
+    \foreach \tn@l in \tn@ls{%
+      \gdef\tn@first{}\gdef\tn@lastn{}%
+      \foreach \tn@i in {1,...,\tn@nn}{%
+        \tn@occ{#2}{\tn@l}{\tn@i}%
+        \ifnum\tn@kd=1
+          \ifx\tn@first\@empty \xdef\tn@first{\tn@o}\fi
+          \xdef\tn@lastn{\tn@o}%
+        \fi}%
+      \ifx\tn@dir\tn@sright \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else
+        \tn@layy{#2}{\tn@get{#2@k@\tn@l}}%
+        \tn@hopen{#1}{\tn@pick}{\tn@ly}{#2-\tn@l-\tn@dir}\fi}%
+  \fi}
+
+% \tnopenswap[<style>]{<tensor>}
+% The two indices down from a tensor across two sites, exchanged on the way: a
+% swap of two fermion legs, drawn by \tnswap, ending where \tnopen{down} would
+% end them (<tensor>-down-1 and -2, by where they end). The crossing needs
+% room, which a layer of `|' under the tensor gives it.
+\newcommand{\tnopenswap}[2][tn edge]{%
+  \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@a{\tn@get{n@#2@a}}%
+  \tn@walk{\tn@s}{\tn@a}{\tn@get{n@#2@kb}+1}{1}%
+  \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly+\tn@slot/2}%
+  \tn@anc{#2}{south}\tn@d=\tn@ay\relax\edef\tn@ys{\the\tn@d}%
+  \tn@len\tn@drop{\tn@ys-\tn@yb}%
+  \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
+  \tn@colx{\tn@s}{\tn@a+1}\let\tn@xb\tn@cx
+  \tnswap[#1]{(\tn@xa,\tn@ys)}{(\tn@xb,\tn@ys)}{\tn@drop}%
+  \coordinate (#2-down-1) at (\tn@xa,\tn@yb);
+  \coordinate (#2-down-2) at (\tn@xb,\tn@yb);}
 
 % \tneq[<factor>]       an equals sign
 % \tnapprox[<factor>]   an approximately-equals sign
-% After everything drawn so far, centred on y = 0 like the stacks, with
+% After everything drawn so far, centred on the row like the stacks, with
 % <factor> after it if there is one (\tneq[$\lambda$]); the next stack starts
 % after it.
 \newcommand{\tn@rel}[2]{%
   \node[anchor=west, inner sep=0pt] (tn@eq) at
-    ($(\the\tn@right,0)+(\tn@gap,0)$) {$#1$\ifx\relax#2\relax\else\hspace{0.3em}#2\fi};
-  \pgfextractx{\tn@d}{\pgfpointanchor{tn@eq}{east}}%
+    ($(\the\tn@right,\the\tn@line@y)+(\tn@gap,0)$)
+    {$#1$\ifx\relax#2\relax\else\hspace{0.3em}#2\fi};
+  \tn@anc{tn@eq}{east}\tn@d=\tn@ax\relax%
   \global\tn@cursor=\tn@d \global\advance\tn@cursor by \tn@gap\relax
-  \global\tn@right=\tn@cursor
+  \global\tn@right=\tn@cursor \global\tn@afterrel=1
 }
 \newcommand{\tneq}[1][]{\tn@rel{=}{#1}}
 \newcommand{\tnapprox}[1][]{\tn@rel{\approx}{#1}}
