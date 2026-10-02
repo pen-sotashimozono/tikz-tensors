@@ -22,6 +22,10 @@
 \newcommand{\spec}[3]{\node[font=\tiny\ttfamily, text=ttmuted, anchor=north,
                             align=center] at (#1,#2) {#3};}
 
+% the tokens are the package's to set and a notation's to change; set here to
+% what they already are, so that the sheet shows \tnset without moving anything
+\tnset{stub=4mm, line width=0.8pt}
+
 \begin{document}
 \begin{tikzpicture}
   % ---- shapes ----------------------------------------------------------
@@ -60,27 +64,6 @@
     \draw[tn line, draw=exact] (9.0,-4.65) -- (9.9,-4.65);
   \end{scope}                                            \spec{9.45}{-4.9}{tn edge=,\\tn line,\\tn line width}
 
-  % ---- exchanging two legs ---------------------------------------------
-  \tnswap{(0.1,-5.8)}{(0.9,-5.8)}{0.9}                   \spec{0.5}{-6.9}{\textbackslash tnswap}
-  \tnswap[tn wavy]{(2.1,-5.8)}{(2.9,-5.8)}{0.9}          \spec{2.5}{-6.9}{\textbackslash tnswap[tn wavy]}
-
-  % ---- a chain, its legs, a gate on two of them, labels ----------------
-  \tnchain{A}{(4.6,-6.0)}{(10.4,-6.0)}{tn triangle right//l, tn triangle right//l,
-                                       tn diamond//c, tn triangle left//r,
-                                       tn triangle left//r}
-  \tnbond[tn arrow]{(A1) -- (A2)}  \tnbond[tn arrow]{(A2) -- (A3)}
-  \tnbond[tn arrow]{(A4) -- (A3)}  \tnbond[tn arrow]{(A5) -- (A4)}
-  \tnlegs{16mm}{A1-leg,A2-leg,A3-leg,A4-leg,A5-leg}
-  \tngate{G}{$U$}{A2-leg,A3-leg}{7mm}
-  \tnput[below]{A1-leg-tip}{$i$}
-  \tnmid{A1}{A2}{$D$}
-  \spec{7.5}{-8.7}{\textbackslash tnchain, \textbackslash tnbond, \textbackslash tnlegs,\\
-    \textbackslash tngate, \textbackslash tnput, \textbackslash tnmid}
-
-  % ---- a row of unlike tensors, each a gap clear of the last ------------
-  \tnrow{R}{(0.0,-8.2)}{tn box/$A$/c, tn rounded/$W$/c, tn diamond/$C$/c}
-  \tnbond{(R1) -- (R2)} \tnbond{(R2) -- (R3)}             \spec{1.4}{-8.8}{\textbackslash tnrow}
-
   % ---- the named colours -----------------------------------------------
   % `color=` and not a bare `\fill[\c]`, because a convention may give a style
   % the name of a colour, and TikZ resolves an option as a key before it tries
@@ -88,8 +71,8 @@
   \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,%
                              canl,canr,centre,mpo,gate,env,%
                              ttfg,ttmuted,ttaccent,ttgood,ttwarn,ttbad}
-    \fill[color=\c] (0.4+\i*0.6-0.6,-9.6) rectangle ++(0.45,0.3);
-  \spec{5.2}{-9.7}{the named colours}
+    \fill[color=\c] (0.4+\i*0.6-0.6,-6.0) rectangle ++(0.45,0.3);
+  \spec{5.2}{-6.1}{the named colours}
 
   % ---- stacks, in rows of their own --------------------------------------
   % A stack places itself: \tnbreak starts a row under everything above, a
@@ -147,5 +130,23 @@
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
     at (current bounding box.south) {\textbackslash tnbreak, tn box/\$Z\$/1/2, dots,
     tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double, tn triangle up, tn triangle down, tn single};
+
+  % ---- a third row: a chain repeated, labels, and joins ------------------
+  % <n>* repeats an entry; \tnjoin closes the chain into a ring, along the
+  % row above it, and traces an operator round the column after it.
+  \tnbreak
+  \tnstack{C}{5}{a}
+  \tnlayer{C}{a}{2*tn triangle right/$A$, tn diamond/$C$, 2*tn triangle left/$B$}
+  \tnconnect[along=tn arrow]{C}
+  \tnopen{down}{C}
+  \tnjoin{C-a-1:left}{C-a-5:right}
+  \tnput[below]{C-1-down}{$i$}
+  \tnmid{C-a-1}{C-a-2}{$D$}
+  \tnstack{J}{1}{a}
+  \tnlayer{J}{a}{tn rounded/$O$}
+  \tnjoin{J-a-1:up}{J-a-1:down}
+  \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
+    at (current bounding box.south) {2*, \textbackslash tnjoin, \textbackslash tnput,
+    \textbackslash tnmid, \textbackslash tnset};
 \end{tikzpicture}
 \end{document}

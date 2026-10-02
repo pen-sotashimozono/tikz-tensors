@@ -15,7 +15,7 @@
 \begin{tikzpicture}
   \tnstack{X}{2}{array, basis}
   \tnlayer{X}{array}{coefwide/$C$/2}
-  \tnlayer{X}{basis}{fn/$\varphi$, fn/$\varphi$}
+  \tnlayer{X}{basis}{2*fn/$\varphi$}
   \tnconnect[apart=basis]{X}
   \tnopen[cont]{down}{X}
   \tnmid[left]{X-array-1-slot}{X-basis-1-slot}{$i$}
@@ -24,8 +24,8 @@
   \tnput[below]{X-2-down}{$\mathbf r_2$}
   \tnapprox
   \tnstack{Y}{2}{array, basis}
-  \tnlayer{Y}{array}{coef/$c$, coef/$c$}
-  \tnlayer{Y}{basis}{fn/$\varphi$, fn/$\varphi$}
+  \tnlayer{Y}{array}{2*coef/$c$}
+  \tnlayer{Y}{basis}{2*fn/$\varphi$}
   \tnconnect[apart={array, basis}]{Y}
   \tnopen[cont]{down}{Y}
   \tnmid[left]{Y-array-1-slot}{Y-basis-1-slot}{$i$}

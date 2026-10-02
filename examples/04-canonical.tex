@@ -26,8 +26,8 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket, gate}
-  \tnlayer{S}{ket}{canl/$A$, canl/$A$, centre/$C$, canr/$B$, canr/$B$}
-  \tnlayer{S}{gate}{|, |, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
+  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{S}{gate}{2*|, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
   \tnconnect[along=gauge]{S}
   \tnopen[gauge]{left}{S-ket-1}
   \tnopen[gauge]{right}{S-ket-5}

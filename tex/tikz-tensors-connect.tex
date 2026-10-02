@@ -139,7 +139,9 @@
   \fi}
 % One pair of neighbouring slots along a layer.
 \def\tn@hlink#1#2{%
-  \ifx\tn@oa\tn@ob\else
+  \def\tn@same{0}%
+  \ifnum\tn@ka=1 \ifx\tn@oa\tn@ob \def\tn@same{1}\fi\fi
+  \ifnum\tn@same=0
   \def\tn@sa{0}\def\tn@sb{0}%
   \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\fi
   \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\fi
@@ -297,7 +299,7 @@
 
 % \tnopenswap[<style>]{<tensor>}
 % The two indices down from a tensor across two sites, exchanged on the way: a
-% swap of two fermion legs, drawn by \tnswap, ending where \tnopen{down} would
+% swap of two fermion legs, drawn by \tn@swap, ending where \tnopen{down} would
 % end them (<tensor>-down-1 and -2, by where they end). The crossing needs
 % room, which a layer of `|' under the tensor gives it.
 \newcommand{\tnopenswap}[2][tn edge]{%
@@ -308,6 +310,152 @@
   \tn@len\tn@drop{\tn@ys-\tn@yb}%
   \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
   \tn@colx{\tn@s}{\tn@a+1}\let\tn@xb\tn@cx
-  \tnswap[#1]{(\tn@xa,\tn@ys)}{(\tn@xb,\tn@ys)}{\tn@drop}%
+  \tn@swap{#1}{(\tn@xa,\tn@ys)}{(\tn@xb,\tn@ys)}{\tn@drop}%
   \coordinate (#2-down-1) at (\tn@xa,\tn@yb);
   \coordinate (#2-down-2) at (\tn@xb,\tn@yb);}
+
+% \tnjoin[<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
+% One index between two ports the lattice does not join: the bond that closes
+% a periodic chain, a trace, an index that skips over its neighbours. <side>
+% is up, down, left or right; <n> picks the port on that side when the tensor
+% has several -- the <n>th site it spans (up, down) or layer (left, right),
+% the first unless said, and the middle on a side its type names as single.
+%   \tnjoin{P-ket-1:left}{P-ket-4:right}     a periodic MPS
+%   \tnjoin{T-op-1:up}{T-op-1:down}          the trace of an operator
+% There is no route to choose. Two ports that face each other are joined
+% straight, or with one step half way between their borders if they are not
+% in line. Any other pair is joined along the lattice: each index leaves its
+% tensor as far as the next line of slots, and the two meet on a line just
+% outside the stack -- the row above it for indices that leave sideways, the
+% row below or above for two that both leave down or up, the column after it
+% for one up and one down. It is drawn from the first port to the second,
+% which is the way an arrow on it points.
+\def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
+% Port <#1> as \tn@j@<#2>x, y (where the index starts), e (where it crosses the
+% border, along its direction), ex, ey (where it reaches the next line of
+% slots), d (its side) and h (1 if it leaves sideways).
+\def\tn@jport#1#2{%
+  \tn@pspec#1:::\tn@end
+  \ifcsname tn@n@\tn@pn @s\endcsname\else
+    \PackageError{tikz-tensors}{\string\tnjoin: `\tn@pn' is not a tensor of a
+      stack}{}\fi
+  \edef\tn@s{\tn@get{n@\tn@pn @s}}%
+  \ifx\tn@pk\@empty \def\tn@pk{1}\fi
+  \expandafter\let\csname tn@j@#2d\endcsname\tn@ps
+  \ifx\tn@ps\tn@sleft \def\tn@ph{1}\else\ifx\tn@ps\tn@sright \def\tn@ph{1}%
+  \else \def\tn@ph{0}\fi\fi
+  \expandafter\let\csname tn@j@#2h\endcsname\tn@ph
+  \ifnum\tn@ph=1
+    \tn@layy{\tn@s}{\tn@get{n@\tn@pn @k}+\tn@pk-1}%
+    \tn@hport{\tn@pn}{\tn@ps}%
+    \ifx\tn@ps\tn@sright
+      \tn@colx{\tn@s}{\tn@get{n@\tn@pn @b}+1}\tn@len\tn@cx{\tn@cx-\tn@slot/2}%
+    \else
+      \tn@colx{\tn@s}{\tn@get{n@\tn@pn @a}-1}\tn@len\tn@cx{\tn@cx+\tn@slot/2}%
+    \fi
+    \tn@set{j@#2x}{\tn@px}\tn@set{j@#2y}{\tn@ly}\tn@set{j@#2e}{\tn@pe}%
+    \tn@set{j@#2ex}{\tn@cx}\tn@set{j@#2ey}{\tn@ly}%
+  \else
+    \edef\tn@one{\tn@get{n@\tn@pn @one}}%
+    \ifx\tn@one\tn@ps
+      \tn@colx{\tn@s}{(\tn@get{n@\tn@pn @a}+\tn@get{n@\tn@pn @b})/2}%
+    \else \tn@colx{\tn@s}{\tn@get{n@\tn@pn @a}+\tn@pk-1}\fi
+    \tn@vport{\tn@pn}{\tn@ps}%
+    \ifx\tn@ps\tn@sdown
+      \tn@layy{\tn@s}{\tn@get{n@\tn@pn @kb}+1}\tn@len\tn@ly{\tn@ly+\tn@slot/2}%
+    \else
+      \tn@layy{\tn@s}{\tn@get{n@\tn@pn @k}-1}\tn@len\tn@ly{\tn@ly-\tn@slot/2}%
+    \fi
+    \tn@set{j@#2x}{\tn@px}\tn@set{j@#2y}{\tn@py}\tn@set{j@#2e}{\tn@pe}%
+    \tn@set{j@#2ex}{\tn@px}\tn@set{j@#2ey}{\tn@ly}%
+  \fi
+  % the column after the stack and the row above it, as far as their borders
+  \tn@colx{\tn@s}{\tn@get{\tn@s @n}+1}\tn@len\tn@cx{\tn@cx-\tn@slot/2}%
+  \tn@set{j@#2cr}{\tn@cx}%
+  \tn@layy{\tn@s}{0}\tn@len\tn@ly{\tn@ly-\tn@slot/2}\tn@set{j@#2ra}{\tn@ly}}
+% Between sideways port <#2> and up-or-down port <#3>, drawn from port a to
+% port b whichever of the two is which.
+\def\tn@corner#1#2#3{%
+  \edef\tn@hx{\csname tn@j@#2x\endcsname}\edef\tn@hy{\csname tn@j@#2y\endcsname}%
+  \edef\tn@hd{\csname tn@j@#2d\endcsname}\edef\tn@hex{\csname tn@j@#2ex\endcsname}%
+  \edef\tn@vx{\csname tn@j@#3x\endcsname}\edef\tn@vy{\csname tn@j@#3y\endcsname}%
+  \edef\tn@vd{\csname tn@j@#3d\endcsname}\edef\tn@vey{\csname tn@j@#3ey\endcsname}%
+  \def\tn@ok{0}%
+  \ifx\tn@hd\tn@sright \ifdim\tn@vx>\tn@hx \def\tn@ok{1}\fi\fi
+  \ifx\tn@hd\tn@sleft  \ifdim\tn@vx<\tn@hx \def\tn@ok{1}\fi\fi
+  \ifnum\tn@ok=1 \def\tn@ok{0}%
+    \ifx\tn@vd\tn@sdown \ifdim\tn@hy<\tn@vy \def\tn@ok{1}\fi\fi
+    \ifx\tn@vd\tn@sup   \ifdim\tn@hy>\tn@vy \def\tn@ok{1}\fi\fi
+  \fi
+  \def\tn@t{#2}\def\tn@ta{a}%
+  \ifnum\tn@ok=1
+    \ifx\tn@t\tn@ta
+      \tn@turns{#1}{(\tn@hx,\tn@hy) -- (\tn@vx,\tn@hy) -- (\tn@vx,\tn@vy)}%
+    \else
+      \tn@turns{#1}{(\tn@vx,\tn@vy) -- (\tn@vx,\tn@hy) -- (\tn@hx,\tn@hy)}%
+    \fi
+  \else
+    \ifx\tn@t\tn@ta
+      \tn@turns{#1}{(\tn@hx,\tn@hy) -- (\tn@hex,\tn@hy) -- (\tn@hex,\tn@vey)
+        -- (\tn@vx,\tn@vey) -- (\tn@vx,\tn@vy)}%
+    \else
+      \tn@turns{#1}{(\tn@vx,\tn@vy) -- (\tn@vx,\tn@vey) -- (\tn@hex,\tn@vey)
+        -- (\tn@hex,\tn@hy) -- (\tn@hx,\tn@hy)}%
+    \fi
+  \fi}
+\newcommand{\tnjoin}[3][tn edge]{%
+  \tn@jport{#2}{a}\tn@jport{#3}{b}%
+  \def\tn@face{0}%
+  \ifnum\tn@j@ah\tn@j@bh=11
+    \ifx\tn@j@ad\tn@sright \ifx\tn@j@bd\tn@sleft
+      \ifdim\tn@j@ax<\tn@j@bx \def\tn@face{1}\fi\fi\fi
+    \ifx\tn@j@ad\tn@sleft \ifx\tn@j@bd\tn@sright
+      \ifdim\tn@j@ax>\tn@j@bx \def\tn@face{1}\fi\fi\fi
+  \fi
+  \ifnum\tn@j@ah\tn@j@bh=0
+    \ifx\tn@j@ad\tn@sdown \ifx\tn@j@bd\tn@sup
+      \ifdim\tn@j@ay>\tn@j@by \def\tn@face{1}\fi\fi\fi
+    \ifx\tn@j@ad\tn@sup \ifx\tn@j@bd\tn@sdown
+      \ifdim\tn@j@ay<\tn@j@by \def\tn@face{1}\fi\fi\fi
+  \fi
+  \ifnum\tn@face=1
+    \ifnum\tn@j@ah=1
+      \ifdim\tn@j@ay=\tn@j@by \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
+      \else
+        \tn@len\tn@m{(\tn@j@ae+\tn@j@be)/2}%
+        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@m,\tn@j@ay) -- (\tn@m,\tn@j@by)
+          -- (\tn@j@bx,\tn@j@by)}%
+      \fi
+    \else
+      \ifdim\tn@j@ax=\tn@j@bx \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
+      \else
+        \tn@len\tn@m{(\tn@j@ae+\tn@j@be)/2}%
+        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@m) -- (\tn@j@bx,\tn@m)
+          -- (\tn@j@bx,\tn@j@by)}%
+      \fi
+    \fi
+  \else
+    \ifnum\tn@j@ah\tn@j@bh=11
+      % both sideways: over the top
+      \tn@len\tn@m{max(\tn@j@ara,\tn@j@bra)}%
+      \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@aex,\tn@j@ay) -- (\tn@j@aex,\tn@m)
+        -- (\tn@j@bex,\tn@m) -- (\tn@j@bex,\tn@j@by) -- (\tn@j@bx,\tn@j@by)}%
+    \else\ifnum\tn@j@ah\tn@j@bh=0
+      \ifx\tn@j@ad\tn@j@bd
+        % both down, or both up: under, or over, at the further of the two
+        \ifx\tn@j@ad\tn@sdown \tn@len\tn@m{min(\tn@j@aey,\tn@j@bey)}%
+        \else \tn@len\tn@m{max(\tn@j@aey,\tn@j@bey)}\fi
+        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@m) -- (\tn@j@bx,\tn@m)
+          -- (\tn@j@bx,\tn@j@by)}%
+      \else
+        % one up, one down, facing away: round the side
+        \tn@len\tn@m{max(\tn@j@acr,\tn@j@bcr)}\tn@reach{\tn@m}%
+        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@j@aey) -- (\tn@m,\tn@j@aey)
+          -- (\tn@m,\tn@j@bey) -- (\tn@j@bx,\tn@j@bey) -- (\tn@j@bx,\tn@j@by)}%
+      \fi
+    \else
+      % one sideways, one up or down: one corner where each runs toward the
+      % other, else out to the next line of slots and along
+      \ifnum\tn@j@ah=1 \tn@corner{#1}{a}{b}\else \tn@corner{#1}{b}{a}\fi
+    \fi\fi
+  \fi}

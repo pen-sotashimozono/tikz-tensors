@@ -15,11 +15,13 @@
 %%             layout reads off a type (tn leg anchor, tn points, tn single);
 %%             tn gate and tn env, the two named for a structure
 %%   edges     edge types -- tn wavy, tn arrow, tn double -- and the routes an
-%%             edge takes: straight, turning a corner, crossing (\tnswap)
+%%             edge takes: straight, turning corners, crossing
 %%   canvas    where a block goes: left to right on a row, \tneq, \tnapprox,
 %%             \tnbreak
-%%   stack     the lattice: \tnstack, \tnlayer, and the record of what is where
-%%   connect   contraction: \tnconnect, \tnopen, \tnopenswap
+%%   stack     the lattice: \tnstack, \tnlayer (<n>*<entry> repeats), and the
+%%             record of what is where
+%%   connect   contraction: a tensor's ports, and \tnconnect, \tnopen,
+%%             \tnopenswap, \tnjoin
 %%   grid      the two-dimensional lattice: \tngrid
 %%   labels    tn label, \tnput, \tnmid
 %%
@@ -35,7 +37,7 @@
 %% the style, never the colour. Say which you mean: color=gate, or draw=/fill=.
 %% The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/02 v0.8.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/02 v0.9.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
@@ -50,6 +52,5 @@
 \input{tikz-tensors-connect.tex}
 \input{tikz-tensors-grid.tex}
 \input{tikz-tensors-labels.tex}
-\input{tikz-tensors-coords.tex}
 
 \endinput

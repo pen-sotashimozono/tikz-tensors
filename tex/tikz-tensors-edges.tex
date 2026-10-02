@@ -8,7 +8,7 @@
 %   tn double  two indices fused into one
 % A user's own type is a style of the same kind. Where an edge goes is not the
 % type's business: a route below takes any type, and the layouts choose the
-% route.
+% route -- a figure never does.
 \tikzset{
   tn wavy/.style   = {tn edge, decorate,
                       decoration={snake, amplitude=0.55mm,
@@ -41,12 +41,12 @@
   \ifnum\tn@rev=1 \tn@line{#1}{#3}{#4}{#2}{#4}%
   \else \tn@line{#1}{#2}{#4}{#3}{#4}\fi}
 
-% \tnswap[<style>]{<left top>}{<right top>}{<drop>}
+% \tn@swap{<style>}{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
 % exchanged: short straight stubs in <style> at both ends, joined by a smooth
 % crossing in the same style undecorated (a wavy line on a diagonal reads as
 % noise).
-\newcommand{\tnswap}[4][tn edge]{%
+\def\tn@swap#1#2#3#4{%
   \begin{pgfonlayer}{tnedges}%
     \path #2 coordinate (tn@l) #3 coordinate (tn@r);
     \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);

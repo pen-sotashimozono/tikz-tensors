@@ -28,11 +28,11 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket, g1, g2, g3, g4}
-  \tnlayer{S}{ket}{canl/$A$, canl/$A$, centre/$C$, canr/$B$, canr/$B$}
-  \tnlayer{S}{g1}{gate/$U(\delta t)$/2, |, |, |}
-  \tnlayer{S}{g2}{|, gate/$U(\delta t)$/2, |, |}
-  \tnlayer{S}{g3}{|, |, gate/$U(\delta t)$/2, |}
-  \tnlayer{S}{g4}{|, |, |, gate/$U(\delta t)$/2}
+  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{S}{g1}{gate/$U(\delta t)$/2, 3*|}
+  \tnlayer{S}{g2}{|, gate/$U(\delta t)$/2, 2*|}
+  \tnlayer{S}{g3}{2*|, gate/$U(\delta t)$/2, |}
+  \tnlayer{S}{g4}{3*|, gate/$U(\delta t)$/2}
   \tnconnect[along=gauge]{S}
   \tnopen[gauge]{left}{S-ket-1}
   \tnopen[gauge]{right}{S-ket-5}
@@ -40,15 +40,15 @@
   \tnmid[right]{S-g2-6-slot}{S-g3-6-slot}{$O(\delta t^2)$ a step}
   \tnbreak
   \tnstack{T}{5}{ket, g1, g2, g3, g4, g5, g6, g7, g8}
-  \tnlayer{T}{ket}{canl/$A$, canl/$A$, centre/$C$, canr/$B$, canr/$B$}
-  \tnlayer{T}{g1}{gate/{$U(\delta t/2)$}/2, |, |, |}
-  \tnlayer{T}{g2}{|, gate/{$U(\delta t/2)$}/2, |, |}
-  \tnlayer{T}{g3}{|, |, gate/{$U(\delta t/2)$}/2, |}
-  \tnlayer{T}{g4}{|, |, |, gate/{$U(\delta t/2)$}/2}
-  \tnlayer{T}{g5}{|, |, |, gate/{$U(\delta t/2)$}/2}
-  \tnlayer{T}{g6}{|, |, gate/{$U(\delta t/2)$}/2, |}
-  \tnlayer{T}{g7}{|, gate/{$U(\delta t/2)$}/2, |, |}
-  \tnlayer{T}{g8}{gate/{$U(\delta t/2)$}/2, |, |, |}
+  \tnlayer{T}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{T}{g1}{gate/{$U(\delta t/2)$}/2, 3*|}
+  \tnlayer{T}{g2}{|, gate/{$U(\delta t/2)$}/2, 2*|}
+  \tnlayer{T}{g3}{2*|, gate/{$U(\delta t/2)$}/2, |}
+  \tnlayer{T}{g4}{3*|, gate/{$U(\delta t/2)$}/2}
+  \tnlayer{T}{g5}{3*|, gate/{$U(\delta t/2)$}/2}
+  \tnlayer{T}{g6}{2*|, gate/{$U(\delta t/2)$}/2, |}
+  \tnlayer{T}{g7}{|, gate/{$U(\delta t/2)$}/2, 2*|}
+  \tnlayer{T}{g8}{gate/{$U(\delta t/2)$}/2, 3*|}
   \tnconnect[along=gauge]{T}
   \tnopen[gauge]{left}{T-ket-1}
   \tnopen[gauge]{right}{T-ket-5}

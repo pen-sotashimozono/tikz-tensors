@@ -100,6 +100,9 @@
 %                                  through, down the site
 %   dots                           the dots of a chain that goes on (not `...'
 %                                  which \foreach reads as a range)
+%   <n>*<entry>                    any of these, <n> times over: a chain is
+%                                  its tensor repeated, 4*canl/$A$, and a run
+%                                  of empty slots is 7*.
 % A type with a comma in it goes in braces, {coef, circle}/$A$, and so does a
 % label with a slash in it, gate/{$U(\delta t/2)$}/2. The tensor of
 % site i is the node <stack>-<layer>-i; one that spans is named by its first
@@ -108,13 +111,27 @@
   \def\tn@span{#3}\def\tn@vspan{#4}}
 \def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
 \def\tn@cdots{dots}
+% <n>*<entry> is <entry> <n> times, as \tn@n and \tn@rest. Only a whole number
+% before the first `*' counts, so a label with a star in it, canl/$A^*$, is a
+% label.
+\def\tn@rep#1*#2\tn@end{%
+  \def\tn@rest{#2}%
+  \ifx\tn@rest\@empty \def\tn@n{1}\def\tn@rest{#1}%
+  \else
+    \edef\tn@digits{\detokenize\expandafter{\romannumeral-0#1}}%
+    \ifx\tn@digits\@empty \def\tn@n{#1}\tn@repstrip#2\tn@end
+    \else \def\tn@n{1}\tn@repstrip#1*#2\tn@end \fi
+  \fi}
+\def\tn@repstrip#1*\tn@end{\def\tn@rest{#1}}
 \newcommand{\tnlayer}[3]{%
   \ifcsname tn@#1@k@#2\endcsname\else
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
   \edef\tn@k{\tn@get{#1@k@#2}}%
   \global\tn@c=1
-  \foreach \tn@e in {#3}{%
-    \expandafter\tn@entry\tn@e/////\tn@end
+  \foreach \tn@each in {#3}{%
+  \expandafter\tn@rep\tn@each*\tn@end
+  \foreach \tn@z in {1,...,\tn@n}{%
+    \expandafter\tn@entry\tn@rest/////\tn@end
     \edef\tn@i{\the\tn@c}%
     \ifx\tn@span\@empty \def\tn@span{1}\fi
     \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
@@ -147,7 +164,7 @@
           \tn@set{#1@o@\tn@get{#1@name@\tn@q}@\tn@j}{\tn@nm}}}%
     \fi\fi\fi\fi
     \global\advance\tn@c by \tn@span\relax
-  }%
+  }}%
 }
 
 % What occupies slot <#3> of layer <#2> of stack <#1>, as \tn@o, and what kind

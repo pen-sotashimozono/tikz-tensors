@@ -27,9 +27,9 @@ stand for.
 | `tn wide`, `tn tall`, `tn small`, `tn flat` | the same shape, resized |
 | `tn fill=<colour>` | solid fill, outline in ink |
 | `tn frame` | a dashed box around nodes |
-| `tn edge`, `tn wavy`, `tn arrow` | an index: plain, wavy, with an arrowhead |
+| `tn edge`, `tn wavy`, `tn arrow`, `tn double` | an index: plain, wavy, with an arrowhead, two fused |
 | `tn label` | the text on an index |
-| `tn gate`, `tn env` | what `\tngate` and the ends of a stack draw with |
+| `tn gate`, `tn env` | a gate, and the blocks at the ends of a stack |
 
 What a shape *means* — that a circle on a wavy leg is a function of position, a
 triangle an isometry, a diamond the orthogonality centre — is a **notation**,
@@ -48,7 +48,32 @@ package:
 one the examples here are drawn in: `fn` a function of position on `cont` wavy
 legs, `coef` an array, `op` an operator, `canl`/`canr`/`centre` the canonical
 form, `mpo`, `gate`, `disc` and `gauge`. It is an example of a notation, not
-part of the package.
+part of the package. A notation may also change the package's spacing, once
+for all its figures: `\tnset{pitch=20mm, rise=14mm}`.
+
+## Modules
+
+The package is a set of modules in `tex/`, each a file, each using only the
+ones above it; `tikz-tensors.sty` loads them all.
+
+| module | defines | extended by |
+|---|---|---|
+| `core` | the stroke, the edge layer, the tokens (`\tnset`), `tn node`, `tn edge`, `\tnbond` | — |
+| `colors` | the theme's named colours (generated) | `theme/tokens.toml` |
+| `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn leg anchor` (where its index leaves), `tn points` (which way it points), `tn single` (one index on that side) | a style on `tn node` that sets those keys is a type like the package's |
+| `edges` | **edge types** (`tn wavy`, `tn arrow`, `tn double`) and the routes an edge takes | a style on `tn edge` |
+| `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnbreak` | — |
+| `stack` | the lattice: `\tnstack`, `\tnlayer`, the record of which tensor covers which slots | — |
+| `connect` | **contraction**: a tensor's ports, and `\tnconnect`, `\tnopen`, `\tnopenswap`, `\tnjoin` | — |
+| `grid` | the two-dimensional lattice, `\tngrid` | — |
+| `labels` | `tn label`, `\tnput`, `\tnmid` | — |
+
+A tensor's indices are **ports**, and the contraction rules work on nothing
+else: a layout records where each tensor is (its layers and sites), its type
+says where an index leaves it, and every index — implied by the lattice, open,
+or joined by hand — runs from a port. So a chain, a tree and a MERA are not
+cases the package knows; they are tensors on the lattice, contracted by one
+set of rules.
 
 A figure of an algorithm is drawn on a **stack**: n sites across and named
 layers down, at one pitch the package owns, with a block (the rest of the
@@ -56,7 +81,7 @@ network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 ```latex
 \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-heff-two-site.tex
-\tnlayer{H}{op}{mpo/$W$, mpo/$W$}
+\tnlayer{H}{op}{2*mpo/$W$}
 \tnconnect{H}
 \tnopen{up}{H-op-1, H-op-2}
 ```
@@ -72,15 +97,23 @@ network, contracted) at either end. Nothing in it is a length or a coordinate:
 | `-` | the layer's index runs through |
 | `\|` | the site's index runs through (a gate's layer, room for a crossing) |
 | `dots` | the dots of a chain that goes on |
+| `<n>*<entry>` | the entry `<n>` times: `4*canl/$A$`, `7*.` |
 
 A style with a comma, or a label with a slash, goes in braces:
-`{coef, circle}/$A$`, `gate/{$U(\delta t/2)$}/2`.
+`{coef, circle}/$A$`, `gate/{$U(\delta t/2)$}/2`. A run of like entries is
+always written as one `<n>*<entry>` — the linter holds figures to it, so a
+layer has one spelling.
 
 - `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
   a bond with an arrow takes its direction from the triangles it joins, so a
   canonical form's arrows all point at the centre without being written.
 - `\tnopen{<up|down|left|right>}{<tensor or stack>, …}` opens indices; given a
-  stack, every site (or layer) at once. `\tnopenswap` opens two crossed.
+  stack, every site (or layer) at once. `\tnopenswap` opens two crossed (an
+  exchange of fermion legs; the sign goes in the equation, as in example 02).
+- `\tnjoin{<tensor>:<side>}{<tensor>:<side>}` joins two ports the lattice
+  does not: the bond that closes a periodic chain, a trace. Two ports that face
+  each other are joined straight; any others along the lattice, round the
+  outside of the stack (example 24).
 - `\tngrid[legs, bonds=…]{P}{4}{4}{coef/$A$}` draws a two-dimensional
   network of one tensor, turned 45° with its physical indices straight down.
 - `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
@@ -97,9 +130,6 @@ A style with a comma, or a label with a slash, goes in braces:
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`).
-
-Exchanging two fermion legs: `\tnswap[<edge style>]{<left top>}{<right top>}{<drop>}`
-draws the crossing (the sign goes in the equation, as in example 02).
 
 Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
 equations beside it; `pdftocairo -svg` turns them into paths, so the SVG shows
@@ -134,11 +164,13 @@ figures. A figure page is a `standalone` document:
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath}
 \usepackage{tikz-tensors}
+\input{notation}   % your own: the styles named for what they mean
 \begin{document}
 \begin{tikzpicture}
-  \node[tn circle] (p) at (0,0) {$\varphi$};
-  \tnbond[tn wavy]{(p) -- ++(0,-1) node[tn label, below] {$\mathbf r$}}
-  \tnbond{(p) -- ++(-1,0) node[tn label, left] {$i$}}
+  \tnstack{P}{4}{ket}
+  \tnlayer{P}{ket}{2*canl/$A$, 2*canr/$B$}
+  \tnconnect[along=gauge]{P}
+  \tnopen{down}{P}
 \end{tikzpicture}
 \end{document}
 ```

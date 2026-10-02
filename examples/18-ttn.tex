@@ -23,12 +23,11 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack[tree]{T}{16}{root, w16, w8, w4, w2}
-  \tnlayer{T}{root}{., ., ., ., ., ., ., centre/$C$/2, ., ., ., ., ., ., .}
+  \tnlayer{T}{root}{7*., centre/$C$/2, 7*.}
   \tnlayer{T}{w16}{iso/$W$/16}
-  \tnlayer{T}{w8}{iso/$W$/8, iso/$W$/8}
-  \tnlayer{T}{w4}{iso/$W$/4, iso/$W$/4, iso/$W$/4, iso/$W$/4}
-  \tnlayer{T}{w2}{iso/$W$/2, iso/$W$/2, iso/$W$/2, iso/$W$/2,
-                   iso/$W$/2, iso/$W$/2, iso/$W$/2, iso/$W$/2}
+  \tnlayer{T}{w8}{2*iso/$W$/8}
+  \tnlayer{T}{w4}{4*iso/$W$/4}
+  \tnlayer{T}{w2}{8*iso/$W$/2}
   \tnconnect[apart={root, w16, w8, w4, w2}]{T}
   \tnopen{down}{T}
   \foreach \i in {1,...,16} \tnput[below]{T-\i-down}{$\sigma_{\i}$};
