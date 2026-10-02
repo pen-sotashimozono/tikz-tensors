@@ -28,9 +28,10 @@ class Rules(unittest.TestCase):
     def test_a_figure_of_package_commands_passes(self):
         self.assertEqual(self.body(
             r"% a comment may say 3.5cm and \node[fill=red] (0,0)",
-            r"\tnchain{S}{A}{B}{canl/$A$/l, centre/$C_{12}$/c}",
-            r"\foreach \i in {1,...,5} \tnput[below]{S\i-leg-tip}{$n_{\i}$};",
-            r"\tnput[above]{S1}{$x = 0.5$}"), [])
+            r"\tnstack{S}{2}{ket}",
+            r"\tnlayer{S}{ket}{canl/$A$, centre/$C_{12}$}",
+            r"\tnopen[label=$n_{#1}$]{down}{S}",
+            r"\tnput[above]{S-ket-1}{$x = 0.5$}"), [])
 
     def test_lengths(self):
         for text in (r"\tnlegs{16mm}{S1-leg}", r"\tnlegs{1.6}{S1-leg}",
@@ -50,7 +51,8 @@ class Rules(unittest.TestCase):
         for text in (r"\node[op] (O) at (A) {$O$};", r"\draw (A) -- (B);",
                      r"\begin{scope}", r"\end{scope}", r"\tikzset{x/.style={}}",
                      r"\pgfmathtruncatemacro{\c}{\b+1}", r"\tnbond{(A1) -- (A2)}",
-                     r"\tnset{pitch=20mm}"):
+                     r"\tnset{pitch=20mm}",
+                     r"\foreach \i in {1,...,4} \tnput[below]{P-\i-down}{$\i$};"):
             self.assertIn("command", self.body(text), text)
         self.assertNotIn("command", self.body(r"\tnodes{A}"))
         self.assertNotIn("command", self.body(r"\tnjoin{A-ket-1:left}{A-ket-4:right}"))

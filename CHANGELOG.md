@@ -33,6 +33,25 @@ file in `layout/`.
   `\tnopen{down}{P}` after `\tngrid{P}...` (`20-peps`, `21-simple-update`,
   which render exactly as before).
 
+The interface, made one set of rules (`docs/api.md`, which a test now holds
+to the code: a public name missing from it, or one it names that does not
+exist, fails):
+- Every optional argument is `key=value`. Breaking: `\tnopen[<style>]`,
+  `\tnopenswap[<style>]` and `\tnjoin[<style>]` are `[edge=<style>]`;
+  `\tneq[<factor>]` and `\tnapprox[<factor>]` are `[factor=<factor>]`.
+- Labels on open indices are `\tnopen`'s (and `\tnopenswap`'s) `label=`, with
+  `#1` the number of each index it opens, or `labels={...}` one by one; they
+  sit beyond the end of the index. `\foreach` is no longer allowed in a
+  figure, and every example that used it to label legs uses `label=`
+  (rendering exactly as before). `15-cp` now puts the labels of its sideways
+  indices beyond their ends, like every other, instead of above them.
+- Breaking: the end of a layer's index from an environment block into an
+  empty slot is `<stack>-<layer>-left` / `-right`, the name an index opened
+  there has, instead of `<stack>-left-<layer>`.
+- `apart=` on a grid is an error instead of being ignored.
+- `scripts/version.py` tracks the interface exactly: the styles (`tn ...`) and
+  each command's keys, instead of every pgfkeys path it found.
+
 Ports are recorded once drawn. Joining or opening an index that is drawn
 already is an error naming the tensor and the side; opening every index of a
 block skips the ones that are taken, so an index joined by hand is not opened

@@ -20,9 +20,8 @@
   \tnlayer{H}{ket}{centre/$A_C$}
   \tnlayer{H}{op}{mpo/$W$}
   \tnconnect{H}
-  \tnopen{down}{H-op-1}
-  \tnput[below]{H-left-bra}{$a$}
-  \tnput[below]{H-op-1-down}{$\sigma$}
-  \tnput[below]{H-right-bra}{$b$}
+  \tnopen[label=$\sigma$]{down}{H-op-1}
+  \tnput[below]{H-bra-left}{$a$}
+  \tnput[below]{H-bra-right}{$b$}
 \end{tikzpicture}
 \end{document}

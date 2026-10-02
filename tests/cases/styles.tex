@@ -86,7 +86,7 @@
   \tnlayer{X}{c}{., -}
   \tnconnect{X}
   \tnopen{up}{X-b-2}
-  \tneq[$\lambda$]
+  \tneq[factor=$\lambda$]
   \tnstack[left=$L$]{Y}{0}{a, b, c}
   \tnconnect{Y}
   % where a stack takes a tensor's index from: a triangle sets it to a corner
@@ -115,7 +115,7 @@
   \tnstack{V}{2}{a, b}
   \tnlayer{V}{a}{tn box/$\Psi$/2}
   \tnlayer{V}{b}{|, |}
-  \tnopenswap{V-a-1}
+  \tnopenswap[edge=tn wavy, labels={$a$, $b$}]{V-a-1}
   \tnstack{U}{2}{a}
   \tnlayer{U}{a}{tn box, tn box}
   \tnconnect[along=tn double]{U}
@@ -138,15 +138,14 @@
   \tnstack{C}{5}{a}
   \tnlayer{C}{a}{2*tn triangle right/$A$, tn diamond/$C$, 2*tn triangle left/$B$}
   \tnconnect[along=tn arrow]{C}
-  \tnopen{down}{C}
+  \tnopen[label=$i_{#1}$]{down}{C}
   \tnjoin{C-a-1:left}{C-a-5:right}
-  \tnput[below]{C-1-down}{$i$}
   \tnmid{C-a-1}{C-a-2}{$D$}
   \tnstack{J}{1}{a}
   \tnlayer{J}{a}{tn rounded/$O$}
   \tnjoin{J-a-1:up}{J-a-1:down}
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
-    at (current bounding box.south) {2*, \textbackslash tnjoin, \textbackslash tnput,
+    at (current bounding box.south) {2*, \textbackslash tnjoin, label=, labels=, edge=, \textbackslash tnput,
     \textbackslash tnmid, \textbackslash tnset};
 \end{tikzpicture}
 \end{document}

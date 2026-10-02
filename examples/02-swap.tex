@@ -18,15 +18,11 @@
   \tnstack{P}{2}{state, legs}
   \tnlayer{P}{state}{coefwide/$\Psi$/2}
   \tnlayer{P}{legs}{2*|}
-  \tnopenswap[disc]{P-state-1}
-  \tnput[below]{P-state-1-down-1}{$i$}
-  \tnput[below]{P-state-1-down-2}{$j$}
-  \tneq[$-$]
+  \tnopenswap[edge=disc, labels={$i$, $j$}]{P-state-1}
+  \tneq[factor=$-$]
   \tnstack{Q}{2}{state, legs}
   \tnlayer{Q}{state}{coefwide/$\Psi$/2}
   \tnlayer{Q}{legs}{2*|}
-  \tnopen{down}{Q}
-  \tnput[below]{Q-1-down}{$i$}
-  \tnput[below]{Q-2-down}{$j$}
+  \tnopen[labels={$i$, $j$}]{down}{Q}
 \end{tikzpicture}
 \end{document}

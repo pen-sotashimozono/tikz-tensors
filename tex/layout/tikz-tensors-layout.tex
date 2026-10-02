@@ -124,23 +124,60 @@
   \pgfkeysgetvalue{/tn/connect/down}\tn@down
   \tn@op{#2}{connect}{#2}}
 
-% \tnopen[<style>]{<direction>}{<item>, ...}
+% \tnopen[edge=<style>, label=<text>, labels={<text>, ...}]{<direction>}{<item>, ...}
 % Open indices toward <direction>. An item is a tensor -- its own indices that
 % way -- or a block -- every free index of it that way. Where each ends, and
-% the coordinate it leaves there, is the layout's to say.
-\newcommand{\tnopen}[3][tn edge]{%
+% the coordinate it leaves there, is the layout's to say. edge= is the edge
+% type (tn edge unless said). label= puts a label at the end of each index,
+% beyond it -- below one opened down, above one up, left and right of one
+% opened sideways -- with #1 standing for its number among the indices this
+% command opens, in order: label=$\sigma_{#1}$. labels= gives them one by one,
+% in the same order, for numbering that is not 1, 2, 3: labels={$n_1$, $n_N$}.
+\pgfkeys{/tn/open/.is family,
+  /tn/open/edge/.initial=tn edge,
+  /tn/open/label/.code={\gdef\tn@olab##1{#1}\gdef\tn@olmode{t}},
+  /tn/open/labels/.code={\gdef\tn@olabs{#1}\gdef\tn@olmode{l}}}
+\newcount\tn@ocount
+\def\tn@olt{t}\def\tn@oll{l}
+\def\tn@openkeys#1{%
+  \gdef\tn@olmode{}\global\tn@ocount=0
+  \pgfkeys{/tn/open/.cd, edge=tn edge, #1}%
+  \pgfkeysgetvalue{/tn/open/edge}\tn@oedge}
+% A layout calls this on the coordinate at the end of each index it opens.
+\def\tn@openlabel#1{%
+  \global\advance\tn@ocount by 1
+  \ifx\tn@dir\tn@sdown \def\tn@olpos{below}%
+  \else\ifx\tn@dir\tn@sup \def\tn@olpos{above}%
+  \else \let\tn@olpos\tn@dir \fi\fi
+  \ifx\tn@olmode\tn@olt
+    \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@olab{\the\tn@ocount}}%
+  \else\ifx\tn@olmode\tn@oll
+    \global\let\tn@lpick\@empty
+    \foreach \tn@x [count=\tn@xc] in \tn@olabs{%
+      \ifnum\tn@xc=\tn@ocount \global\let\tn@lpick\tn@x \fi}%
+    \ifx\tn@lpick\@empty
+      \PackageError{tikz-tensors}{\string\tnopen: more indices than labels}{}%
+    \else \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@lpick}\fi
+  \fi\fi}
+\newcommand{\tnopen}[3][]{%
+  \tn@openkeys{#1}%
   \edef\tn@dir{#2}%
   \foreach \tn@it in {#3}{%
-    \ifcsname tn@\tn@it @kind\endcsname \tn@op{\tn@it}{openblock}{#1}{\tn@it}%
-    \else \tn@isnode{\tn@it}{\string\tnopen}\tn@nop{\tn@it}{opennode}{#1}{\tn@it}\fi}}
+    \ifcsname tn@\tn@it @kind\endcsname
+      \expandafter\tn@op\expandafter{\tn@it}{openblock}{\tn@oedge}{\tn@it}%
+    \else
+      \tn@isnode{\tn@it}{\string\tnopen}%
+      \expandafter\tn@nop\expandafter{\tn@it}{opennode}{\tn@oedge}{\tn@it}%
+    \fi}}
 
-% \tnopenswap[<style>]{<tensor>}
+% \tnopenswap[edge=<style>, label=..., labels=...]{<tensor>}
 % The two indices down from a tensor across two sites, exchanged on the way: a
-% swap of two fermion legs.
-\newcommand{\tnopenswap}[2][tn edge]{%
-  \tn@isnode{#2}{\string\tnopenswap}\tn@nop{#2}{openswap}{#1}{#2}}
+% swap of two fermion legs. The keys are \tnopen's.
+\newcommand{\tnopenswap}[2][]{%
+  \tn@openkeys{#1}\def\tn@dir{down}%
+  \tn@isnode{#2}{\string\tnopenswap}\tn@nop{#2}{openswap}{\tn@oedge}{#2}}
 
-% \tnjoin[<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
+% \tnjoin[edge=<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
 % One index between two ports the layout does not join: the bond that closes
 % a periodic chain, a trace, a bond that skips over its neighbours. Both
 % tensors are in one block; <n> picks the port on that side when there are
@@ -148,7 +185,9 @@
 % drawn from the first port to the second, which is the way an arrow on it
 % points; a port that is drawn already is an error.
 \def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
-\newcommand{\tnjoin}[3][tn edge]{%
+\pgfkeys{/tn/join/.is family, /tn/join/edge/.initial=tn edge}
+\newcommand{\tnjoin}[3][]{%
+  \pgfkeys{/tn/join/.cd, edge=tn edge, #1}\pgfkeysgetvalue{/tn/join/edge}\tn@jedge
   \tn@pspec#2:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
   \edef\tn@ja{\tn@get{n@\tn@pn @s}}%
   \tn@pspec#3:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
@@ -156,4 +195,4 @@
   \ifx\tn@ja\tn@jb\else
     \PackageError{tikz-tensors}{\string\tnjoin: `#2' and `#3' are in two
       blocks}{An index is joined inside one stack, tree or grid.}\fi
-  \tn@op{\tn@ja}{join}{#1}{#2}{#3}}
+  \tn@op{\tn@ja}{join}{\tn@jedge}{#2}{#3}}

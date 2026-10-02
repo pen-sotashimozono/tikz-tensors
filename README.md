@@ -116,8 +116,10 @@ layer has one spelling.
 - `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
   a bond with an arrow takes its direction from the triangles it joins, so a
   canonical form's arrows all point at the centre without being written.
-- `\tnopen{<up|down|left|right>}{<tensor or stack>, …}` opens indices; given a
-  stack, every site (or layer) at once. `\tnopenswap` opens two crossed (an
+- `\tnopen[edge=…, label=…]{<up|down|left|right>}{<tensor or stack>, …}`
+  opens indices; given a stack, every site (or layer) at once.
+  `label=$\sigma_{#1}$` labels each end, `#1` its number;
+  `labels={$n_1$, $n_N$}` gives them one by one. `\tnopenswap` opens two crossed (an
   exchange of fermion legs; the sign goes in the equation, as in example 02).
 - `\tnjoin{<tensor>:<side>}{<tensor>:<side>}` joins two ports the lattice
   does not: the bond that closes a periodic chain, a trace, a bond that skips
@@ -127,7 +129,7 @@ layer has one spelling.
 - `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
   one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
   `\tnopen{down}{P}` its physical indices, straight down.
-- `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
+- `\tneq[factor=$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side
   (`tn leg anchor`), and the triangle is set across so that corner is on the
@@ -140,7 +142,9 @@ layer has one spelling.
   drawn.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
-(`docs/roadmap.md`).
+(`docs/roadmap.md`). Every optional argument is `key=value`, and
+[`docs/api.md`](docs/api.md) lists the whole interface — every command, key,
+style and name a figure can refer to — and is checked against the code.
 
 Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
 equations beside it; `pdftocairo -svg` turns them into paths, so the SVG shows

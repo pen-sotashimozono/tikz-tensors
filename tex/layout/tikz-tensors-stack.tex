@@ -222,7 +222,8 @@
 % site from its first tensor to its last, through the ones between, which cover
 % it; from an environment into each layer -- to the tensor there, or, if the
 % slot is empty, to the border that tensor would have, which is the coordinate
-% <stack>-left-<layer> or <stack>-right-<layer>; and up to the dots of a chain
+% <stack>-<layer>-left or <stack>-<layer>-right (the name the end of an index
+% opened there would have); and up to the dots of a chain
 % that goes on. A bond with an arrow takes its direction from the shapes it
 % joins. Layers named apart= have no index along them.
 \def\tn@stack@connect#1{%
@@ -310,13 +311,13 @@
     \ifnum\tn@ka=5 \ifnum\tn@sb=0 \ifnum\tn@kb=4 \else
       \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
       \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
-      \coordinate (#2-left-\tn@l) at (\tn@xb,\tn@y);
+      \coordinate (#2-\tn@l-left) at (\tn@xb,\tn@y);
       \tn@reach{\tn@xb}%
     \fi\fi\fi
     \ifnum\tn@kb=6 \ifnum\tn@sa=0 \ifnum\tn@ka=4 \else
       \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
       \tn@line{#1}{\tn@xb}{\tn@y}{\tn@xa}{\tn@y}%
-      \coordinate (#2-right-\tn@l) at (\tn@xa,\tn@y);
+      \coordinate (#2-\tn@l-right) at (\tn@xa,\tn@y);
     \fi\fi\fi
     \ifnum\tn@ka\tn@kb=14
       \tn@use{\tn@oa}{right}{\tn@lk}%
@@ -362,7 +363,8 @@
     \ifx\tn@pt\tn@sright \tn@line{#1}{\tn@xb}{\tn@hy}{\tn@xa}{\tn@hy}%
     \else \tn@line{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}\fi
   \fi
-  \coordinate (#4) at (\tn@xb,\tn@hy);}
+  \coordinate (#4) at (\tn@xb,\tn@hy);
+  \tn@openlabel{#4}}
 % one index up or down, from tensor #2 on site #3, ending at coordinate #4;
 % \tn@vopenx draws it at the column <x> instead, walking site #3. It ends at the
 % border of the next slot that is not `|'; where the tensor's port is not over
@@ -387,7 +389,8 @@
     \tn@turns{#1}{(\tn@px,\tn@py) -- (\tn@px,\tn@ym)
       -- (\tn@cx,\tn@ym) -- (\tn@cx,\tn@yb)}%
   \fi
-  \coordinate (#5) at (\tn@cx,\tn@yb);}
+  \coordinate (#5) at (\tn@cx,\tn@yb);
+  \tn@openlabel{#5}}
 \def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
   \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
 \def\tn@stack@opennode#1#2{%
@@ -472,7 +475,8 @@
   \tn@colx{\tn@s}{\tn@a+1}\let\tn@xb\tn@cx
   \tn@swap{#1}{(\tn@xa,\tn@ys)}{(\tn@xb,\tn@ys)}{\tn@drop}%
   \coordinate (#2-down-1) at (\tn@xa,\tn@yb);
-  \coordinate (#2-down-2) at (\tn@xb,\tn@yb);}
+  \coordinate (#2-down-2) at (\tn@xb,\tn@yb);
+  \tn@openlabel{#2-down-1}\tn@openlabel{#2-down-2}}
 
 % ---- join --------------------------------------------------------------------
 % <side> is up, down, left or right; <n> is the <n>th site the tensor spans

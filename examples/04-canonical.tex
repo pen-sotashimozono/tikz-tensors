@@ -29,10 +29,9 @@
   \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
   \tnlayer{S}{gate}{2*|, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
   \tnconnect[along=gauge]{S}
-  \tnopen[gauge]{left}{S-ket-1}
-  \tnopen[gauge]{right}{S-ket-5}
-  \tnopen{down}{S}
+  \tnopen[edge=gauge]{left}{S-ket-1}
+  \tnopen[edge=gauge]{right}{S-ket-5}
+  \tnopen[label=$n_{#1}$]{down}{S}
   \tnmid{S-ket-1}{S-ket-2}{$D$}
-  \foreach \i in {1,...,5} \tnput[below]{S-\i-down}{$n_{\i}$};
 \end{tikzpicture}
 \end{document}

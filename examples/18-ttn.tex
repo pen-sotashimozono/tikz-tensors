@@ -29,7 +29,6 @@
   \tnlayer{T}{w4}{4*iso/$W$/4}
   \tnlayer{T}{w2}{8*iso/$W$/2}
   \tnconnect[apart={root, w16, w8, w4, w2}]{T}
-  \tnopen{down}{T}
-  \foreach \i in {1,...,16} \tnput[below]{T-\i-down}{$\sigma_{\i}$};
+  \tnopen[label=$\sigma_{#1}$]{down}{T}
 \end{tikzpicture}
 \end{document}

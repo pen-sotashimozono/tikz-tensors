@@ -63,6 +63,9 @@
 % Every bond of the lattice, centre to centre (a tensor covers the index it
 % carries), through the tensor on it if there is one.
 \def\tn@grid@connect#1{%
+  \ifx\tn@apart\@empty\else
+    \PackageError{tikz-tensors}{\string\tnconnect: apart= names layers of a
+      stack; a grid has none}{}\fi
   \edef\tn@gc{\tn@get{#1@cols}}\edef\tn@gr{\tn@get{#1@rows}}%
   \foreach \tn@i in {1,...,\tn@gc}{\foreach \tn@j in {1,...,\tn@gr}{%
     \tn@gxy{#1}{\tn@i}{\tn@j}\let\tn@xa\tn@gx \let\tn@ya\tn@gy
@@ -84,7 +87,8 @@
   \tn@anc{#2}{center}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
   \tn@len\tn@yb{\tn@ya-\tn@slot/2-\tn@stub}%
   \tn@line{#1}{\tn@xa}{\tn@ya}{\tn@xa}{\tn@yb}%
-  \coordinate (#3) at (\tn@xa,\tn@yb);}
+  \coordinate (#3) at (\tn@xa,\tn@yb);
+  \tn@openlabel{#3}}
 \def\tn@gdown#1{\ifx\tn@dir\tn@sdown\else
   \PackageError{tikz-tensors}{#1: a grid's open indices go down, out of the
     plane}{}\fi}

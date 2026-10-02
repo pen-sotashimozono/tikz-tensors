@@ -20,14 +20,12 @@
 \begin{tikzpicture}
   \tnstack{P}{5}{ket}
   \tnlayer{P}{ket}{coef/$\Psi$/5}
-  \tnopen{down}{P-ket-1}
+  \tnopen[label=$n_{#1}$]{down}{P-ket-1}
   \tnapprox
   \tnstack{M}{5}{ket}
   \tnlayer{M}{ket}{4*canl/$A$, centre/$C$}
   \tnconnect{M}
-  \tnopen{down}{M-ket-1, M-ket-2, M-ket-3, M-ket-4, M-ket-5}
-  \foreach \i in {1,...,5} \tnput[below]{P-ket-1-down-\i}{$n_{\i}$};
-  \foreach \i in {1,...,5} \tnput[below]{M-ket-\i-down}{$n_{\i}$};
+  \tnopen[label=$n_{#1}$]{down}{M-ket-1, M-ket-2, M-ket-3, M-ket-4, M-ket-5}
   \tnmid{M-ket-1}{M-ket-2}{$D$}
 \end{tikzpicture}
 \end{document}

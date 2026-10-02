@@ -44,15 +44,17 @@
   \global\tn@brk=1 \global\tn@cursor=0pt \global\tn@right=0pt
   \global\tn@fresh=1}
 
-% \tneq[<factor>]       an equals sign
-% \tnapprox[<factor>]   an approximately-equals sign
+% \tneq[factor=<text>]       an equals sign
+% \tnapprox[factor=<text>]   an approximately-equals sign
 % After everything drawn so far, centred on the row like the blocks, with
-% <factor> after it if there is one (\tneq[$\lambda$]); the next block starts
-% after it.
-\newcommand{\tn@rel}[2]{%
+% <factor> after it if there is one (\tneq[factor=$\lambda$]); the next block
+% starts after it.
+\pgfkeys{/tn/rel/.is family, /tn/rel/factor/.initial=}
+\newcommand{\tn@rel}[2]{% sign, keys
+  \pgfkeys{/tn/rel/.cd, factor=, #2}\pgfkeysgetvalue{/tn/rel/factor}\tn@factor
   \node[anchor=west, inner sep=0pt] (tn@eq) at
     ($(\the\tn@right,\the\tn@line@y)+(\tn@gap,0)$)
-    {$#1$\ifx\relax#2\relax\else\hspace{0.3em}#2\fi};
+    {$#1$\ifx\tn@factor\@empty\else\hspace{0.3em}\tn@factor\fi};
   \tn@anc{tn@eq}{east}\tn@d=\tn@ax\relax
   \global\tn@cursor=\tn@d \global\advance\tn@cursor by \tn@gap\relax
   \global\tn@right=\tn@cursor \global\tn@afterrel=1

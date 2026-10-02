@@ -24,7 +24,8 @@ What is checked, on the file with its comments and its math removed:
             \\newcommand, \\def, \\pgfmath... -- a pattern a figure needs is a
             command in tex/; and not the package's own escape hatches,
             \\tnbond (a path written out) and \\tnset (the tokens, which are a
-            notation's to change)
+            notation's to change); and no \\foreach -- labels on open indices
+            are \\tnopen's label= and labels=
 
   repeat    a run of like entries in a \\tnlayer is written once, <n>*<entry>,
             and the whole run in one: 3*canl/$A$, never canl/$A$, canl/$A$,
@@ -69,7 +70,7 @@ RULES = [
         r"|line width)\s*=")),
     ("command", re.compile(
         r"\\(?:node|draw|path|fill|filldraw|coordinate|clip|matrix"
-        r"|tikzset|newcommand|renewcommand|def|let|edef|gdef|tnbond|tnset"
+        r"|tikzset|newcommand|renewcommand|def|let|edef|gdef|tnbond|tnset|foreach"
         r"|pgf[a-z]*)(?![A-Za-z@])"
         r"|\\(?:begin|end)\{(?:scope|pgfonlayer)\}")),
 ]

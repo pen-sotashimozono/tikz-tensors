@@ -25,17 +25,15 @@
   \tnstack{S}{5}{ket}
   \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
   \tnconnect[along=gauge]{S}
-  \tnopen[gauge]{left}{S-ket-1}
-  \tnopen[gauge]{right}{S-ket-5}
-  \tnopen{down}{S}
-  \foreach \i in {1,...,5} \tnput[below]{S-\i-down}{$n_{\i}$};
+  \tnopen[edge=gauge]{left}{S-ket-1}
+  \tnopen[edge=gauge]{right}{S-ket-5}
+  \tnopen[label=$n_{#1}$]{down}{S}
   \tnbreak
   \tnstack{T}{6}{ket}
   \tnlayer{T}{ket}{3*canl/$A$, centrebond/$\Lambda$, 2*canr/$B$}
   \tnconnect[along=gauge]{T}
-  \tnopen[gauge]{left}{T-ket-1}
-  \tnopen[gauge]{right}{T-ket-6}
-  \tnopen{down}{T-ket-1, T-ket-2, T-ket-3, T-ket-5, T-ket-6}
-  \foreach \s/\n in {1/1, 2/2, 3/3, 5/4, 6/5} \tnput[below]{T-ket-\s-down}{$n_{\n}$};
+  \tnopen[edge=gauge]{left}{T-ket-1}
+  \tnopen[edge=gauge]{right}{T-ket-6}
+  \tnopen[label=$n_{#1}$]{down}{T-ket-1, T-ket-2, T-ket-3, T-ket-5, T-ket-6}
 \end{tikzpicture}
 \end{document}
