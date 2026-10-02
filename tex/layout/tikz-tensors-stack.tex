@@ -1,0 +1,600 @@
+% tikz-tensors-stack.tex -- the stack layout: the lattice a figure of an
+% algorithm is drawn on, sites across and named layers down, and the tensors
+% in its slots. It implements every operation of the abstract layout
+% (tikz-tensors-layout.tex); a tree (tikz-tensors-tree.tex) is a stack that
+% sizes and routes its own way.
+%
+% Its tensors are recorded -- the sites and layers each covers -- and that
+% record is all the contraction rules below read: a tensor's indices follow
+% from where it is and from its type, never from a coordinate.
+\tn@kind{stack}{}
+
+% The centre of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
+% \tn@ly. Column 0 and column n+1 are the slots just beyond the ends; a
+% fraction is a line between two.
+\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
+\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@get{#1@rise}}}
+
+% ---- placing ----------------------------------------------------------------
+% \tnstack[left=<label>, right=<label>, tree]{<name>}{<sites>}{<layers>}
+% A grid of <sites> slots across and the <layers> down, top to bottom, placed
+% after what is already on the row (an equals sign, or another stack, whose
+% end slot and its own keep them a pitch apart) and centred on the row, so that
+% the stacks of an equation line up. left= and right= put an environment at
+% either end. Without one, the stack keeps the slot beyond its end as far as
+% that slot's border, which is where an open index there ends -- so an index
+% opened later never runs into the equals sign before it. [tree] makes it the
+% tree layout.
+%
+%   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
+%
+% The environment is the node <name>-left or <name>-right. Every slot, and the
+% ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
+% is what a label for something that is not a tensor is placed on.
+\pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
+         /tn/stack/right/.initial=,
+         /tn/stack/tree/.code={\def\tn@stkind{tree}}}
+\def\tn@stack@geometry#1{\tn@set{#1@pitch}{\tn@pitch}\tn@set{#1@rise}{\tn@rise}}
+\newcommand{\tnstack}[4][]{%
+  \def\tn@stkind{stack}%
+  \pgfkeys{/tn/stack/.cd, left=, right=, #1}%
+  \tn@newblock{#2}{\tn@stkind}%
+  \tn@op{#2}{geometry}{#2}%
+  \pgfkeysgetvalue{/tn/stack/left}\tn@envl
+  \pgfkeysgetvalue{/tn/stack/right}\tn@envr
+  \tn@set{#2@n}{#3}%
+  \tn@set{#2@layers}{#4}%
+  \global\tn@c=0
+  \foreach \tn@l in {#4}{%
+    \global\advance\tn@c by 1
+    \tn@set{#2@k@\tn@l}{\the\tn@c}\tn@set{#2@name@\the\tn@c}{\tn@l}}%
+  \tn@set{#2@L}{\the\tn@c}%
+  % A row after \tnbreak hangs a gap under everything drawn so far, keeping the
+  % slot above its top layer as far as that slot's border -- where an index
+  % opened upward ends -- as a stack keeps the slots beyond its ends.
+  \tn@block{0pt}{\tn@gap+(\tn@get{#2@L}+1)/2*\tn@get{#2@rise}-\tn@slot/2}%
+  \tn@set{#2@y0}{\the\tn@line@y}%
+  \ifx\tn@envl\@empty
+    \tn@set{#2@hasl}{0}%
+    \tn@len\tn@xz{\the\tn@cursor-\tn@slot/2}%
+  \else
+    \tn@set{#2@hasl}{1}%
+    \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
+  \fi
+  \tn@set{#2@x0}{\tn@xz}%
+  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@get{#2@rise}+\tn@slot}%
+  \ifx\tn@envl\@empty\else
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
+  \fi
+  \ifx\tn@envr\@empty
+    \tn@set{#2@hasr}{0}%
+    \tn@colx{#2}{#3+1}\tn@reach{\tn@cx-\tn@slot/2}%
+  \else
+    \tn@set{#2@hasr}{1}%
+    \tn@colx{#2}{#3+1}%
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};
+    \tn@reach{\tn@cx+\tn@envw/2}%
+  \fi
+  \pgfmathtruncatemacro\tn@nn{#3+1}%
+  \foreach \tn@l in {#4}{%
+    \tn@layy{#2}{\tn@get{#2@k@\tn@l}}%
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \tn@colx{#2}{\tn@i}%
+      \path[overlay] (\tn@cx,\tn@ly) coordinate (#2-\tn@l-\tn@i-slot);}}%
+}
+
+% \tnlayer{<stack>}{<layer>}{<entry>, ...}
+% The layer's slots, left to right, one entry each:
+%   <type>/<label>                 a tensor in that slot
+%   <type>/<label>/<span>          one tensor across <span> slots: a gate, a
+%                                  two-site tensor, as wide as the slots
+%   <type>/<label>/<span>/<down>   ... and down <down> layers, as tall as
+%                                  they are, with an index into each: the
+%                                  zipper of zip-up. The layers below leave
+%                                  its slots as `.'
+%   .                              nothing: the slot is empty
+%   -                              nothing, but the layer's index runs
+%                                  through, along the layer
+%   |                              nothing, but the site's index runs
+%                                  through, down the site
+%   dots                           the dots of a chain that goes on (not `...'
+%                                  which \foreach reads as a range)
+%   <n>*<entry>                    any of these, <n> times over: a chain is
+%                                  its tensor repeated, 4*canl/$A$, and a run
+%                                  of empty slots is 7*.
+% A type with a comma in it goes in braces, {coef, circle}/$A$, and so does a
+% label with a slash in it, gate/{$U(\delta t/2)$}/2. The tensor of
+% site i is the node <stack>-<layer>-i; one that spans is named by its first
+% site and its top layer.
+\def\tn@entry#1/#2/#3/#4/#5\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}%
+  \def\tn@span{#3}\def\tn@vspan{#4}}
+\def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
+\def\tn@cdots{dots}
+% <n>*<entry> is <entry> <n> times, as \tn@n and \tn@rest. Only a whole number
+% before the first `*' counts, so a label with a star in it, canl/$A^*$, is a
+% label.
+\def\tn@rep#1*#2\tn@end{%
+  \def\tn@rest{#2}%
+  \ifx\tn@rest\@empty \def\tn@n{1}\def\tn@rest{#1}%
+  \else
+    \edef\tn@digits{\detokenize\expandafter{\romannumeral-0#1}}%
+    \ifx\tn@digits\@empty \def\tn@n{#1}\tn@repstrip#2\tn@end
+    \else \def\tn@n{1}\tn@repstrip#1*#2\tn@end \fi
+  \fi}
+\def\tn@repstrip#1*\tn@end{\def\tn@rest{#1}}
+% How wide a tensor across <span> sites is drawn, as \tn@span@w sites: as wide
+% as them on a stack.
+\def\tn@stack@spanwidth{\let\tn@span@w\tn@span}
+\newcommand{\tnlayer}[3]{%
+  \ifcsname tn@#1@k@#2\endcsname\else
+    \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
+  \edef\tn@k{\tn@get{#1@k@#2}}%
+  \global\tn@c=1
+  \foreach \tn@each in {#3}{%
+  \expandafter\tn@rep\tn@each*\tn@end
+  \ifnum\tn@n<1
+    \PackageError{tikz-tensors}{`\tn@n*' in layer `#2' of `#1': a run is one
+      entry or more}{Leave the entry out instead of writing it 0 times.}%
+    \def\tn@n{1}\def\tn@rest{.}%
+  \fi
+  \foreach \tn@z in {1,...,\tn@n}{%
+    \expandafter\tn@entry\tn@rest/////\tn@end
+    \edef\tn@i{\the\tn@c}%
+    \ifx\tn@span\@empty \def\tn@span{1}\fi
+    \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
+    \ifx\tn@sty\tn@cdot
+    \else\ifx\tn@sty\tn@cE
+      \tn@set{#1@o@#2@\tn@i}{-}%
+    \else\ifx\tn@sty\tn@cB
+      \tn@set{#1@o@#2@\tn@i}{|}%
+    \else\ifx\tn@sty\tn@cdots
+      \tn@set{#1@o@#2@\tn@i}{D}%
+      \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
+      \node[tn label] at (\tn@cx,\tn@ly) {$\cdots$};
+    \else
+      \tn@layy{#1}{\tn@k+(\tn@vspan-1)/2}%
+      \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
+      \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
+      \tn@len\tn@hh{(\tn@vspan-1)*\tn@get{#1@rise}+\tn@slot}%
+      \tn@op{#1}{spanwidth}%
+      \edef\tn@opt{\tn@sty\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
+                   \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
+      \edef\tn@nm{#1-#2-\tn@i}%
+      \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
+      \pgfmathtruncatemacro\tn@last{\tn@i+\tn@span-1}%
+      \pgfmathtruncatemacro\tn@kb{\tn@k+\tn@vspan-1}%
+      \tn@record{\tn@nm}{#1}{\tn@i}{\tn@last}{\tn@k}{\tn@kb}%
+      \foreach \tn@q in {\tn@k,...,\tn@kb}{%
+        \foreach \tn@j in {\tn@i,...,\tn@last}{%
+          \tn@set{#1@o@\tn@get{#1@name@\tn@q}@\tn@j}{\tn@nm}}}%
+    \fi\fi\fi\fi
+    \global\advance\tn@c by \tn@span\relax
+  }}%
+}
+
+% What occupies slot <#3> of layer <#2> of stack <#1>, as \tn@o, and what kind
+% of thing that is, as \tn@kd:
+%   0 nothing  1 a tensor (\tn@o is its name)  2 `-'  3 `|'  4 `dots'
+%   5 the environment on the left (column 0)  6 on the right (column n+1)
+\def\tn@occ#1#2#3{%
+  \ifnum#3=0 \ifnum\tn@get{#1@hasl}=1 \def\tn@o{L}\else\def\tn@o{}\fi
+  \else\ifnum#3>\tn@get{#1@n} \ifnum\tn@get{#1@hasr}=1 \def\tn@o{R}\else\def\tn@o{}\fi
+  \else\ifcsname tn@#1@o@#2@#3\endcsname \edef\tn@o{\tn@get{#1@o@#2@#3}}%
+  \else\def\tn@o{}\fi\fi\fi
+  \ifx\tn@o\@empty\def\tn@kd{0}%
+  \else\ifx\tn@o\tn@cE\def\tn@kd{2}%
+  \else\ifx\tn@o\tn@cB\def\tn@kd{3}%
+  \else\ifx\tn@o\tn@cD\def\tn@kd{4}%
+  \else\ifx\tn@o\tn@cL\def\tn@kd{5}%
+  \else\ifx\tn@o\tn@cR\def\tn@kd{6}%
+  \else\def\tn@kd{1}\fi\fi\fi\fi\fi\fi}
+
+% From slot <#3> of site <#2>, step by <#4> through every `|' -- the site's
+% index running through -- and leave the first layer that is not one in
+% \tn@kw, which may be just off the grid.
+\def\tn@walk#1#2#3#4{\pgfmathtruncatemacro\tn@kw{#3}\tn@walkstep{#1}{#2}{#4}}
+\def\tn@walkstep#1#2#3{%
+  \let\tn@next\relax
+  \ifnum\tn@kw>0 \ifnum\tn@kw>\tn@get{#1@L}\else
+    \edef\tn@ln{\tn@get{#1@name@\tn@kw}}%
+    \tn@occ{#1}{\tn@ln}{#2}%
+    \ifnum\tn@kd=3
+      \pgfmathtruncatemacro\tn@kw{\tn@kw+(#3)}%
+      \def\tn@next{\tn@walkstep{#1}{#2}{#3}}%
+    \fi
+  \fi\fi
+  \tn@next}
+
+% ---- ports -------------------------------------------------------------------
+% On a stack a tensor has one port up and one down per site it covers -- one,
+% in the middle, on a side its type names as single -- and one left and one
+% right per layer. The port up or down in column \tn@cx is in that column.
+\def\tn@stack@vport#1#2{%
+  \let\tn@px\tn@cx
+  \tn@inner{#1}\let\tn@py\tn@ay
+  \edef\tn@t{#2}%
+  \ifx\tn@t\tn@sdown \tn@anc{#1}{south}\else \tn@anc{#1}{north}\fi
+  \let\tn@pe\tn@ay}
+
+% ---- connect -----------------------------------------------------------------
+% Every index the stack implies, and nothing else: along a layer between
+% neighbouring slots that are both filled (or `-'), border to border; down a
+% site from its first tensor to its last, through the ones between, which cover
+% it; from an environment into each layer -- to the tensor there, or, if the
+% slot is empty, to the border that tensor would have, which is the coordinate
+% <stack>-left-<layer> or <stack>-right-<layer>; and up to the dots of a chain
+% that goes on. A bond with an arrow takes its direction from the shapes it
+% joins. Layers named apart= have no index along them.
+\def\tn@stack@connect#1{%
+  \foreach \tn@l in \tn@apart{\tn@set{#1@apart@\tn@l}{1}}%
+  \edef\tn@ls{\tn@get{#1@layers}}%
+  \pgfmathtruncatemacro\tn@nn{\tn@get{#1@n}}%
+  \foreach \tn@l in \tn@ls{%
+    \edef\tn@lk{\tn@get{#1@k@\tn@l}}%
+    \tn@layy{#1}{\tn@lk}\let\tn@y\tn@ly
+    \ifcsname tn@#1@apart@\tn@l\endcsname\else
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \pgfmathtruncatemacro\tn@j{\tn@i+1}%
+      \tn@occ{#1}{\tn@l}{\tn@i}\let\tn@oa\tn@o \let\tn@ka\tn@kd
+      \tn@occ{#1}{\tn@l}{\tn@j}\let\tn@ob\tn@o \let\tn@kb\tn@kd
+      \tn@colx{#1}{\tn@i}\let\tn@xa\tn@cx
+      \tn@colx{#1}{\tn@j}\let\tn@xb\tn@cx
+      \tn@hlink{\tn@along}{#1}%
+    }\fi
+  }%
+  \ifnum\tn@nn>0
+  \foreach \tn@i in {1,...,\tn@nn}{%
+    \gdef\tn@prev{}%
+    \foreach \tn@l in \tn@ls{%
+      \tn@occ{#1}{\tn@l}{\tn@i}%
+      \ifnum\tn@kd=1
+        \ifx\tn@o\tn@prev\else
+          \ifx\tn@prev\@empty\else \tn@vlink{#1}{\tn@prev}{\tn@o}{\tn@i}\fi
+          \xdef\tn@prev{\tn@o}%
+        \fi
+      \fi}%
+  }%
+  \fi}
+% The index between a tensor and the next one down its site. Two that cover
+% the same sites meet once on each of them: a gate on a gate, a site on a site.
+% Otherwise they meet once, in the middle of the sites they share -- a site
+% under a gate, a branch under the node of a tree, an isometry of a MERA under
+% the disentangler that overlaps it by half.
+\def\tn@vlink#1#2#3#4{% stack, upper, lower, site
+  \edef\tn@ua{\tn@get{n@#2@a}}\edef\tn@ub{\tn@get{n@#2@b}}%
+  \edef\tn@na{\tn@get{n@#3@a}}\edef\tn@nb{\tn@get{n@#3@b}}%
+  \def\tn@draw{0}%
+  \ifnum\tn@ua=\tn@na \ifnum\tn@ub=\tn@nb \def\tn@col{#4}\def\tn@draw{1}\fi\fi
+  \ifnum\tn@draw=0
+    \pgfmathtruncatemacro\tn@oa{max(\tn@ua,\tn@na)}%
+    \pgfmathtruncatemacro\tn@ob{min(\tn@ub,\tn@nb)}%
+    \ifnum#4=\tn@oa \edef\tn@col{(\tn@oa+\tn@ob)/2}\def\tn@draw{1}\fi
+  \fi
+  \ifnum\tn@draw=1
+    \tn@colx{#1}{\tn@col}%
+    \tn@use{#2}{down}{\tn@col}\tn@use{#3}{up}{\tn@col}%
+    \tn@facing{\tn@down}{#2}{#3}%
+  \fi}
+% From the down port of #2 to the up port of #3, under it, both in column
+% \tn@cx: straight where the two ports line up, else down, across half way
+% between the two borders, and down again.
+\def\tn@facing#1#2#3{%
+  \tn@vport{#2}{down}\let\tn@xu\tn@px \let\tn@yu\tn@py \let\tn@eu\tn@pe
+  \tn@vport{#3}{up}\let\tn@xl\tn@px \let\tn@yl\tn@py
+  \ifdim\tn@xu=\tn@xl
+    \tn@line{#1}{\tn@xu}{\tn@yu}{\tn@xl}{\tn@yl}%
+  \else
+    \tn@len\tn@ym{(\tn@eu+\tn@pe)/2}%
+    \tn@turns{#1}{(\tn@xu,\tn@yu) -- (\tn@xu,\tn@ym)
+      -- (\tn@xl,\tn@ym) -- (\tn@xl,\tn@yl)}%
+  \fi}
+% One pair of neighbouring slots along a layer.
+\def\tn@hlink#1#2{%
+  \def\tn@same{0}%
+  \ifnum\tn@ka=1 \ifx\tn@oa\tn@ob \def\tn@same{1}\fi\fi
+  \ifnum\tn@same=0
+  \def\tn@sa{0}\def\tn@sb{0}%
+  \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\fi
+  \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\fi
+  \ifnum\tn@sa\tn@sb=11
+    % a bond: from the right border of the one to the left border of the other
+    \def\tn@pa{}\def\tn@pb{}%
+    \ifnum\tn@ka=1
+      \tn@use{\tn@oa}{right}{\tn@lk}%
+      \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px \edef\tn@pa{\tn@get{n@\tn@oa @pt}}\fi
+    \ifnum\tn@kb=1
+      \tn@use{\tn@ob}{left}{\tn@lk}%
+      \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px \edef\tn@pb{\tn@get{n@\tn@ob @pt}}\fi
+    \tn@bond{#1}{\tn@xa}{\tn@xb}{\tn@y}{\tn@pa}{\tn@pb}%
+  \else
+    \ifnum\tn@ka=5 \ifnum\tn@sb=0 \ifnum\tn@kb=4 \else
+      \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \coordinate (#2-left-\tn@l) at (\tn@xb,\tn@y);
+      \tn@reach{\tn@xb}%
+    \fi\fi\fi
+    \ifnum\tn@kb=6 \ifnum\tn@sa=0 \ifnum\tn@ka=4 \else
+      \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
+      \tn@line{#1}{\tn@xb}{\tn@y}{\tn@xa}{\tn@y}%
+      \coordinate (#2-right-\tn@l) at (\tn@xa,\tn@y);
+    \fi\fi\fi
+    \ifnum\tn@ka\tn@kb=14
+      \tn@use{\tn@oa}{right}{\tn@lk}%
+      \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+    \fi
+    \ifnum\tn@ka\tn@kb=41
+      \tn@use{\tn@ob}{left}{\tn@lk}%
+      \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+    \fi
+  \fi\fi}
+
+% ---- open ------------------------------------------------------------------------
+% An open index ends at the border the tensor in the next slot would have --
+% past any `|', where the site's index runs on -- and shows at least `stub'
+% beyond its own tensor. Opened on a tensor: its own indices that way, one per
+% site it spans up or down and one per layer it spans left or right, ending at
+% <tensor>-<direction>, or -<direction>-1, -2, ... when there are several. On
+% the stack: every site's index from its lowest tensor (down) or highest (up),
+% ending at <stack>-<i>-down / -up; or every layer's from its last tensor
+% (right) or first (left), ending at <stack>-<layer>-right / -left. A
+% horizontal index that carries a direction takes it from its triangle: an
+% open bond of a canonical form points in.
+%
+% one index across, from tensor #2 on layer number #3, ending at coordinate #4
+\def\tn@hopen#1#2#3#4{%
+  \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@pt{\tn@get{n@#2@pt}}%
+  \tn@use{#2}{\tn@dir}{#3}%
+  \tn@layy{\tn@s}{#3}\let\tn@hy\tn@ly
+  \tn@hport{#2}{\tn@dir}\let\tn@xa\tn@px
+  \ifx\tn@dir\tn@sright
+    \tn@len\tn@xc{\tn@pe+\tn@stub}%
+    \tn@colx{\tn@s}{\tn@get{n@#2@b}+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
+    \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
+    \tn@reach{\tn@xb}%
+    \ifx\tn@pt\tn@sleft \tn@line{#1}{\tn@xb}{\tn@hy}{\tn@xa}{\tn@hy}%
+    \else \tn@line{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}\fi
+  \else
+    \tn@len\tn@xc{\tn@pe-\tn@stub}%
+    \tn@colx{\tn@s}{\tn@get{n@#2@a}-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
+    \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
+    \ifx\tn@pt\tn@sright \tn@line{#1}{\tn@xb}{\tn@hy}{\tn@xa}{\tn@hy}%
+    \else \tn@line{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}\fi
+  \fi
+  \coordinate (#4) at (\tn@xb,\tn@hy);}
+% one index up or down, from tensor #2 on site #3, ending at coordinate #4;
+% \tn@vopenx draws it at the column <x> instead, walking site #3. It ends at the
+% border of the next slot that is not `|'; where the tensor's port is not over
+% that slot (in a tree), it turns a corner half way there.
+\def\tn@vopen#1#2#3#4{\tn@vopenx{#1}{#2}{#3}{#3}{#4}}
+\def\tn@vopenx#1#2#3#4#5{%
+  \edef\tn@s{\tn@get{n@#2@s}}%
+  \tn@use{#2}{\tn@dir}{#4}%
+  \ifx\tn@dir\tn@sdown
+    \tn@walk{\tn@s}{#3}{\tn@get{n@#2@kb}+1}{1}%
+    \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly+\tn@slot/2}%
+  \else
+    \tn@walk{\tn@s}{#3}{\tn@get{n@#2@k}-1}{-1}%
+    \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly-\tn@slot/2}%
+  \fi
+  \tn@colx{\tn@s}{#4}%
+  \tn@vport{#2}{\tn@dir}%
+  \ifdim\tn@px=\tn@cx
+    \tn@line{#1}{\tn@cx}{\tn@py}{\tn@cx}{\tn@yb}%
+  \else
+    \tn@len\tn@ym{(\tn@pe+\tn@yb)/2}%
+    \tn@turns{#1}{(\tn@px,\tn@py) -- (\tn@px,\tn@ym)
+      -- (\tn@cx,\tn@ym) -- (\tn@cx,\tn@yb)}%
+  \fi
+  \coordinate (#5) at (\tn@cx,\tn@yb);}
+\def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
+  \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
+\def\tn@stack@opennode#1#2{%
+  \tn@vdir
+  \ifnum\tn@isv=1
+    \edef\tn@a{\tn@get{n@#2@a}}\edef\tn@b{\tn@get{n@#2@b}}%
+    \edef\tn@one{\tn@get{n@#2@one}}%
+    \ifx\tn@one\tn@dir
+      \tn@free{#2}{\tn@dir}{(\tn@a+\tn@b)/2}{\string\tnopen}%
+      \tn@vopenx{#1}{#2}{\tn@a}{(\tn@a+\tn@b)/2}{#2-\tn@dir}%
+    \else
+    \foreach \tn@i [count=\tn@m] in {\tn@a,...,\tn@b}{%
+      \tn@free{#2}{\tn@dir}{\tn@i}{\string\tnopen}%
+      \ifnum\tn@a=\tn@b \tn@vopen{#1}{#2}{\tn@i}{#2-\tn@dir}%
+      \else \tn@vopen{#1}{#2}{\tn@i}{#2-\tn@dir-\tn@m}\fi}%
+    \fi
+  \else
+    \edef\tn@ka{\tn@get{n@#2@k}}\edef\tn@kb{\tn@get{n@#2@kb}}%
+    \foreach \tn@q [count=\tn@m] in {\tn@ka,...,\tn@kb}{%
+      \tn@free{#2}{\tn@dir}{\tn@q}{\string\tnopen}%
+      \ifnum\tn@ka=\tn@kb \tn@hopen{#1}{#2}{\tn@q}{#2-\tn@dir}%
+      \else \tn@hopen{#1}{#2}{\tn@q}{#2-\tn@dir-\tn@m}\fi}%
+  \fi}
+\def\tn@stack@openblock#1#2{%
+  \tn@vdir
+  \edef\tn@ls{\tn@get{#2@layers}}%
+  \pgfmathtruncatemacro\tn@nn{\tn@get{#2@n}}%
+  \ifnum\tn@isv=1
+    \foreach \tn@i in {1,...,\tn@nn}{%
+      \gdef\tn@first{}\gdef\tn@lastn{}%
+      \foreach \tn@l in \tn@ls{%
+        \tn@occ{#2}{\tn@l}{\tn@i}%
+        \ifnum\tn@kd=1
+          \ifx\tn@first\@empty \xdef\tn@first{\tn@o}\fi
+          \xdef\tn@lastn{\tn@o}%
+        \fi}%
+      \ifx\tn@dir\tn@sdown \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else
+        \edef\tn@one{\tn@get{n@\tn@pick @one}}%
+        \ifx\tn@one\tn@dir
+          \edef\tn@a{\tn@get{n@\tn@pick @a}}\edef\tn@b{\tn@get{n@\tn@pick @b}}%
+          \ifnum\tn@i=\tn@a
+            \tn@ifused{\tn@pick}{\tn@dir}{(\tn@a+\tn@b)/2}%
+            \ifnum\tn@isused=0
+              \tn@vopenx{#1}{\tn@pick}{\tn@i}{(\tn@a+\tn@b)/2}{#2-\tn@i-\tn@dir}%
+            \fi
+          \fi
+        \else
+          \tn@ifused{\tn@pick}{\tn@dir}{\tn@i}%
+          \ifnum\tn@isused=0 \tn@vopen{#1}{\tn@pick}{\tn@i}{#2-\tn@i-\tn@dir}\fi
+        \fi\fi}%
+  \else
+    \foreach \tn@l in \tn@ls{%
+      \gdef\tn@first{}\gdef\tn@lastn{}%
+      \foreach \tn@i in {1,...,\tn@nn}{%
+        \tn@occ{#2}{\tn@l}{\tn@i}%
+        \ifnum\tn@kd=1
+          \ifx\tn@first\@empty \xdef\tn@first{\tn@o}\fi
+          \xdef\tn@lastn{\tn@o}%
+        \fi}%
+      \ifx\tn@dir\tn@sright \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else
+        \edef\tn@lk{\tn@get{#2@k@\tn@l}}%
+        \tn@ifused{\tn@pick}{\tn@dir}{\tn@lk}%
+        \ifnum\tn@isused=0 \tn@hopen{#1}{\tn@pick}{\tn@lk}{#2-\tn@l-\tn@dir}\fi
+      \fi}%
+  \fi}
+
+% The two indices down from a tensor across two sites, exchanged on the way,
+% drawn by \tn@swap and ending where \tnopen{down} would end them
+% (<tensor>-down-1 and -2, by where they end). The crossing needs room, which
+% a layer of `|' under the tensor gives it.
+\def\tn@stack@openswap#1#2{%
+  \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@a{\tn@get{n@#2@a}}%
+  \tn@free{#2}{down}{\tn@a}{\string\tnopenswap}\tn@use{#2}{down}{\tn@a}%
+  \tn@free{#2}{down}{\tn@a+1}{\string\tnopenswap}\tn@use{#2}{down}{\tn@a+1}%
+  \tn@walk{\tn@s}{\tn@a}{\tn@get{n@#2@kb}+1}{1}%
+  \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly+\tn@slot/2}%
+  \tn@anc{#2}{south}\tn@d=\tn@ay\relax\edef\tn@ys{\the\tn@d}%
+  \tn@len\tn@drop{\tn@ys-\tn@yb}%
+  \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
+  \tn@colx{\tn@s}{\tn@a+1}\let\tn@xb\tn@cx
+  \tn@swap{#1}{(\tn@xa,\tn@ys)}{(\tn@xb,\tn@ys)}{\tn@drop}%
+  \coordinate (#2-down-1) at (\tn@xa,\tn@yb);
+  \coordinate (#2-down-2) at (\tn@xb,\tn@yb);}
+
+% ---- join --------------------------------------------------------------------
+% <side> is up, down, left or right; <n> is the <n>th site the tensor spans
+% (up, down) or layer (left, right), and the middle on a side its type names
+% as single. There is no route to choose, and none goes through a tensor. Two
+% ports that face each other on one line, with nothing in the slots between
+% them, are joined straight. Any other index leaves each port by half a step,
+% into the gutter beside it -- the line half way between two columns, or two
+% layers, where no tensor sits -- and runs along gutters from one to the
+% other: along the one they share, else by one gutter across (between their
+% layers, or their columns), else, for two ports on one layer that do not
+% face each other or have tensors between them, round the top of the stack.
+% Only a tensor drawn across a gutter (one spanning several sites or layers)
+% can be in the way.
+%
+% Port <#1> as \tn@j@<#2>x, y (where the index starts), gx, gy (where it
+% reaches the gutter), d (its side), h (1 if it leaves sideways), c (its
+% column, for an index up or down, or layer, for one sideways, in lattice
+% units), lo and hi (the sites it spans, or the layers) and s (its stack).
+\def\tn@jset#1#2{\expandafter\xdef\csname tn@j@#1\endcsname{#2}}
+\def\tn@jport#1#2{%
+  \tn@pspec#1:::\tn@end
+  \edef\tn@s{\tn@get{n@\tn@pn @s}}\tn@jset{#2s}{\tn@s}%
+  \ifx\tn@pk\@empty \def\tn@pk{1}\fi
+  \tn@jset{#2d}{\tn@ps}%
+  \ifx\tn@ps\tn@sleft \def\tn@ph{1}\else\ifx\tn@ps\tn@sright \def\tn@ph{1}%
+  \else \def\tn@ph{0}\fi\fi
+  \tn@jset{#2h}{\tn@ph}%
+  \edef\tn@a{\tn@get{n@\tn@pn @a}}\edef\tn@b{\tn@get{n@\tn@pn @b}}%
+  \edef\tn@ka{\tn@get{n@\tn@pn @k}}\edef\tn@kb{\tn@get{n@\tn@pn @kb}}%
+  \ifnum\tn@ph=1
+    \tn@jset{#2lo}{\tn@a}\tn@jset{#2hi}{\tn@b}%
+    \pgfmathtruncatemacro\tn@q{\tn@ka+\tn@pk-1}\tn@jset{#2c}{\tn@q}%
+    \tn@free{\tn@pn}{\tn@ps}{\tn@q}{\string\tnjoin}\tn@use{\tn@pn}{\tn@ps}{\tn@q}%
+    \tn@layy{\tn@s}{\tn@q}%
+    \tn@hport{\tn@pn}{\tn@ps}%
+    \ifx\tn@ps\tn@sright \tn@colx{\tn@s}{\tn@b+0.5}\else \tn@colx{\tn@s}{\tn@a-0.5}\fi
+    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@ly}%
+    \tn@jset{#2gx}{\tn@cx}\tn@jset{#2gy}{\tn@ly}%
+  \else
+    \tn@jset{#2lo}{\tn@ka}\tn@jset{#2hi}{\tn@kb}%
+    \edef\tn@one{\tn@get{n@\tn@pn @one}}%
+    \ifx\tn@one\tn@ps \pgfmathsetmacro\tn@q{(\tn@a+\tn@b)/2}%
+    \else \pgfmathsetmacro\tn@q{\tn@a+\tn@pk-1}\fi
+    \tn@jset{#2c}{\tn@q}%
+    \tn@free{\tn@pn}{\tn@ps}{\tn@q}{\string\tnjoin}\tn@use{\tn@pn}{\tn@ps}{\tn@q}%
+    \tn@colx{\tn@s}{\tn@q}%
+    \tn@vport{\tn@pn}{\tn@ps}%
+    \ifx\tn@ps\tn@sdown \tn@layy{\tn@s}{\tn@kb+0.5}\else \tn@layy{\tn@s}{\tn@ka-0.5}\fi
+    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@py}%
+    \tn@jset{#2gx}{\tn@px}\tn@jset{#2gy}{\tn@ly}%
+  \fi}
+% \tn@jclear{<stack>}{<layer|site>}{<from>}{<to>}{<h>}: is every slot strictly
+% between <from> and <to> empty -- along layer number <layer> (h = 1) or down
+% site <site> (h = 0)? As \tn@clear.
+\def\tn@jclear#1#2#3#4#5{%
+  \def\tn@clear{1}%
+  \pgfmathtruncatemacro\tn@lo{min(#3,#4)+1}\pgfmathtruncatemacro\tn@hi{max(#3,#4)-1}%
+  \ifnum\tn@lo>\tn@hi\else
+    \foreach \tn@w in {\tn@lo,...,\tn@hi}{%
+      \ifnum#5=1 \tn@occ{#1}{\tn@get{#1@name@#2}}{\tn@w}%
+      \else \tn@occ{#1}{\tn@get{#1@name@\tn@w}}{#2}\fi
+      \ifnum\tn@kd=0 \else \gdef\tn@clear{0}\fi}%
+  \fi}
+\def\tn@stack@join#1#2#3{%
+  \tn@jport{#2}{a}\tn@jport{#3}{b}%
+  \edef\tn@s{\tn@j@as}%
+  % straight: facing on one line, nothing between
+  \def\tn@face{0}%
+  \ifnum\tn@j@ah\tn@j@bh=11 \ifdim\tn@j@ay=\tn@j@by
+    \ifx\tn@j@ad\tn@sright \ifx\tn@j@bd\tn@sleft
+      \ifdim\tn@j@ax<\tn@j@bx \def\tn@face{1}\fi\fi\fi
+    \ifx\tn@j@ad\tn@sleft \ifx\tn@j@bd\tn@sright
+      \ifdim\tn@j@ax>\tn@j@bx \def\tn@face{1}\fi\fi\fi
+    \ifnum\tn@face=1
+      \ifx\tn@j@ad\tn@sright \tn@jclear{\tn@s}{\tn@j@ac}{\tn@j@ahi}{\tn@j@blo}{1}%
+      \else \tn@jclear{\tn@s}{\tn@j@ac}{\tn@j@bhi}{\tn@j@alo}{1}\fi
+      \ifnum\tn@clear=0 \def\tn@face{0}\fi
+    \fi
+  \fi\fi
+  \ifnum\tn@j@ah\tn@j@bh=0 \ifdim\tn@j@ax=\tn@j@bx
+    \ifx\tn@j@ad\tn@sdown \ifx\tn@j@bd\tn@sup
+      \ifdim\tn@j@ay>\tn@j@by \def\tn@face{1}\fi\fi\fi
+    \ifx\tn@j@ad\tn@sup \ifx\tn@j@bd\tn@sdown
+      \ifdim\tn@j@ay<\tn@j@by \def\tn@face{1}\fi\fi\fi
+    \ifnum\tn@face=1
+      \pgfmathtruncatemacro\tn@site{\tn@j@ac}%
+      \ifx\tn@j@ad\tn@sdown \tn@jclear{\tn@s}{\tn@site}{\tn@j@ahi}{\tn@j@blo}{0}%
+      \else \tn@jclear{\tn@s}{\tn@site}{\tn@j@bhi}{\tn@j@alo}{0}\fi
+      \ifnum\tn@clear=0 \def\tn@face{0}\fi
+    \fi
+  \fi\fi
+  \ifnum\tn@face=1
+    \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
+  \else
+    % along the gutters: from (gx, gy) of the one to (gx, gy) of the other
+    \ifnum\tn@j@ah\tn@j@bh=11
+      \ifdim\tn@j@agx=\tn@j@bgx \def\tn@via{}%
+      \else
+        \ifdim\tn@j@ay=\tn@j@by
+          \tn@layy{\tn@s}{0.5}% round the top of the stack
+        \else
+          \tn@layy{\tn@s}{min(\tn@j@ac,\tn@j@bc)+0.5}% between their layers
+        \fi
+        \edef\tn@via{-- (\tn@j@agx,\tn@ly) -- (\tn@j@bgx,\tn@ly)}%
+      \fi
+    \else\ifnum\tn@j@ah\tn@j@bh=0
+      \ifdim\tn@j@agy=\tn@j@bgy \def\tn@via{}%
+      \else
+        \ifdim\tn@j@ax=\tn@j@bx
+          \tn@colx{\tn@s}{\tn@j@ac+0.5}% beside them
+        \else
+          \tn@colx{\tn@s}{min(\tn@j@ac,\tn@j@bc)+0.5}% between their columns
+        \fi
+        \tn@reach{\tn@cx}%
+        \edef\tn@via{-- (\tn@cx,\tn@j@agy) -- (\tn@cx,\tn@j@bgy)}%
+      \fi
+    \else\ifnum\tn@j@ah=1
+      \edef\tn@via{-- (\tn@j@agx,\tn@j@bgy)}%
+    \else
+      \edef\tn@via{-- (\tn@j@bgx,\tn@j@agy)}%
+    \fi\fi\fi
+    \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@agx,\tn@j@agy) \tn@via
+      -- (\tn@j@bgx,\tn@j@bgy) -- (\tn@j@bx,\tn@j@by)}%
+  \fi}

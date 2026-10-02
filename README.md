@@ -53,27 +53,36 @@ for all its figures: `\tnset{pitch=20mm, rise=14mm}`.
 
 ## Modules
 
-The package is a set of modules in `tex/`, each a file, each using only the
-ones above it; `tikz-tensors.sty` loads them all.
+The package is a set of modules in three folders of `tex/`, each module using
+only what is loaded before it; `tikz-tensors.sty` loads them all.
 
-| module | defines | extended by |
-|---|---|---|
-| `core` | the stroke, the edge layer, the tokens (`\tnset`), `tn node`, `tn edge`, `\tnbond` | — |
-| `colors` | the theme's named colours (generated) | `theme/tokens.toml` |
-| `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn leg anchor` (where its index leaves), `tn points` (which way it points), `tn single` (one index on that side) | a style on `tn node` that sets those keys is a type like the package's |
-| `edges` | **edge types** (`tn wavy`, `tn arrow`, `tn double`) and the routes an edge takes | a style on `tn edge` |
-| `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnbreak` | — |
-| `stack` | the lattice: `\tnstack`, `\tnlayer`, the record of which tensor covers which slots | — |
-| `connect` | **contraction**: a tensor's ports, and `\tnconnect`, `\tnopen`, `\tnopenswap`, `\tnjoin` | — |
-| `grid` | the two-dimensional lattice, `\tngrid` | — |
-| `labels` | `tn label`, `\tnput`, `\tnmid` | — |
+| folder | module | defines | extended by |
+|---|---|---|---|
+| `core/` | `core` | the stroke, the edge layer, the tokens (`\tnset`), `tn node`, `tn edge`, `\tnbond` | — |
+| | `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnbreak` | — |
+| `style/` | `colors` | the theme's named colours (generated) | `theme/tokens.toml` |
+| | `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn leg anchor` (where its index leaves), `tn points` (which way it points), `tn single` (one index on that side) | a style on `tn node` that sets those keys |
+| | `edges` | **edge types** (`tn wavy`, `tn arrow`, `tn double`) and the routes an edge takes | a style on `tn edge` |
+| | `labels` | `tn label`, `\tnput`, `\tnmid` | — |
+| `layout/` | `layout` | **the abstract layout**: the record of a tensor, its ports and which are taken, and `\tnconnect`, `\tnopen`, `\tnopenswap`, `\tnjoin`, which hand their work to the layout of the block | a new layout |
+| | `stack` | `\tnstack`, `\tnlayer`: sites across, layers down | — |
+| | `tree` | `\tnstack[tree]`: a stack that keeps each tensor its own size and routes with corners | — |
+| | `grid` | `\tngrid`: a square lattice turned by 45° | — |
+
+A **layout** is a kind of block with a set of operations — connect, open a
+block, open a tensor, join two ports, the port of a tensor in a column — and a
+kind may inherit the ones it does not define from another: a tree is a stack
+that sizes and routes its own way. `\tnconnect`, `\tnopen` and `\tnjoin` are
+the same commands on every layout and ask the block's layout what to do, so a
+new layout is one file in `layout/` and nothing else changes.
 
 A tensor's indices are **ports**, and the contraction rules work on nothing
-else: a layout records where each tensor is (its layers and sites), its type
-says where an index leaves it, and every index — implied by the lattice, open,
-or joined by hand — runs from a port. So a chain, a tree and a MERA are not
-cases the package knows; they are tensors on the lattice, contracted by one
-set of rules.
+else: a layout records where each tensor is, its type says where an index
+leaves it, and every index — implied by the layout, open, or joined by hand —
+runs from a port. Each port is drawn once: joining or opening one that is
+drawn already is an error, and opening a whole block skips the ports that are
+taken. So a chain, a tree and a MERA are not cases the package knows; they are
+tensors on a layout, contracted by one set of rules.
 
 A figure of an algorithm is drawn on a **stack**: n sites across and named
 layers down, at one pitch the package owns, with a block (the rest of the
@@ -115,8 +124,9 @@ layer has one spelling.
   its neighbours. Two ports facing each other with nothing between are joined
   straight; any other index runs along the gutters between columns and
   layers, so it never passes through a tensor (example 24).
-- `\tngrid[legs, bonds=…]{P}{4}{4}{coef/$A$}` draws a two-dimensional
-  network of one tensor, turned 45° with its physical indices straight down.
+- `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
+  one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
+  `\tnopen{down}{P}` its physical indices, straight down.
 - `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side
@@ -145,7 +155,7 @@ meaning in every medium — `ele` electrons and position legs, `nuc` nuclei,
 results.
 
 ```sh
-python3 scripts/theme.py           # writes tex/tikz-tensors-colors.tex and theme/theme.css
+python3 scripts/theme.py           # writes tex/style/tikz-tensors-colors.tex and theme/theme.css
 python3 scripts/theme.py --check   # fails if either is out of date
 ```
 
@@ -158,7 +168,8 @@ physics colours by name for diagrams.
 ## Use in a project
 
 Put `tex/` on TeX's search path — for example
-`TEXINPUTS=/path/to/tikz-tensors/tex//:` — or copy `tex/*` next to your
+`TEXINPUTS=/path/to/tikz-tensors/tex//:` (the `//` searches its folders) —
+or copy every file under `tex/`, flattened, next to your
 figures. A figure page is a `standalone` document:
 
 ```latex

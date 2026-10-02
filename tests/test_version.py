@@ -46,7 +46,7 @@ class VersionCheck(unittest.TestCase):
 
     def edit_sty(self, old, new):
         """Replace <old> in the one file of the package (tex/) that has it."""
-        files = [p for p in sorted((self.tmp / "tex").iterdir()) if old in p.read_text()]
+        files = [p for p in sorted((self.tmp / "tex").rglob("*.*")) if old in p.read_text()]
         self.assertEqual(len(files), 1, old)
         files[0].write_text(files[0].read_text().replace(old, new, 1))
 

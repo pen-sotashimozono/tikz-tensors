@@ -1,0 +1,30 @@
+% tikz-tensors-tree.tex -- the tree layout: a stack (tikz-tensors-stack.tex)
+% drawn as a tree is usually drawn. It is \tnstack[tree], and everything it
+% does not say here it does as a stack.
+%
+% It differs in three things. Its pitch across is half a stack's, because a
+% tree's leaves are tensors of one site each and nothing is set across in its
+% slot. A tensor across several sites keeps its own size, centred over them,
+% instead of stretching to their width. And an index meets a tensor where the
+% tensor's base can take it, so an index between two tensors that do not line
+% up turns a corner rather than stretching either -- down from the upper one,
+% across half way, and down into the lower one.
+\tn@kind{tree}{stack}
+
+\def\tn@tree@geometry#1{\tn@set{#1@pitch}{\tn@treepitch}\tn@set{#1@rise}{\tn@treerise}}
+\def\tn@tree@spanwidth{\def\tn@span@w{1}}
+
+% Where an index at x = \tn@cx meets tensor #1, as \tn@xc: straight on if its
+% base reaches that far, else as far out as its base comfortably takes an
+% index -- three fifths of the way to its edge. A triangle is half as wide at
+% mid-height, where `east' is, as at its base.
+\def\tn@meet#1{%
+  \tn@anc{#1}{center}\let\tn@mx\tn@ax
+  \tn@anc{#1}{east}\tn@len\tn@hw{\tn@ax-\tn@mx}%
+  \edef\tn@one{\tn@get{n@#1@one}}%
+  \ifx\tn@one\@empty\else \tn@len\tn@hw{2*\tn@hw}\fi
+  \tn@len\tn@off{abs(\tn@cx-\tn@mx)}%
+  \ifdim\tn@off>\tn@hw
+    \tn@len\tn@xc{min(max(\tn@cx,\tn@mx-0.6*\tn@hw),\tn@mx+0.6*\tn@hw)}%
+  \else \let\tn@xc\tn@cx \fi}
+\def\tn@tree@vport#1#2{\tn@stack@vport{#1}{#2}\tn@meet{#1}\let\tn@px\tn@xc}

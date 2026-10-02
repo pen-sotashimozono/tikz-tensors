@@ -13,6 +13,8 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tngrid[legs, bonds=centrebond/$\lambda$]{S}{3}{3}{coef/$\Gamma$}
+  \tngrid[bonds=centrebond/$\lambda$]{S}{3}{3}{coef/$\Gamma$}
+  \tnconnect{S}
+  \tnopen{down}{S}
 \end{tikzpicture}
 \end{document}

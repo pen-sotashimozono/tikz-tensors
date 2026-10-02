@@ -5,6 +5,39 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.10.0 — 2026-10-02
+
+Folders, and the abstract layout: stack, tree and grid as layouts of one kind.
+
+`tex/` is in three folders: `core/` (core, canvas), `style/` (colors,
+palette, nodes, edges, labels) and `layout/` (layout, stack, tree, grid). The
+file names are unchanged and found by TeX's recursive search (`tex//`); a copy
+of the package next to a figure takes every file, flattened.
+
+`layout/tikz-tensors-layout.tex` is the abstract layout. A layout is a kind of
+block with operations -- geometry, connect, open a block, open a tensor, join
+two ports, the port of a tensor in a column -- and a kind inherits the ones it
+does not define from its parent. `\tnconnect`, `\tnopen`, `\tnopenswap` and
+`\tnjoin` are the same commands on every layout and hand their work to the
+block's; a layout asked for what it cannot do says so. A new layout is one
+file in `layout/`.
+- The stack is a layout; the tree is a layout whose parent is the stack (its
+  own pitch, tensors at their own size, indices meeting a tensor where its
+  base takes them) -- no longer a flag the contraction rules test. Its bonds
+  between layers are now drawn top to bottom like a stack's, which renders
+  the same (`18-ttn`, `19-mera`: 0 pixels differ at 300 dpi; the references
+  change).
+- The grid is a layout: its tensors are recorded like a stack's, its bonds are
+  drawn by `\tnconnect` and its physical indices by `\tnopen{down}`. Breaking:
+  `\tngrid`'s `legs` option is gone; write `\tnconnect{P}` and
+  `\tnopen{down}{P}` after `\tngrid{P}...` (`20-peps`, `21-simple-update`,
+  which render exactly as before).
+
+Ports are recorded once drawn. Joining or opening an index that is drawn
+already is an error naming the tensor and the side; opening every index of a
+block skips the ones that are taken, so an index joined by hand is not opened
+as well. A name used again in a later picture is a new tensor.
+
 ## v0.9.0 — 2026-10-02
 
 The package as modules; a tensor's indices as ports; `\tnjoin`, `<n>*`, `\tnset`.
