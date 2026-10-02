@@ -81,6 +81,8 @@ A style with a comma, or a label with a slash, goes in braces:
   canonical form's arrows all point at the centre without being written.
 - `\tnopen{<up|down|left|right>}{<tensor or stack>, …}` opens indices; given a
   stack, every site (or layer) at once. `\tnopenswap` opens two crossed.
+- `\tngrid[legs, bonds=…]{P}{4}{4}{coef/$A$}` draws a two-dimensional
+  network of one tensor, turned 45° with its physical indices straight down.
 - `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side

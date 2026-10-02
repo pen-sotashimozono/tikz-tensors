@@ -7,7 +7,11 @@
 % Read top to bottom, it is the notation:
 %   a function of position is a circle (or capsule) in the electron colour,
 %   and its continuous argument a wavy leg in the same colour;
-%   an array of numbers is a grey box, an operator a plain one;
+%   an array of numbers is a circle in the array colour -- a capsule, which is
+%   a circle at one site's size and stretches to the sites it spans -- an
+%   operator a plain rounded box -- no tensor is a square: a square
+%   says nothing a circle does not, and turned on a lattice it reads as a
+%   diamond;
 %   left- and right-canonical tensors are triangles pointing the way the gauge
 %   runs, each in its own colour, and the orthogonality centre a green
 %   diamond -- small when it sits on a bond;
@@ -22,17 +26,20 @@
 %   root, in the left-canonical colour: off a chain there is no left and
 %   right, only toward the centre and away from it, and that is the colour
 %   that already says `isometric toward the centre'; both it and a MERA's
-%   disentangler (a gate, flatter) are drawn flat, as a tree's tensors are.
+%   disentangler (a gate, flatter) are drawn flat, as a tree's tensors are;
+%   the environment of a two-dimensional network, contracted from its
+%   boundary, is the environment's colour: a corner as a rounded box, a side
+%   as a circle.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
   fn/.style         = {tn circle, draw=ele, fill=ele!12},
   fnwide/.style     = {tn capsule, tn wide, draw=ele, fill=ele!12},
   fntall/.style     = {tn capsule, tn tall, draw=ele, fill=ele!12},
-  coef/.style       = {tn box, fill=black!6},
-  coefwide/.style   = {coef, tn wide},
-  coeftall/.style   = {coef, tn tall},
-  op/.style         = {tn box},
+  coef/.style       = {tn capsule, tn fill=coef},
+  coefwide/.style   = {tn capsule, tn wide, tn fill=coef},
+  coeftall/.style   = {tn capsule, tn tall, tn fill=coef},
+  op/.style         = {tn rounded},
   opwide/.style     = {op, tn wide},
   frame/.style      = {tn frame},
   canl/.style       = {tn triangle right, tn fill=canl},
@@ -52,4 +59,7 @@
   basis/.style      = {tn circle, tn small},
   iso/.style        = {tn triangle up, tn flat, tn fill=canl},
   disentangler/.style = {gate, tn flat},
+  isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
+  corner/.style     = {tn rounded, fill=env!25},
+  side/.style       = {tn circle, fill=env!25},
 }

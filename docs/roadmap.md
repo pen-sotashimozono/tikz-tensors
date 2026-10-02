@@ -140,7 +140,7 @@ touches off the lint ratchet.
 | 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; single-site and bond H_eff, fixed point, low rank |
 | 2 | fused index (`tn double`), delta (`tn dot`), basis caps, tensors across layers, `\|` and `dots` slots, rows — **done** (v0.6.0) | MPO × MPS, zip-up, CP, sampling (`13`–`16`); every legacy example rewritten |
 | 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`17`–`19`), |
-| 4 | grid, env corner/edge | PEPS, simple update, CTMRG, TRG, HOTRG |
+| 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, HOTRG (`20`–`23`); TRG still needs diagonal indices |
 | 5 | machine learning | neural networks as diagrams: what is a tensor (weights, feature maps) and what is not (activations) |
 
 ## What a figure looks like after phase 1

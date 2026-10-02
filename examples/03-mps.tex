@@ -1,16 +1,11 @@
 % A matrix product state: arrays A on the chain, bonds between them, occupation
 % indices n_i down -- a finite basis, so no wavy legs.
 %
-% The same chain twice, in the two conventions a tensor is drawn in. Square is
-% this notation's default, because elsewhere it tells an array of numbers from a
-% function of position, which is a circle. Here there are no functions, so there
-% is nothing to tell apart, and a great deal of the literature draws every
-% tensor of a network as a circle -- that is the lower row, which is
-% `{coef, circle}' and nothing else: same style, same colour, same meaning.
-%
-% Shape does carry meaning once a chain is in canonical form, where a triangle
-% says isometric and a diamond says centre (04, 05). That is a different claim
-% from this one, and it is not what `circle' touches.
+% Every tensor is a circle in the array colour. No tensor of this notation is
+% a square: a square says nothing a circle does not, and on a lattice turned
+% by 45 degrees it reads as a diamond. Shape carries meaning only where there
+% is something to tell apart -- a triangle says isometric and a diamond says
+% centre (04, 05), a rounded box an operator on the chain.
 %
 % The fourth slot is the dots of a chain that goes on: the bonds either side of
 % it stop at its border.
@@ -26,13 +21,5 @@
   \tnopen{down}{P}
   \tnmid{P-ket-1}{P-ket-2}{$D$}
   \foreach \i/\n in {1/1, 2/2, 3/3, 5/N} \tnput[below]{P-\i-down}{$n_{\n}$};
-  \tnbreak
-  \tnstack{Q}{5}{ket}
-  \tnlayer{Q}{ket}{{coef, circle}/$A$, {coef, circle}/$A$, {coef, circle}/$A$,
-                   dots, {coef, circle}/$A$}
-  \tnconnect{Q}
-  \tnopen{down}{Q}
-  \tnmid{Q-ket-1}{Q-ket-2}{$D$}
-  \foreach \i/\n in {1/1, 2/2, 3/3, 5/N} \tnput[below]{Q-\i-down}{$n_{\n}$};
 \end{tikzpicture}
 \end{document}

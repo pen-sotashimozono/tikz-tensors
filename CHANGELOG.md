@@ -5,6 +5,41 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.8.0 — 2026-10-02
+
+Two-dimensional networks: PEPS, simple update, CTMRG, HOTRG.
+
+Roadmap phase 4. `\tngrid[legs, bonds=<style>/<label>]{<name>}{<columns>}{<rows>}{<style>/<label>}`
+draws one tensor repeated over a lattice, each joined to its neighbours,
+turned by 45 degrees so the lattice reads as a plane seen from above and the
+physical indices (`legs`) go straight down without crossing a bond. `bonds=`
+puts a tensor on every bond, half way along. It is placed as a stack is, so it
+takes part in rows and equations.
+
+New examples: `20-peps` (a four-by-four PEPS), `21-simple-update` (Gamma on
+the sites, lambda on the bonds), `22-ctmrg` (the corner transfer matrix
+environment of one site, on an ordinary stack) and `23-hotrg` (two tensors
+coarse-grained into one, the fusing isometries a triangle up and a triangle
+down, again on a stack). In the notation: `corner` and `side`, the
+environment of a two-dimensional network in the environment's colour, and
+`isodown`, an isometry pointing down.
+
+No tensor of the notation is a square any more. `coef` is a circle in the
+array colour (`coef` = `blue1`): a `tn capsule`, whose corners are now half
+its height, so it is a circle at one site's size and stretches to a stadium
+across several; `op` is
+a plain rounded box; a CTM side is a circle. Rounded boxes stay what they were
+(an MPO tensor, a gate, a corner). A square says nothing a circle does not,
+and on a lattice turned by 45 degrees it reads as a diamond. `03-mps` loses
+its second row, which compared the two.
+
+On a grid, a tensor on a bond is turned with the lattice, so that the bond
+meets it as it would on a chain — at a vertex of the diamond, not the middle
+of a side — with its label upright.
+
+Not yet: TRG, which splits each tensor along a diagonal of the lattice and
+needs an index that is neither along a layer nor down a site.
+
 ## v0.7.0 — 2026-10-02
 
 Trees, MERA and the decompositions, on the same grid.
