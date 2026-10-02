@@ -1,65 +1,51 @@
 % The superblock of two-site DMRG: the effective Hamiltonian the eigensolver is
 % handed at one step of a sweep.
 %
-% Everything to the left of the two active sites has been contracted into L and
-% everything to the right into R, so each carries three indices and no more --
-% the bra's bond, the Hamiltonian's bond, the ket's bond. They are drawn as
-% blocks -- the same triangle the chain uses, pointing the way its half was
-% swept up -- because that is what they are: everything on one side, contracted.
-% Between them sit the two MPO tensors of the sites being optimised.
+% It is the fixed point's left-hand side with the state removed. Take L from
+% 07 -- the tall tensor carrying one index into each layer and one into the
+% Hamiltonian -- take the A and its conjugate out of the column, and what is
+% left is L with its bra and ket indices free. Put that on the left, its mirror
+% on the right, and the two MPO tensors of the sites being optimised between
+% them, and the picture is H_eff.
 %
-% Every index is the same length and they end at one depth above and one below,
-% because nothing here is said by how long a line is: the four below are what
-% the operator takes and the four above are what it returns, and a leg drawn
-% longer than its neighbour only asks the reader why. The gap left under them is
-% the room the two-site tensor needs, and it is the only space in the picture
-% that means anything.
+% So the free indices are where the state used to be, and they point at the gap
+% it would fill: the two stubs above and the two legs of W between them are the
+% four indices of the two-site tensor that comes out, the two below and the two
+% legs under W are the four that go in. The gaps are left empty on purpose --
+% drawing Theta into one would make this a picture of one application rather
+% than of the operator.
 %
-% The four indices below are spaced to take a tensor, and the four above do the
-% same, because that is what this object is for: the
-% two-site wavefunction Theta, with legs (a, sigma_1, sigma_2, b), drops into
-% the gap underneath and the picture closes into H_eff Theta. The space is left
-% empty on purpose -- drawing Theta in would make this a picture of one
-% application rather than of the operator.
-%
-% Nothing here is the state. That is the point of the form, and why the solver
-% never sees the sites that were contracted away: it works in the four indices
-% left over, not in the length of the chain.
+% Every index is the same length and the four of each half end at one height,
+% because nothing here is said by how long a line is. Nothing in the picture is
+% the state: that is the point of the form, and why the solver never sees the
+% sites that were contracted away.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
-  % the environments are blocks, so they take the block shape: a triangle
-  % pointing the way its half of the chain was swept up
-  \node[canl] (L)  at (0,0)   {$L$};
-  \node[canr] (R)  at (2.9,0) {$R$};
-  \node[mpo]  (W1) at (0.95,0) {$W$};
-  \node[mpo]  (W2) at (1.95,0) {$W$};
+  \node[tn node, minimum width=7mm, minimum height=22mm] (L) at (0,0)   {$L$};
+  \node[tn node, minimum width=7mm, minimum height=22mm] (R) at (4.3,0) {$R$};
+  \node[mpo] (W1) at (1.7,0) {$W$};
+  \node[mpo] (W2) at (2.6,0) {$W$};
 
-  % the Hamiltonian's own bond: short, because its length says nothing
+  % the Hamiltonian's own bond, straight through
   \tnbond[disc]{(L) -- (W1)}  \tnbond[disc]{(W1) -- (W2)}  \tnbond[disc]{(W2) -- (R)}
 
-  % the four indices below, at one depth: Theta's legs. The block's two bond
-  % indices leave from the corners of its flat side and carry that side
-  % straight down, as a site's physical index does.
-  \tnbond[disc]{(L.corner 3) -- (L.corner 3 |- 0,-0.78)}
-  \tnbond[disc]{(W1.south)   -- (W1.south  |- 0,-0.78)}
-  \tnbond[disc]{(W2.south)   -- (W2.south  |- 0,-0.78)}
-  \tnbond[disc]{(R.corner 2) -- (R.corner 2 |- 0,-0.78)}
-  \tnput[below]{L.corner 3 |- 0,-0.78}{$a$}
-  \tnput[below]{W1.south |- 0,-0.78}{$\sigma_1$}
-  \tnput[below]{W2.south |- 0,-0.78}{$\sigma_2$}
-  \tnput[below]{R.corner 2 |- 0,-0.78}{$b$}
-
-  % and the four above, which is what it returns
-  \tnbond[disc]{(L.corner 2) -- (L.corner 2 |- 0,0.78)}
-  \tnbond[disc]{(W1.north)   -- (W1.north  |- 0,0.78)}
-  \tnbond[disc]{(W2.north)   -- (W2.north  |- 0,0.78)}
-  \tnbond[disc]{(R.corner 3) -- (R.corner 3 |- 0,0.78)}
-  \tnput[above]{L.corner 2 |- 0,0.78}{$a'$}
-  \tnput[above]{W1.north |- 0,0.78}{$\sigma_1'$}
-  \tnput[above]{W2.north |- 0,0.78}{$\sigma_2'$}
-  \tnput[above]{R.corner 3 |- 0,0.78}{$b'$}
+  % the indices the state used to be attached to, free and pointing at the gap
+  \foreach \s/\p in {1/{'}, -1/{}} {
+    \tnbond[disc]{([yshift=\s*8mm]L.east) -- ++(0.45,0)}
+    \tnbond[disc]{([yshift=\s*8mm]R.west) -- ++(-0.45,0)}
+    \tnbond[disc]{(W1) -- (W1 |- 0,\s*0.8)}
+    \tnbond[disc]{(W2) -- (W2 |- 0,\s*0.8)}
+  }
+  \tnput[above]{[yshift=8mm,xshift=4.5mm]L.east}{$a'$}
+  \tnput[above]{W1 |- 0,0.8}{$\sigma_1'$}
+  \tnput[above]{W2 |- 0,0.8}{$\sigma_2'$}
+  \tnput[above]{[yshift=8mm,xshift=-4.5mm]R.west}{$b'$}
+  \tnput[below]{[yshift=-8mm,xshift=4.5mm]L.east}{$a$}
+  \tnput[below]{W1 |- 0,-0.8}{$\sigma_1$}
+  \tnput[below]{W2 |- 0,-0.8}{$\sigma_2$}
+  \tnput[below]{[yshift=-8mm,xshift=-4.5mm]R.west}{$b$}
 \end{tikzpicture}
 \end{document}

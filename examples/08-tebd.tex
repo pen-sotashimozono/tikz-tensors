@@ -1,89 +1,42 @@
-% The Trotter error is about the order the gates are applied in, and that is
-% what these three pictures differ by.
+% TEBD as it is actually applied: one gate at a time, up the chain and back
+% down.
 %
-% The nearest-neighbour terms of the Hamiltonian split into those on the odd
-% bonds and those on the even ones. Within each half the gates commute, so each
-% half is one layer; the two halves do not commute, so the layers have an order
-% and the order shows.
+% The two-layer picture -- all the odd bonds, then all the even ones -- is the
+% same operator grouped by what commutes, and it is how the splitting is derived.
+% It is not how it is run. A gate acts on two sites, so it is applied on its own,
+% and the sweep goes bond by bond: (1,2), (2,3), (3,4), (4,5), and then the same
+% bonds in reverse. That sequence is its own reverse, which is what makes it
+% second order, and the picture shows the symmetry rather than asserting it.
 %
-% The first two are the same two layers in opposite orders. Each is correct to
-% first order in dt and they are not equal to each other: the difference between
-% them, O(dt^2) a step, is the first-order Trotter error. Read downward -- the
-% layer nearest the state is applied first, so the operator product underneath
-% each picture reads right to left as usual.
+% Running it this way is what keeps the orthogonality centre where the next gate
+% needs it. The centre travels with the sweep -- after a gate on (i, i+1) and the
+% truncation that follows, it sits ready for the gate on (i+1, i+2) -- so no one
+% canonical form labels the whole picture, and the sites are drawn plain. That
+% is the practical reason the order is a sweep and not two layers: in two layers
+% the centre would have to be dragged back across the chain between them.
 %
-% The third is the symmetric arrangement, half a step of one half, a full step
-% of the other, half a step of the first again. It is its own reverse, which is
-% what kills the leading error term and leaves O(dt^3) a step. The price is one
-% more layer of gates, which is the only thing the third picture has that the
-% first two do not.
-%
-% The state is in a definite mixed canonical form throughout, because that is
-% what makes the truncation after each gate cheap and controlled: with the
-% orthogonality centre where it is, the singular values on the bond being cut
-% are the Schmidt values, so discarding the smallest is the best rank-D
-% approximation. Finite, so the chain stops; the outer bonds carry nothing.
-%
-% No gate has legs of its own. The physical indices run the whole way down and a
-% gate is laid on the ones it acts on; a tensor is drawn over an index, so it
-% interrupts them, which is what applying it means.
+% Read downward: the state at the top, the first gate applied just under it, the
+% last at the bottom. No gate has legs of its own; the physical indices run the
+% whole way down and a gate is laid on the two it acts on.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
-
-% one chain, in mixed canonical form, with its physical indices dropped #2
-\newcommand{\tebdchain}[2]{%
-  \tnchain{#1}{(0,0)}{(5,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
-                             canr/$B$/r, canr/$B$/r, canr/$B$/r}
-  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,2}{
-    \tnbond[gauge]{(#1\i) -- (#1\j)}%
-  }
-  \foreach \i [evaluate=\i as \j using int(\i+1)] in {3,4,5}{
-    \tnbond[gauge]{(#1\j) -- (#1\i)}%
-  }
-  \tnbond[gauge]{([xshift=-5mm]#11.west) -- (#11)}
-  \tnbond[gauge]{([xshift=5mm]#16.east) -- (#16)}
-  \tnlegs{#2}{#11-leg,#12-leg,#13-leg,#14-leg,#15-leg,#16-leg}%
-}
-
 \begin{document}
-\begin{tikzpicture}[x=1.35cm]
-  % ---- odd first, then even ---------------------------------------------
-  \tebdchain{S}{32mm}
-  \tngate{Sa}{$U(\delta t)$}{S1-leg,S2-leg}{8mm}
-  \tngate{Sb}{$U(\delta t)$}{S3-leg,S4-leg}{8mm}
-  \tngate{Sc}{$U(\delta t)$}{S5-leg,S6-leg}{8mm}
-  \tngate{Sd}{$U(\delta t)$}{S2-leg,S3-leg}{21mm}
-  \tngate{Se}{$U(\delta t)$}{S4-leg,S5-leg}{21mm}
-  \node[leg, anchor=west] at (5.5,-1.15)
-    {$U_{\mathrm{even}}(\delta t)\,U_{\mathrm{odd}}(\delta t)$};
+% the sites take the circle convention, `tn round': this picture has no
+% functions in it to tell a circle from, and a plain tensor is what they are
+\tikzset{site/.style={coef, tn round}}
+\begin{tikzpicture}[x=1.45cm]
+  \tnchain{S}{(0,0)}{(4,0)}{site/{}/c, site/{}/c, site/{}/c, site/{}/c, site/{}/c}
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,...,4}{
+    \tnbond[disc]{(S\i) -- (S\j)}%
+  }
+  \node[leg, anchor=east] at (-0.35,0) {$|\psi\rangle$};
+  \tnlegs{92mm}{S1-leg,S2-leg,S3-leg,S4-leg,S5-leg}
 
-  % ---- even first, then odd ---------------------------------------------
-  \begin{scope}[yshift=-5.0cm]
-    \tebdchain{T}{32mm}
-    \tngate{Ta}{$U(\delta t)$}{T2-leg,T3-leg}{8mm}
-    \tngate{Tb}{$U(\delta t)$}{T4-leg,T5-leg}{8mm}
-    \tngate{Tc}{$U(\delta t)$}{T1-leg,T2-leg}{21mm}
-    \tngate{Td}{$U(\delta t)$}{T3-leg,T4-leg}{21mm}
-    \tngate{Te}{$U(\delta t)$}{T5-leg,T6-leg}{21mm}
-    \node[leg, anchor=west] at (5.5,-1.15)
-      {$U_{\mathrm{odd}}(\delta t)\,U_{\mathrm{even}}(\delta t)$};
-  \end{scope}
-
-  % ---- symmetric: its own reverse ---------------------------------------
-  \begin{scope}[yshift=-10.0cm]
-    \tebdchain{V}{45mm}
-    \tngate{Va}{$U(\delta t/2)$}{V1-leg,V2-leg}{8mm}
-    \tngate{Vb}{$U(\delta t/2)$}{V3-leg,V4-leg}{8mm}
-    \tngate{Vc}{$U(\delta t/2)$}{V5-leg,V6-leg}{8mm}
-    \tngate{Vd}{$U(\delta t)$}{V2-leg,V3-leg}{21mm}
-    \tngate{Ve}{$U(\delta t)$}{V4-leg,V5-leg}{21mm}
-    \tngate{Vf}{$U(\delta t/2)$}{V1-leg,V2-leg}{34mm}
-    \tngate{Vg}{$U(\delta t/2)$}{V3-leg,V4-leg}{34mm}
-    \tngate{Vh}{$U(\delta t/2)$}{V5-leg,V6-leg}{34mm}
-    \node[leg, anchor=west] at (5.5,-1.7)
-      {$U_{\mathrm{odd}}(\delta t/2)\,U_{\mathrm{even}}(\delta t)\,
-        U_{\mathrm{odd}}(\delta t/2)$};
-  \end{scope}
+  % up the chain, then the same bonds back down
+  \foreach \b/\d [count=\k] in {1/9, 2/19, 3/29, 4/39, 4/49, 3/59, 2/69, 1/79}{
+    \pgfmathtruncatemacro{\c}{\b+1}
+    \tngate{G\k}{$U(\delta t/2)$}{S\b-leg,S\c-leg}{\d mm}%
+  }
 \end{tikzpicture}
 \end{document}
