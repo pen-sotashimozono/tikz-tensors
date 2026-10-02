@@ -111,9 +111,10 @@ layer has one spelling.
   stack, every site (or layer) at once. `\tnopenswap` opens two crossed (an
   exchange of fermion legs; the sign goes in the equation, as in example 02).
 - `\tnjoin{<tensor>:<side>}{<tensor>:<side>}` joins two ports the lattice
-  does not: the bond that closes a periodic chain, a trace. Two ports that face
-  each other are joined straight; any others along the lattice, round the
-  outside of the stack (example 24).
+  does not: the bond that closes a periodic chain, a trace, a bond that skips
+  its neighbours. Two ports facing each other with nothing between are joined
+  straight; any other index runs along the gutters between columns and
+  layers, so it never passes through a tensor (example 24).
 - `\tngrid[legs, bonds=…]{P}{4}{4}{coef/$A$}` draws a two-dimensional
   network of one tensor, turned 45° with its physical indices straight down.
 - `\tneq[$\lambda$]`, `\tnapprox` write a relation and the next stack goes after

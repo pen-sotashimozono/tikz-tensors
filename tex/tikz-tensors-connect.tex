@@ -316,146 +316,137 @@
 
 % \tnjoin[<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
 % One index between two ports the lattice does not join: the bond that closes
-% a periodic chain, a trace, an index that skips over its neighbours. <side>
-% is up, down, left or right; <n> picks the port on that side when the tensor
-% has several -- the <n>th site it spans (up, down) or layer (left, right),
-% the first unless said, and the middle on a side its type names as single.
+% a periodic chain, a trace, a bond that skips over its neighbours. Both
+% tensors are in one stack. <side> is up, down, left or right; <n> picks the
+% port on that side when the tensor has several -- the <n>th site it spans
+% (up, down) or layer (left, right), the first unless said, and the middle on
+% a side its type names as single.
 %   \tnjoin{P-ket-1:left}{P-ket-4:right}     a periodic MPS
 %   \tnjoin{T-op-1:up}{T-op-1:down}          the trace of an operator
-% There is no route to choose. Two ports that face each other are joined
-% straight, or with one step half way between their borders if they are not
-% in line. Any other pair is joined along the lattice: each index leaves its
-% tensor as far as the next line of slots, and the two meet on a line just
-% outside the stack -- the row above it for indices that leave sideways, the
-% row below or above for two that both leave down or up, the column after it
-% for one up and one down. It is drawn from the first port to the second,
-% which is the way an arrow on it points.
+% There is no route to choose, and none goes through a tensor. Two ports that
+% face each other on one line, with nothing in the slots between them, are
+% joined straight. Any other index leaves each port by half a step, into the
+% gutter beside it -- the line half way between two columns, or two layers,
+% where no tensor sits -- and runs along gutters from one to the other: along
+% the one they share, else by one gutter across (between their layers, or
+% their columns), else, for two ports on one layer that do not face each
+% other or have tensors between them, round the top of the stack. Only a
+% tensor drawn across a gutter (one spanning several sites or layers) can be
+% in the way. It is drawn from the first port to the second, which is the way
+% an arrow on it points.
 \def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
-% Port <#1> as \tn@j@<#2>x, y (where the index starts), e (where it crosses the
-% border, along its direction), ex, ey (where it reaches the next line of
-% slots), d (its side) and h (1 if it leaves sideways).
+% Port <#1> as \tn@j@<#2>x, y (where the index starts), gx, gy (where it
+% reaches the gutter), d (its side), h (1 if it leaves sideways), c (its
+% column, for an index up or down, or layer, for one sideways, in lattice
+% units), lo and hi (the sites it spans, or the layers) and s (its stack).
+\def\tn@jset#1#2{\expandafter\xdef\csname tn@j@#1\endcsname{#2}}
+\def\tn@jget#1{\csname tn@j@#1\endcsname}
 \def\tn@jport#1#2{%
   \tn@pspec#1:::\tn@end
   \ifcsname tn@n@\tn@pn @s\endcsname\else
     \PackageError{tikz-tensors}{\string\tnjoin: `\tn@pn' is not a tensor of a
       stack}{}\fi
-  \edef\tn@s{\tn@get{n@\tn@pn @s}}%
+  \edef\tn@s{\tn@get{n@\tn@pn @s}}\tn@jset{#2s}{\tn@s}%
   \ifx\tn@pk\@empty \def\tn@pk{1}\fi
-  \expandafter\let\csname tn@j@#2d\endcsname\tn@ps
+  \tn@jset{#2d}{\tn@ps}%
   \ifx\tn@ps\tn@sleft \def\tn@ph{1}\else\ifx\tn@ps\tn@sright \def\tn@ph{1}%
   \else \def\tn@ph{0}\fi\fi
-  \expandafter\let\csname tn@j@#2h\endcsname\tn@ph
+  \tn@jset{#2h}{\tn@ph}%
+  \edef\tn@a{\tn@get{n@\tn@pn @a}}\edef\tn@b{\tn@get{n@\tn@pn @b}}%
+  \edef\tn@ka{\tn@get{n@\tn@pn @k}}\edef\tn@kb{\tn@get{n@\tn@pn @kb}}%
   \ifnum\tn@ph=1
-    \tn@layy{\tn@s}{\tn@get{n@\tn@pn @k}+\tn@pk-1}%
+    \tn@jset{#2lo}{\tn@a}\tn@jset{#2hi}{\tn@b}%
+    \pgfmathtruncatemacro\tn@q{\tn@ka+\tn@pk-1}\tn@jset{#2c}{\tn@q}%
+    \tn@layy{\tn@s}{\tn@q}%
     \tn@hport{\tn@pn}{\tn@ps}%
-    \ifx\tn@ps\tn@sright
-      \tn@colx{\tn@s}{\tn@get{n@\tn@pn @b}+1}\tn@len\tn@cx{\tn@cx-\tn@slot/2}%
-    \else
-      \tn@colx{\tn@s}{\tn@get{n@\tn@pn @a}-1}\tn@len\tn@cx{\tn@cx+\tn@slot/2}%
-    \fi
-    \tn@set{j@#2x}{\tn@px}\tn@set{j@#2y}{\tn@ly}\tn@set{j@#2e}{\tn@pe}%
-    \tn@set{j@#2ex}{\tn@cx}\tn@set{j@#2ey}{\tn@ly}%
+    \ifx\tn@ps\tn@sright \tn@colx{\tn@s}{\tn@b+0.5}\else \tn@colx{\tn@s}{\tn@a-0.5}\fi
+    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@ly}%
+    \tn@jset{#2gx}{\tn@cx}\tn@jset{#2gy}{\tn@ly}%
   \else
+    \tn@jset{#2lo}{\tn@ka}\tn@jset{#2hi}{\tn@kb}%
     \edef\tn@one{\tn@get{n@\tn@pn @one}}%
-    \ifx\tn@one\tn@ps
-      \tn@colx{\tn@s}{(\tn@get{n@\tn@pn @a}+\tn@get{n@\tn@pn @b})/2}%
-    \else \tn@colx{\tn@s}{\tn@get{n@\tn@pn @a}+\tn@pk-1}\fi
+    \ifx\tn@one\tn@ps \pgfmathsetmacro\tn@q{(\tn@a+\tn@b)/2}%
+    \else \pgfmathsetmacro\tn@q{\tn@a+\tn@pk-1}\fi
+    \tn@jset{#2c}{\tn@q}%
+    \tn@colx{\tn@s}{\tn@q}%
     \tn@vport{\tn@pn}{\tn@ps}%
-    \ifx\tn@ps\tn@sdown
-      \tn@layy{\tn@s}{\tn@get{n@\tn@pn @kb}+1}\tn@len\tn@ly{\tn@ly+\tn@slot/2}%
-    \else
-      \tn@layy{\tn@s}{\tn@get{n@\tn@pn @k}-1}\tn@len\tn@ly{\tn@ly-\tn@slot/2}%
-    \fi
-    \tn@set{j@#2x}{\tn@px}\tn@set{j@#2y}{\tn@py}\tn@set{j@#2e}{\tn@pe}%
-    \tn@set{j@#2ex}{\tn@px}\tn@set{j@#2ey}{\tn@ly}%
-  \fi
-  % the column after the stack and the row above it, as far as their borders
-  \tn@colx{\tn@s}{\tn@get{\tn@s @n}+1}\tn@len\tn@cx{\tn@cx-\tn@slot/2}%
-  \tn@set{j@#2cr}{\tn@cx}%
-  \tn@layy{\tn@s}{0}\tn@len\tn@ly{\tn@ly-\tn@slot/2}\tn@set{j@#2ra}{\tn@ly}}
-% Between sideways port <#2> and up-or-down port <#3>, drawn from port a to
-% port b whichever of the two is which.
-\def\tn@corner#1#2#3{%
-  \edef\tn@hx{\csname tn@j@#2x\endcsname}\edef\tn@hy{\csname tn@j@#2y\endcsname}%
-  \edef\tn@hd{\csname tn@j@#2d\endcsname}\edef\tn@hex{\csname tn@j@#2ex\endcsname}%
-  \edef\tn@vx{\csname tn@j@#3x\endcsname}\edef\tn@vy{\csname tn@j@#3y\endcsname}%
-  \edef\tn@vd{\csname tn@j@#3d\endcsname}\edef\tn@vey{\csname tn@j@#3ey\endcsname}%
-  \def\tn@ok{0}%
-  \ifx\tn@hd\tn@sright \ifdim\tn@vx>\tn@hx \def\tn@ok{1}\fi\fi
-  \ifx\tn@hd\tn@sleft  \ifdim\tn@vx<\tn@hx \def\tn@ok{1}\fi\fi
-  \ifnum\tn@ok=1 \def\tn@ok{0}%
-    \ifx\tn@vd\tn@sdown \ifdim\tn@hy<\tn@vy \def\tn@ok{1}\fi\fi
-    \ifx\tn@vd\tn@sup   \ifdim\tn@hy>\tn@vy \def\tn@ok{1}\fi\fi
-  \fi
-  \def\tn@t{#2}\def\tn@ta{a}%
-  \ifnum\tn@ok=1
-    \ifx\tn@t\tn@ta
-      \tn@turns{#1}{(\tn@hx,\tn@hy) -- (\tn@vx,\tn@hy) -- (\tn@vx,\tn@vy)}%
-    \else
-      \tn@turns{#1}{(\tn@vx,\tn@vy) -- (\tn@vx,\tn@hy) -- (\tn@hx,\tn@hy)}%
-    \fi
-  \else
-    \ifx\tn@t\tn@ta
-      \tn@turns{#1}{(\tn@hx,\tn@hy) -- (\tn@hex,\tn@hy) -- (\tn@hex,\tn@vey)
-        -- (\tn@vx,\tn@vey) -- (\tn@vx,\tn@vy)}%
-    \else
-      \tn@turns{#1}{(\tn@vx,\tn@vy) -- (\tn@vx,\tn@vey) -- (\tn@hex,\tn@vey)
-        -- (\tn@hex,\tn@hy) -- (\tn@hx,\tn@hy)}%
-    \fi
+    \ifx\tn@ps\tn@sdown \tn@layy{\tn@s}{\tn@kb+0.5}\else \tn@layy{\tn@s}{\tn@ka-0.5}\fi
+    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@py}%
+    \tn@jset{#2gx}{\tn@px}\tn@jset{#2gy}{\tn@ly}%
+  \fi}
+% \tn@jclear{<stack>}{<layer|site>}{<from>}{<to>}{<h>}: is every slot strictly
+% between <from> and <to> empty -- along layer number <layer> (h = 1) or down
+% site <site> (h = 0)? As \tn@clear.
+\def\tn@jclear#1#2#3#4#5{%
+  \def\tn@clear{1}%
+  \pgfmathtruncatemacro\tn@lo{min(#3,#4)+1}\pgfmathtruncatemacro\tn@hi{max(#3,#4)-1}%
+  \ifnum\tn@lo>\tn@hi\else
+    \foreach \tn@w in {\tn@lo,...,\tn@hi}{%
+      \ifnum#5=1 \tn@occ{#1}{\tn@get{#1@name@#2}}{\tn@w}%
+      \else \tn@occ{#1}{\tn@get{#1@name@\tn@w}}{#2}\fi
+      \ifnum\tn@kd=0 \else \gdef\tn@clear{0}\fi}%
   \fi}
 \newcommand{\tnjoin}[3][tn edge]{%
   \tn@jport{#2}{a}\tn@jport{#3}{b}%
+  \edef\tn@s{\tn@j@as}%
+  \ifx\tn@j@as\tn@j@bs\else
+    \PackageError{tikz-tensors}{\string\tnjoin: `#2' and `#3' are in two
+      stacks}{An index between two stacks is not drawn by \string\tnjoin.}\fi
+  % straight: facing on one line, nothing between
   \def\tn@face{0}%
-  \ifnum\tn@j@ah\tn@j@bh=11
+  \ifnum\tn@j@ah\tn@j@bh=11 \ifdim\tn@j@ay=\tn@j@by
     \ifx\tn@j@ad\tn@sright \ifx\tn@j@bd\tn@sleft
       \ifdim\tn@j@ax<\tn@j@bx \def\tn@face{1}\fi\fi\fi
     \ifx\tn@j@ad\tn@sleft \ifx\tn@j@bd\tn@sright
       \ifdim\tn@j@ax>\tn@j@bx \def\tn@face{1}\fi\fi\fi
-  \fi
-  \ifnum\tn@j@ah\tn@j@bh=0
+    \ifnum\tn@face=1
+      \ifx\tn@j@ad\tn@sright \tn@jclear{\tn@s}{\tn@j@ac}{\tn@j@ahi}{\tn@j@blo}{1}%
+      \else \tn@jclear{\tn@s}{\tn@j@ac}{\tn@j@bhi}{\tn@j@alo}{1}\fi
+      \ifnum\tn@clear=0 \def\tn@face{0}\fi
+    \fi
+  \fi\fi
+  \ifnum\tn@j@ah\tn@j@bh=0 \ifdim\tn@j@ax=\tn@j@bx
     \ifx\tn@j@ad\tn@sdown \ifx\tn@j@bd\tn@sup
       \ifdim\tn@j@ay>\tn@j@by \def\tn@face{1}\fi\fi\fi
     \ifx\tn@j@ad\tn@sup \ifx\tn@j@bd\tn@sdown
       \ifdim\tn@j@ay<\tn@j@by \def\tn@face{1}\fi\fi\fi
-  \fi
-  \ifnum\tn@face=1
-    \ifnum\tn@j@ah=1
-      \ifdim\tn@j@ay=\tn@j@by \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
-      \else
-        \tn@len\tn@m{(\tn@j@ae+\tn@j@be)/2}%
-        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@m,\tn@j@ay) -- (\tn@m,\tn@j@by)
-          -- (\tn@j@bx,\tn@j@by)}%
-      \fi
-    \else
-      \ifdim\tn@j@ax=\tn@j@bx \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
-      \else
-        \tn@len\tn@m{(\tn@j@ae+\tn@j@be)/2}%
-        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@m) -- (\tn@j@bx,\tn@m)
-          -- (\tn@j@bx,\tn@j@by)}%
-      \fi
+    \ifnum\tn@face=1
+      \pgfmathtruncatemacro\tn@site{\tn@j@ac}%
+      \ifx\tn@j@ad\tn@sdown \tn@jclear{\tn@s}{\tn@site}{\tn@j@ahi}{\tn@j@blo}{0}%
+      \else \tn@jclear{\tn@s}{\tn@site}{\tn@j@bhi}{\tn@j@alo}{0}\fi
+      \ifnum\tn@clear=0 \def\tn@face{0}\fi
     \fi
+  \fi\fi
+  \ifnum\tn@face=1
+    \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
   \else
+    % along the gutters: from (gx, gy) of the one to (gx, gy) of the other
     \ifnum\tn@j@ah\tn@j@bh=11
-      % both sideways: over the top
-      \tn@len\tn@m{max(\tn@j@ara,\tn@j@bra)}%
-      \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@aex,\tn@j@ay) -- (\tn@j@aex,\tn@m)
-        -- (\tn@j@bex,\tn@m) -- (\tn@j@bex,\tn@j@by) -- (\tn@j@bx,\tn@j@by)}%
-    \else\ifnum\tn@j@ah\tn@j@bh=0
-      \ifx\tn@j@ad\tn@j@bd
-        % both down, or both up: under, or over, at the further of the two
-        \ifx\tn@j@ad\tn@sdown \tn@len\tn@m{min(\tn@j@aey,\tn@j@bey)}%
-        \else \tn@len\tn@m{max(\tn@j@aey,\tn@j@bey)}\fi
-        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@m) -- (\tn@j@bx,\tn@m)
-          -- (\tn@j@bx,\tn@j@by)}%
+      \ifdim\tn@j@agx=\tn@j@bgx \def\tn@via{}%
       \else
-        % one up, one down, facing away: round the side
-        \tn@len\tn@m{max(\tn@j@acr,\tn@j@bcr)}\tn@reach{\tn@m}%
-        \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@ax,\tn@j@aey) -- (\tn@m,\tn@j@aey)
-          -- (\tn@m,\tn@j@bey) -- (\tn@j@bx,\tn@j@bey) -- (\tn@j@bx,\tn@j@by)}%
+        \ifdim\tn@j@ay=\tn@j@by
+          \tn@layy{\tn@s}{0.5}% round the top of the stack
+        \else
+          \tn@layy{\tn@s}{min(\tn@j@ac,\tn@j@bc)+0.5}% between their layers
+        \fi
+        \edef\tn@via{-- (\tn@j@agx,\tn@ly) -- (\tn@j@bgx,\tn@ly)}%
       \fi
+    \else\ifnum\tn@j@ah\tn@j@bh=0
+      \ifdim\tn@j@agy=\tn@j@bgy \def\tn@via{}%
+      \else
+        \ifdim\tn@j@ax=\tn@j@bx
+          \tn@colx{\tn@s}{\tn@j@ac+0.5}% beside them
+        \else
+          \tn@colx{\tn@s}{min(\tn@j@ac,\tn@j@bc)+0.5}% between their columns
+        \fi
+        \tn@reach{\tn@cx}%
+        \edef\tn@via{-- (\tn@cx,\tn@j@agy) -- (\tn@cx,\tn@j@bgy)}%
+      \fi
+    \else\ifnum\tn@j@ah=1
+      \edef\tn@via{-- (\tn@j@agx,\tn@j@bgy)}%
     \else
-      % one sideways, one up or down: one corner where each runs toward the
-      % other, else out to the next line of slots and along
-      \ifnum\tn@j@ah=1 \tn@corner{#1}{a}{b}\else \tn@corner{#1}{b}{a}\fi
-    \fi\fi
+      \edef\tn@via{-- (\tn@j@bgx,\tn@j@agy)}%
+    \fi\fi\fi
+    \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@agx,\tn@j@agy) \tn@via
+      -- (\tn@j@bgx,\tn@j@bgy) -- (\tn@j@bx,\tn@j@by)}%
   \fi}

@@ -130,6 +130,11 @@
   \global\tn@c=1
   \foreach \tn@each in {#3}{%
   \expandafter\tn@rep\tn@each*\tn@end
+  \ifnum\tn@n<1
+    \PackageError{tikz-tensors}{`\tn@n*' in layer `#2' of `#1': a run is one
+      entry or more}{Leave the entry out instead of writing it 0 times.}%
+    \def\tn@n{1}\def\tn@rest{.}%
+  \fi
   \foreach \tn@z in {1,...,\tn@n}{%
     \expandafter\tn@entry\tn@rest/////\tn@end
     \edef\tn@i{\the\tn@c}%

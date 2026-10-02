@@ -25,15 +25,20 @@ renders identically at 300 dpi, but its reference changes).
 
 New:
 - `\tnjoin[<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}` joins two
-  ports the lattice does not: a periodic chain, a trace. Facing ports are
-  joined straight (or with one step); any others along the lattice, round the
-  outside of the stack. Example `24-periodic-mps`.
+  ports the lattice does not: a periodic chain, a trace, a bond that skips
+  its neighbours. Two ports facing each other on one line with nothing between
+  are joined straight; any other index leaves each port by half a step into
+  the gutter beside it (between two columns or two layers, where no tensor
+  sits) and runs along gutters, so it never passes through or under a tensor.
+  Example `24-periodic-mps`.
 - `<n>*<entry>` in `\tnlayer`: an entry repeated, `4*canl/$A$`, `7*.`. The
   linter requires it for every run of like entries (rule `repeat`), so a layer
   has one spelling; every example is rewritten that way.
 - `\tnset{<token>=<length>, ...}` sets the package's spacing (pitch, rise,
   slot, stub, gap, ...) and line width, for a notation file; a figure cannot
   (the linter forbids it there, and `\tnbond`).
+
+`0*<entry>` is an error (a run is one entry or more).
 
 Fixed: two neighbouring `-` slots are now joined (they were left apart).
 
