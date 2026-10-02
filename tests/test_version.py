@@ -25,7 +25,7 @@ class VersionCheck(unittest.TestCase):
                             ignore=shutil.ignore_patterns("__pycache__"))
         shutil.copy(ROOT / "CHANGELOG.md", self.tmp / "CHANGELOG.md")
         (self.tmp / "tests/reference").mkdir(parents=True)
-        (self.tmp / "tests/reference/a.png").write_bytes(b"one")
+        (self.tmp / "tests/reference/a.svg").write_bytes(b"one")
         self.git("init", "-q", "-b", "main")
         self.commit("base")
 
@@ -80,7 +80,7 @@ class VersionCheck(unittest.TestCase):
         self.assertIn("Put it back", out)
 
     def test_a_new_reference_image_needs_no_bump(self):
-        (self.tmp / "tests/reference/b.png").write_bytes(b"new case")
+        (self.tmp / "tests/reference/b.svg").write_bytes(b"new case")
         self.assertEqual(self.check()[0], 0)
 
     # -- how large the step must be -----------------------------------------
@@ -128,7 +128,7 @@ class VersionCheck(unittest.TestCase):
         self.assertIn("needs a major step", out)
 
     def test_a_changed_reference_image_needs_a_minor(self):
-        (self.tmp / "tests/reference/a.png").write_bytes(b"two")
+        (self.tmp / "tests/reference/a.svg").write_bytes(b"two")
         self.bump("patch")
         code, out = self.check()
         self.assertEqual(code, 1)

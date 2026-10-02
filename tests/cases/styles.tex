@@ -40,6 +40,7 @@
   \node[tn box, tn tall]     at (4.6,-2.0) {$T$}; \spec{4.6}{-3.2}{tn box,\\tn tall}
   \node[tn capsule, tn tall] at (5.8,-2.0) {$T$}; \spec{5.8}{-3.2}{tn capsule,\\tn tall}
   \node[tn gate]             at (7.1,-2.0) {$U$}; \spec{7.1}{-2.85}{tn gate}
+  \node[tn triangle up, tn flat] at (7.1,-3.6) {$T$}; \spec{7.1}{-4.05}{tn flat}
   \node[tn env, minimum height=17mm] at (8.3,-2.0) {$L$}; \spec{8.3}{-3.2}{tn env}
   \node[tn box] (q1) at (9.6,-2.0) {}; \node[tn box] (q2) at (10.4,-2.0) {};
   \draw[tn frame] ([shift={(-0.15,0.15)}]q1.north west)
@@ -135,8 +136,16 @@
   \tnstack{U}{2}{a}
   \tnlayer{U}{a}{tn box, tn box}
   \tnconnect[along=tn double]{U}
+  % a tree on the same grid: triangles pointing up and down, each as wide as
+  % the sites under it, with one index on the apex side (tn single)
+  \tnstack{R}{4}{a, b}
+  \tnlayer{R}{a}{tn triangle down/$D$/4}
+  \tnlayer{R}{b}{tn triangle up/$U$/2, {tn box, tn single=up}/$S$/2}
+  \tnconnect[apart={a, b}]{R}
+  \tnopen{up}{R-a-1}
+  \tnopen{down}{R}
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
     at (current bounding box.south) {\textbackslash tnbreak, tn box/\$Z\$/1/2, dots,
-    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double};
+    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double, tn triangle up, tn triangle down, tn single};
 \end{tikzpicture}
 \end{document}

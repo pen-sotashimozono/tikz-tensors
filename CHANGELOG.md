@@ -5,6 +5,64 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.7.0 — 2026-10-02
+
+Trees, MERA and the decompositions, on the same grid.
+
+Roadmap phase 3. New examples: `17-svd-qr` (T = U S V† and T = Q R on one
+tensor of a chain), `18-ttn` (a tree on sixteen sites: four tiers of isometries, sixteen to one,
+and the centre on top) and `19-mera` (a binary MERA on sixteen sites: four
+tiers of coarse-graining and the top tensor).
+
+- **Triangles pointing up and down.** `tn triangle up` and `tn triangle down`
+  stretch to the sites they span, so an isometry of a tree or a MERA is as
+  wide as what it joins. `tn single` says on which side a shape has one index
+  however wide it is; `\tnopen` on that side opens one, from the middle.
+- **One rule for every vertical index.** Two tensors over the same sites meet
+  on each of them, as before. Otherwise they meet once, in the middle of the
+  sites they share. That one rule places a site under a gate, a branch under
+  its node, and an isometry of a MERA under a disentangler that overlaps it by
+  half; no example says where any of them goes.
+- **Into a triangle from the side.** An index meeting a triangle away from its
+  apex ends just inside the base, not at the middle, which off the apex is
+  outside it.
+- **`\tnstack[tree]`** draws a stack as a tree is usually drawn: a tensor
+  across several sites keeps its own size, centred over them, the sites are
+  half the pitch apart, and an index between two tensors that do not line up
+  turns a corner — up from the lower one, across at half height, up into the
+  base of the upper one — instead of stretching either. `18-ttn` and
+  `19-mera` are drawn this way; a chain is not, because there the stretched
+  gate laid on its indices is the point.
+- **Rows keep the slot above them**, as stacks keep the slots beyond their
+  ends, so an index opened upward on a second row clears the first. Every
+  picture with two rows is a little taller.
+
+`tn flat` is a shape resized flat (10.5 mm by 6 mm), as a tree's tensors are
+drawn.
+
+In the notation: `iso`, a flat triangle pointing up, toward the root, in the
+left-canonical colour — off a chain there is no left and right, only toward
+the centre; and `disentangler`, a gate drawn flat.
+
+Outside the package (no version step of its own, carried here):
+
+- **The pictures are compared as SVG.** `tests/reference/` holds the
+  `pdftocairo -svg` of every page instead of a 180 dpi PNG, and
+  `tests/compare.py` matches them as drawings — every path and every glyph,
+  glyphs by their shape rather than their id, numbers within a quarter of a
+  point. Rasterising had to be compared with a pixel tolerance a moved leg
+  could hide in; the SVG is the drawing itself, a quarter the size, readable
+  in a diff and shown as it is by GitHub. A page that fails gets a
+  `-diff.txt` of what is only on one side.
+- **CI is split by role**, each job on its own runner: `rules` (coverage and
+  the figure rules, no TeX), `compile` (one runner per engine), and `test`,
+  which waits for those, says whether they passed, and compares the pictures
+  and posts the preview from the LuaLaTeX job's PDFs — so the check the
+  ruleset on `main` requires keeps its name and its meaning. `tests/run.sh` takes the same steps as arguments
+  (`compile <engine>`, `rules`, `compare`) and runs them all with none.
+- `examples/out/` is no longer committed: the README shows the reference
+  SVGs, which are the same pictures.
+
 ## v0.6.0 — 2026-10-02
 
 Every example on the grid, and what MPO times MPS needs.

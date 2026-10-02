@@ -9,8 +9,8 @@ figures, notes and slides.
 
 | | |
 |---|---|
-| ![expansion](examples/out/01-expansion.svg) | ![swap](examples/out/02-swap.svg) |
-| ![mps](examples/out/03-mps.svg) | |
+| ![expansion](tests/reference/01-expansion.svg) | ![swap](tests/reference/02-swap.svg) |
+| ![canonical](tests/reference/04-canonical.svg) | ![mera](tests/reference/19-mera.svg) |
 
 ## Shapes, not meanings
 
@@ -22,8 +22,9 @@ stand for.
 | `tn node` | the bare tensor: one stroke, no fill, 9 mm |
 | `tn box`, `tn circle`, `tn capsule`, `tn rounded` | an outline, paper-filled |
 | `tn triangle right`, `tn triangle left` | a triangle pointing that way |
+| `tn triangle up`, `tn triangle down` | an isosceles triangle, as wide as the sites it spans |
 | `tn diamond` | a diamond |
-| `tn wide`, `tn tall`, `tn small` | the same shape, resized |
+| `tn wide`, `tn tall`, `tn small`, `tn flat` | the same shape, resized |
 | `tn fill=<colour>` | solid fill, outline in ink |
 | `tn frame` | a dashed box around nodes |
 | `tn edge`, `tn wavy`, `tn arrow` | an index: plain, wavy, with an arrowhead |
@@ -85,6 +86,12 @@ A style with a comma, or a label with a slash, goes in braces:
 - A triangle's physical index leaves from the corner of its flat side
   (`tn leg anchor`), and the triangle is set across so that corner is on the
   site's line.
+- Two tensors one above the other meet on every site they both cover if they
+  cover the same ones, and otherwise once, in the middle of the sites they
+  share — which is what places the branches of a tree (`tn triangle up`,
+  `tn single`) and the layers of a MERA. `\tnstack[tree]` keeps every tensor
+  its own size and routes those indices with corners, as trees are usually
+  drawn.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`).
@@ -135,7 +142,8 @@ figures. A figure page is a `standalone` document:
 ```
 
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
-(SVG and PDF) with LuaLaTeX and `pdftocairo`.
+(SVG and PDF, gitignored) with LuaLaTeX and `pdftocairo`; the pictures in this
+README are the test references, which are the same SVGs.
 
 ## Where the real tikz-tensors is
 
@@ -205,16 +213,20 @@ CHANGELOG section filled in. Merging a new version to `main` tags it
 ## Tests
 
 ```sh
-tests/run.sh             # LuaLaTeX, pdfLaTeX, pdftoppm
-tests/run.sh --update    # accept a deliberate change in appearance
+tests/run.sh                   # all of it: LuaLaTeX, pdfLaTeX, the rules, the pictures
+tests/run.sh --update          # accept a deliberate change in appearance
+tests/run.sh compile lualatex  # one step: compile | rules | compare
 ```
 
 Every file in `examples/` and `tests/cases/` must compile with both engines
-without a warning, and every style and command must be drawn by one of them
-(`tests/coverage.py`). The LuaLaTeX pages are then rendered and compared with
-`tests/reference/*.png` (`tests/compare.py`, standard library only): a moved
-leg, a changed colour or a lost label fails, and a `-diff.png` marks it in red.
-In CI the rendered pages are the `rendered` artifact of the **CI** run.
+without a warning, every style and command must be drawn by one of them
+(`tests/coverage.py`), and every example must follow the figure rules
+(`tests/lint.py`). The LuaLaTeX pages are then turned into SVG by `pdftocairo`
+and compared with `tests/reference/*.svg` as drawings (`tests/compare.py`,
+standard library only): path by path and glyph by glyph, numbers within a
+quarter of a point. A moved leg, a changed colour or a lost label fails, and a
+`-diff.txt` lists what differs. In CI each of those is its own job, the comparison in the one named
+`test`, and the rendered pages are the `rendered` artifact of the run.
 `tests/cases/styles.tex` shows every style side by side — a new style is
 added there.
 

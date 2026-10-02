@@ -1,16 +1,22 @@
 name: CI
 
-# Three questions for every change, each its own check:
-#   version  did the version move exactly as the change requires, and do the
-#            rules behind that still hold (tests/test_version.py; seconds, no TeX),
-#            and does every example follow the figure rules (tests/lint.py)
-#   theme    are the generated colour files in step with theme/tokens.toml
-#   test     does everything compile with LuaLaTeX and pdfLaTeX, and look as it did
-# The rendered pages (and a diff image for any that changed) are uploaded as
-# the `rendered` artifact, so a change in appearance can be looked at, not
-# only counted. On a pull request the pages this branch draws differently are
-# posted as one comment on the PR -- the picture and the link to it -- which
-# later pushes replace, so the usual case needs no download and no detour.
+# Every change answers these, each its own job and runner:
+#   version     did the version move exactly as the change requires, and do the
+#               rules behind that still hold (tests/test_version.py, test_lint.py)
+#   theme       are the generated colour files in step with theme/tokens.toml
+#   rules       is every style and command drawn somewhere, and does every
+#               example follow the figure rules (no TeX needed)
+#   compile     does everything compile, with no warning -- once per engine,
+#               LuaLaTeX and pdfLaTeX on runners of their own
+#   test        the rules and both compiles passed, and the LuaLaTeX pages
+#               draw what tests/reference/*.svg draws (from the compile job's
+#               PDFs; no TeX needed). It is the check the ruleset on main
+#               requires, so it runs even when a job it waits on failed --
+#               a required check that is skipped counts as passed.
+# The rendered pages (and a diff list for any that changed) are uploaded as
+# the `rendered` artifact. On a pull request the pages this branch draws
+# differently are posted as one comment -- the pictures and the links to them
+# -- which later pushes replace, so the usual case needs no download.
 
 on:
   pull_request:
@@ -43,8 +49,6 @@ jobs:
           python3 scripts/version.py check --base "$base"
       - name: The version rules and the figure rules themselves
         run: python3 -m unittest discover -s tests -v
-      - name: Every example follows the figure rules (docs/roadmap.md)
-        run: python3 tests/lint.py
 
   theme:
     runs-on: ubuntu-latest
@@ -55,15 +59,21 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/theme.py --check
 
-  test:
+  rules:
     runs-on: ubuntu-latest
     steps:
-      # Deep, because the preview step below diffs against the base commit, and
-      # the default single-commit fetch does not have it -- the same reason the
-      # version job above asks for it.
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+      - name: Coverage and the figure rules (docs/roadmap.md)
+        run: tests/run.sh rules
+
+  compile:
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [lualatex, pdflatex]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
       - uses: TeX-Live/setup-texlive-action@v4
         with:
           packages: |
@@ -80,10 +90,40 @@ jobs:
             svn-prov
             adjustbox
             collectbox
-      - name: poppler (pdftoppm)
+      - name: Compile with ${{ matrix.engine }}
+        run: tests/run.sh compile ${{ matrix.engine }}
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: pdf-${{ matrix.engine }}
+          path: tests/out/${{ matrix.engine }}/
+          if-no-files-found: ignore
+
+  test:
+    needs: [rules, compile]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: The rules and both compiles passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "rules, compile: $RESULTS"
+          for r in $RESULTS; do [ "$r" = success ] || exit 1; done
+      # Deep, because the preview step below diffs against the base commit, and
+      # the default single-commit fetch does not have it -- the same reason the
+      # version job asks for it.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v7
+        with:
+          name: pdf-lualatex
+          path: tests/out/lualatex/
+      - name: poppler (pdftocairo)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
-      - name: Compile and compare
-        run: tests/run.sh
+      - name: Compare with the references
+        run: tests/run.sh compare
       - name: Upload the rendered pages
         if: always()
         uses: actions/upload-artifact@v7
@@ -92,8 +132,8 @@ jobs:
           path: tests/out/rendered/
           if-no-files-found: ignore
 
-      # Only after tests/run.sh has passed, because the preview links this
-      # branch's committed reference images and those are the pages CI drew
+      # Only after the comparison has passed, because the preview links this
+      # branch's committed reference pictures and those are the pages CI drew
       # exactly when the comparison said so. The comment follows the shape the
       # other repositories' preview workflows use: one sticky comment, found by
       # its heading and replaced on each push.
@@ -129,3 +169,4 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
           body: ${{ steps.preview.outputs.body }}
+

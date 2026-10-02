@@ -22,7 +22,9 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 WATCHED = ("examples", "tests/cases", "tests/reference")
-RAW = "https://raw.githubusercontent.com/{repo}/{sha}/tests/reference/{name}.png"
+# ?sanitize=true makes raw.githubusercontent.com serve an SVG as an image, so
+# GitHub shows it inline instead of as text.
+RAW = "https://raw.githubusercontent.com/{repo}/{sha}/tests/reference/{name}.svg?sanitize=true"
 
 
 def changed(base: str) -> list[str]:
@@ -30,8 +32,8 @@ def changed(base: str) -> list[str]:
     out = subprocess.run(
         ["git", "diff", "--name-only", "--diff-filter=AM", f"{base}...HEAD", "--", *WATCHED],
         cwd=ROOT, capture_output=True, text=True, check=True).stdout
-    stems = {pathlib.PurePath(p).stem for p in out.split() if p.endswith((".tex", ".png"))}
-    return sorted(s for s in stems if (ROOT / f"tests/reference/{s}.png").is_file())
+    stems = {pathlib.PurePath(p).stem for p in out.split() if p.endswith((".tex", ".svg"))}
+    return sorted(s for s in stems if (ROOT / f"tests/reference/{s}.svg").is_file())
 
 
 def main() -> int:

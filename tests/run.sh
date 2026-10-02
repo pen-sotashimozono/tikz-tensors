@@ -1,31 +1,39 @@
 #!/usr/bin/env bash
-# The package's tests: every example and test case compiles, and looks as it did.
+# The package's tests: every example and test case compiles, follows the rules,
+# and looks as it did.
 #
-#   tests/run.sh            # compile with LuaLaTeX and pdfLaTeX, compare the pictures
-#   tests/run.sh --update   # the same, then take the new pictures as the references
+#   tests/run.sh                    # all of it, as a contributor runs it
+#   tests/run.sh --update           # the same, then take the new pictures as the references
+#   tests/run.sh compile <engine>   # 1 for one engine (lualatex or pdflatex)
+#   tests/run.sh rules              # 2
+#   tests/run.sh compare [--update] # 3, on the LuaLaTeX PDFs already in tests/out/
 #
-# 1. examples/*.tex and tests/cases/*.tex compile with both engines, with no
-#    warning from LaTeX or a package and the log naming this version of the
-#    package (the \ProvidesPackage line, as scripts/version.py reads it).
+# 1. examples/*.tex and tests/cases/*.tex compile, with no warning from LaTeX or
+#    a package and the log naming this version of the package (the
+#    \ProvidesPackage line, as scripts/version.py reads it).
 # 2. tests/coverage.py: every style and command in tex/ is used by some case;
 #    tests/lint.py: every example follows the figure rules (docs/roadmap.md).
-# 3. The LuaLaTeX pages, rendered by pdftoppm, match tests/reference/*.png
-#    (tests/compare.py). A deliberate change in appearance is --update plus a
-#    minor version step, which scripts/version.py check enforces.
+# 3. The LuaLaTeX pages, as SVG from pdftocairo, draw what tests/reference/*.svg
+#    draws (tests/compare.py). A deliberate change in appearance is --update
+#    plus a minor version step, which scripts/version.py check enforces.
+#
+# CI runs each step as its own job (.github/workflows/ci.yml): the two engines
+# on two runners, the rules with no TeX at all, and the comparison, in the job
+# named test, on the LuaLaTeX job's PDFs. Run with no step, this does all of
+# them in order.
 #
 # Output goes to tests/out/ (gitignored): <engine>/<name>.pdf and .log, and
-# rendered/<name>.png with a <name>-diff.png beside any page that changed.
+# rendered/<name>.svg with a <name>-diff.txt beside any page that changed.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 OUT=tests/out
-rm -rf "$OUT"
-mkdir -p "$OUT/rendered"
 export TEXINPUTS="$ROOT/tex//:$ROOT/examples/conventions//:${TEXINPUTS:-}"
-VERSION="$(python3 scripts/version.py)"
-fail=0
 
-for engine in lualatex pdflatex; do
+compile() {
+  local engine="$1" fail=0 version name log warnings
+  version="$(python3 scripts/version.py)"
+  rm -rf "$OUT/$engine"
   mkdir -p "$OUT/$engine"
   for src in examples/*.tex tests/cases/*.tex; do
     name="$(basename "$src" .tex)"
@@ -44,38 +52,48 @@ for engine in lualatex pdflatex; do
       echo "FAIL  $engine $src: warnings"
       echo "$warnings" | sed 's/^/      /'
       fail=1
-    elif ! grep -Eq "^Package: tikz-tensors [0-9/]+ v$VERSION " "$log"; then
-      echo "FAIL  $engine $src: the log does not show tikz-tensors v$VERSION"
+    elif ! grep -Eq "^Package: tikz-tensors [0-9/]+ v$version " "$log"; then
+      echo "FAIL  $engine $src: the log does not show tikz-tensors v$version"
       fail=1
     else
       echo "  ok  $engine $src"
     fi
   done
-done
+  return "$fail"
+}
 
-python3 tests/coverage.py || fail=1
-python3 tests/lint.py || fail=1
+rules() {
+  local fail=0
+  python3 tests/coverage.py || fail=1
+  python3 tests/lint.py || fail=1
+  return "$fail"
+}
 
-for pdf in "$OUT"/lualatex/*.pdf; do
-  # 180 dpi, because poppler's Splash backend snaps a thin axis-aligned stroke
-  # to whole pixels without anti-aliasing: where a stroke is not a whole number
-  # of them, two strokes of the same width round differently by where each
-  # lands. At 150 dpi 0.8pt is 1.67 px and the five legs of 05-centre came out
-  # 0.8, 0.8, 1.6, 1.6, 1.6 in ink -- half of them twice the weight of the
-  # others, plainly visible. 0.8pt is whole at every multiple of 90, and
-  # measured there the legs are uniform (180, 270, 360) and ragged between
-  # (150, 200, 300). 180 is the cheapest of them: 2 px a stroke, references
-  # 330K against 228K, compare.py about three seconds slower.
-  #
-  # This fixes the widths at 0.8pt, not the snapping: a width that is not whole
-  # at 180 is ragged again, and the demo of `tn line width' is 1.8pt (4.5 px),
-  # so its two strokes differ by a pixel here. That is left alone on purpose --
-  # the artefact belongs to the renderer and the figure should not be chosen to
-  # flatter it. pdftocairo anti-aliases and avoids
-  # the whole business, but its anti-aliasing differs between poppler versions
-  # and references made here then failed against the runner's; this test exists
-  # to be reproducible, and snapping is.
-  pdftoppm -r 180 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
-done
-python3 tests/compare.py "$OUT/rendered" "$@" || fail=1
-exit "$fail"
+compare() {
+  # SVG, not pixels: a rasteriser snaps thin strokes to whole pixels and
+  # anti-aliases differently from one poppler to the next, so a picture had
+  # to be compared with a tolerance in pixels that a moved leg could hide in.
+  # pdftocairo's SVG is the drawing itself -- every path and glyph, in pt --
+  # and compare.py matches it thing by thing.
+  rm -rf "$OUT/rendered"
+  mkdir -p "$OUT/rendered"
+  for pdf in "$OUT"/lualatex/*.pdf; do
+    pdftocairo -svg "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf).svg"
+  done
+  python3 tests/compare.py "$OUT/rendered" "$@"
+}
+
+case "${1:-all}" in
+  compile) compile "$2" ;;
+  rules)   rules ;;
+  compare) shift; compare "$@" ;;
+  all|--update)
+    fail=0
+    compile lualatex || fail=1
+    compile pdflatex || fail=1
+    rules || fail=1
+    compare "$@" || fail=1
+    exit "$fail" ;;
+  *) echo "usage: tests/run.sh [--update | compile <engine> | rules | compare [--update]]" >&2
+     exit 2 ;;
+esac
