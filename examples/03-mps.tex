@@ -1,40 +1,38 @@
-% A matrix product state: arrays A on the chain, bonds (disc) between them,
-% occupation indices n_i (disc) down -- a finite basis, so no wavy legs.
+% A matrix product state: arrays A on the chain, bonds between them, occupation
+% indices n_i down -- a finite basis, so no wavy legs.
 %
 % The same chain twice, in the two conventions a tensor is drawn in. Square is
 % this notation's default, because elsewhere it tells an array of numbers from a
 % function of position, which is a circle. Here there are no functions, so there
 % is nothing to tell apart, and a great deal of the literature draws every
-% tensor of a network as a circle -- that is the lower row, which is `coef, circle`
-% and nothing else: same style, same colour, same meaning.
+% tensor of a network as a circle -- that is the lower row, which is
+% `{coef, circle}' and nothing else: same style, same colour, same meaning.
 %
 % Shape does carry meaning once a chain is in canonical form, where a triangle
 % says isometric and a diamond says centre (04, 05). That is a different claim
-% from this one, and it is not what `circle` touches.
+% from this one, and it is not what `circle' touches.
+%
+% The fourth slot is the dots of a chain that goes on: the bonds either side of
+% it stop at its border.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \foreach \i/\l in {1/1,2/2,3/3,5/N} {
-    \node[coef] (A\i) at (1.4*\i,0) {$A$};
-    \tnbond[disc]{(A\i) -- ++(0,-0.9)} \node[leg, below] at (A\i |- 0,-0.9) {$n_{\l}$};
-  }
-  \tnbond[disc]{(A1) -- (A2)} \tnbond[disc]{(A2) -- (A3)}
-  \tnbond[disc]{(A3) -- ++(0.55,0)} \tnbond[disc]{(A5) -- ++(-0.55,0)}
-  \node at (5.6,0) {$\cdots$};
-  \node[leg, above] at (2.1,0) {$D$};
-
-  \begin{scope}[yshift=-2.4cm]
-    \foreach \i/\l in {1/1,2/2,3/3,5/N} {
-      \node[coef, circle] (B\i) at (1.4*\i,0) {$A$};
-      \tnbond[disc]{(B\i) -- ++(0,-0.9)} \node[leg, below] at (B\i |- 0,-0.9) {$n_{\l}$};
-    }
-    \tnbond[disc]{(B1) -- (B2)} \tnbond[disc]{(B2) -- (B3)}
-    \tnbond[disc]{(B3) -- ++(0.55,0)} \tnbond[disc]{(B5) -- ++(-0.55,0)}
-    \node at (5.6,0) {$\cdots$};
-    \node[leg, above] at (2.1,0) {$D$};
-  \end{scope}
+  \tnstack{P}{5}{ket}
+  \tnlayer{P}{ket}{coef/$A$, coef/$A$, coef/$A$, dots, coef/$A$}
+  \tnconnect{P}
+  \tnopen{down}{P}
+  \tnmid{P-ket-1}{P-ket-2}{$D$}
+  \foreach \i/\n in {1/1, 2/2, 3/3, 5/N} \tnput[below]{P-\i-down}{$n_{\n}$};
+  \tnbreak
+  \tnstack{Q}{5}{ket}
+  \tnlayer{Q}{ket}{{coef, circle}/$A$, {coef, circle}/$A$, {coef, circle}/$A$,
+                   dots, {coef, circle}/$A$}
+  \tnconnect{Q}
+  \tnopen{down}{Q}
+  \tnmid{Q-ket-1}{Q-ket-2}{$D$}
+  \foreach \i/\n in {1/1, 2/2, 3/3, 5/N} \tnput[below]{Q-\i-down}{$n_{\n}$};
 \end{tikzpicture}
 \end{document}

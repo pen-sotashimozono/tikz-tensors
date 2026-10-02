@@ -5,19 +5,28 @@
 % function of position -- and the statement is the antisymmetry of that array.
 % The wavy form of the same picture, where the arguments are continuous, is the
 % expansion in 01; tests/cases/styles.tex draws \tnswap both ways.
+%
+% Both sides are the same stack: Psi across two sites, and under it a layer of
+% `|' that the indices run through. The crossing needs that room, and the
+% straight side has it too, so the indices of both end at one depth.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \node[coefwide] (a) at (0,0) {$\Psi$};
-  \tnswap[disc]{([xshift=-4.5mm]a.south)}{([xshift=4.5mm]a.south)}{1}
-  \node[leg, below] at ([xshift=-4.5mm,yshift=-10mm]a.south) {$i$};
-  \node[leg, below] at ([xshift= 4.5mm,yshift=-10mm]a.south) {$j$};
-  \node at (1.45,-0.35) {$= \; -$};
-  \node[coefwide] (b) at (3.0,0) {$\Psi$};
-  \tnbond[disc]{([xshift=-4.5mm]b.south) -- ++(0,-1) node[leg, below] {$i$}}
-  \tnbond[disc]{([xshift= 4.5mm]b.south) -- ++(0,-1) node[leg, below] {$j$}}
+  \tnstack{P}{2}{state, legs}
+  \tnlayer{P}{state}{coefwide/$\Psi$/2}
+  \tnlayer{P}{legs}{|, |}
+  \tnopenswap[disc]{P-state-1}
+  \tnput[below]{P-state-1-down-1}{$i$}
+  \tnput[below]{P-state-1-down-2}{$j$}
+  \tneq[$-$]
+  \tnstack{Q}{2}{state, legs}
+  \tnlayer{Q}{state}{coefwide/$\Psi$/2}
+  \tnlayer{Q}{legs}{|, |}
+  \tnopen{down}{Q}
+  \tnput[below]{Q-1-down}{$i$}
+  \tnput[below]{Q-2-down}{$j$}
 \end{tikzpicture}
 \end{document}

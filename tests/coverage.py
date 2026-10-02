@@ -29,7 +29,7 @@ for name in sorted(version.api()):
     what, _, ident = name.partition(" ")
     ident = ident.strip("'")
     if what == "style":
-        used = re.search(rf"[\[,\s{{]{re.escape(ident)}\s*[\],=/]", text)
+        used = re.search(rf"[\[,\s{{=]{re.escape(ident)}\s*[\],=/]", text)
     elif what == "command":
         used = re.search(re.escape(ident) + r"(?![A-Za-z])", text)
     else:

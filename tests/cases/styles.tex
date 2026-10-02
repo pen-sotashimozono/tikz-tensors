@@ -80,35 +80,6 @@
   \tnrow{R}{(0.0,-8.2)}{tn box/$A$/c, tn rounded/$W$/c, tn diamond/$C$/c}
   \tnbond{(R1) -- (R2)} \tnbond{(R2) -- (R3)}             \spec{1.4}{-8.8}{\textbackslash tnrow}
 
-  % ---- where a stack takes a tensor's index from -----------------------
-  % A triangle sets it to a corner of its flat side; any shape can, and the
-  % stack moves the tensor across so that point is on the site's line. Drawn
-  % before the equation below, because \tneq moves the cursor every later
-  % stack in the picture starts from.
-  \begin{scope}[shift={(11.6,-11.4)},
-                 corner box/.style={tn box, tn leg anchor=south west}]
-    \tnstack{Z}{1}{a, b}
-    \tnlayer{Z}{a}{corner box/$T$}
-    \tnlayer{Z}{b}{tn box/$T$}
-    \tnconnect{Z}
-  \end{scope}
-  \spec{11.6}{-12.6}{tn leg anchor}
-
-  % ---- a stack, and an equation of two ----------------------------------
-  \begin{scope}[shift={(0.5,-11.4)}]
-    \tnstack[left=$L$, right=$R$]{X}{2}{a, b, c}
-    \tnlayer{X}{a}{tn triangle right/$A$, .}
-    \tnlayer{X}{b}{tn box/$T$, tn rounded/$W$}
-    \tnlayer{X}{c}{., -}
-    \tnconnect{X}
-    \tnopen{up}{X-b-2}
-    \tneq[$\lambda$]
-    \tnstack[left=$L$]{Y}{0}{a, b, c}
-    \tnconnect{Y}
-  \end{scope}
-  \spec{3.6}{-13.3}{\textbackslash tnstack, \textbackslash tnlayer, \textbackslash tnconnect,
-    \textbackslash tnopen, \textbackslash tneq}
-
   % ---- the named colours -----------------------------------------------
   % `color=` and not a bare `\fill[\c]`, because a convention may give a style
   % the name of a colour, and TikZ resolves an option as a key before it tries
@@ -116,7 +87,56 @@
   \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,%
                              canl,canr,centre,mpo,gate,env,%
                              ttfg,ttmuted,ttaccent,ttgood,ttwarn,ttbad}
-    \fill[color=\c] (0.4+\i*0.6-0.6,-14.3) rectangle ++(0.45,0.3);
-  \spec{5.2}{-14.4}{the named colours}
+    \fill[color=\c] (0.4+\i*0.6-0.6,-9.6) rectangle ++(0.45,0.3);
+  \spec{5.2}{-9.7}{the named colours}
+
+  % ---- stacks, in rows of their own --------------------------------------
+  % A stack places itself: \tnbreak starts a row under everything above, a
+  % relation sign goes after what is on the row, and a stack after another
+  % stands beside it. So these rows have no coordinates, and their captions
+  % hang under whatever the row turned out to be.
+  \tnbreak
+  \tnstack[left=$L$, right=$R$]{X}{2}{a, b, c}
+  \tnlayer{X}{a}{tn triangle right/$A$, .}
+  \tnlayer{X}{b}{tn box/$T$, tn rounded/$W$}
+  \tnlayer{X}{c}{., -}
+  \tnconnect{X}
+  \tnopen{up}{X-b-2}
+  \tneq[$\lambda$]
+  \tnstack[left=$L$]{Y}{0}{a, b, c}
+  \tnconnect{Y}
+  % where a stack takes a tensor's index from: a triangle sets it to a corner
+  % of its flat side; any shape can, and the stack moves the tensor across so
+  % that point is on the site's line
+  \tnstack{Z}{1}{a, b}
+  \tnlayer{Z}{a}{{tn box, tn leg anchor=south west}/$T$}
+  \tnlayer{Z}{b}{tn box/$T$}
+  \tnconnect{Z}
+  \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
+    at (current bounding box.south) {\textbackslash tnstack, \textbackslash tnlayer,
+    \textbackslash tnconnect, \textbackslash tnopen, \textbackslash tneq, tn leg anchor};
+
+  % ---- a second row of stacks: what a grid can hold ---------------------
+  % \tnbreak starts a row under everything above. One stack holds a tensor two
+  % layers tall, a `dots' slot, a copy tensor, the slots a site's index runs
+  % through, fused bonds, and an arrow taken from a shape that says which way
+  % it points; the next, two indices exchanged on their way down.
+  \tnbreak
+  \tnstack{W}{5}{a, b, c}
+  \tnlayer{W}{a}{tn box/$Z$/1/2, tn box, dots, tn dot/, {tn box, tn points=left}/$P$}
+  \tnlayer{W}{b}{., tn rounded, |, |, tn box}
+  \tnlayer{W}{c}{|, |, |, |, |}
+  \tnconnect[along=tn arrow, apart=c]{W}
+  \tnopen{down}{W}
+  \tnstack{V}{2}{a, b}
+  \tnlayer{V}{a}{tn box/$\Psi$/2}
+  \tnlayer{V}{b}{|, |}
+  \tnopenswap{V-a-1}
+  \tnstack{U}{2}{a}
+  \tnlayer{U}{a}{tn box, tn box}
+  \tnconnect[along=tn double]{U}
+  \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
+    at (current bounding box.south) {\textbackslash tnbreak, tn box/\$Z\$/1/2, dots,
+    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double};
 \end{tikzpicture}
 \end{document}
