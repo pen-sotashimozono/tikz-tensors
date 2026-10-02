@@ -89,7 +89,7 @@
 %% the theme's other named colours) come from tikz-tensors-colors.tex, generated
 %% from theme/tokens.toml. The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/01 v0.3.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/02 v0.4.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
@@ -265,6 +265,34 @@
     \fi
     \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
     \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
+  }%
+}
+\makeatother
+
+% \tnrow[<gap>]{<prefix>}{<origin>}{<style/label/side, ...>}
+% Place tensors left to right, each <gap> clear of the one before it -- measured
+% between their borders, not between their centres, so the spacing is right
+% whatever shapes and sizes are in the row and stays right when one of them
+% changes. \tnchain spreads a row evenly along a line you give it, which is what
+% a chain of like tensors wants; this is for a row of unlike ones, where the
+% distance that matters is the gap and working the centres out by hand is both
+% tedious and the first thing to go stale.
+%
+%   \tnrow{P}{(0,0)}{env/$L$/c, mpo/$W$/c, mpo/$W$/c, envr/$R$/c}
+%
+% Site i becomes the node <prefix>i and the coordinate <prefix>i-leg, exactly as
+% in \tnchain.
+\makeatletter
+\newdimen\tn@cur \newdimen\tn@rowy
+\newcommand{\tnrow}[4][6mm]{%
+  \coordinate (tn@rowstart) at #3;
+  \pgf@process{\pgfpointanchor{tn@rowstart}{center}}%
+  \global\tn@cur=\pgf@x \global\tn@rowy=\pgf@y
+  \foreach \tn@sty/\tn@lab/\tn@sd [count=\tn@i from 1] in {#4}{%
+    \node[\tn@sty, anchor=west] (#2\tn@i) at (\the\tn@cur,\the\tn@rowy) {\tn@lab};
+    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
+    \pgfextractx{\tn@x}{\pgfpointanchor{#2\tn@i}{east}}%
+    \global\tn@cur=\tn@x \global\advance\tn@cur by #1\relax
   }%
 }
 \makeatother
