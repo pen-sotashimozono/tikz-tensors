@@ -24,7 +24,7 @@ stand for.
 | `tn triangle right`, `tn triangle left` | a triangle pointing that way |
 | `tn triangle up`, `tn triangle down` | an isosceles triangle, as wide as the sites it spans |
 | `tn diamond` | a diamond |
-| `tn wide`, `tn tall`, `tn small` | the same shape, resized |
+| `tn wide`, `tn tall`, `tn small`, `tn flat` | the same shape, resized |
 | `tn fill=<colour>` | solid fill, outline in ink |
 | `tn frame` | a dashed box around nodes |
 | `tn edge`, `tn wavy`, `tn arrow` | an index: plain, wavy, with an arrowhead |

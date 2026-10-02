@@ -10,7 +10,7 @@
 %%   tn box, tn circle, tn capsule, tn rounded    a tensor's outline
 %%   tn triangle right, tn triangle left           a triangle pointing that way
 %%   tn diamond                                    a diamond
-%%   tn wide, tn tall, tn small                    the same shape, resized
+%%   tn wide, tn tall, tn small, tn flat           the same shape, resized
 %%   tn frame                                      a dashed box around nodes
 %%   tn edge, tn wavy, tn arrow                    an index: plain, wavy, or with
 %%                                                 an arrowhead (`tn arrows' turns
@@ -190,6 +190,7 @@
   tn wide/.style           = {minimum width=17mm},
   tn tall/.style           = {minimum height=17mm},
   tn small/.style          = {minimum size=6mm, font=\scriptsize},
+  tn flat/.style           = {minimum width=10.5mm, minimum height=6mm},
   tn dot/.style            = {tn node, circle, fill=stroke, minimum size=1.8mm},
   tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
   tn wavy/.style           = {tn edge, decorate,

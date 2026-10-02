@@ -37,9 +37,12 @@ tiers of coarse-graining and the top tensor).
   ends, so an index opened upward on a second row clears the first. Every
   picture with two rows is a little taller.
 
-In the notation: `iso`, a triangle pointing up, toward the root, in the
+`tn flat` is a shape resized flat (10.5 mm by 6 mm), as a tree's tensors are
+drawn.
+
+In the notation: `iso`, a flat triangle pointing up, toward the root, in the
 left-canonical colour — off a chain there is no left and right, only toward
-the centre.
+the centre; and `disentangler`, a gate drawn flat.
 
 Outside the package (no version step of its own, carried here):
 
