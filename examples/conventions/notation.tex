@@ -22,7 +22,10 @@
 %   root, in the left-canonical colour: off a chain there is no left and
 %   right, only toward the centre and away from it, and that is the colour
 %   that already says `isometric toward the centre'; both it and a MERA's
-%   disentangler (a gate, flatter) are drawn flat, as a tree's tensors are.
+%   disentangler (a gate, flatter) are drawn flat, as a tree's tensors are;
+%   the environment of a two-dimensional network, contracted from its
+%   boundary, is the environment's colour: a corner as a rounded box, a side
+%   as a plain one.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
@@ -52,4 +55,7 @@
   basis/.style      = {tn circle, tn small},
   iso/.style        = {tn triangle up, tn flat, tn fill=canl},
   disentangler/.style = {gate, tn flat},
+  isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
+  corner/.style     = {tn rounded, fill=env!25},
+  side/.style       = {tn box, fill=env!25},
 }

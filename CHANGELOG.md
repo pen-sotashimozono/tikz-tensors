@@ -5,6 +5,28 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.8.0 — 2026-10-02
+
+Two-dimensional networks: PEPS, simple update, CTMRG, HOTRG.
+
+Roadmap phase 4. `\tngrid[legs, bonds=<style>/<label>]{<name>}{<columns>}{<rows>}{<style>/<label>}`
+draws one tensor repeated over a lattice, each joined to its neighbours,
+turned by 45 degrees so the lattice reads as a plane seen from above and the
+physical indices (`legs`) go straight down without crossing a bond. `bonds=`
+puts a tensor on every bond, half way along. It is placed as a stack is, so it
+takes part in rows and equations.
+
+New examples: `20-peps` (a four-by-four PEPS), `21-simple-update` (Gamma on
+the sites, lambda on the bonds), `22-ctmrg` (the corner transfer matrix
+environment of one site, on an ordinary stack) and `23-hotrg` (two tensors
+coarse-grained into one, the fusing isometries a triangle up and a triangle
+down, again on a stack). In the notation: `corner` and `side`, the
+environment of a two-dimensional network in the environment's colour, and
+`isodown`, an isometry pointing down.
+
+Not yet: TRG, which splits each tensor along a diagonal of the lattice and
+needs an index that is neither along a layer nor down a site.
+
 ## v0.7.0 — 2026-10-02
 
 Trees, MERA and the decompositions, on the same grid.
