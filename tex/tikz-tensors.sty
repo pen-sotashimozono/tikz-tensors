@@ -3,6 +3,13 @@
 %%
 %%   \usepackage{tikz-tensors}
 %%
+%% A network is nodes and edges, and those are the two things the package
+%% defines before anything else: `tn node' is a tensor, `tn edge' is an index,
+%% `tn fill' is the solid colour convention. A diagram can be drawn out of those
+%% three alone, with no notion of what is a state and what is an operator --
+%% which is the normal case, since most networks have no such distinction to
+%% make. Everything named below is a preset built on them, for the cases that do.
+%%
 %% The notation distinguishes what a leg carries:
 %%   cont   wavy leg, electron colour: a continuous argument (r, r_1, x)
 %%   disc   plain line: a finite index (i, mu, a bond)
@@ -16,42 +23,317 @@
 %% is a coefwide C with two disc legs down to two fn phi, each with a cont leg:
 %% the numbers sit on the basis functions, which sit on space.
 %%
+%% A matrix-product state needs more than that, since its tensors are not all the
+%% same kind of object:
+%%   canl, canr   left- and right-canonical. The triangle points the way the
+%%                gauge runs AND carries its own colour, so the two are told
+%%                apart twice
+%%   centre       the orthogonality centre on a site: a diamond, the one tensor
+%%                of the chain that is neither isometric nor shaped like its
+%%                neighbours, and the one carrying a physical leg of its own
+%%   centrebond   the same diamond, smaller, for the centre on a bond: the
+%%                Schmidt values between two sites, which carry no physical leg.
+%%                One SVD takes either form to the other, and the notation has to
+%%                be able to say both, so the shape is shared and only the slot
+%%                it sits in differs
+%%   mpo          an operator tensor sitting on the chain, neutral so that the
+%%                state reads through it
+%%   gate         a box over one site or several (a Trotter step, one term of an
+%%                MPO). \tngate sizes and places it from the indices themselves,
+%%                so no width is written by hand, and it needs no legs
+%%   gauge        a disc that carries a direction, as an arrowhead. A bond does
+%%                not have one in general -- it is an index, and an index is
+%%                just an index -- so the plain `disc' is the bond, and `gauge'
+%%                is for a picture where the direction is known and is part of
+%%                what is being said: which way the gauge runs in a canonical
+%%                form. `tn arrows' is on by default and turns those arrowheads
+%%                off, for the same picture with the direction left unstated
+%% The triangles are the usual convention and they are load-bearing: a reader who
+%% cannot see which tensors are isometric cannot tell a canonical form from a
+%% picture of one. Shape carries the meaning on its own and colour repeats it, so
+%% the diagrams survive being printed in grey.
+%%
+%% Square or circle is this package's own distinction, and it is only worth
+%% keeping where both kinds are on the page. A diagram with no functions in it --
+%% a plain tensor network -- has nothing to confuse, and much of the literature
+%% draws every tensor there as a circle. `tn round' is that convention: add it to
+%% a node style and the shape is a circle, the colour and meaning unchanged.
+%% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
+%%
+%% Every edge is drawn under the nodes, by \tnbond, \tnlegs and
+%% \tnswap: a tensor covers the index it carries whatever order the file is
+%% written in. \tnbond takes the whole path, so an index can end on a node, on a
+%% coordinate, or on nothing at all -- an open index needs no far end. A `node'
+%% written inside that path rides the layer with it, so a label that has to stay
+%% readable where it crosses a tensor belongs in a \node of its own; a raw
+%% \draw is on the main layer and is the caller's to place.
+%%
+%% Where a tensor's index leaves it is said once, by \tnchain, which places a
+%% row and gives each site a <name>-leg coordinate. Everything that connects to
+%% that site -- its own leg, a gate's leg, an operator row under it -- connects
+%% to that coordinate, so the point exists in one place and cannot be spelled
+%% two ways. \tnlegs and \tngate take points, and a label is placed by \tnput
+%% and \tnmid in terms of what it labels rather than as a coordinate.
+%%
 %% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
+%%
+%% Outlines and legs are one stroke, `tn line`, whose width is `tn line width`
+%% (0.8pt) -- settable on a picture, a scope or a node, and usable directly on a
+%% path of the caller's own.
+%%
+%% The style names are short and unprefixed, which has one consequence worth
+%% knowing: where a style and a colour share a name (coef, centre, mpo, gate), an
+%% option written bare -- \fill[gate] -- is resolved as the style, never the
+%% colour. Say which you mean: color=gate, or draw=/fill=.
 %% Colours (ele for continuous legs and functions, the page tokens tt<name>, and
 %% the theme's other named colours) come from tikz-tensors-colors.tex, generated
 %% from theme/tokens.toml. The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/09/29 v0.2.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/01 v0.3.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
-\usetikzlibrary{decorations.pathmorphing,calc}
+\usetikzlibrary{decorations.pathmorphing,decorations.markings,shapes.geometric,
+                arrows.meta,calc}
 \input{tikz-tensors-colors.tex}
 
-% ---- tensor diagrams ---------------------------------------------------------
+% ---- edges go under nodes, always -------------------------------------------
+% A tensor is drawn over the index it carries, never under it. Left to the order
+% of the source that holds only while nobody adds a line after a node, and the
+% moment a leg is drawn to a coordinate that happens to sit inside a tensor it
+% is drawn across it. So every edge this package draws goes on a layer beneath
+% the nodes, and the rule holds whatever order the file is written in.
+%
+% \pgfsetlayers is global, so this orders every picture in the document, not only
+% the diagrams: `main' stays on top, which is pgf's own default, and `tnedges'
+% is added under it. A document that sets its own layers should include both.
+\pgfdeclarelayer{tnedges}
+\pgfsetlayers{tnedges,main}
+
+% ---- one line width ----------------------------------------------------------
+% An outline and a leg are the same stroke in a tensor diagram: a node is not a
+% heavier object than the index it carries. So every style below draws with
+% `tn line` rather than carrying a width of its own, and `tn line width` moves
+% all of them at once -- on a picture, on a scope, or on a single node. A caller
+% drawing a path of its own uses `tn line` to match.
+\pgfkeys{/tn/line width/.initial=0.8pt}
+\newif\iftnarrows \tnarrowstrue
 \tikzset{
-  fn/.style       = {circle, draw=ele, fill=ele!12, line width=0.9pt,
-                     minimum size=8mm, inner sep=0pt},
+  tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
+  tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
+  tn round/.style     = {circle},
+  tn arrows/.is if    = tnarrows,
+}
+
+% ---- a network is nodes and edges --------------------------------------------
+% These three are the network itself. Everything after them is a preset, and a
+% diagram that has no use for the vocabulary below can be drawn out of these
+% alone, with no notion of what is an operator and what is a state:
+%
+%   \node[tn node, tn fill=blue1, circle] (a) at (0,0) {$A$};
+%   \node[tn node] (b) at (2,0) {$B$};            % a box: the plain tensor
+%   \tnbond[tn edge]{(a) -- (b)}                  % an index between them
+%   \tnbond[tn edge=exact]{(b) -- ++(1,0)}        % one in a colour of its own
+%
+% tn node is what every tensor shares -- one stroke, no inner padding -- and the
+% shape is TikZ's, a rectangle unless another is asked for. Its outline is the
+% theme's `stroke' and so is tn edge's, so a tensor and the index it carries are drawn in one
+% ink by default: a tensor is not a different kind of mark from its index, and
+% an outline in its own colour should be something a preset says on purpose. It
+% draws rather than leaving `draw' unset, because a node with no draw is not
+% drawn at all and a bare tn node has to be a tensor you can see.
+%
+% outer sep=0pt, because a bond would otherwise stop short of the tensor it runs
+% to. TikZ keeps a path half a line width clear of a node's border so that it
+% meets the outside of the stroke rather than overlapping it -- but `minimum
+% size' already counts the stroke, so the border IS the outside of it, and the
+% half width is added to a clearance that is already there. Measured at 700 dpi
+% on two canl triangles: a one-pixel gap between the tensor and its bond. tn fill is the
+% solid convention -- a step of a scale, outlined in a darker shade of itself --
+% and it keeps that default outline, so the colour of a tensor is its fill and
+% every outline in a diagram is the one ink -- which is the rule holding in a
+% picture rather than only where no preset has overridden it. A colour can of course be given: tn edge
+% takes one as its argument, and a node takes draw= like any TikZ node.
+\tikzset{
+  tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
+                      outer sep=0pt, text=ttfg},
+  tn fill/.style   = {draw=stroke, fill=#1},
+  tn fill/.default = grey2,
+  tn edge/.style   = {tn line, draw=#1},
+  tn edge/.default = stroke,
+}
+
+% ---- presets: what a tensor is, and what its index carries -------------------
+\tikzset{
+  fn/.style       = {tn node, circle, draw=ele, fill=ele!12, minimum size=8mm},
   fnwide/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=17mm,
                      minimum height=8mm},
   fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
                      minimum height=17mm},
-  coef/.style     = {rectangle, draw=black!80, fill=black!6, line width=0.9pt,
-                     minimum size=7mm, inner sep=0pt},
+  coef/.style     = {tn node, rectangle, fill=black!6, minimum size=7mm},
   coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
   coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {rectangle, draw=ttfg, fill=white, line width=0.9pt,
+  op/.style       = {tn node, rectangle, fill=white,
                      minimum size=7mm, inner sep=1pt},
   opwide/.style   = {op, minimum width=17mm},
-  frame/.style    = {draw=black!50, dashed, rounded corners=2mm, line width=0.7pt},
-  cont/.style     = {draw=ele, line width=0.9pt, decorate,
+  frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},
+  cont/.style     = {tn edge=ele, decorate,
                      decoration={snake, amplitude=0.55mm, segment length=2.4mm,
                                  pre length=0.4mm, post length=0.8mm}},
-  disc/.style     = {draw=black!80, line width=0.9pt},
+  disc/.style     = {tn edge},
   leg/.style      = {font=\small, inner sep=2pt},
-  tn swap cont/.style = {draw=ele, line width=0.9pt},
-  tn swap disc/.style = {draw=black!80, line width=0.9pt},
+  tn swap cont/.style = {tn edge=ele},
+  tn swap disc/.style = {tn edge},
 }
+
+% ---- presets: matrix-product states ------------------------------------------
+% Solid fills, because an MPS diagram is mostly tensors: at the pale fills the
+% presets above use, a ten-site chain turns into ten outlines and the eye finds
+% no site. The labels stay ink rather than reversing to white -- white on these
+% fills measures 2.2--3.1:1 against the 7--9:1 ink gives.
+\tikzset{
+  canl/.style       = {tn node, tn fill=canl, regular polygon,
+                       regular polygon sides=3, shape border rotate=-90,
+                       minimum size=10.5mm, font=\small},
+  canr/.style       = {canl, tn fill=canr, shape border rotate=90},
+  centre/.style     = {tn node, tn fill=centre, diamond, minimum size=9.5mm,
+                       font=\small},
+  centrebond/.style = {centre, minimum size=6mm, font=\scriptsize},
+  mpo/.style        = {tn node, tn fill=mpo, rectangle, rounded corners=1.2mm,
+                       minimum size=7.5mm, inner sep=1pt},
+  gate/.style       = {tn node, rectangle, rounded corners=1.2mm,
+                       draw=stroke, fill=gate!25, minimum size=7.5mm,
+                       inner sep=3pt, font=\small},
+  gauge/.style      = {disc, postaction={decorate}, decoration={markings,
+                       mark=at position 0.58 with
+                         {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+}
+
+% \tnbond[<style>]{<path>}
+% One edge, drawn under the nodes. The path is written out in full, so it can
+% end wherever it needs to -- on a node, on a coordinate, or on nothing:
+%   \tnbond{(A1) -- (A2)}             a bond between two tensors
+%   \tnbond{(A3) -- ++(0.55,0)}       an open index, with no other end
+%   \tnbond[gauge]{(A1) -- (A2)}      one whose direction is known
+%   \tnbond[cont]{(p.south) -- ++(0,-0.9)}
+% Nothing here needs a tensor at the far end, because an index that leaves the
+% diagram is an index like any other. The default is `disc', an index with no
+% direction, because that is what an index is unless something says otherwise.
+\newcommand{\tnbond}[2][disc]{%
+  \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
+
+% \tnchain[<pitch>]{<prefix>}{<from>}{<to>}{<style/label/side, ...>}
+% Draw one line and put the tensors on it. Without <pitch> they are spread
+% evenly from <from> to <to>, first and last on the ends; with it they start at
+% <from> and step by <pitch>, and <to> only gives the direction. Site i becomes
+% the node <prefix>i and the coordinate <prefix>i-leg, the point where its
+% physical index leaves it and the point everything else connects to.
+%
+%   \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
+%
+% Two coordinates for a row, and none per site: a row that is respaced, or
+% turned, or given another tensor, is one line edited in one place.
+%
+% <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
+% or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
+% at a 180 degree turn, so no single index names both, and `south west' is on
+% the edge above the vertex rather than on it), and `c' is the node's own south,
+% which is what a box, a circle or a diamond takes.
+\makeatletter
+% An anchor lands on the line that is drawn only because `tn node' sets
+% outer sep=0pt. With TikZ's default, outer sep is half a line width and it is
+% added to every anchor as well as to the border, so a corner anchor sits that
+% far outside the stroke and an index placed on it runs beside the tensor's own
+% edge instead of along it. Measured on a canl triangle: corner 3 at -7.86884pt
+% with the default and -7.46884pt without, exactly half a width apart.
+\def\tn@side@l{corner 3}
+\def\tn@side@r{corner 2}
+\def\tn@side@c{south}
+\newcount\tn@cnt
+\newcommand{\tnchain}[5][]{%
+  \global\tn@cnt=0
+  \foreach \tn@z in {#5}{\global\advance\tn@cnt by 1}%
+  \foreach \tn@sty/\tn@lab/\tn@sd [count=\tn@i from 1] in {#5}{%
+    \ifx\relax#1\relax
+      \ifnum\tn@cnt>1
+        \pgfmathsetmacro{\tn@t}{(\tn@i-1)/(\the\tn@cnt-1)}%
+      \else \def\tn@t{0}\fi
+      \coordinate (tn@spot) at ($#3!\tn@t!#4$);
+    \else
+      \pgfmathsetlength{\pgf@xa}{(\tn@i-1)*(#1)}%
+      \coordinate (tn@spot) at ($#3!\the\pgf@xa!#4$);
+    \fi
+    \node[\tn@sty] (#2\tn@i) at (tn@spot) {\tn@lab};
+    \coordinate (#2\tn@i-leg) at (#2\tn@i.\csname tn@side@\tn@sd\endcsname);
+  }%
+}
+\makeatother
+
+% \tnlegs[<kind>]{<drop>}{<points>}
+% A physical index from each point, every one ending <drop> below the lowest of
+% them, so a row of legs is level whatever each started from -- a diamond hangs
+% lower than a triangle's corner, and the drop is a rule rather than a y to be
+% written out. <drop> is a length (16mm, 1.6cm), like \tngate's padding and
+% unlike the line \tnchain is given, which is a pair of coordinates. Each leg's far end becomes <point>-tip, which is where a label
+% for that index goes.
+\makeatletter
+\newdimen\tn@x \newdimen\tn@y \newdimen\tn@lo \newdimen\tn@hi
+\newcommand{\tn@spanx}[1]{% min and max x of a list of points
+  \global\tn@lo=\maxdimen \global\tn@hi=-\maxdimen
+  \foreach \tn@s in {#1}{%
+    \pgfextractx{\tn@x}{\pgfpointanchor{\tn@s}{center}}%
+    \ifdim\tn@x<\tn@lo \global\tn@lo=\tn@x \fi
+    \ifdim\tn@x>\tn@hi \global\tn@hi=\tn@x \fi}}
+\newcommand{\tn@lowy}[1]{% the lowest y of a list of points
+  \global\tn@lo=\maxdimen
+  \foreach \tn@s in {#1}{%
+    \pgfextracty{\tn@y}{\pgfpointanchor{\tn@s}{center}}%
+    \ifdim\tn@y<\tn@lo \global\tn@lo=\tn@y \fi}}
+\newcommand{\tnlegs}[3][disc]{%
+  \tn@lowy{#3}%
+  \pgfmathsetlength{\pgf@yb}{\tn@lo-(#2)}\edef\tn@bot{\the\pgf@yb}%
+  \begin{pgfonlayer}{tnedges}%
+    \foreach \tn@n in {#3}{%
+      \coordinate (\tn@n-tip) at (\tn@n |- 0,\tn@bot);
+      % Start inside the tensor and let it cover the overlap -- nodes are drawn
+      % over the edge layer. Begun exactly on the point, the leg's own stroke
+      % ends half a line width short of where the outline's stroke ends and the
+      % join reads as a gap; begun above it, the two merge. Upward only, so a
+      % leg taken from the bottom corner of a triangle's flat side stays on that
+      % side's own line and simply continues it down.
+      \draw[#1] ($(\tn@n)+(0,2*\pgfkeysvalueof{/tn/line width})$) -- (\tn@n-tip);%
+    }%
+  \end{pgfonlayer}%
+}
+\makeatother
+
+% \tngate[<padding>]{<node name>}{<label>}{<points>}{<drop>}
+% A gate on those indices, <drop> below the lowest of them (a length, as in
+% \tnlegs), as wide as they span plus <padding> at each end and centred on them. One point gives a small
+% box, several a bar. It needs no legs of its own: a node is drawn over an
+% edge, so a gate placed on indices that run past it interrupts them, which is
+% what applying a gate to those indices looks like.
+\makeatletter
+\newcommand{\tngate}[5][4mm]{%
+  \tn@spanx{#4}%
+  \pgfmathsetlength{\pgf@xb}{\tn@hi-\tn@lo+2*(#1)}%
+  \pgfmathsetlength{\pgf@xc}{(\tn@lo+\tn@hi)/2}%
+  \edef\tn@wd{\the\pgf@xb}\edef\tn@md{\the\pgf@xc}%
+  \tn@lowy{#4}%
+  \pgfmathsetlength{\pgf@yb}{\tn@lo-(#5)}%
+  \node[gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
+}
+\makeatother
+
+% \tnput[<placement>]{<point>}{<text>}      text on or beside one point
+% \tnmid[<placement>]{<a>}{<b>}{<text>}     text midway between two points
+% Where a label goes is said in terms of what it labels -- above this tensor,
+% below that index's end, midway along this bond -- and never as a coordinate,
+% because a coordinate written for a label is a coordinate that has to be
+% re-found every time the thing it labels moves. <placement> is TikZ's: above,
+% below, left, right, center, and any of them with a distance.
+\newcommand{\tnput}[3][above]{\node[leg, #1] at (#2) {#3};}
+\newcommand{\tnmid}[4][above]{\node[leg, #1] at ($(#2)!0.5!(#3)$) {#4};}
 
 % \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
@@ -59,13 +341,15 @@
 % by a smooth crossing (a snake decoration on a diagonal reads as noise).
 \makeatletter
 \newcommand{\tnswap}[4][cont]{%
-  \path #2 coordinate (tn@l) #3 coordinate (tn@r);
-  \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
-  \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
-  \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
-  \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
-  \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
-  \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+  \begin{pgfonlayer}{tnedges}%
+    \path #2 coordinate (tn@l) #3 coordinate (tn@r);
+    \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
+    \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
+    \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
+    \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
+    \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
+    \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+  \end{pgfonlayer}%
 }
 \makeatother
 

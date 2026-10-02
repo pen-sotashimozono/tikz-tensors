@@ -2,42 +2,121 @@
 # and, later, slides. scripts/theme.py writes theme/theme.css and
 # tex/tikz-tensors-colors.tex from this file; edit here, never there.
 #
-# Base: the GitHub-style palette of the slide storyboards (light and dark).
-# The physics colours carry meaning and are the same in every medium:
-# a blue electron is an electron on a slide, in a note and in a diagram.
+# [ramp] is where the colour codes live, and they are scales rather than loose
+# colours: each runs light to dark in three steps. Everything below names a step
+# -- blue2, warm3 +25% white -- and never repeats a hex, so a code is written
+# once and a meaning is an assignment onto it. A pair that should read as a pair
+# takes the same step on two scales: canl/canr at step 1, edge/edgec at step 3.
+# A figure that wants a stronger version of a colour moves along its own scale
+# instead of reaching for a new one.
+#
+# blue and warm are the given codes. grey is the neutral one: paper, a hairline
+# grey, ink. green, yellow and purple are built on the
+# ladder those two measure out, in CIELCh: step 1 near L* 62-74 at about 40% of
+# the chroma the gamut allows there, step 2 near L* 50-60 and step 3 near L* 35-42
+# at about 85%, capped in absolute chroma as well -- purple's gamut is three
+# times blue's at the same lightness, and a fraction of it alone comes out neon.
+# green1 is the given green, which sits a little lighter than the other step 1s;
+# green2 and green3 are built under it. yellow turns gold and then ochre as it
+# darkens, which is what a yellow does: a yellow light enough to stay yellow is
+# too light to put text in.
+#
+# The page sections take tints and shades of these steps, because a page has a
+# background and body text and a step does not always clear the contrast a
+# reader needs. Each of those values is written as `step +NN% white|black`, and
+# the comment carries the ratio it measures. examples/00-palette.tex draws the
+# whole map.
+#
+# One limit, stated rather than hidden: there is no red. `bad` is therefore the
+# darkest warm rather than a red, and it is told from `warn` by hue (ochre
+# against red-brown, about 30 degrees apart) as well as by weight.
+#
+# And the honest count, so that the size of this file is not read as the size of
+# the theme. Sixteen steps are defined. Eleven carry something:
+#
+#   blue1 blue2 blue3  warm1 warm2 warm3  green1 green3  yellow2 yellow3  grey
+#
+# The other five -- green2, yellow1, purple1, purple2, purple3 -- are defined
+# and unused. They are scales that exist for a figure that needs a hue the
+# others do not have, not assignments; nothing in the package reads them, and
+# examples/00-palette.tex leaves their rows blank rather than filling them in.
+
+[ramp]
+blue1   = "#809eab"   # light
+blue2   = "#0082a9"
+blue3   = "#005077"   # dark
+warm1   = "#ce7e60"   # light
+warm2   = "#b65c24"
+warm3   = "#88451b"   # dark
+green1  = "#6abe92"   # light
+green2  = "#2f9262"
+green3  = "#1e6543"   # dark
+yellow1 = "#cbb387"   # light -- sand
+yellow2 = "#ae8c3d"   #          gold
+yellow3 = "#7a601e"   # dark  -- ochre
+purple1 = "#a494c1"   # light
+purple2 = "#816ab7"
+purple3 = "#5a4887"   # dark
+grey1   = "#ffffff"   # light -- paper
+grey2   = "#d2d2d3"
+grey3   = "#333333"   # dark  -- ink
 
 [light]
-bg      = "#fafafa"   # page background
-card    = "#ffffff"   # cards, figure paper
-soft    = "#f6f8fa"   # table heads, subtle fills
-fg      = "#24292f"   # text
-muted   = "#57606a"   # secondary text
-faint   = "#8b949e"   # tertiary text, captions
-line    = "#e2e5e9"   # rules, hairlines
-accent  = "#0366d6"   # links, emphasis
-warn    = "#9a6700"
-warn-bg = "#fff8c5"
-bad     = "#a40e26"
-bad-bg  = "#ffebe9"
+bg      = "grey2 +88% white"    # page background
+card    = "grey1"              # cards, figure paper
+soft    = "blue1 +90% white"   # table heads, subtle fills
+fg      = "blue3 +35% black"   # text,                       12.59:1 on bg
+muted   = "blue1 +25% black"   # secondary text,              4.57:1
+faint   = "blue1 +6% black"    # captions,                    3.04:1
+line    = "grey2"              # rules, hairlines
+accent  = "blue2 +4% black"    # links, emphasis,             4.52:1
+good    = "green3"             #                              6.71:1
+good-bg = "green1 +90% white"
+warn    = "yellow3"            #                              5.72:1
+warn-bg = "yellow3 +88% white"
+bad     = "warm3"              #                              6.90:1
+bad-bg  = "warm3 +88% white"
 
 [dark]
-bg      = "#0d1117"
-card    = "#161b22"
-soft    = "#1c2128"
-fg      = "#e6edf3"
-muted   = "#9198a1"
-faint   = "#6e7681"
-line    = "#30363d"
-accent  = "#4493f8"
-warn    = "#d29922"
-warn-bg = "#272115"
-bad     = "#f85149"
-bad-bg  = "#25171c"
+bg      = "blue3 +90% black"
+card    = "blue3 +84% black"
+soft    = "blue3 +78% black"
+fg      = "blue1 +80% white"   #                             16.92:1 on bg
+muted   = "blue1 +25% white"   #                              9.56:1
+faint   = "blue1"              #                              7.11:1
+line    = "blue3 +55% black"
+accent  = "blue2 +35% white"   #                              7.98:1
+good    = "green1"             #                              9.03:1
+good-bg = "green3 +72% black"
+warn    = "yellow2 +15% white" #                              7.75:1
+warn-bg = "yellow2 +86% black"
+bad     = "warm3 +25% white"   #                              5.05:1
+bad-bg  = "warm3 +86% black"
 
-# Meaning, not decoration. Same in light and dark (figures keep their own white paper).
+# What a diagram is drawn in when nothing says otherwise. One value for a
+# tensor's outline and for an index, because a tensor is not a different kind of
+# mark from the index it carries; a preset that means something by its colour
+# says so for itself.
+[figure]
+stroke = "grey3"
+
+# Meaning, not decoration, and a step of a scale taken whole. Same in light and
+# dark (figures keep their own white paper).
 [physics]
-ele      = "#2e6fba"   # electrons, electron density, continuous (position) legs
-nuc      = "#c96a1b"   # nuclei
-coef     = "#57606a"   # coefficient arrays (tensor boxes), finite-index legs
-exchange = "#a40e26"   # exchange: the term, the hole, the sign under a swap
-exact    = "#24292f"   # exact / reference results
+ele      = "blue2"   # electrons, electron density, continuous (position) legs
+nuc      = "warm2"   # nuclei
+coef     = "blue1"   # coefficient arrays (tensor boxes), finite-index legs
+exchange = "warm3"   # exchange: the term, the hole, the sign under a swap
+exact    = "blue3"   # exact / reference results
+
+# Matrix-product states. The gauge is read from colour as much as from the
+# direction a triangle points, so the two canonical forms do not share one:
+# they take step 1 of the two given scales, which makes them a pair. An
+# operator on the chain stays neutral so that the state reads through it, and a
+# gate takes a hue nothing else does, because it is neither.
+[mps]
+canl   = "blue1"    # left-canonical: isometric from the left
+canr   = "warm1"    # right-canonical: isometric from the right
+centre = "green1"   # the orthogonality centre, on a site or on a bond
+mpo    = "grey2"    # operator tensors sitting on the chain
+gate   = "purple1"  # a gate over one site or several

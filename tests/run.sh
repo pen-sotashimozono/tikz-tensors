@@ -55,7 +55,25 @@ done
 python3 tests/coverage.py || fail=1
 
 for pdf in "$OUT"/lualatex/*.pdf; do
-  pdftoppm -r 150 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
+  # 180 dpi, because poppler's Splash backend snaps a thin axis-aligned stroke
+  # to whole pixels without anti-aliasing: where a stroke is not a whole number
+  # of them, two strokes of the same width round differently by where each
+  # lands. At 150 dpi 0.8pt is 1.67 px and the five legs of 05-centre came out
+  # 0.8, 0.8, 1.6, 1.6, 1.6 in ink -- half of them twice the weight of the
+  # others, plainly visible. 0.8pt is whole at every multiple of 90, and
+  # measured there the legs are uniform (180, 270, 360) and ragged between
+  # (150, 200, 300). 180 is the cheapest of them: 2 px a stroke, references
+  # 330K against 228K, compare.py about three seconds slower.
+  #
+  # This fixes the widths at 0.8pt, not the snapping: a width that is not whole
+  # at 180 is ragged again, and the demo of `tn line width' is 1.8pt (4.5 px),
+  # so its two strokes differ by a pixel here. That is left alone on purpose --
+  # the artefact belongs to the renderer and the figure should not be chosen to
+  # flatter it. pdftocairo anti-aliases and avoids
+  # the whole business, but its anti-aliasing differs between poppler versions
+  # and references made here then failed against the runner's; this test exists
+  # to be reproducible, and snapping is.
+  pdftoppm -r 180 -png -singlefile "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf)"
 done
 python3 tests/compare.py "$OUT/rendered" "$@" || fail=1
 exit "$fail"

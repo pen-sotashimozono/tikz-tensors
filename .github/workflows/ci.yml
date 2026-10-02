@@ -7,7 +7,9 @@ name: CI
 #   test     does everything compile with LuaLaTeX and pdfLaTeX, and look as it did
 # The rendered pages (and a diff image for any that changed) are uploaded as
 # the `rendered` artifact, so a change in appearance can be looked at, not
-# only counted.
+# only counted. On a pull request the pages this branch draws differently are
+# posted as one comment on the PR -- the picture and the link to it -- which
+# later pushes replace, so the usual case needs no download and no detour.
 
 on:
   pull_request:
@@ -17,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -52,7 +55,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      # Deep, because the preview step below diffs against the base commit, and
+      # the default single-commit fetch does not have it -- the same reason the
+      # version job above asks for it.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: TeX-Live/setup-texlive-action@v4
         with:
           packages: |
@@ -80,3 +88,41 @@ jobs:
           name: rendered
           path: tests/out/rendered/
           if-no-files-found: ignore
+
+      # Only after tests/run.sh has passed, because the preview links this
+      # branch's committed reference images and those are the pages CI drew
+      # exactly when the comparison said so. The comment follows the shape the
+      # other repositories' preview workflows use: one sticky comment, found by
+      # its heading and replaced on each push.
+      - name: Collect the pages that changed
+        id: preview
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/preview.py --base "$BASE" --sha "$SHA" \
+                                     --repo "$GITHUB_REPOSITORY" > preview.md
+          cat preview.md >> "$GITHUB_STEP_SUMMARY"
+          { echo 'body<<PREVIEW_EOF'; cat preview.md; echo PREVIEW_EOF; } >> "$GITHUB_OUTPUT"
+
+      - name: Find the existing preview comment
+        id: find-comment
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: peter-evans/find-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Figure preview'
+
+      - name: Post / update the preview
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: ${{ steps.preview.outputs.body }}

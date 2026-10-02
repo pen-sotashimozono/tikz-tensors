@@ -6,8 +6,16 @@
 The names come from scripts/version.py's `api` (what the version check guards);
 a name counts as used when a file under tests/cases/ or examples/ mentions it.
 The two `tn swap <kind>` styles are drawn by \\tnswap[<kind>] (cont by default).
+A key that takes a value counts when it is used with one, hence the `=`, and a
+style named in a \\tnchain spec counts, hence the `/`.
 Colours and theme tokens are left out: tests/cases/styles.tex shows them as
 swatches, and theme.py --check keeps them in step with theme/tokens.toml.
+
+The match is textual, which has one consequence worth knowing: where a style
+and a colour share a name (coef, centre, mpo, gate), the colour's swatch
+satisfies the style. `gate' is like that -- it is applied by \\tngate and is
+genuinely drawn, but what the check finds is the name in the swatch list. For
+those four the check prompts rather than proves.
 """
 import pathlib
 import re
@@ -28,7 +36,7 @@ for name in sorted(version.api()):
     ident = ident.strip("'")
     if what == "style":
         used = (ident.split()[-1] in kinds) if ident.startswith("tn swap ") \
-            else re.search(rf"[\[,\s]{re.escape(ident)}\s*[\],]", text)
+            else re.search(rf"[\[,\s]{re.escape(ident)}\s*[\],=/]", text)
     elif what == "command":
         used = re.search(re.escape(ident) + r"(?![A-Za-z])", text)
     else:

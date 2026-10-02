@@ -1,0 +1,48 @@
+% A finite matrix product state in mixed canonical form, with a two-site gate
+% about to be applied: one step of TEBD. The triangles say which tensors are
+% isometric -- canl to the left of the centre, canr to the right -- and the
+% arrows on the bonds say which way the gauge runs. The centre is the one
+% tensor that is not isometric, and it is also the one drawn as a diamond:
+% shape and colour both single it out, which is the point, because the norm and
+% every local expectation value can be read off it alone.
+%
+% One line is written down and everything else is placed on it or measured from
+% it; a drop is a length, not a height to be worked out. The line is longer than
+% the tensors strictly need: a bond meets a triangle at its apex, which is a
+% point, and at a tighter pitch the arrowhead has nowhere to sit but against
+% that tip. Widening the line is the one knob that fixes it without touching
+% either the shape or the notation.
+%
+% \tnchain spreads the tensors along that line and settles, once, where each
+% one's physical index leaves it; the indices drop by a stated amount rather
+% than to a stated height; the gate is placed on two of them and sized from
+% them; the labels are put where the things they label are. There is no second
+% coordinate in the picture, so respacing or lengthening the chain is one edit.
+%
+% The gate has no legs of its own. The indices run past it and a node covers an
+% edge, so it interrupts them -- which is what applying a gate to those indices
+% looks like, and is one fewer thing to keep in step.
+%
+% Finite, so the chain simply stops: the outer indices are open, with nothing at
+% the far end, and drawn inward so their arrowheads run toward the centre.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[x=1.35cm]
+  \tnchain{S}{(0,0)}{(5.2,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
+                            canr/$B$/r, canr/$B$/r}
+
+  % bonds, carrying the gauge direction: everything points at the centre
+  \tnbond[gauge]{(S1) -- (S2)}  \tnbond[gauge]{(S2) -- (S3)}
+  \tnbond[gauge]{(S5) -- (S4)}  \tnbond[gauge]{(S4) -- (S3)}
+  \tnbond[gauge]{([xshift=-5mm]S1.west) -- (S1)}
+  \tnbond[gauge]{([xshift=5mm]S5.east) -- (S5)}
+  \tnmid{S1}{S2}{$D$}
+
+  % the physical indices, then the gate on two of them
+  \tnlegs{16mm}{S1-leg,S2-leg,S3-leg,S4-leg,S5-leg}
+  \tngate{U}{$e^{-i\,\delta t\,\hat h}$}{S3-leg,S4-leg}{7mm}
+  \foreach \i in {1,...,5} \tnput[below]{S\i-leg-tip}{$n_{\i}$};
+\end{tikzpicture}
+\end{document}
