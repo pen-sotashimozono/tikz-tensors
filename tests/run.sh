@@ -21,7 +21,7 @@ cd "$ROOT"
 OUT=tests/out
 rm -rf "$OUT"
 mkdir -p "$OUT/rendered"
-export TEXINPUTS="$ROOT/tex//:${TEXINPUTS:-}"
+export TEXINPUTS="$ROOT/tex//:$ROOT/examples/conventions//:${TEXINPUTS:-}"
 VERSION="$(python3 scripts/version.py)"
 fail=0
 

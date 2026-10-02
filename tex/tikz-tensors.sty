@@ -3,62 +3,29 @@
 %%
 %%   \usepackage{tikz-tensors}
 %%
-%% A network is nodes and edges, and those are the two things the package
-%% defines before anything else: `tn node' is a tensor, `tn edge' is an index,
-%% `tn fill' is the solid colour convention. A diagram can be drawn out of those
-%% three alone, with no notion of what is a state and what is an operator --
-%% which is the normal case, since most networks have no such distinction to
-%% make. Everything named below is a preset built on them, for the cases that do.
+%% A network is nodes and edges, and the package defines what they look like and
+%% where they go -- never what they mean. `tn node' is a tensor, `tn edge' is an
+%% index, `tn fill' is the solid colour convention, and every other style is a
+%% shape or a line:
+%%   tn box, tn circle, tn capsule, tn rounded    a tensor's outline
+%%   tn triangle right, tn triangle left           a triangle pointing that way
+%%   tn diamond                                    a diamond
+%%   tn wide, tn tall, tn small                    the same shape, resized
+%%   tn frame                                      a dashed box around nodes
+%%   tn edge, tn wavy, tn arrow                    an index: plain, wavy, or with
+%%                                                 an arrowhead (`tn arrows' turns
+%%                                                 every arrowhead off)
+%%   tn label                                      the text on an index
 %%
-%% The notation distinguishes what a leg carries:
-%%   cont   wavy leg, electron colour: a continuous argument (r, r_1, x)
-%%   disc   plain line: a finite index (i, mu, a bond)
-%% and what a node is:
-%%   fn, fnwide, fntall      circle / rounded box, electron colour: a function of position
-%%   coef, coefwide, coeftall square / box: an array of numbers (C, c, A^n)
-%%   op, opwide              square-cornered box in ink: an operator (H, the MPO)
-%%   frame                   dashed box around nodes that contract to one object
-%% Joining two legs means summing over that index. So the expansion
-%%   psi(r1, r2) = sum_ij C_ij phi_i(r1) phi_j(r2)
-%% is a coefwide C with two disc legs down to two fn phi, each with a cont leg:
-%% the numbers sit on the basis functions, which sit on space.
+%% What a shape stands for -- that a circle on a wavy leg is a function of
+%% position, that a triangle is an isometry and a diamond the orthogonality
+%% centre -- is a convention, and a convention belongs to whoever draws in it.
+%% Each user keeps theirs as a file of styles named for the meaning and built
+%% from these shapes -- a left-canonical tensor as `tn triangle right, tn
+%% fill=canl', a continuous argument as `tn wavy, draw=ele'.
 %%
-%% A matrix-product state needs more than that, since its tensors are not all the
-%% same kind of object:
-%%   canl, canr   left- and right-canonical. The triangle points the way the
-%%                gauge runs AND carries its own colour, so the two are told
-%%                apart twice
-%%   centre       the orthogonality centre on a site: a diamond, the one tensor
-%%                of the chain that is neither isometric nor shaped like its
-%%                neighbours, and the one carrying a physical leg of its own
-%%   centrebond   the same diamond, smaller, for the centre on a bond: the
-%%                Schmidt values between two sites, which carry no physical leg.
-%%                One SVD takes either form to the other, and the notation has to
-%%                be able to say both, so the shape is shared and only the slot
-%%                it sits in differs
-%%   mpo          an operator tensor sitting on the chain, neutral so that the
-%%                state reads through it
-%%   gate         a box over one site or several (a Trotter step, one term of an
-%%                MPO). \tngate sizes and places it from the indices themselves,
-%%                so no width is written by hand, and it needs no legs
-%%   gauge        a disc that carries a direction, as an arrowhead. A bond does
-%%                not have one in general -- it is an index, and an index is
-%%                just an index -- so the plain `disc' is the bond, and `gauge'
-%%                is for a picture where the direction is known and is part of
-%%                what is being said: which way the gauge runs in a canonical
-%%                form. `tn arrows' is on by default and turns those arrowheads
-%%                off, for the same picture with the direction left unstated
-%% The triangles are the usual convention and they are load-bearing: a reader who
-%% cannot see which tensors are isometric cannot tell a canonical form from a
-%% picture of one. Shape carries the meaning on its own and colour repeats it, so
-%% the diagrams survive being printed in grey.
-%%
-%% Square or circle is this package's own distinction, and it is only worth
-%% keeping where both kinds are on the page. A diagram with no functions in it --
-%% a plain tensor network -- has nothing to confuse, and much of the literature
-%% draws every tensor there as a circle. `tn round' is that convention: add it to
-%% a node style and the shape is a circle, the colour and meaning unchanged.
-%% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
+%% examples/conventions/notation.tex is one such file, the one the examples in
+%% this repository are drawn in; it is not part of the package.
 %%
 %% Every edge is drawn under the nodes, by \tnbond, \tnlegs and
 %% \tnswap: a tensor covers the index it carries whatever order the file is
@@ -75,27 +42,31 @@
 %% two ways. \tnlegs and \tngate take points, and a label is placed by \tnput
 %% and \tnmid in terms of what it labels rather than as a coordinate.
 %%
-%% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
+%% Exchanging two legs is \tnswap (a sign in the text, not in the drawing).
 %%
 %% A figure of an algorithm is drawn on a stack: a grid of sites across and
 %% named layers down (ket, op, bra), at one pitch the package owns. \tnstack
-%% places it, with an `env' -- the rest of the network, contracted -- at either
-%% end; \tnlayer fills a layer's slots; \tnconnect draws every index the grid
-%% implies; \tnopen adds the open ones; \tneq writes an equals sign and moves
-%% on to the next stack. Nothing in such a figure is a length or a coordinate,
-%% and tests/lint.py holds the examples to that (docs/roadmap.md).
+%% places it, with an environment block at either end; \tnlayer fills a
+%% layer's slots; \tnconnect draws every index the grid implies; \tnopen adds
+%% the open ones; \tneq writes an equals sign and moves on to the next stack.
+%% Nothing in such a figure is a length or a coordinate, and tests/lint.py
+%% holds the examples to that (docs/roadmap.md).
+%%
+%% Two styles are named for the command that draws them rather than for a
+%% shape, because the command needs something to draw with and a convention
+%% needs somewhere to colour it: `tn gate' (\tngate) and `tn env' (the blocks of
+%% \tnstack). Both are plain outlines here.
 %%
 %% Outlines and legs are one stroke, `tn line`, whose width is `tn line width`
 %% (0.8pt) -- settable on a picture, a scope or a node, and usable directly on a
 %% path of the caller's own.
 %%
-%% The style names are short and unprefixed, which has one consequence worth
-%% knowing: where a style and a colour share a name (coef, centre, mpo, gate,
-%% env), an option written bare -- \fill[gate] -- is resolved as the style, never the
-%% colour. Say which you mean: color=gate, or draw=/fill=.
-%% Colours (ele for continuous legs and functions, the page tokens tt<name>, and
-%% the theme's other named colours) come from tikz-tensors-colors.tex, generated
-%% from theme/tokens.toml. The version is the \ProvidesPackage line below.
+%% Colours (the page tokens tt<name>, and the theme's other named colours) come
+%% from tikz-tensors-colors.tex, generated from theme/tokens.toml. Where a
+%% convention gives a style the name of a colour (canl, centre, gate, ...), an
+%% option written bare -- \fill[gate] -- is resolved as the style, never the
+%% colour. Say which you mean: color=gate, or draw=/fill=. The version is the
+%% \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{tikz-tensors}[2026/10/02 v0.5.0 tensor-network diagrams in one theme]
 
@@ -129,7 +100,6 @@
 \tikzset{
   tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
   tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
-  tn round/.style     = {circle},
   tn arrows/.is if    = tnarrows,
 }
 
@@ -156,7 +126,7 @@
 % meets the outside of the stroke rather than overlapping it -- but `minimum
 % size' already counts the stroke, so the border IS the outside of it, and the
 % half width is added to a clearance that is already there. Measured at 700 dpi
-% on two canl triangles: a one-pixel gap between the tensor and its bond. tn fill is the
+% on two triangles: a one-pixel gap between the tensor and its bond. tn fill is the
 % solid convention -- a step of a scale, outlined in a darker shade of itself --
 % and it keeps that default outline, so the colour of a tensor is its fill and
 % every outline in a diagram is the one ink -- which is the rule holding in a
@@ -171,50 +141,38 @@
   tn edge/.default = stroke,
 }
 
-% ---- presets: what a tensor is, and what its index carries -------------------
+% ---- shapes ------------------------------------------------------------------
+% Each shape carries the size at which it reads as the same weight as the
+% others -- a triangle has to be larger than a box to hold a label, a diamond a
+% little less -- and paper fill, so that an index drawn to its centre is covered
+% by it. A fill of a convention's own replaces the paper.
 \tikzset{
-  fn/.style       = {tn node, circle, draw=ele, fill=ele!12, minimum size=8mm},
-  fnwide/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=17mm,
-                     minimum height=8mm},
-  fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
-                     minimum height=17mm},
-  coef/.style     = {tn node, rectangle, fill=black!6, minimum size=7mm},
-  coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
-  coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {tn node, rectangle, fill=white,
-                     minimum size=7mm, inner sep=1pt},
-  opwide/.style   = {op, minimum width=17mm},
-  frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},
-  cont/.style     = {tn edge=ele, decorate,
-                     decoration={snake, amplitude=0.55mm, segment length=2.4mm,
-                                 pre length=0.4mm, post length=0.8mm}},
-  disc/.style     = {tn edge},
-  leg/.style      = {font=\small, inner sep=2pt},
-  tn swap cont/.style = {tn edge=ele},
-  tn swap disc/.style = {tn edge},
-}
-
-% ---- presets: matrix-product states ------------------------------------------
-% Solid fills, because an MPS diagram is mostly tensors: at the pale fills the
-% presets above use, a ten-site chain turns into ten outlines and the eye finds
-% no site. The labels stay ink rather than reversing to white -- white on these
-% fills measures 2.2--3.1:1 against the 7--9:1 ink gives.
-\tikzset{
-  canl/.style       = {tn node, tn fill=canl, regular polygon,
-                       regular polygon sides=3, shape border rotate=-90,
-                       minimum size=10.5mm, font=\small},
-  canr/.style       = {canl, tn fill=canr, shape border rotate=90},
-  centre/.style     = {tn node, tn fill=centre, diamond, minimum size=9.5mm,
-                       font=\small},
-  centrebond/.style = {centre, minimum size=6mm, font=\scriptsize},
-  mpo/.style        = {tn node, tn fill=mpo, rectangle, rounded corners=1.2mm,
-                       minimum size=7.5mm, inner sep=1pt},
-  gate/.style       = {tn node, rectangle, rounded corners=1.2mm,
-                       draw=stroke, fill=gate!25, minimum size=7.5mm,
-                       inner sep=3pt, font=\small},
-  gauge/.style      = {disc, postaction={decorate}, decoration={markings,
-                       mark=at position 0.58 with
-                         {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn box/.style            = {tn node, rectangle, fill=grey1, minimum size=7mm,
+                              inner sep=1pt},
+  tn circle/.style         = {tn node, circle, fill=grey1, minimum size=8mm},
+  tn capsule/.style        = {tn node, rectangle, rounded corners=3.5mm,
+                              fill=grey1, minimum size=8mm},
+  tn rounded/.style        = {tn node, rectangle, rounded corners=1.2mm,
+                              fill=grey1, minimum size=7.5mm, inner sep=1pt},
+  tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
+                              shape border rotate=-90, fill=grey1,
+                              minimum size=10.5mm, font=\small},
+  tn triangle left/.style  = {tn triangle right, shape border rotate=90},
+  tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
+                              font=\small},
+  tn wide/.style           = {minimum width=17mm},
+  tn tall/.style           = {minimum height=17mm},
+  tn small/.style          = {minimum size=6mm, font=\scriptsize},
+  tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
+  tn wavy/.style           = {tn edge, decorate,
+                              decoration={snake, amplitude=0.55mm,
+                                          segment length=2.4mm, pre length=0.4mm,
+                                          post length=0.8mm}},
+  tn arrow/.style          = {tn edge, postaction={decorate},
+                              decoration={markings, mark=at position 0.58 with
+                                {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn label/.style          = {font=\small, inner sep=2pt},
+  tn gate/.style           = {tn rounded, inner sep=3pt, font=\small},
 }
 
 % \tnbond[<style>]{<path>}
@@ -222,12 +180,11 @@
 % end wherever it needs to -- on a node, on a coordinate, or on nothing:
 %   \tnbond{(A1) -- (A2)}             a bond between two tensors
 %   \tnbond{(A3) -- ++(0.55,0)}       an open index, with no other end
-%   \tnbond[gauge]{(A1) -- (A2)}      one whose direction is known
-%   \tnbond[cont]{(p.south) -- ++(0,-0.9)}
+%   \tnbond[tn arrow]{(A1) -- (A2)}   one with an arrowhead
+%   \tnbond[tn wavy]{(p.south) -- ++(0,-0.9)}
 % Nothing here needs a tensor at the far end, because an index that leaves the
-% diagram is an index like any other. The default is `disc', an index with no
-% direction, because that is what an index is unless something says otherwise.
-\newcommand{\tnbond}[2][disc]{%
+% diagram is an index like any other. The default is `tn edge', a plain line.
+\newcommand{\tnbond}[2][tn edge]{%
   \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
 % \tnchain[<pitch>]{<prefix>}{<from>}{<to>}{<style/label/side, ...>}
@@ -237,13 +194,14 @@
 % the node <prefix>i and the coordinate <prefix>i-leg, the point where its
 % physical index leaves it and the point everything else connects to.
 %
-%   \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
+%   \tnchain{S}{(0,0)}{(4,0)}{tn triangle right/$A$/l, tn diamond/$C$/c,
+%                             tn triangle left/$B$/r}
 %
 % Two coordinates for a row, and none per site: a row that is respaced, or
 % turned, or given another tensor, is one line edited in one place.
 %
-% <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
-% or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
+% <side> is where the index leaves: `l' and `r' are the bottom corner of a
+% triangle's flat side, pointing right and pointing left (corner 3 and corner 2 -- the two are one shape
 % at a 180 degree turn, so no single index names both, and `south west' is on
 % the edge above the vertex rather than on it), and `c' is the node's own south,
 % which is what a box, a circle or a diamond takes.
@@ -252,7 +210,7 @@
 % outer sep=0pt. With TikZ's default, outer sep is half a line width and it is
 % added to every anchor as well as to the border, so a corner anchor sits that
 % far outside the stroke and an index placed on it runs beside the tensor's own
-% edge instead of along it. Measured on a canl triangle: corner 3 at -7.86884pt
+% edge instead of along it. Measured on a triangle pointing right: corner 3 at -7.86884pt
 % with the default and -7.46884pt without, exactly half a width apart.
 \def\tn@side@l{corner 3}
 \def\tn@side@r{corner 2}
@@ -286,7 +244,7 @@
 % distance that matters is the gap and working the centres out by hand is both
 % tedious and the first thing to go stale.
 %
-%   \tnrow{P}{(0,0)}{env/$L$/c, mpo/$W$/c, mpo/$W$/c, envr/$R$/c}
+%   \tnrow{P}{(0,0)}{tn box/$A$/c, tn rounded/$W$/c, tn diamond/$C$/c}
 %
 % Site i becomes the node <prefix>i and the coordinate <prefix>i-leg, exactly as
 % in \tnchain.
@@ -325,7 +283,7 @@
   \foreach \tn@s in {#1}{%
     \pgfextracty{\tn@y}{\pgfpointanchor{\tn@s}{center}}%
     \ifdim\tn@y<\tn@lo \global\tn@lo=\tn@y \fi}}
-\newcommand{\tnlegs}[3][disc]{%
+\newcommand{\tnlegs}[3][tn edge]{%
   \tn@lowy{#3}%
   \pgfmathsetlength{\pgf@yb}{\tn@lo-(#2)}\edef\tn@bot{\the\pgf@yb}%
   \begin{pgfonlayer}{tnedges}%
@@ -357,7 +315,7 @@
   \edef\tn@wd{\the\pgf@xb}\edef\tn@md{\the\pgf@xc}%
   \tn@lowy{#4}%
   \pgfmathsetlength{\pgf@yb}{\tn@lo-(#5)}%
-  \node[gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
+  \node[tn gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
 }
 \makeatother
 
@@ -368,23 +326,24 @@
 % because a coordinate written for a label is a coordinate that has to be
 % re-found every time the thing it labels moves. <placement> is TikZ's: above,
 % below, left, right, center, and any of them with a distance.
-\newcommand{\tnput}[3][above]{\node[leg, #1] at (#2) {#3};}
-\newcommand{\tnmid}[4][above]{\node[leg, #1] at ($(#2)!0.5!(#3)$) {#4};}
+\newcommand{\tnput}[3][above]{\node[tn label, #1] at (#2) {#3};}
+\newcommand{\tnmid}[4][above]{\node[tn label, #1] at ($(#2)!0.5!(#3)$) {#4};}
 
-% \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
+% \tnswap[<style>]{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
-% exchanged: short straight stubs of <kind> (cont or disc) at both ends, joined
-% by a smooth crossing (a snake decoration on a diagonal reads as noise).
+% exchanged: short straight stubs in <style> at both ends, joined by a smooth
+% crossing in the same style undecorated (a wavy line on a diagonal reads as
+% noise).
 \makeatletter
-\newcommand{\tnswap}[4][cont]{%
+\newcommand{\tnswap}[4][tn edge]{%
   \begin{pgfonlayer}{tnedges}%
     \path #2 coordinate (tn@l) #3 coordinate (tn@r);
     \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
     \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
     \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
     \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
-    \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
-    \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+    \draw[#1, decorate=false] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
+    \draw[#1, decorate=false] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
   \end{pgfonlayer}%
 }
 \makeatother
@@ -419,13 +378,11 @@
 \def\tn@reach#1{\tn@len\tn@e{#1}\ifdim\tn@e>\tn@right \global\tn@right=\tn@e\fi}
 \def\tn@line#1#2#3#4#5{\tnbond[#1]{(#2,#3) -- (#4,#5)}}
 
-% The environment: the rest of the network, already contracted -- the L and R
-% blocks of DMRG and TDVP, the fixed points of a uniform state. It spans every
-% layer of its stack and has one index in each. Light purple, a hue no tensor
-% of the state has, because it is not a tensor of the state.
+% The block at either end of a stack: the rest of the network, already
+% contracted -- the L and R of an effective Hamiltonian, the fixed points of a
+% uniform state. It spans every layer of its stack and has one index in each.
 \tikzset{
-  env/.style = {tn node, rectangle, tn fill=env!25, minimum width=\tn@envw,
-                font=\small},
+  tn env/.style = {tn box, minimum width=\tn@envw, font=\small},
 }
 
 % \tnstack[left=<label>, right=<label>]{<name>}{<sites>}{<layers>}
@@ -458,7 +415,7 @@
   \tn@set{#2@x0}{\tn@xz}%
   \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@pitch+\tn@slot}%
   \ifx\tn@envl\@empty\else
-    \node[env, minimum height=\tn@h] (#2-left) at (\tn@xz,0) {\tn@envl};
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,0) {\tn@envl};
   \fi
   \ifx\tn@envr\@empty
     \tn@set{#2@hasr}{0}%
@@ -466,7 +423,7 @@
   \else
     \tn@set{#2@hasr}{1}%
     \tn@colx{#2}{#3+1}%
-    \node[env, minimum height=\tn@h] (#2-right) at (\tn@cx,0) {\tn@envr};
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,0) {\tn@envr};
     \tn@reach{\tn@cx+\tn@envw/2}%
   \fi
 }
@@ -526,7 +483,7 @@
 % border that tensor would have. That end is <stack>-left-<layer> or
 % <stack>-right-<layer>. An index that leaves the grid anywhere else is open,
 % and is \tnopen's.
-\newcommand{\tnconnect}[2][disc]{%
+\newcommand{\tnconnect}[2][tn edge]{%
   \edef\tn@ls{\tn@get{#2@layers}}%
   \pgfmathtruncatemacro\tn@nn{\tn@get{#2@n}}%
   \foreach \tn@l in \tn@ls{%
@@ -581,7 +538,7 @@
 % the tensor in the next slot would have. Its end is <node>-<direction>; a
 % tensor across several slots has one up or down per site,
 % <node>-<direction>-1, -2, ...
-\newcommand{\tnopen}[3][disc]{%
+\newcommand{\tnopen}[3][tn edge]{%
   \foreach \tn@nm in {#3}{%
     \edef\tn@s{\tn@get{n@\tn@nm @s}}\edef\tn@l{\tn@get{n@\tn@nm @l}}%
     \edef\tn@a{\tn@get{n@\tn@nm @a}}\edef\tn@b{\tn@get{n@\tn@nm @b}}%

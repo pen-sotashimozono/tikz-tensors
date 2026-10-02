@@ -2,18 +2,19 @@
 % occupation indices n_i (disc) down -- a finite basis, so no wavy legs.
 %
 % The same chain twice, in the two conventions a tensor is drawn in. Square is
-% this package's default, because elsewhere it tells an array of numbers from a
+% this notation's default, because elsewhere it tells an array of numbers from a
 % function of position, which is a circle. Here there are no functions, so there
 % is nothing to tell apart, and a great deal of the literature draws every
-% tensor of a network as a circle -- that is the lower row, which is `tn round`
+% tensor of a network as a circle -- that is the lower row, which is `coef, circle`
 % and nothing else: same style, same colour, same meaning.
 %
 % Shape does carry meaning once a chain is in canonical form, where a triangle
 % says isometric and a diamond says centre (04, 05). That is a different claim
-% from this one, and it is not what `tn round` touches.
+% from this one, and it is not what `circle` touches.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
+\input{notation}
 \begin{document}
 \begin{tikzpicture}
   \foreach \i/\l in {1/1,2/2,3/3,5/N} {
@@ -27,7 +28,7 @@
 
   \begin{scope}[yshift=-2.4cm]
     \foreach \i/\l in {1/1,2/2,3/3,5/N} {
-      \node[coef, tn round] (B\i) at (1.4*\i,0) {$A$};
+      \node[coef, circle] (B\i) at (1.4*\i,0) {$A$};
       \tnbond[disc]{(B\i) -- ++(0,-0.9)} \node[leg, below] at (B\i |- 0,-0.9) {$n_{\l}$};
     }
     \tnbond[disc]{(B1) -- (B2)} \tnbond[disc]{(B2) -- (B3)}

@@ -12,31 +12,45 @@ figures, notes and slides.
 | ![expansion](examples/out/01-expansion.svg) | ![swap](examples/out/02-swap.svg) |
 | ![mps](examples/out/03-mps.svg) | |
 
-## The notation
+## Shapes, not meanings
 
-What a **leg** carries:
+The package draws shapes and lines and places them; it never says what they
+stand for.
 
-| style | drawn as | means |
-|---|---|---|
-| `cont` | wavy, electron colour | a continuous argument (**r**, **r**₁, x) |
-| `disc` | plain line | a finite index (i, μ, a bond) |
+| style | drawn as |
+|---|---|
+| `tn node` | the bare tensor: one stroke, no fill, 9 mm |
+| `tn box`, `tn circle`, `tn capsule`, `tn rounded` | an outline, paper-filled |
+| `tn triangle right`, `tn triangle left` | a triangle pointing that way |
+| `tn diamond` | a diamond |
+| `tn wide`, `tn tall`, `tn small` | the same shape, resized |
+| `tn fill=<colour>` | solid fill, outline in ink |
+| `tn frame` | a dashed box around nodes |
+| `tn edge`, `tn wavy`, `tn arrow` | an index: plain, wavy, with an arrowhead |
+| `tn label` | the text on an index |
+| `tn gate`, `tn env` | what `\tngate` and the ends of a stack draw with |
 
-What a **node** is:
+What a shape *means* — that a circle on a wavy leg is a function of position, a
+triangle an isometry, a diamond the orthogonality centre — is a **notation**,
+and a notation belongs to whoever draws in it. Keep yours as a file of styles
+named for the meaning and built from the shapes, and `\input` it after the
+package:
 
-| style | drawn as | means |
-|---|---|---|
-| `fn`, `fnwide`, `fntall` | circle / rounded box, electron colour | a function of position (ψ, φ) |
-| `coef`, `coefwide`, `coeftall` | square / box, grey | an array of numbers (C, c, A) |
-| `op`, `opwide` | square-cornered box, ink | an operator (Ĥ, an MPO) |
-| `frame` | dashed box | nodes that contract to one object |
+```latex
+\tikzset{
+  canl/.style = {tn triangle right, tn fill=canl},   % left-canonical
+  cont/.style = {tn wavy, draw=ele},                 % a continuous argument
+}
+```
 
-Joining two legs sums over that index. The expansion
-ψ(**r**₁, **r**₂) = Σ C_ij φ_i(**r**₁) φ_j(**r**₂) is a `coefwide` C on two `fn` φ,
-each with a `cont` leg: **the numbers sit on the basis functions, which sit on
-space.** A finite-basis object (an MPS over occupation numbers) has no wavy legs.
+[`examples/conventions/notation.tex`](examples/conventions/notation.tex) is the
+one the examples here are drawn in: `fn` a function of position on `cont` wavy
+legs, `coef` an array, `op` an operator, `canl`/`canr`/`centre` the canonical
+form, `mpo`, `gate`, `disc` and `gauge`. It is an example of a notation, not
+part of the package.
 
 A figure of an algorithm is drawn on a **stack**: n sites across and named
-layers down, at one pitch the package owns, with an `env` (the rest of the
+layers down, at one pitch the package owns, with a block (the rest of the
 network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 ```latex
@@ -52,7 +66,7 @@ index runs through. `\tneq[$\lambda$]` writes an equals sign and the next
 stack goes after it. `tests/lint.py` holds the examples to these rules
 (`docs/roadmap.md`).
 
-Exchanging two fermion legs: `\tnswap[cont|disc]{<left top>}{<right top>}{<drop>}`
+Exchanging two fermion legs: `\tnswap[<edge style>]{<left top>}{<right top>}{<drop>}`
 draws the crossing (the sign goes in the equation, as in example 02).
 
 Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
@@ -90,9 +104,9 @@ figures. A figure page is a `standalone` document:
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
-  \node[fn] (p) at (0,0) {$\varphi$};
-  \draw[cont] (p) -- ++(0,-1) node[leg, below] {$\mathbf r$};
-  \draw[disc] (p) -- ++(-1,0) node[leg, left] {$i$};
+  \node[tn circle] (p) at (0,0) {$\varphi$};
+  \tnbond[tn wavy]{(p) -- ++(0,-1) node[tn label, below] {$\mathbf r$}}
+  \tnbond{(p) -- ++(-1,0) node[tn label, left] {$i$}}
 \end{tikzpicture}
 \end{document}
 ```

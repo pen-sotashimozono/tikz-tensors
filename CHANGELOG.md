@@ -22,14 +22,48 @@ on. An open index ends at the border an absent tensor of the standard size
 would have, so the gap in a picture of H_eff is the shape of the state that is
 missing from it, and none of those ends is written down.
 
-`env` is back, as something else. The one removed in v0.3.0 put an object at the
+**The package's styles are shapes, not meanings.** What a circle on a wavy
+leg stands for, or a triangle, or a diamond, is a notation, and a notation is
+its user's: the package now draws and places, and says nothing about meaning.
+
+| was | is |
+|---|---|
+| `coef`, `op` | `tn box` |
+| `fn` | `tn circle` |
+| `fnwide`, `fntall`, and `coefwide` … `opwide` | `tn capsule` or `tn box` with `tn wide` / `tn tall` |
+| `mpo` | `tn rounded` |
+| `gate` (the style \tngate draws with) | `tn gate` |
+| `canl`, `canr` | `tn triangle right`, `tn triangle left` |
+| `centre`, `centrebond` | `tn diamond`, `tn diamond, tn small` |
+| `frame` | `tn frame` |
+| `disc`, `cont`, `gauge` | `tn edge`, `tn wavy`, `tn arrow` |
+| `leg` | `tn label` |
+| `tn round`, `tn swap cont`, `tn swap disc` | gone (`circle`; \tnswap draws its crossing in its own style, undecorated) |
+
+Every old name is still available, as a style of
+`examples/conventions/notation.tex` — the notation this repository's examples
+are drawn in, and an example of the file a project keeps for its own. Each
+example `\input`s it after the package (`tests/run.sh` and
+`scripts/build-examples.sh` put `examples/conventions/` on `TEXINPUTS`), and
+every example renders exactly as before. A document that used the old names
+needs the same one line, or its own copy of that file. The default style of
+`\tnbond`, `\tnlegs`, `\tnconnect` and `\tnopen` is `tn edge`, and of
+`\tnswap` `tn edge` too (was `cont`).
+
+The shapes carry paper fill, so an index drawn to a tensor's centre is covered
+by it; `tn node` stays unfilled. Colours are unchanged, and the theme still
+names them by meaning (`ele`, `canl`, …): that is the theme's vocabulary, used
+by a notation to colour its styles.
+
+The block at the ends of a stack (`tn env`) is new, and so is an environment
+in the notation (`env` colour). It is not the `env` removed in v0.3.0, which put an object at the
 end of a finite chain, where the outer bonds carry nothing. This one is the rest
 of the network, contracted — the L and R of DMRG and TDVP, the fixed points of a
 uniform state — and it spans every layer of its stack with one index in each.
 
-Colours, within the ramp as it is: an environment is light purple (`env` =
-`purple1`, at the 25% fill the gate used to have), and a gate is now light
-yellow (`gate` = `yellow1`). Purple for the environment, which is large and
+Colours, within the ramp as it is: in the notation an environment is light
+purple (`env` = `purple1`, at the 25% fill the gate used to have), and a gate is
+now light yellow (`gate` = `yellow1`). Purple for the environment, which is large and
 should recede; yellow for the gate, which is the thing being applied. Every page
 with a gate on it is redrawn.
 

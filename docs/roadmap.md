@@ -44,8 +44,10 @@ do not exist yet and arrive in the linter with them.
    contains integers (site numbers, counts) and no `mm`, `cm`, `pt` or decimal.
    A figure that needs a length is a missing token, and the fix goes in `tex/`.
 2. **Every tensor has a role, and the role is the whole style.** No `fill=`,
-   `draw=`, `minimum ...=`, `shape=` in a figure. The role decides shape and
-   colour together (the rule `canl` already follows).
+   `draw=`, `minimum ...=`, `shape=` in a figure. The package names only
+   shapes; a role is a style of the author's notation file
+   (`examples/conventions/notation.tex` for this repository), which decides
+   shape and colour together. A figure names roles, never shapes and colours.
 3. **One command per concept.** No raw `\node`, `\draw`, `\path`, `scope`
    shifts, `\tikzset` or `\newcommand` in a figure. Labels go through `\tnput`
    and `\tnmid`. A pattern a figure needs twice is a command in `tex/`.

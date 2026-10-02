@@ -12,8 +12,10 @@ command or a token in tex/, never a number in the figure.
 
 What is checked, on the file with its comments and its math removed:
 
-  frame     the file is the one frame and nothing else: the fixed preamble,
-            one tikzpicture with no options, and the end
+  frame     the file is the one frame and nothing else: the fixed preamble
+            (the package, then the notation the figure is drawn in --
+            examples/conventions/notation.tex), one tikzpicture with no
+            options, and the end
   length    no length and no decimal: every distance is the package's
   coord     no literal coordinate (x,y): a tensor sits on a slot, not a point
   key       no key that sets what a role decides or moves a thing by hand
@@ -45,6 +47,7 @@ EXEMPT = {
 HEAD = [r"\documentclass[border=4pt]{standalone}",
         r"\usepackage{amsmath,amssymb}",
         r"\usepackage{tikz-tensors}",
+        r"\input{notation}",
         r"\begin{document}",
         r"\begin{tikzpicture}"]
 TAIL = [r"\end{tikzpicture}",
