@@ -9,8 +9,8 @@ figures, notes and slides.
 
 | | |
 |---|---|
-| ![expansion](examples/out/01-expansion.svg) | ![swap](examples/out/02-swap.svg) |
-| ![mps](examples/out/03-mps.svg) | |
+| ![expansion](tests/reference/01-expansion.svg) | ![swap](tests/reference/02-swap.svg) |
+| ![canonical](tests/reference/04-canonical.svg) | ![mera](tests/reference/19-mera.svg) |
 
 ## Shapes, not meanings
 
@@ -140,7 +140,8 @@ figures. A figure page is a `standalone` document:
 ```
 
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
-(SVG and PDF) with LuaLaTeX and `pdftocairo`.
+(SVG and PDF, gitignored) with LuaLaTeX and `pdftocairo`; the pictures in this
+README are the test references, which are the same SVGs.
 
 ## Where the real tikz-tensors is
 
@@ -210,16 +211,20 @@ CHANGELOG section filled in. Merging a new version to `main` tags it
 ## Tests
 
 ```sh
-tests/run.sh             # LuaLaTeX, pdfLaTeX, pdftoppm
-tests/run.sh --update    # accept a deliberate change in appearance
+tests/run.sh                   # all of it: LuaLaTeX, pdfLaTeX, the rules, the pictures
+tests/run.sh --update          # accept a deliberate change in appearance
+tests/run.sh compile lualatex  # one step: compile | rules | compare
 ```
 
 Every file in `examples/` and `tests/cases/` must compile with both engines
-without a warning, and every style and command must be drawn by one of them
-(`tests/coverage.py`). The LuaLaTeX pages are then rendered and compared with
-`tests/reference/*.png` (`tests/compare.py`, standard library only): a moved
-leg, a changed colour or a lost label fails, and a `-diff.png` marks it in red.
-In CI the rendered pages are the `rendered` artifact of the **CI** run.
+without a warning, every style and command must be drawn by one of them
+(`tests/coverage.py`), and every example must follow the figure rules
+(`tests/lint.py`). The LuaLaTeX pages are then turned into SVG by `pdftocairo`
+and compared with `tests/reference/*.svg` as drawings (`tests/compare.py`,
+standard library only): path by path and glyph by glyph, numbers within a
+quarter of a point. A moved leg, a changed colour or a lost label fails, and a
+`-diff.txt` lists what differs. In CI each of those is its own job, and the
+rendered pages are the `rendered` artifact of the run.
 `tests/cases/styles.tex` shows every style side by side — a new style is
 added there.
 
