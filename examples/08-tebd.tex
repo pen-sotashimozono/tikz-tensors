@@ -1,42 +1,61 @@
-% TEBD as it is actually applied: one gate at a time, up the chain and back
-% down.
+% TEBD as it is actually applied: one gate at a time, along the chain.
 %
-% The two-layer picture -- all the odd bonds, then all the even ones -- is the
-% same operator grouped by what commutes, and it is how the splitting is derived.
-% It is not how it is run. A gate acts on two sites, so it is applied on its own,
-% and the sweep goes bond by bond: (1,2), (2,3), (3,4), (4,5), and then the same
-% bonds in reverse. That sequence is its own reverse, which is what makes it
-% second order, and the picture shows the symmetry rather than asserting it.
+% The two-layer picture -- all the odd bonds, then all the even ones -- is how
+% the splitting is derived. It is not how it is run. A gate acts on two sites,
+% so it goes on by itself, and the sweep runs bond by bond.
 %
-% Running it this way is what keeps the orthogonality centre where the next gate
-% needs it. The centre travels with the sweep -- after a gate on (i, i+1) and the
-% truncation that follows, it sits ready for the gate on (i+1, i+2) -- so no one
-% canonical form labels the whole picture, and the sites are drawn plain. That
-% is the practical reason the order is a sweep and not two layers: in two layers
-% the centre would have to be dragged back across the chain between them.
+% First order is one pass: (1,2), (2,3), (3,4), (4,5), each with the full step.
+% Second order is the same pass at half a step and then the same bonds in
+% reverse. That sequence is its own reverse, which is what kills the leading
+% error term, and the picture shows the symmetry rather than asserting it. One
+% more pass is the whole price.
 %
-% Read downward: the state at the top, the first gate applied just under it, the
-% last at the bottom. No gate has legs of its own; the physical indices run the
-% whole way down and a gate is laid on the two it acts on.
+% The state is drawn in a definite mixed canonical form, which is what it is
+% when the step begins. It does not stay in that one: the orthogonality centre
+% travels with the sweep, so after a gate on (i, i+1) and the truncation that
+% follows it sits ready for (i+1, i+2). That is the practical reason the order
+% is a sweep and not two layers -- in two layers the centre would have to be
+% dragged back across the chain between them.
+%
+% Read downward: the state at the top, the first gate applied just under it.
+% No gate has legs of its own; the physical indices run the whole way down and
+% a gate is laid on the two it acts on.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
-\begin{document}
-% the sites take the circle convention, `tn round': this picture has no
-% functions in it to tell a circle from, and a plain tensor is what they are
-\tikzset{site/.style={coef, tn round}}
-\begin{tikzpicture}[x=1.45cm]
-  \tnchain{S}{(0,0)}{(4,0)}{site/{}/c, site/{}/c, site/{}/c, site/{}/c, site/{}/c}
-  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,...,4}{
-    \tnbond[disc]{(S\i) -- (S\j)}%
-  }
-  \node[leg, anchor=east] at (-0.35,0) {$|\psi\rangle$};
-  \tnlegs{92mm}{S1-leg,S2-leg,S3-leg,S4-leg,S5-leg}
 
-  % up the chain, then the same bonds back down
-  \foreach \b/\d [count=\k] in {1/9, 2/19, 3/29, 4/39, 4/49, 3/59, 2/69, 1/79}{
-    \pgfmathtruncatemacro{\c}{\b+1}
-    \tngate{G\k}{$U(\delta t/2)$}{S\b-leg,S\c-leg}{\d mm}%
+\newcommand{\tebdchain}[2]{%
+  \tnchain{#1}{(0,0)}{(4,0)}{canl/$A$/l, canl/$A$/l, centre/$C$/c,
+                             canr/$B$/r, canr/$B$/r}
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,2}{
+    \tnbond[gauge]{(#1\i) -- (#1\j)}%
   }
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {3,4}{
+    \tnbond[gauge]{(#1\j) -- (#1\i)}%
+  }
+  \tnbond[gauge]{([xshift=-5mm]#11.west) -- (#11)}
+  \tnbond[gauge]{([xshift=5mm]#15.east) -- (#15)}
+  \tnlegs{#2}{#11-leg,#12-leg,#13-leg,#14-leg,#15-leg}%
+}
+
+\begin{document}
+\begin{tikzpicture}[x=1.45cm]
+  % ---- first order: one pass --------------------------------------------
+  \tebdchain{S}{52mm}
+  \foreach \b/\d [count=\k] in {1/9, 2/19, 3/29, 4/39}{
+    \pgfmathtruncatemacro{\c}{\b+1}
+    \tngate{F\k}{$U(\delta t)$}{S\b-leg,S\c-leg}{\d mm}%
+  }
+  \node[leg, anchor=west] at (4.45,-2.4) {$O(\delta t^2)$ a step};
+
+  % ---- second order: the pass at half a step, then its reverse ----------
+  \begin{scope}[yshift=-7.6cm]
+    \tebdchain{T}{92mm}
+    \foreach \b/\d [count=\k] in {1/9, 2/19, 3/29, 4/39, 4/49, 3/59, 2/69, 1/79}{
+      \pgfmathtruncatemacro{\c}{\b+1}
+      \tngate{G\k}{$U(\delta t/2)$}{T\b-leg,T\c-leg}{\d mm}%
+    }
+    \node[leg, anchor=west] at (5.0,-4.4) {$O(\delta t^3)$ a step};
+  \end{scope}
 \end{tikzpicture}
 \end{document}
