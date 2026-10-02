@@ -10,9 +10,9 @@ section as its notes.
 Trees, MERA and the decompositions, on the same grid.
 
 Roadmap phase 3. New examples: `17-svd-qr` (T = U S V† and T = Q R on one
-tensor of a chain), `18-ttn` (a tree on eight sites, four tiers from the leaves to the root, the
-centre at the root),
-`19-mera` (a binary MERA on eight sites, up to its top tensor).
+tensor of a chain), `18-ttn` (a tree on sixteen sites: four tiers of isometries, sixteen to one,
+and the centre on top) and `19-mera` (a binary MERA on sixteen sites: four
+tiers of coarse-graining and the top tensor).
 
 - **Triangles pointing up and down.** `tn triangle up` and `tn triangle down`
   stretch to the sites they span, so an isometry of a tree or a MERA is as

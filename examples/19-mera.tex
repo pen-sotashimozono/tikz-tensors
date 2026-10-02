@@ -1,34 +1,39 @@
-% A binary MERA on eight sites, all the way up: two layers of disentanglers and
-% isometries, and the top tensor that closes it.
+% A binary MERA on sixteen sites, all the way up: four tiers of coarse-graining
+% -- sixteen sites, eight, four, two, one -- and the top tensor that closes it.
 %
-% Read upward. The disentanglers u act first, on pairs that straddle the
-% blocks the isometries are about to join -- (2,3), (4,5), (6,7) -- and
-% remove the entanglement across those block boundaries. Then each isometry w
-% takes a block of two sites to one. The next layer does the same on the four
-% sites that are left: one disentangler across the middle, two isometries. Two
-% coarse-grained sites remain, and the top tensor is the state on them -- the
-% one tensor of the network that is not an isometry or a unitary, so it is the
-% centre. Counting the physical indices, that is four tiers.
+% Read upward. In each of the first three tiers the disentanglers u act first,
+% on pairs that straddle the blocks the isometries are about to join, and
+% remove the entanglement across those block boundaries; then each isometry w
+% takes a block of two sites to one. The fourth tier has two sites left and
+% only joins them: a disentangler there would act on the same pair the
+% isometry does, and has nothing to straddle. The top tensor is the state on
+% the one site that remains -- the one tensor of the network that is neither
+% an isometry nor a unitary, so it is the centre.
 %
 % Every index here is placed by one rule: two tensors of different extent
-% meet once, in the middle of the sites they share. So a disentangler of the
-% second layer, four sites wide, meets the isometries under it at their apexes,
-% an isometry of the second layer meets the disentangler it overlaps by half in
-% the middle of that half, and the top tensor meets the two last isometries at
-% their apexes. The layers are `apart': nothing joins two tensors side by side.
+% meet once, in the middle of the sites they share. So a disentangler meets
+% the isometries under it at their apexes, an isometry meets the disentangler
+% it overlaps by half in the middle of that half, and the top tensor, two
+% sites wide in the middle of the network, meets the last isometry at its
+% apex. The layers are `apart': nothing joins two tensors side by side.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack{M}{8}{top, w2, u2, w1, u1}
-  \tnlayer{M}{top}{centre/$\tau$/8}
-  \tnlayer{M}{w2}{iso/$w$/4, iso/$w$/4}
-  \tnlayer{M}{u2}{., ., gate/$u$/4, ., .}
-  \tnlayer{M}{w1}{iso/$w$/2, iso/$w$/2, iso/$w$/2, iso/$w$/2}
-  \tnlayer{M}{u1}{., gate/$u$/2, gate/$u$/2, gate/$u$/2, .}
-  \tnconnect[apart={top, w2, u2, w1, u1}]{M}
+  \tnstack{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
+  \tnlayer{M}{top}{., ., ., ., ., ., ., centre/$\tau$/2, ., ., ., ., ., ., .}
+  \tnlayer{M}{w4}{iso/$w$/16}
+  \tnlayer{M}{w3}{iso/$w$/8, iso/$w$/8}
+  \tnlayer{M}{u3}{., ., ., ., gate/$u$/8, ., ., ., .}
+  \tnlayer{M}{w2}{iso/$w$/4, iso/$w$/4, iso/$w$/4, iso/$w$/4}
+  \tnlayer{M}{u2}{., ., gate/$u$/4, gate/$u$/4, gate/$u$/4, ., .}
+  \tnlayer{M}{w1}{iso/$w$/2, iso/$w$/2, iso/$w$/2, iso/$w$/2,
+                   iso/$w$/2, iso/$w$/2, iso/$w$/2, iso/$w$/2}
+  \tnlayer{M}{u1}{., gate/$u$/2, gate/$u$/2, gate/$u$/2, gate/$u$/2,
+                   gate/$u$/2, gate/$u$/2, gate/$u$/2, .}
+  \tnconnect[apart={top, w4, w3, u3, w2, u2, w1, u1}]{M}
   \tnopen{down}{M}
 \end{tikzpicture}
 \end{document}
