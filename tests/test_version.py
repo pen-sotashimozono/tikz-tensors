@@ -57,8 +57,8 @@ class VersionCheck(unittest.TestCase):
     def version(self):
         return self.run_version().stdout.strip()
 
-    NEW_STYLE = ("  leg/.style", "  unitary/.style = {coef, diamond},\n  leg/.style")
-    NO_OPWIDE = ("  opwide/.style   = {op, minimum width=17mm},\n", "")
+    NEW_STYLE = ("  tn label/.style", "  tn hexagon/.style = {tn node, regular polygon},\n  tn label/.style")
+    NO_SMALL = ("  tn small/.style          = {minimum size=6mm, font=\\scriptsize},\n", "")
     # A change under tex/ that adds and removes no public name. It anchors on
     # \NeedsTeXFormat and adds a comment, rather than rewriting a value inside a
     # style: the styles are the thing under development, and a fixture that
@@ -98,7 +98,7 @@ class VersionCheck(unittest.TestCase):
         self.bump("patch")
         code, out = self.check()
         self.assertEqual(code, 1)
-        self.assertIn("adds style 'unitary'", out)
+        self.assertIn("adds style 'tn hexagon'", out)
         self.assertIn("needs a minor step", out)
 
     def test_a_new_style_with_a_minor_passes(self):
@@ -108,20 +108,20 @@ class VersionCheck(unittest.TestCase):
         self.assertEqual(code, 0, out)
 
     def test_a_removed_style_before_1_0_needs_a_minor(self):
-        self.edit_sty(*self.NO_OPWIDE)
+        self.edit_sty(*self.NO_SMALL)
         self.bump("patch")
         code, out = self.check()
         self.assertEqual(code, 1)
-        self.assertIn("removes style 'opwide'", out)
+        self.assertIn("removes style 'tn small'", out)
         self.git("checkout", "CHANGELOG.md", "tex/tikz-tensors.sty")
-        self.edit_sty(*self.NO_OPWIDE)
+        self.edit_sty(*self.NO_SMALL)
         self.bump("minor")
         self.assertEqual(self.check()[0], 0)
 
     def test_a_removed_style_after_1_0_needs_a_major(self):
         self.edit_sty(" v0.", " v1.")  # make the base a 1.x release
         self.commit("1.x")
-        self.edit_sty(*self.NO_OPWIDE)
+        self.edit_sty(*self.NO_SMALL)
         self.bump("minor")
         code, out = self.check()
         self.assertEqual(code, 1)

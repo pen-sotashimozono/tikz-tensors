@@ -3,62 +3,29 @@
 %%
 %%   \usepackage{tikz-tensors}
 %%
-%% A network is nodes and edges, and those are the two things the package
-%% defines before anything else: `tn node' is a tensor, `tn edge' is an index,
-%% `tn fill' is the solid colour convention. A diagram can be drawn out of those
-%% three alone, with no notion of what is a state and what is an operator --
-%% which is the normal case, since most networks have no such distinction to
-%% make. Everything named below is a preset built on them, for the cases that do.
+%% A network is nodes and edges, and the package defines what they look like and
+%% where they go -- never what they mean. `tn node' is a tensor, `tn edge' is an
+%% index, `tn fill' is the solid colour convention, and every other style is a
+%% shape or a line:
+%%   tn box, tn circle, tn capsule, tn rounded    a tensor's outline
+%%   tn triangle right, tn triangle left           a triangle pointing that way
+%%   tn diamond                                    a diamond
+%%   tn wide, tn tall, tn small                    the same shape, resized
+%%   tn frame                                      a dashed box around nodes
+%%   tn edge, tn wavy, tn arrow                    an index: plain, wavy, or with
+%%                                                 an arrowhead (`tn arrows' turns
+%%                                                 every arrowhead off)
+%%   tn label                                      the text on an index
 %%
-%% The notation distinguishes what a leg carries:
-%%   cont   wavy leg, electron colour: a continuous argument (r, r_1, x)
-%%   disc   plain line: a finite index (i, mu, a bond)
-%% and what a node is:
-%%   fn, fnwide, fntall      circle / rounded box, electron colour: a function of position
-%%   coef, coefwide, coeftall square / box: an array of numbers (C, c, A^n)
-%%   op, opwide              square-cornered box in ink: an operator (H, the MPO)
-%%   frame                   dashed box around nodes that contract to one object
-%% Joining two legs means summing over that index. So the expansion
-%%   psi(r1, r2) = sum_ij C_ij phi_i(r1) phi_j(r2)
-%% is a coefwide C with two disc legs down to two fn phi, each with a cont leg:
-%% the numbers sit on the basis functions, which sit on space.
+%% What a shape stands for -- that a circle on a wavy leg is a function of
+%% position, that a triangle is an isometry and a diamond the orthogonality
+%% centre -- is a convention, and a convention belongs to whoever draws in it.
+%% Each user keeps theirs as a file of styles named for the meaning and built
+%% from these shapes -- a left-canonical tensor as `tn triangle right, tn
+%% fill=canl', a continuous argument as `tn wavy, draw=ele'.
 %%
-%% A matrix-product state needs more than that, since its tensors are not all the
-%% same kind of object:
-%%   canl, canr   left- and right-canonical. The triangle points the way the
-%%                gauge runs AND carries its own colour, so the two are told
-%%                apart twice
-%%   centre       the orthogonality centre on a site: a diamond, the one tensor
-%%                of the chain that is neither isometric nor shaped like its
-%%                neighbours, and the one carrying a physical leg of its own
-%%   centrebond   the same diamond, smaller, for the centre on a bond: the
-%%                Schmidt values between two sites, which carry no physical leg.
-%%                One SVD takes either form to the other, and the notation has to
-%%                be able to say both, so the shape is shared and only the slot
-%%                it sits in differs
-%%   mpo          an operator tensor sitting on the chain, neutral so that the
-%%                state reads through it
-%%   gate         a box over one site or several (a Trotter step, one term of an
-%%                MPO). \tngate sizes and places it from the indices themselves,
-%%                so no width is written by hand, and it needs no legs
-%%   gauge        a disc that carries a direction, as an arrowhead. A bond does
-%%                not have one in general -- it is an index, and an index is
-%%                just an index -- so the plain `disc' is the bond, and `gauge'
-%%                is for a picture where the direction is known and is part of
-%%                what is being said: which way the gauge runs in a canonical
-%%                form. `tn arrows' is on by default and turns those arrowheads
-%%                off, for the same picture with the direction left unstated
-%% The triangles are the usual convention and they are load-bearing: a reader who
-%% cannot see which tensors are isometric cannot tell a canonical form from a
-%% picture of one. Shape carries the meaning on its own and colour repeats it, so
-%% the diagrams survive being printed in grey.
-%%
-%% Square or circle is this package's own distinction, and it is only worth
-%% keeping where both kinds are on the page. A diagram with no functions in it --
-%% a plain tensor network -- has nothing to confuse, and much of the literature
-%% draws every tensor there as a circle. `tn round' is that convention: add it to
-%% a node style and the shape is a circle, the colour and meaning unchanged.
-%% examples/03-mps.tex draws one chain both ways. Within one diagram, pick one.
+%% examples/conventions/notation.tex is one such file, the one the examples in
+%% this repository are drawn in; it is not part of the package.
 %%
 %% Every edge is drawn under the nodes, by \tnbond, \tnlegs and
 %% \tnswap: a tensor covers the index it carries whatever order the file is
@@ -75,21 +42,33 @@
 %% two ways. \tnlegs and \tngate take points, and a label is placed by \tnput
 %% and \tnmid in terms of what it labels rather than as a coordinate.
 %%
-%% Exchanging two fermion legs is \tnswap (a sign in the text, not in the drawing).
+%% Exchanging two legs is \tnswap (a sign in the text, not in the drawing).
+%%
+%% A figure of an algorithm is drawn on a stack: a grid of sites across and
+%% named layers down (ket, op, bra), at one pitch the package owns. \tnstack
+%% places it, with an environment block at either end; \tnlayer fills a
+%% layer's slots; \tnconnect draws every index the grid implies; \tnopen adds
+%% the open ones; \tneq writes an equals sign and moves on to the next stack.
+%% Nothing in such a figure is a length or a coordinate, and tests/lint.py
+%% holds the examples to that (docs/roadmap.md).
+%%
+%% Two styles are named for the command that draws them rather than for a
+%% shape, because the command needs something to draw with and a convention
+%% needs somewhere to colour it: `tn gate' (\tngate) and `tn env' (the blocks of
+%% \tnstack). Both are plain outlines here.
 %%
 %% Outlines and legs are one stroke, `tn line`, whose width is `tn line width`
 %% (0.8pt) -- settable on a picture, a scope or a node, and usable directly on a
 %% path of the caller's own.
 %%
-%% The style names are short and unprefixed, which has one consequence worth
-%% knowing: where a style and a colour share a name (coef, centre, mpo, gate), an
+%% Colours (the page tokens tt<name>, and the theme's other named colours) come
+%% from tikz-tensors-colors.tex, generated from theme/tokens.toml. Where a
+%% convention gives a style the name of a colour (canl, centre, gate, ...), an
 %% option written bare -- \fill[gate] -- is resolved as the style, never the
-%% colour. Say which you mean: color=gate, or draw=/fill=.
-%% Colours (ele for continuous legs and functions, the page tokens tt<name>, and
-%% the theme's other named colours) come from tikz-tensors-colors.tex, generated
-%% from theme/tokens.toml. The version is the \ProvidesPackage line below.
+%% colour. Say which you mean: color=gate, or draw=/fill=. The version is the
+%% \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/02 v0.4.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/02 v0.5.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
@@ -121,7 +100,6 @@
 \tikzset{
   tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
   tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
-  tn round/.style     = {circle},
   tn arrows/.is if    = tnarrows,
 }
 
@@ -148,7 +126,7 @@
 % meets the outside of the stroke rather than overlapping it -- but `minimum
 % size' already counts the stroke, so the border IS the outside of it, and the
 % half width is added to a clearance that is already there. Measured at 700 dpi
-% on two canl triangles: a one-pixel gap between the tensor and its bond. tn fill is the
+% on two triangles: a one-pixel gap between the tensor and its bond. tn fill is the
 % solid convention -- a step of a scale, outlined in a darker shade of itself --
 % and it keeps that default outline, so the colour of a tensor is its fill and
 % every outline in a diagram is the one ink -- which is the rule holding in a
@@ -163,50 +141,50 @@
   tn edge/.default = stroke,
 }
 
-% ---- presets: what a tensor is, and what its index carries -------------------
+% ---- shapes ------------------------------------------------------------------
+% `tn leg anchor' says where a tensor's physical index leaves it, for the
+% commands that place tensors on a grid: its centre, unless the shape says
+% otherwise. A triangle says a corner of its flat side -- the index continues
+% that side's own line rather than leaving from the middle of a slanted edge,
+% which is how a canonical form is read -- and a stack sets the triangle in its
+% slot so that the corner, not the centre, is on the site's line.
+\makeatletter
+\gdef\tn@legat{center}
+\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}}}
+\makeatother
+% Each shape carries the size at which it reads as the same weight as the
+% others -- a triangle has to be larger than a box to hold a label, a diamond a
+% little less -- and paper fill, so that an index drawn to its centre is covered
+% by it. A fill of a convention's own replaces the paper.
 \tikzset{
-  fn/.style       = {tn node, circle, draw=ele, fill=ele!12, minimum size=8mm},
-  fnwide/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=17mm,
-                     minimum height=8mm},
-  fntall/.style   = {fn, rectangle, rounded corners=3.5mm, minimum width=8mm,
-                     minimum height=17mm},
-  coef/.style     = {tn node, rectangle, fill=black!6, minimum size=7mm},
-  coefwide/.style = {coef, minimum width=17mm, minimum height=7mm},
-  coeftall/.style = {coef, minimum width=7mm, minimum height=17mm},
-  op/.style       = {tn node, rectangle, fill=white,
-                     minimum size=7mm, inner sep=1pt},
-  opwide/.style   = {op, minimum width=17mm},
-  frame/.style    = {tn line, draw=black!50, dashed, rounded corners=2mm},
-  cont/.style     = {tn edge=ele, decorate,
-                     decoration={snake, amplitude=0.55mm, segment length=2.4mm,
-                                 pre length=0.4mm, post length=0.8mm}},
-  disc/.style     = {tn edge},
-  leg/.style      = {font=\small, inner sep=2pt},
-  tn swap cont/.style = {tn edge=ele},
-  tn swap disc/.style = {tn edge},
-}
-
-% ---- presets: matrix-product states ------------------------------------------
-% Solid fills, because an MPS diagram is mostly tensors: at the pale fills the
-% presets above use, a ten-site chain turns into ten outlines and the eye finds
-% no site. The labels stay ink rather than reversing to white -- white on these
-% fills measures 2.2--3.1:1 against the 7--9:1 ink gives.
-\tikzset{
-  canl/.style       = {tn node, tn fill=canl, regular polygon,
-                       regular polygon sides=3, shape border rotate=-90,
-                       minimum size=10.5mm, font=\small},
-  canr/.style       = {canl, tn fill=canr, shape border rotate=90},
-  centre/.style     = {tn node, tn fill=centre, diamond, minimum size=9.5mm,
-                       font=\small},
-  centrebond/.style = {centre, minimum size=6mm, font=\scriptsize},
-  mpo/.style        = {tn node, tn fill=mpo, rectangle, rounded corners=1.2mm,
-                       minimum size=7.5mm, inner sep=1pt},
-  gate/.style       = {tn node, rectangle, rounded corners=1.2mm,
-                       draw=stroke, fill=gate!25, minimum size=7.5mm,
-                       inner sep=3pt, font=\small},
-  gauge/.style      = {disc, postaction={decorate}, decoration={markings,
-                       mark=at position 0.58 with
-                         {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn box/.style            = {tn node, rectangle, fill=grey1, minimum size=7mm,
+                              inner sep=1pt},
+  tn circle/.style         = {tn node, circle, fill=grey1, minimum size=8mm},
+  tn capsule/.style        = {tn node, rectangle, rounded corners=3.5mm,
+                              fill=grey1, minimum size=8mm},
+  tn rounded/.style        = {tn node, rectangle, rounded corners=1.2mm,
+                              fill=grey1, minimum size=7.5mm, inner sep=1pt},
+  tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
+                              shape border rotate=-90, fill=grey1,
+                              minimum size=10.5mm, font=\small,
+                              tn leg anchor=corner 3},
+  tn triangle left/.style  = {tn triangle right, shape border rotate=90,
+                              tn leg anchor=corner 2},
+  tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
+                              font=\small},
+  tn wide/.style           = {minimum width=17mm},
+  tn tall/.style           = {minimum height=17mm},
+  tn small/.style          = {minimum size=6mm, font=\scriptsize},
+  tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
+  tn wavy/.style           = {tn edge, decorate,
+                              decoration={snake, amplitude=0.55mm,
+                                          segment length=2.4mm, pre length=0.4mm,
+                                          post length=0.8mm}},
+  tn arrow/.style          = {tn edge, postaction={decorate},
+                              decoration={markings, mark=at position 0.58 with
+                                {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
+  tn label/.style          = {font=\small, inner sep=2pt},
+  tn gate/.style           = {tn rounded, inner sep=3pt, font=\small},
 }
 
 % \tnbond[<style>]{<path>}
@@ -214,12 +192,11 @@
 % end wherever it needs to -- on a node, on a coordinate, or on nothing:
 %   \tnbond{(A1) -- (A2)}             a bond between two tensors
 %   \tnbond{(A3) -- ++(0.55,0)}       an open index, with no other end
-%   \tnbond[gauge]{(A1) -- (A2)}      one whose direction is known
-%   \tnbond[cont]{(p.south) -- ++(0,-0.9)}
+%   \tnbond[tn arrow]{(A1) -- (A2)}   one with an arrowhead
+%   \tnbond[tn wavy]{(p.south) -- ++(0,-0.9)}
 % Nothing here needs a tensor at the far end, because an index that leaves the
-% diagram is an index like any other. The default is `disc', an index with no
-% direction, because that is what an index is unless something says otherwise.
-\newcommand{\tnbond}[2][disc]{%
+% diagram is an index like any other. The default is `tn edge', a plain line.
+\newcommand{\tnbond}[2][tn edge]{%
   \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}
 
 % \tnchain[<pitch>]{<prefix>}{<from>}{<to>}{<style/label/side, ...>}
@@ -229,13 +206,14 @@
 % the node <prefix>i and the coordinate <prefix>i-leg, the point where its
 % physical index leaves it and the point everything else connects to.
 %
-%   \tnchain{S}{(0,0)}{(4,0)}{canl/$A$/l, centre/$C$/c, canr/$B$/r}
+%   \tnchain{S}{(0,0)}{(4,0)}{tn triangle right/$A$/l, tn diamond/$C$/c,
+%                             tn triangle left/$B$/r}
 %
 % Two coordinates for a row, and none per site: a row that is respaced, or
 % turned, or given another tensor, is one line edited in one place.
 %
-% <side> is where the index leaves: `l' and `r' are the bottom corner of a canl
-% or a canr triangle's flat side (corner 3 and corner 2 -- the two are one shape
+% <side> is where the index leaves: `l' and `r' are the bottom corner of a
+% triangle's flat side, pointing right and pointing left (corner 3 and corner 2 -- the two are one shape
 % at a 180 degree turn, so no single index names both, and `south west' is on
 % the edge above the vertex rather than on it), and `c' is the node's own south,
 % which is what a box, a circle or a diamond takes.
@@ -244,7 +222,7 @@
 % outer sep=0pt. With TikZ's default, outer sep is half a line width and it is
 % added to every anchor as well as to the border, so a corner anchor sits that
 % far outside the stroke and an index placed on it runs beside the tensor's own
-% edge instead of along it. Measured on a canl triangle: corner 3 at -7.86884pt
+% edge instead of along it. Measured on a triangle pointing right: corner 3 at -7.86884pt
 % with the default and -7.46884pt without, exactly half a width apart.
 \def\tn@side@l{corner 3}
 \def\tn@side@r{corner 2}
@@ -278,7 +256,7 @@
 % distance that matters is the gap and working the centres out by hand is both
 % tedious and the first thing to go stale.
 %
-%   \tnrow{P}{(0,0)}{env/$L$/c, mpo/$W$/c, mpo/$W$/c, envr/$R$/c}
+%   \tnrow{P}{(0,0)}{tn box/$A$/c, tn rounded/$W$/c, tn diamond/$C$/c}
 %
 % Site i becomes the node <prefix>i and the coordinate <prefix>i-leg, exactly as
 % in \tnchain.
@@ -317,7 +295,7 @@
   \foreach \tn@s in {#1}{%
     \pgfextracty{\tn@y}{\pgfpointanchor{\tn@s}{center}}%
     \ifdim\tn@y<\tn@lo \global\tn@lo=\tn@y \fi}}
-\newcommand{\tnlegs}[3][disc]{%
+\newcommand{\tnlegs}[3][tn edge]{%
   \tn@lowy{#3}%
   \pgfmathsetlength{\pgf@yb}{\tn@lo-(#2)}\edef\tn@bot{\the\pgf@yb}%
   \begin{pgfonlayer}{tnedges}%
@@ -349,7 +327,7 @@
   \edef\tn@wd{\the\pgf@xb}\edef\tn@md{\the\pgf@xc}%
   \tn@lowy{#4}%
   \pgfmathsetlength{\pgf@yb}{\tn@lo-(#5)}%
-  \node[gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
+  \node[tn gate, minimum width=\tn@wd] (#2) at (\tn@md,\the\pgf@yb) {#3};%
 }
 \makeatother
 
@@ -360,25 +338,296 @@
 % because a coordinate written for a label is a coordinate that has to be
 % re-found every time the thing it labels moves. <placement> is TikZ's: above,
 % below, left, right, center, and any of them with a distance.
-\newcommand{\tnput}[3][above]{\node[leg, #1] at (#2) {#3};}
-\newcommand{\tnmid}[4][above]{\node[leg, #1] at ($(#2)!0.5!(#3)$) {#4};}
+\newcommand{\tnput}[3][above]{\node[tn label, #1] at (#2) {#3};}
+\newcommand{\tnmid}[4][above]{\node[tn label, #1] at ($(#2)!0.5!(#3)$) {#4};}
 
-% \tnswap[<kind>]{<left top>}{<right top>}{<drop>}
+% \tnswap[<style>]{<left top>}{<right top>}{<drop>}
 % Two legs that start at <left top> and <right top> and end <drop> lower,
-% exchanged: short straight stubs of <kind> (cont or disc) at both ends, joined
-% by a smooth crossing (a snake decoration on a diagonal reads as noise).
+% exchanged: short straight stubs in <style> at both ends, joined by a smooth
+% crossing in the same style undecorated (a wavy line on a diagonal reads as
+% noise).
 \makeatletter
-\newcommand{\tnswap}[4][cont]{%
+\newcommand{\tnswap}[4][tn edge]{%
   \begin{pgfonlayer}{tnedges}%
     \path #2 coordinate (tn@l) #3 coordinate (tn@r);
     \draw[#1] (tn@l) -- ++(0,-0.3) coordinate (tn@l1);
     \draw[#1] (tn@r) -- ++(0,-0.3) coordinate (tn@r1);
     \draw[#1] ($(tn@l)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@l2);
     \draw[#1] ($(tn@r)+(0,-#4)$) -- ++(0,0.3) coordinate (tn@r2);
-    \draw[tn swap #1] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
-    \draw[tn swap #1] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
+    \draw[#1, decorate=false] (tn@l1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@r2);
+    \draw[#1, decorate=false] (tn@r1) .. controls +(0,-0.3) and +(0,0.3) .. (tn@l2);
   \end{pgfonlayer}%
 }
+\makeatother
+
+% ---- stacks: the lattice a figure is drawn on ---------------------------------
+% A figure that says where its tensors are in centimetres is a figure two
+% authors write two ways. So the package owns the geometry: a stack is a grid of
+% slots, n sites across and a list of named layers down (ket, op, bra, ...), at
+% one pitch both ways, and a tensor is put in a slot rather than at a point.
+% Every distance below is one of these tokens, never a figure's own:
+%   pitch   between neighbouring sites, and between neighbouring layers
+%   slot    the size of a tensor that is not there: an open index ends at the
+%           border an absent tensor of this size would have, so a gap in a
+%           picture is the shape of what is missing from it
+%   stub    the least an open index shows beyond its own tensor, where the
+%           border of the next slot is nearer than that (a triangle set across
+%           to put its corner on the line reaches most of the way there)
+%   envw    the width of an environment block
+%   gap     the space either side of an equals sign
+\makeatletter
+\def\tn@pitch{15mm}
+\def\tn@slot{9mm}
+\def\tn@stub{4mm}
+\def\tn@envw{7mm}
+\def\tn@gap{4mm}
+\newdimen\tn@cursor \newdimen\tn@right \newdimen\tn@d \newcount\tn@c
+% Stacks are placed left to right from a cursor, which every picture starts at
+% the origin; \tneq moves it past what has been drawn.
+\tikzset{every picture/.append style={execute at begin picture={%
+  \global\tn@cursor=0pt \global\tn@right=0pt}}}
+\def\tn@set#1#2{\expandafter\xdef\csname tn@#1\endcsname{#2}}
+\def\tn@get#1{\csname tn@#1\endcsname}
+\def\tn@len#1#2{\pgfmathsetlength\tn@d{#2}\edef#1{\the\tn@d}}
+\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@pitch}}
+\def\tn@layy#1#2{\tn@len\tn@ly{((\tn@get{#1@L}+1)/2-(#2))*\tn@pitch}}
+\def\tn@reach#1{\tn@len\tn@e{#1}\ifdim\tn@e>\tn@right \global\tn@right=\tn@e\fi}
+\def\tn@line#1#2#3#4#5{\tnbond[#1]{(#2,#3) -- (#4,#5)}}
+
+% The block at either end of a stack: the rest of the network, already
+% contracted -- the L and R of an effective Hamiltonian, the fixed points of a
+% uniform state. It spans every layer of its stack and has one index in each.
+\tikzset{
+  tn env/.style = {tn box, minimum width=\tn@envw, font=\small},
+}
+
+% \tnstack[left=<label>, right=<label>]{<name>}{<sites>}{<layers>}
+% A grid of <sites> slots across and the <layers> down, top to bottom, placed
+% at the cursor and centred on the line y = 0, so that the stacks of an
+% equation line up. left= and right= put an environment at either end.
+%
+%   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
+%
+% The environment is the node <name>-left or <name>-right.
+\pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
+         /tn/stack/right/.initial=}
+\newcommand{\tnstack}[4][]{%
+  \pgfkeys{/tn/stack/.cd, left=, right=, #1}%
+  \pgfkeysgetvalue{/tn/stack/left}\tn@envl
+  \pgfkeysgetvalue{/tn/stack/right}\tn@envr
+  \tn@set{#2@n}{#3}%
+  \tn@set{#2@layers}{#4}%
+  \global\tn@c=0
+  \foreach \tn@l in {#4}{%
+    \global\advance\tn@c by 1 \tn@set{#2@k@\tn@l}{\the\tn@c}}%
+  \tn@set{#2@L}{\the\tn@c}%
+  \ifx\tn@envl\@empty
+    \tn@set{#2@hasl}{0}%
+    \tn@len\tn@xz{\the\tn@cursor+\tn@slot/2-\tn@pitch}%
+  \else
+    \tn@set{#2@hasl}{1}%
+    \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
+  \fi
+  \tn@set{#2@x0}{\tn@xz}%
+  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@pitch+\tn@slot}%
+  \ifx\tn@envl\@empty\else
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,0) {\tn@envl};
+  \fi
+  \ifx\tn@envr\@empty
+    \tn@set{#2@hasr}{0}%
+    \tn@colx{#2}{#3}\tn@reach{\tn@cx+\tn@slot/2}%
+  \else
+    \tn@set{#2@hasr}{1}%
+    \tn@colx{#2}{#3+1}%
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,0) {\tn@envr};
+    \tn@reach{\tn@cx+\tn@envw/2}%
+  \fi
+}
+
+% \tnlayer{<stack>}{<layer>}{<entry>, ...}
+% The layer's slots, left to right, one entry each:
+%   <style>/<label>          a tensor in that slot
+%   <style>/<label>/<span>   one tensor across <span> slots: a gate, a two-site
+%                            tensor. It is as wide as the slots it covers
+%   .                        nothing: the slot is empty
+%   -                        nothing, but the index of the layer runs through
+% The tensor of site i is the node <stack>-<layer>-i; one that spans is named
+% by its first site.
+\def\tn@entry#1/#2/#3/#4\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}\def\tn@span{#3}}
+\def\tn@dot{.}\def\tn@dash{-}
+% A tensor in a slot: centred on the slot, or, when its shape gives its leg an
+% anchor of its own, moved across so that the anchor is on the site's line. A
+% probe of the same shape, drawn nowhere, measures how far.
+\def\tn@center{center}
+\def\tn@place#1#2#3#4#5{%
+  \gdef\tn@legat{center}%
+  \begingroup\tikzset{#1}\endgroup
+  \ifx\tn@legat\tn@center
+    \node[#1] (#2) at (#3,#4) {#5};
+  \else
+    \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
+    \pgfextractx{\tn@d}{\pgfpointanchor{tn@probe}{\tn@legat}}%
+    \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};
+  \fi}
+\newcommand{\tnlayer}[3]{%
+  \ifcsname tn@#1@k@#2\endcsname\else
+    \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
+  \global\tn@c=1
+  \foreach \tn@e in {#3}{%
+    \expandafter\tn@entry\tn@e////\tn@end
+    \edef\tn@i{\the\tn@c}%
+    \ifx\tn@span\@empty \def\tn@span{1}\fi
+    \ifx\tn@sty\tn@dot
+    \else\ifx\tn@sty\tn@dash
+      \tn@set{#1@o@#2@\tn@i}{-}%
+    \else
+      \tn@layy{#1}{\tn@get{#1@k@#2}}%
+      \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
+      \tn@len\tn@w{(\tn@span-1)*\tn@pitch+\tn@slot}%
+      \edef\tn@opt{\tn@sty\ifnum\tn@span>1 , minimum width=\tn@w\fi}%
+      \edef\tn@nm{#1-#2-\tn@i}%
+      \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
+      \pgfmathtruncatemacro\tn@last{\tn@i+\tn@span-1}%
+      \tn@set{n@\tn@nm @s}{#1}\tn@set{n@\tn@nm @l}{#2}%
+      \tn@set{n@\tn@nm @a}{\tn@i}\tn@set{n@\tn@nm @b}{\tn@last}%
+      \foreach \tn@j in {\tn@i,...,\tn@last}{\tn@set{#1@o@#2@\tn@j}{\tn@nm}}%
+    \fi\fi
+    \global\advance\tn@c by \tn@span\relax
+  }%
+}
+
+% What occupies slot <i> of a layer: a node's name, `-', L or R for the
+% environments at columns 0 and n+1, or nothing.
+\def\tn@occ#1#2#3{%
+  \ifnum#3=0 \ifnum\tn@get{#1@hasl}=1 \def\tn@o{L}\else\def\tn@o{}\fi
+  \else\ifnum#3>\tn@get{#1@n} \ifnum\tn@get{#1@hasr}=1 \def\tn@o{R}\else\def\tn@o{}\fi
+  \else\ifcsname tn@#1@o@#2@#3\endcsname \edef\tn@o{\tn@get{#1@o@#2@#3}}%
+  \else\def\tn@o{}\fi\fi\fi}
+
+% \tnconnect[<style>]{<stack>}
+% Every index the grid implies, and nothing else: along a layer between
+% neighbouring slots that are both filled, down a site from its first tensor to
+% its last (through the ones between, which cover it), and from an environment
+% into each layer -- to the tensor there, or, if the slot is empty, to the
+% border that tensor would have. That end is <stack>-left-<layer> or
+% <stack>-right-<layer>. An index that leaves the grid anywhere else is open,
+% and is \tnopen's.
+\newcommand{\tnconnect}[2][tn edge]{%
+  \edef\tn@ls{\tn@get{#2@layers}}%
+  \pgfmathtruncatemacro\tn@nn{\tn@get{#2@n}}%
+  \foreach \tn@l in \tn@ls{%
+    \tn@layy{#2}{\tn@get{#2@k@\tn@l}}\let\tn@y\tn@ly
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \pgfmathtruncatemacro\tn@j{\tn@i+1}%
+      \tn@occ{#2}{\tn@l}{\tn@i}\let\tn@oa\tn@o
+      \tn@occ{#2}{\tn@l}{\tn@j}\let\tn@ob\tn@o
+      \tn@colx{#2}{\tn@i}\let\tn@xa\tn@cx
+      \tn@colx{#2}{\tn@j}\let\tn@xb\tn@cx
+      \ifx\tn@oa\@empty
+        \def\tn@t{R}\ifx\tn@ob\tn@t
+          \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
+          \tn@line{#1}{\tn@xb}{\tn@y}{\tn@xa}{\tn@y}%
+          \coordinate (#2-right-\tn@l) at (\tn@xa,\tn@y);
+        \fi
+      \else\ifx\tn@ob\@empty
+        \def\tn@t{L}\ifx\tn@oa\tn@t
+          \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
+          \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+          \coordinate (#2-left-\tn@l) at (\tn@xb,\tn@y);
+          \tn@reach{\tn@xb}%
+        \fi
+      \else\ifx\tn@oa\tn@ob
+      \else
+        \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \fi\fi\fi
+    }%
+  }%
+  \ifnum\tn@nn>0
+  \foreach \tn@i in {1,...,\tn@nn}{%
+    \gdef\tn@top{0}\gdef\tn@bot{0}%
+    \foreach \tn@l in \tn@ls{%
+      \tn@occ{#2}{\tn@l}{\tn@i}%
+      \ifx\tn@o\@empty\else\ifx\tn@o\tn@dash\else
+        \ifnum\tn@top=0 \xdef\tn@top{\tn@get{#2@k@\tn@l}}\fi
+        \xdef\tn@bot{\tn@get{#2@k@\tn@l}}%
+      \fi\fi}%
+    \ifnum\tn@top<\tn@bot
+      \tn@colx{#2}{\tn@i}%
+      \tn@layy{#2}{\tn@top}\let\tn@ya\tn@ly
+      \tn@layy{#2}{\tn@bot}%
+      \tn@line{#1}{\tn@cx}{\tn@ya}{\tn@cx}{\tn@ly}%
+    \fi
+    \gdef\tn@top{0}%
+  }%
+  \fi
+}
+
+% \tnopen[<style>]{<direction>}{<node>, ...}
+% An open index from each tensor, up, down, left or right, ending at the border
+% the tensor in the next slot would have, and at least `stub' beyond its own
+% border. Its end is <node>-<direction>; a
+% tensor across several slots has one up or down per site,
+% <node>-<direction>-1, -2, ...
+\newcommand{\tnopen}[3][tn edge]{%
+  \foreach \tn@nm in {#3}{%
+    \edef\tn@s{\tn@get{n@\tn@nm @s}}\edef\tn@l{\tn@get{n@\tn@nm @l}}%
+    \edef\tn@a{\tn@get{n@\tn@nm @a}}\edef\tn@b{\tn@get{n@\tn@nm @b}}%
+    \edef\tn@k{\tn@get{\tn@s @k@\tn@l}}%
+    \tn@layy{\tn@s}{\tn@k}\let\tn@y\tn@ly
+    \def\tn@t{right}\edef\tn@dir{#2}%
+    \ifx\tn@dir\tn@t
+      \tn@colx{\tn@s}{\tn@b}\let\tn@xa\tn@cx
+      \tn@colx{\tn@s}{\tn@b+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
+      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{east}}%
+      \tn@len\tn@xc{\the\tn@d+\tn@stub}%
+      \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \coordinate (\tn@nm-right) at (\tn@xb,\tn@y);
+      \tn@reach{\tn@xb}%
+    \fi
+    \def\tn@t{left}\ifx\tn@dir\tn@t
+      \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
+      \tn@colx{\tn@s}{\tn@a-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
+      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{west}}%
+      \tn@len\tn@xc{\the\tn@d-\tn@stub}%
+      \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
+      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \coordinate (\tn@nm-left) at (\tn@xb,\tn@y);
+    \fi
+    \def\tn@t{up}\ifx\tn@dir\tn@t \tn@layy{\tn@s}{\tn@k-1}%
+      \tn@len\tn@yb{\tn@ly-\tn@slot/2}\fi
+    \def\tn@t{down}\ifx\tn@dir\tn@t \tn@layy{\tn@s}{\tn@k+1}%
+      \tn@len\tn@yb{\tn@ly+\tn@slot/2}\fi
+    \def\tn@t{up}\ifx\tn@dir\tn@t \def\tn@v{1}\else
+    \def\tn@t{down}\ifx\tn@dir\tn@t \def\tn@v{1}\else\def\tn@v{0}\fi\fi
+    \ifnum\tn@v=1
+      \foreach \tn@i [count=\tn@m] in {\tn@a,...,\tn@b}{%
+        \tn@colx{\tn@s}{\tn@i}%
+        \tn@line{#1}{\tn@cx}{\tn@y}{\tn@cx}{\tn@yb}%
+        \ifnum\tn@a=\tn@b
+          \coordinate (\tn@nm-\tn@dir) at (\tn@cx,\tn@yb);
+        \else
+          \coordinate (\tn@nm-\tn@dir-\tn@m) at (\tn@cx,\tn@yb);
+        \fi
+      }%
+    \fi
+  }%
+}
+
+% \tneq[<factor>]       an equals sign
+% \tnapprox[<factor>]   an approximately-equals sign
+% After everything drawn so far, centred on y = 0 like the stacks, with
+% <factor> after it if there is one (\tneq[$\lambda$]); the next stack starts
+% after it.
+\newcommand{\tn@rel}[2]{%
+  \node[anchor=west, inner sep=0pt] (tn@eq) at
+    ($(\the\tn@right,0)+(\tn@gap,0)$) {$#1$\ifx\relax#2\relax\else\hspace{0.3em}#2\fi};
+  \pgfextractx{\tn@d}{\pgfpointanchor{tn@eq}{east}}%
+  \global\tn@cursor=\tn@d \global\advance\tn@cursor by \tn@gap\relax
+  \global\tn@right=\tn@cursor
+}
+\newcommand{\tneq}[1][]{\tn@rel{=}{#1}}
+\newcommand{\tnapprox}[1][]{\tn@rel{\approx}{#1}}
 \makeatother
 
 \endinput

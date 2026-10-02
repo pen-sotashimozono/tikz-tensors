@@ -1,0 +1,42 @@
+% One user's notation: what the shapes of tikz-tensors stand for in the figures
+% of this repository. It is a convention, not part of the package -- the
+% package draws shapes and lines and says nothing about what they mean; a
+% project that means something else by a triangle keeps a file like this of
+% its own. Every example loads it with \input{notation}.
+%
+% Read top to bottom, it is the notation:
+%   a function of position is a circle (or capsule) in the electron colour,
+%   and its continuous argument a wavy leg in the same colour;
+%   an array of numbers is a grey box, an operator a plain one;
+%   left- and right-canonical tensors are triangles pointing the way the gauge
+%   runs, each in its own colour, and the orthogonality centre a green
+%   diamond -- small when it sits on a bond;
+%   an operator tensor on a chain is a neutral rounded box, a gate a light
+%   yellow one, an environment block light purple;
+%   a finite index is a plain line, and one whose direction is part of what is
+%   being said -- which way the gauge runs -- carries an arrowhead.
+% The colours are the theme's (theme/tokens.toml). Shape carries the meaning
+% on its own and colour repeats it, so a figure survives being printed in grey.
+\tikzset{
+  fn/.style         = {tn circle, draw=ele, fill=ele!12},
+  fnwide/.style     = {tn capsule, tn wide, draw=ele, fill=ele!12},
+  fntall/.style     = {tn capsule, tn tall, draw=ele, fill=ele!12},
+  coef/.style       = {tn box, fill=black!6},
+  coefwide/.style   = {coef, tn wide},
+  coeftall/.style   = {coef, tn tall},
+  op/.style         = {tn box},
+  opwide/.style     = {op, tn wide},
+  frame/.style      = {tn frame},
+  canl/.style       = {tn triangle right, tn fill=canl},
+  canr/.style       = {tn triangle left, tn fill=canr},
+  centre/.style     = {tn diamond, tn fill=centre},
+  centrebond/.style = {centre, tn small},
+  mpo/.style        = {tn rounded, tn fill=mpo},
+  tn gate/.append style = {fill=gate!25},
+  gate/.style       = {tn gate},
+  tn env/.append style  = {fill=env!25},
+  cont/.style       = {tn wavy, draw=ele},
+  disc/.style       = {tn edge},
+  gauge/.style      = {tn arrow},
+  leg/.style        = {tn label},
+}

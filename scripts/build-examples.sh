@@ -9,7 +9,7 @@ mkdir -p "$OUT"
 [ $# -gt 0 ] || set -- examples/*.tex
 for src in "$@"; do
   name="$(basename "$src" .tex)"
-  if ! TEXINPUTS="$ROOT/tex//:${TEXINPUTS:-}" lualatex -interaction=nonstopmode -halt-on-error \
+  if ! TEXINPUTS="$ROOT/tex//:$ROOT/examples/conventions//:${TEXINPUTS:-}" lualatex -interaction=nonstopmode -halt-on-error \
       -output-directory="$BUILD" "$src" >/dev/null 2>&1; then
     echo "error: $src" >&2; grep -A4 '^!' "$BUILD/$name.log" >&2 || true; exit 1
   fi

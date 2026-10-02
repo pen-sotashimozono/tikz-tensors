@@ -7,7 +7,8 @@
 # 1. examples/*.tex and tests/cases/*.tex compile with both engines, with no
 #    warning from LaTeX or a package and the log naming this version of the
 #    package (the \ProvidesPackage line, as scripts/version.py reads it).
-# 2. tests/coverage.py: every style and command in tex/ is used by some case.
+# 2. tests/coverage.py: every style and command in tex/ is used by some case;
+#    tests/lint.py: every example follows the figure rules (docs/roadmap.md).
 # 3. The LuaLaTeX pages, rendered by pdftoppm, match tests/reference/*.png
 #    (tests/compare.py). A deliberate change in appearance is --update plus a
 #    minor version step, which scripts/version.py check enforces.
@@ -20,7 +21,7 @@ cd "$ROOT"
 OUT=tests/out
 rm -rf "$OUT"
 mkdir -p "$OUT/rendered"
-export TEXINPUTS="$ROOT/tex//:${TEXINPUTS:-}"
+export TEXINPUTS="$ROOT/tex//:$ROOT/examples/conventions//:${TEXINPUTS:-}"
 VERSION="$(python3 scripts/version.py)"
 fail=0
 
@@ -53,6 +54,7 @@ for engine in lualatex pdflatex; do
 done
 
 python3 tests/coverage.py || fail=1
+python3 tests/lint.py || fail=1
 
 for pdf in "$OUT"/lualatex/*.pdf; do
   # 180 dpi, because poppler's Splash backend snaps a thin axis-aligned stroke

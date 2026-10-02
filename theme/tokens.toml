@@ -32,12 +32,12 @@
 # against red-brown, about 30 degrees apart) as well as by weight.
 #
 # And the honest count, so that the size of this file is not read as the size of
-# the theme. Sixteen steps are defined. Eleven carry something:
+# the theme. Eighteen steps are defined. Fifteen carry something:
 #
-#   blue1 blue2 blue3  warm1 warm2 warm3  green1 green3  yellow2 yellow3  grey
+#   blue1 blue2 blue3  warm1 warm2 warm3  green1 green3
+#   yellow1 yellow2 yellow3  purple1  grey1 grey2 grey3
 #
-# The other five -- green2, yellow1, purple1, purple2, purple3 -- are defined
-# and unused. They are scales that exist for a figure that needs a hue the
+# The other three -- green2, purple2, purple3 -- are defined and unused. They are scales that exist for a figure that needs a hue the
 # others do not have, not assignments; nothing in the package reads them, and
 # examples/00-palette.tex leaves their rows blank rather than filling them in.
 
@@ -112,11 +112,16 @@ exact    = "blue3"   # exact / reference results
 # Matrix-product states. The gauge is read from colour as much as from the
 # direction a triangle points, so the two canonical forms do not share one:
 # they take step 1 of the two given scales, which makes them a pair. An
-# operator on the chain stays neutral so that the state reads through it, and a
-# gate takes a hue nothing else does, because it is neither.
+# operator on the chain stays neutral so that the state reads through it. A
+# gate and an environment each take a light step of a hue nothing else has: a
+# gate is neither a state tensor nor an operator on the chain, and an
+# environment is not one tensor at all but the rest of the network contracted.
+# Purple for the environment, which is large and should recede; yellow for the
+# gate, which is small and is the thing being applied.
 [mps]
 canl   = "blue1"    # left-canonical: isometric from the left
 canr   = "warm1"    # right-canonical: isometric from the right
 centre = "green1"   # the orthogonality centre, on a site or on a bond
 mpo    = "grey2"    # operator tensors sitting on the chain
-gate   = "purple1"  # a gate over one site or several
+gate   = "yellow1"  # a gate over one site or several
+env    = "purple1"  # an environment: the rest of the network, contracted

@@ -22,6 +22,11 @@
 % Only one site carries O, and the rest of the column is the physical index
 % running straight through: that is what makes it a local observable.
 %
+% It is a stack of five layers on five sites: the ket, the gate, the operator,
+% the gate's adjoint, the bra. The gate spans two slots and is as wide as they
+% are; every site is one index from the ket down to the bra, and what sits on
+% it covers it. No height in it is chosen -- the layers are one pitch apart.
+%
 % The chain is drawn as plain arrays and not in a canonical form on purpose.
 % This is the general contraction; put the state in a canonical form with its
 % centre at the measured site and most of this picture becomes the identity and
@@ -30,23 +35,16 @@
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
+\input{notation}
 \begin{document}
-\begin{tikzpicture}[x=1.25cm]
-  \tnchain{S}{(0,0)}{(4,0)}{coef/$A$/c, coef/$A$/c, coef/$A$/c,
-                            coef/$A$/c, coef/$A$/c}
-  \tnchain{T}{(0,-4.15)}{(4,-4.15)}{coef/$\bar A$/c, coef/$\bar A$/c,
-                                  coef/$\bar A$/c, coef/$\bar A$/c,
-                                  coef/$\bar A$/c}
-  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,...,4}{
-    \tnbond[disc]{(S\i) -- (S\j)}  \tnbond[disc]{(T\i) -- (T\j)}%
-  }
-
-  % every physical index of the ket meets the matching index of the bra
-  \foreach \i in {1,...,5}{ \tnbond[disc]{(S\i.south) -- (T\i.north)}}
-
-  % the gate on the ket, the operator, the gate's adjoint on the bra
-  \tngate{U}{$U$}{S2-leg,S3-leg}{8mm}
-  \node[op, minimum size=9mm] (O) at (S3-leg |- 0,-2.2) {$\hat O$};
-  \tngate{Ud}{$U^{\dagger}$}{S2-leg,S3-leg}{28.5mm}
+\begin{tikzpicture}
+  \tnstack{E}{5}{ket, gate, op, adj, bra}
+  \tnlayer{E}{ket}{coef/$A$, coef/$A$, coef/$A$, coef/$A$, coef/$A$}
+  \tnlayer{E}{gate}{., gate/$U$/2, ., .}
+  \tnlayer{E}{op}{., ., op/$\hat O$, ., .}
+  \tnlayer{E}{adj}{., gate/$U^{\dagger}$/2, ., .}
+  \tnlayer{E}{bra}{coef/$\bar A$, coef/$\bar A$, coef/$\bar A$, coef/$\bar A$,
+                   coef/$\bar A$}
+  \tnconnect{E}
 \end{tikzpicture}
 \end{document}

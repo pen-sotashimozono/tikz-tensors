@@ -5,6 +5,93 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.5.0 — 2026-10-02
+
+Stacks: a figure of an algorithm drawn on a grid the package owns, so that two
+authors drawing the same algorithm write the same file (`docs/roadmap.md`).
+
+A stack is n sites across and a list of named layers down — `ket`, `op`, `bra`,
+or as many as a picture has — at one pitch both ways, and a tensor is put in a
+slot rather than at a point. `\tnstack` places it, centred on y = 0 and to the
+right of what is already drawn, with an environment at either end if asked;
+`\tnlayer` fills a layer, one entry per slot (`<style>/<label>`, a tensor across
+several slots as `<style>/<label>/<span>`, `.` for an empty slot and `-` for one
+the layer's index runs through); `\tnconnect` draws every index the grid
+implies; `\tnopen` adds the open ones; `\tneq` writes an equals sign and moves
+on. An open index ends at the border an absent tensor of the standard size
+would have, so the gap in a picture of H_eff is the shape of the state that is
+missing from it, and none of those ends is written down.
+
+**The package's styles are shapes, not meanings.** What a circle on a wavy
+leg stands for, or a triangle, or a diamond, is a notation, and a notation is
+its user's: the package now draws and places, and says nothing about meaning.
+
+| was | is |
+|---|---|
+| `coef`, `op` | `tn box` |
+| `fn` | `tn circle` |
+| `fnwide`, `fntall`, and `coefwide` … `opwide` | `tn capsule` or `tn box` with `tn wide` / `tn tall` |
+| `mpo` | `tn rounded` |
+| `gate` (the style \tngate draws with) | `tn gate` |
+| `canl`, `canr` | `tn triangle right`, `tn triangle left` |
+| `centre`, `centrebond` | `tn diamond`, `tn diamond, tn small` |
+| `frame` | `tn frame` |
+| `disc`, `cont`, `gauge` | `tn edge`, `tn wavy`, `tn arrow` |
+| `leg` | `tn label` |
+| `tn round`, `tn swap cont`, `tn swap disc` | gone (`circle`; \tnswap draws its crossing in its own style, undecorated) |
+
+Every old name is still available, as a style of
+`examples/conventions/notation.tex` — the notation this repository's examples
+are drawn in, and an example of the file a project keeps for its own. Each
+example `\input`s it after the package (`tests/run.sh` and
+`scripts/build-examples.sh` put `examples/conventions/` on `TEXINPUTS`), and
+every example renders exactly as before. A document that used the old names
+needs the same one line, or its own copy of that file. The default style of
+`\tnbond`, `\tnlegs`, `\tnconnect` and `\tnopen` is `tn edge`, and of
+`\tnswap` `tn edge` too (was `cont`).
+
+The shapes carry paper fill, so an index drawn to a tensor's centre is covered
+by it; `tn node` stays unfilled. Colours are unchanged, and the theme still
+names them by meaning (`ele`, `canl`, …): that is the theme's vocabulary, used
+by a notation to colour its styles.
+
+The block at the ends of a stack (`tn env`) is new, and so is an environment
+in the notation (`env` colour). It is not the `env` removed in v0.3.0, which put an object at the
+end of a finite chain, where the outer bonds carry nothing. This one is the rest
+of the network, contracted — the L and R of DMRG and TDVP, the fixed points of a
+uniform state — and it spans every layer of its stack with one index in each.
+
+Colours, within the ramp as it is: in the notation an environment is light
+purple (`env` = `purple1`, at the 25% fill the gate used to have), and a gate is
+now light yellow (`gate` = `yellow1`). Purple for the environment, which is large and
+should recede; yellow for the gate, which is the thing being applied. Every page
+with a gate on it is redrawn.
+
+`examples/06-dmrg.tex` is rewritten on stacks as `06-heff-two-site`, and
+`examples/09-expectation.tex` in place; neither has a length or a coordinate in
+it, and both come off the lint ratchet. New: `10-heff-single-site` and
+`11-heff-bond`, the single-site and bond effective Hamiltonians, and
+`12-fixed-point`, the left fixed point of a uniform MPS as an equation of two
+stacks. `13-low-rank` is a five-site tensor and its MPS approximation,
+side by side: one entry spanning five slots is exactly as wide as five sites, so
+the two share their width, their columns and the depth of every index without
+the file saying so. `\tnapprox` is `\tneq` with an approximately-equals sign.
+
+In a stack a triangle's physical index leaves from the corner of its flat side,
+not its centre: the index continues that side's own line, which is how a
+canonical form is read. The triangle is set across in its slot so that the
+corner is on the site's line, and the grid stays straight. A shape says where
+its index leaves with `tn leg anchor` (the triangles set `corner 3` and
+`corner 2`; everything else is its centre). The pitch is 15 mm, so that a
+triangle moved across still clears its neighbour, and an open index shows at
+least 4 mm beyond its own tensor.
+
+`tests/cases/inline.tex` has the expansion twice: drawn downward, and along the
+line as one stack, which `baseline=-0.5ex` sets on the math axis — the one to
+copy for running text. Examples are named for the object they draw, not the algorithm that
+uses it: one H_eff serves DMRG, TDVP and VUMPS alike. `07-fixed-point` stays as it is: it compares two places the physical
+index can leave a triangle, and a stack takes it from the centre.
+
 ## v0.4.0 — 2026-10-02
 
 `\tnrow` places tensors left to right, each a given gap clear of the one before
