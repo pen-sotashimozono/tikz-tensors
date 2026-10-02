@@ -35,6 +35,23 @@ Joining two legs sums over that index. The expansion
 each with a `cont` leg: **the numbers sit on the basis functions, which sit on
 space.** A finite-basis object (an MPS over occupation numbers) has no wavy legs.
 
+A figure of an algorithm is drawn on a **stack**: n sites across and named
+layers down, at one pitch the package owns, with an `env` (the rest of the
+network, contracted) at either end. Nothing in it is a length or a coordinate:
+
+```latex
+\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-dmrg.tex
+\tnlayer{H}{op}{mpo/$W$, mpo/$W$}
+\tnconnect{H}
+\tnopen{up}{H-op-1, H-op-2}
+```
+
+`\tnlayer` takes one entry per slot: `<style>/<label>`, `<style>/<label>/<span>`
+for a tensor across several, `.` for an empty slot, `-` for one the layer's
+index runs through. `\tneq[$\lambda$]` writes an equals sign and the next
+stack goes after it. `tests/lint.py` holds the examples to these rules
+(`docs/roadmap.md`).
+
 Exchanging two fermion legs: `\tnswap[cont|disc]{<left top>}{<right top>}{<drop>}`
 draws the crossing (the sign goes in the equation, as in example 02).
 

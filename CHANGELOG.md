@@ -5,6 +5,41 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.5.0 — 2026-10-02
+
+Stacks: a figure of an algorithm drawn on a grid the package owns, so that two
+authors drawing the same algorithm write the same file (`docs/roadmap.md`).
+
+A stack is n sites across and a list of named layers down — `ket`, `op`, `bra`,
+or as many as a picture has — at one pitch both ways, and a tensor is put in a
+slot rather than at a point. `\tnstack` places it, centred on y = 0 and to the
+right of what is already drawn, with an environment at either end if asked;
+`\tnlayer` fills a layer, one entry per slot (`<style>/<label>`, a tensor across
+several slots as `<style>/<label>/<span>`, `.` for an empty slot and `-` for one
+the layer's index runs through); `\tnconnect` draws every index the grid
+implies; `\tnopen` adds the open ones; `\tneq` writes an equals sign and moves
+on. An open index ends at the border an absent tensor of the standard size
+would have, so the gap in a picture of H_eff is the shape of the state that is
+missing from it, and none of those ends is written down.
+
+`env` is back, as something else. The one removed in v0.3.0 put an object at the
+end of a finite chain, where the outer bonds carry nothing. This one is the rest
+of the network, contracted — the L and R of DMRG and TDVP, the fixed points of a
+uniform state — and it spans every layer of its stack with one index in each.
+
+Colours, within the ramp as it is: an environment is light purple (`env` =
+`purple1`, at the 25% fill the gate used to have), and a gate is now light
+yellow (`gate` = `yellow1`). Purple for the environment, which is large and
+should recede; yellow for the gate, which is the thing being applied. Every page
+with a gate on it is redrawn.
+
+`examples/06-dmrg.tex` and `examples/09-expectation.tex` are rewritten on
+stacks with no length and no coordinate in them, and come off the lint ratchet.
+New: `10-tdvp-site` and `11-tdvp-bond`, the two halves of a one-site TDVP step,
+and `12-fixed-point`, the left fixed point of a uniform MPS as an equation of two
+stacks. `07-fixed-point` stays as it is: it compares two places the physical
+index can leave a triangle, and a stack takes it from the centre.
+
 ## v0.4.0 — 2026-10-02
 
 `\tnrow` places tensors left to right, each a given gap clear of the one before

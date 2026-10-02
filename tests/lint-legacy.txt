@@ -7,7 +7,5 @@ examples/02-swap.tex
 examples/03-mps.tex
 examples/04-canonical.tex
 examples/05-centre.tex
-examples/06-dmrg.tex
 examples/07-fixed-point.tex
 examples/08-tebd.tex
-examples/09-expectation.tex

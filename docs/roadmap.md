@@ -104,14 +104,15 @@ Ranked by how many rows they unblock:
 
 ## Colour: closing the role table
 
-The palette works because each colour is a role and not a decoration. Today the
+Decided so far: stay inside the ramp as it is and extend it only when a role
+cannot be said with it. The palette works because each colour is a role and not a decoration. Today the
 roles are a chain's: `canl`, `canr`, `centre`, `mpo`, `gate`, `coef`. The other
 algorithms bring roles that do not have a colour yet, and the open decisions
 are these:
 
 | new role | used by | proposal | open question |
 |---|---|---|---|
-| env | DMRG, TDVP, fitting, VUMPS, CTMRG | `yellow1` (sand, unused): "the rest of the network, already contracted" | one colour for L and R, or tied to `canl`/`canr`? |
+| env | DMRG, TDVP, fitting, VUMPS, CTMRG | **decided**: `purple1` at 25%, one colour for L and R; the gate moved to `yellow1` | — |
 | isometry, not on a chain | TTN, MERA w, TRG S, HOTRG U, CTMRG P | `canl`'s colour for "isometric toward the centre", whatever the angle | in a tree there is no left and right, so one colour; is `canr` then only the 1D mirror? |
 | disentangler | MERA u, TNR | `gate` (it is a unitary on two indices) | — |
 | partition-function T | TRG, HOTRG | `coef` (a plain array) | — |
@@ -129,7 +130,7 @@ touches off the lint ratchet.
 | phase | adds | examples |
 |---|---|---|
 | 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step — **done** | — |
-| 1 | stack, env, `\tnopen`, equation row | `06`, `07`, `09` rewritten; TDVP, fitting |
+| 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; TDVP site and bond, fixed point (`10`–`12`) |
 | 2 | fused index, cap, delta | MPO × MPS, zip-up, density matrix, sampling |
 | 3 | `iso` at any angle, tree placement | SVD/QR, TTN, MERA |
 | 4 | grid, env corner/edge | PEPS, simple update, CTMRG, TRG, HOTRG |

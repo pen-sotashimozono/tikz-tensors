@@ -97,12 +97,19 @@
   \tngate{W}{$V$}{V1-leg}{4mm}                           \spec{0.9}{-10.1}{\textbackslash tngate,
                                                              one site}
 
+  % ---- a row of unlike tensors, each a gap clear of the last ------------
+  \tnrow{R}{(9.6,-10.0)}{coef/$A$/c, mpo/$W$/c, centre/$C$/c}
+  \tnbond{(R1) -- (R2)} \tnbond{(R2) -- (R3)}             \spec{11.0}{-10.6}{\textbackslash tnrow}
+
+  % ---- an environment, alone ------------------------------------------
+  \node[env, minimum height=17mm] at (15.0,-8.2) {$L$}; \spec{15.0}{-9.15}{env}
+
   % ---- the named colours -----------------------------------------------
   % `color=` and not a bare `\fill[\c]`, because several of these names are also
   % styles (coef, mpo, gate, centre), and TikZ resolves an option as a key before
   % it tries it as a colour -- a bare one silently fills with the style instead.
   \foreach \c [count=\i] in {ele,nuc,coef,exchange,exact,%
-                             canl,canr,centre,mpo,gate,%
+                             canl,canr,centre,mpo,gate,env,%
                              ttfg,ttmuted,ttaccent,ttgood,ttwarn,ttbad}
     \fill[color=\c] (3.6+\i*0.6-0.6,-8.6) rectangle ++(0.45,0.3);
   \spec{7.8}{-8.9}{the named colours}
