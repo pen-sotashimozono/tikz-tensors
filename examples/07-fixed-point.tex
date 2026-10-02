@@ -27,24 +27,24 @@
 \begin{document}
 \begin{tikzpicture}
   % ---- the transfer matrix: l E = lambda l -------------------------------
-  \node[tn node, minimum width=7mm, minimum height=28mm] (l) at (0,0) {$l$};
-  \node[canl] (A)  at (1.5,0.85)  {$A$};
-  \node[canl] (Ab) at (1.5,-0.85) {$\bar A$};
+  \node[tn node, minimum width=7mm, minimum height=34mm] (l) at (0,0) {$l$};
+  \node[canl] (A)  at (1.6,1.05)  {$A$};
+  \node[canl] (Ab) at (1.6,-1.05) {$\bar A$};
   \tnbond[disc]{(l.east |- A) -- (A)}   \tnbond[disc]{(l.east |- Ab) -- (Ab)}
   \tnbond[disc]{(A.south) -- (Ab.north)}
   \tnbond[disc]{(A) -- ++(0.95,0)}      \tnbond[disc]{(Ab) -- ++(0.95,0)}
 
   \node at (3.5,0) {$=\;\lambda$};
-  \node[tn node, minimum width=7mm, minimum height=28mm] (r) at (4.4,0) {$l$};
-  \tnbond[disc]{([yshift=8.5mm]r.east) -- ++(0.95,0)}
-  \tnbond[disc]{([yshift=-8.5mm]r.east) -- ++(0.95,0)}
+  \node[tn node, minimum width=7mm, minimum height=34mm] (r) at (4.4,0) {$l$};
+  \tnbond[disc]{([yshift=10.5mm]r.east) -- ++(0.95,0)}
+  \tnbond[disc]{([yshift=-10.5mm]r.east) -- ++(0.95,0)}
 
   % ---- the Hamiltonian's transfer matrix: L E_W = lambda L ---------------
-  \begin{scope}[yshift=-3.6cm]
-    \node[tn node, minimum width=7mm, minimum height=28mm] (L) at (0,0) {$L$};
-    \node[canl] (B)  at (1.5,0.85)  {$A$};
-    \node[mpo]  (W)  at (1.5,0)     {$W$};
-    \node[canl] (Bb) at (1.5,-0.85) {$\bar A$};
+  \begin{scope}[yshift=-4.4cm]
+    \node[tn node, minimum width=7mm, minimum height=44mm] (L) at (0,0) {$L$};
+    \node[canl] (B)  at (1.6,1.45)  {$A$};
+    \node[mpo]  (W)  at (1.6,0)     {$W$};
+    \node[canl] (Bb) at (1.6,-1.45) {$\bar A$};
     \tnbond[disc]{(L.east |- B) -- (B)}   \tnbond[disc]{(L) -- (W)}
     \tnbond[disc]{(L.east |- Bb) -- (Bb)}
     \tnbond[disc]{(B.south) -- (W.north)} \tnbond[disc]{(W.south) -- (Bb.north)}
@@ -52,10 +52,10 @@
     \tnbond[disc]{(Bb) -- ++(0.95,0)}
 
     \node at (3.5,0) {$=\;\lambda$};
-    \node[tn node, minimum width=7mm, minimum height=28mm] (Lr) at (4.4,0) {$L$};
-    \tnbond[disc]{([yshift=8.5mm]Lr.east) -- ++(0.95,0)}
+    \node[tn node, minimum width=7mm, minimum height=44mm] (Lr) at (4.4,0) {$L$};
+    \tnbond[disc]{([yshift=14.5mm]Lr.east) -- ++(0.95,0)}
     \tnbond[disc]{(Lr.east) -- ++(0.95,0)}
-    \tnbond[disc]{([yshift=-8.5mm]Lr.east) -- ++(0.95,0)}
+    \tnbond[disc]{([yshift=-14.5mm]Lr.east) -- ++(0.95,0)}
   \end{scope}
 \end{tikzpicture}
 \end{document}

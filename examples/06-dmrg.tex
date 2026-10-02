@@ -3,8 +3,10 @@
 %
 % Everything to the left of the two active sites has been contracted into L and
 % everything to the right into R, so each carries three indices and no more --
-% the bra's bond, the Hamiltonian's bond, the ket's bond. Between them sit the
-% two MPO tensors of the sites being optimised.
+% the bra's bond, the Hamiltonian's bond, the ket's bond. They are drawn as
+% blocks -- the same triangle the chain uses, pointing the way its half was
+% swept up -- because that is what they are: everything on one side, contracted.
+% Between them sit the two MPO tensors of the sites being optimised.
 %
 % The four indices below end at one depth and are spaced to take a tensor, and
 % the four above do the same, because that is what this object is for: the
@@ -21,28 +23,36 @@
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
-  \node[tn node, minimum width=7mm, minimum height=22mm] (L) at (0,0)   {$L$};
-  \node[tn node, minimum width=7mm, minimum height=22mm] (R) at (3.3,0) {$R$};
-  \node[mpo] (W1) at (1.15,0) {$W$};
-  \node[mpo] (W2) at (2.15,0) {$W$};
+  % the environments are blocks, so they take the block shape: a triangle
+  % pointing the way its half of the chain was swept up
+  \node[canl] (L)  at (0,0)   {$L$};
+  \node[canr] (R)  at (2.9,0) {$R$};
+  \node[mpo]  (W1) at (0.95,0) {$W$};
+  \node[mpo]  (W2) at (1.95,0) {$W$};
 
   % the Hamiltonian's own bond: short, because its length says nothing
   \tnbond[disc]{(L) -- (W1)}  \tnbond[disc]{(W1) -- (W2)}  \tnbond[disc]{(W2) -- (R)}
 
-  % the four indices below, at one depth and evenly spaced: Theta's legs
-  \tnbond[disc]{([yshift=-7mm]L.east) -| (0.5,-1.55)}
-  \tnbond[disc]{(W1.south) -- (1.15,-1.55)}
-  \tnbond[disc]{(W2.south) -- (2.15,-1.55)}
-  \tnbond[disc]{([yshift=-7mm]R.west) -| (2.8,-1.55)}
-  \tnput[below]{0.5,-1.55}{$a$}        \tnput[below]{1.15,-1.55}{$\sigma_1$}
-  \tnput[below]{2.15,-1.55}{$\sigma_2$} \tnput[below]{2.8,-1.55}{$b$}
+  % the four indices below, at one depth: Theta's legs. The block's two bond
+  % indices leave from the corners of its flat side and carry that side
+  % straight down, as a site's physical index does.
+  \tnbond[disc]{(L.corner 3) -- (L.corner 3 |- 0,-1.5)}
+  \tnbond[disc]{(W1.south)   -- (W1.south  |- 0,-1.5)}
+  \tnbond[disc]{(W2.south)   -- (W2.south  |- 0,-1.5)}
+  \tnbond[disc]{(R.corner 2) -- (R.corner 2 |- 0,-1.5)}
+  \tnput[below]{L.corner 3 |- 0,-1.5}{$a$}
+  \tnput[below]{W1.south |- 0,-1.5}{$\sigma_1$}
+  \tnput[below]{W2.south |- 0,-1.5}{$\sigma_2$}
+  \tnput[below]{R.corner 2 |- 0,-1.5}{$b$}
 
   % and the four above, which is what it returns
-  \tnbond[disc]{([yshift=7mm]L.east) -| (0.5,1.55)}
-  \tnbond[disc]{(W1.north) -- (1.15,1.55)}
-  \tnbond[disc]{(W2.north) -- (2.15,1.55)}
-  \tnbond[disc]{([yshift=7mm]R.west) -| (2.8,1.55)}
-  \tnput[above]{0.5,1.55}{$a'$}         \tnput[above]{1.15,1.55}{$\sigma_1'$}
-  \tnput[above]{2.15,1.55}{$\sigma_2'$} \tnput[above]{2.8,1.55}{$b'$}
+  \tnbond[disc]{(L.corner 2) -- (L.corner 2 |- 0,1.5)}
+  \tnbond[disc]{(W1.north)   -- (W1.north  |- 0,1.5)}
+  \tnbond[disc]{(W2.north)   -- (W2.north  |- 0,1.5)}
+  \tnbond[disc]{(R.corner 3) -- (R.corner 3 |- 0,1.5)}
+  \tnput[above]{L.corner 2 |- 0,1.5}{$a'$}
+  \tnput[above]{W1.north |- 0,1.5}{$\sigma_1'$}
+  \tnput[above]{W2.north |- 0,1.5}{$\sigma_2'$}
+  \tnput[above]{R.corner 3 |- 0,1.5}{$b'$}
 \end{tikzpicture}
 \end{document}

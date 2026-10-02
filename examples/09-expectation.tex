@@ -3,8 +3,15 @@
 %
 % It is a number, so the diagram has no free index anywhere -- that is the test
 % to apply to a picture like this. The ket chain runs along the top, its
-% conjugate along the bottom, every physical index of the one meets the matching
-% index of the other, and the bond indices at the two ends are closed around.
+% conjugate along the bottom, and every physical index of the one meets the
+% matching index of the other.
+%
+% The chain is finite, so its outer bonds are one-dimensional: they carry
+% nothing and are not drawn. An earlier draft ran a line from each end of the
+% ket around to the matching end of the bra, which is literally the contraction
+% but says the wrong thing -- a drawn index is one with something in it, and
+% those two have a single value each. Leaving them out is what makes the picture
+% manifestly a scalar rather than a scalar with decoration.
 %
 % Between them, read downward: the gate that evolved the ket, the operator being
 % measured, and the gate's conjugate coming back up to the bra. The gate appears
@@ -36,10 +43,6 @@
 
   % every physical index of the ket meets the matching index of the bra
   \foreach \i in {1,...,5}{ \tnbond[disc]{(S\i.south) -- (T\i.north)}}
-
-  % the bond indices at the two ends, closed around: no free index, a number
-  \tnbond[disc]{(S1) -- ++(-0.55,0) |- (T1)}
-  \tnbond[disc]{(S5) -- ++(0.55,0) |- (T5)}
 
   % the gate on the ket, the operator, the gate's adjoint on the bra
   \tngate{U}{$U$}{S2-leg,S3-leg}{8mm}
