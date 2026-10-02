@@ -139,8 +139,9 @@ touches off the lint ratchet.
 | 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step — **done** | — |
 | 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; single-site and bond H_eff, fixed point, low rank |
 | 2 | fused index (`tn double`), delta (`tn dot`), basis caps, tensors across layers, `\|` and `dots` slots, rows — **done** (v0.6.0) | MPO × MPS, zip-up, CP, sampling (`13`–`16`); every legacy example rewritten |
-| 3 | `iso` at any angle, tree placement | SVD/QR, TTN, MERA |
+| 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`17`–`19`), and a first neural network (`20`) |
 | 4 | grid, env corner/edge | PEPS, simple update, CTMRG, TRG, HOTRG |
+| 5 | machine learning | neural networks as diagrams: what is a tensor (weights, feature maps) and what is not (activations) |
 
 ## What a figure looks like after phase 1
 

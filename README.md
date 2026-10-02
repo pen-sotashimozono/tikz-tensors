@@ -22,6 +22,7 @@ stand for.
 | `tn node` | the bare tensor: one stroke, no fill, 9 mm |
 | `tn box`, `tn circle`, `tn capsule`, `tn rounded` | an outline, paper-filled |
 | `tn triangle right`, `tn triangle left` | a triangle pointing that way |
+| `tn triangle up`, `tn triangle down` | an isosceles triangle, as wide as the sites it spans |
 | `tn diamond` | a diamond |
 | `tn wide`, `tn tall`, `tn small` | the same shape, resized |
 | `tn fill=<colour>` | solid fill, outline in ink |
@@ -85,6 +86,10 @@ A style with a comma, or a label with a slash, goes in braces:
 - A triangle's physical index leaves from the corner of its flat side
   (`tn leg anchor`), and the triangle is set across so that corner is on the
   site's line.
+- Two tensors one above the other meet on every site they both cover if they
+  cover the same ones, and otherwise once, in the middle of the sites they
+  share — which is what places the branches of a tree (`tn triangle up`,
+  `tn single`) and the layers of a MERA.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`).

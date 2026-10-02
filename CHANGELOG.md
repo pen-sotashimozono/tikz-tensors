@@ -5,6 +5,36 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.7.0 — 2026-10-02
+
+Trees, MERA and the decompositions, on the same grid; and a neural network, roughly.
+
+Roadmap phase 3. New examples: `17-svd-qr` (T = U S V† and T = Q R on one
+tensor of a chain), `18-ttn` (a tree on four sites, the centre at the root),
+`19-mera` (two layers of a binary MERA on eight sites) and `20-neural-network`
+(a perceptron next to an MPS classifier).
+
+- **Triangles pointing up and down.** `tn triangle up` and `tn triangle down`
+  stretch to the sites they span, so an isometry of a tree or a MERA is as
+  wide as what it joins. `tn single` says on which side a shape has one index
+  however wide it is; `\tnopen` on that side opens one, from the middle.
+- **One rule for every vertical index.** Two tensors over the same sites meet
+  on each of them, as before. Otherwise they meet once, in the middle of the
+  sites they share. That one rule places a site under a gate, a branch under
+  its node, and an isometry of a MERA under a disentangler that overlaps it by
+  half; no example says where any of them goes.
+- **Into a triangle from the side.** An index meeting a triangle away from its
+  apex ends just inside the base, not at the middle, which off the apex is
+  outside it.
+- **Rows keep the slot above them**, as stacks keep the slots beyond their
+  ends, so an index opened upward on a second row clears the first. Every
+  picture with two rows is a little taller.
+
+In the notation: `iso` (a triangle pointing up, toward the root, in the
+left-canonical colour — off a chain there is no left and right, only toward
+the centre) and `act` (a dashed circle: a nonlinear map on an index, which is
+not a tensor).
+
 ## v0.6.0 — 2026-10-02
 
 Every example on the grid, and what MPO times MPS needs.

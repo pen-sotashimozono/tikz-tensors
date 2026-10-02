@@ -135,8 +135,16 @@
   \tnstack{U}{2}{a}
   \tnlayer{U}{a}{tn box, tn box}
   \tnconnect[along=tn double]{U}
+  % a tree on the same grid: triangles pointing up and down, each as wide as
+  % the sites under it, with one index on the apex side (tn single)
+  \tnstack{R}{4}{a, b}
+  \tnlayer{R}{a}{tn triangle down/$D$/4}
+  \tnlayer{R}{b}{tn triangle up/$U$/2, {tn box, tn single=up}/$S$/2}
+  \tnconnect[apart={a, b}]{R}
+  \tnopen{up}{R-a-1}
+  \tnopen{down}{R}
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
     at (current bounding box.south) {\textbackslash tnbreak, tn box/\$Z\$/1/2, dots,
-    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double};
+    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double, tn triangle up, tn triangle down, tn single};
 \end{tikzpicture}
 \end{document}

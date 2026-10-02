@@ -17,7 +17,13 @@
 %   being said -- which way the gauge runs -- carries an arrowhead;
 %   two indices fused into one (a bond of dimension D times chi) are a double
 %   line; a copy tensor, diagonal in all its indices, is an ink dot; a basis
-%   vector closing an index is a small circle.
+%   vector closing an index is a small circle;
+%   an isometry of a tree or a MERA is a triangle pointing up, toward the
+%   root, in the left-canonical colour: off a chain there is no left and
+%   right, only toward the centre and away from it, and that is the colour
+%   that already says `isometric toward the centre';
+%   a nonlinear map applied to an index (an activation) is a small dashed
+%   circle: it is not a tensor, and the dashes say so.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
@@ -45,4 +51,6 @@
   fused/.style      = {tn double},
   delta/.style      = {tn dot},
   basis/.style      = {tn circle, tn small},
+  iso/.style        = {tn triangle up, tn fill=canl},
+  act/.style        = {tn circle, tn small, dashed},
 }

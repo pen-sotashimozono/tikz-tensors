@@ -1,0 +1,27 @@
+% A tree tensor network on four sites, with its centre at the root.
+%
+% Each isometry W takes two indices up to one: the triangle points toward the
+% root, which is the direction it is isometric in, and it is as wide as the two
+% sites it joins. Its one upper index leaves from the apex, in the middle of
+% those sites, and meets the root there -- the grid joins two tensors of
+% different widths once, in the middle of the sites they share, so no position
+% in this file is worked out.
+%
+% The root is the centre, spanning everything below it, the one tensor that is
+% not isometric. Move the centre down a branch and the triangle it passes
+% through turns over; the notation has the shape for that (a triangle pointing
+% down) but this picture keeps it at the top.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{T}{4}{root, iso}
+  \tnlayer{T}{root}{centre/$C$/4}
+  \tnlayer{T}{iso}{iso/$W$/2, iso/$W$/2}
+  \tnconnect[apart={root, iso}]{T}
+  \tnopen{down}{T}
+  \foreach \i in {1,...,4} \tnput[below]{T-\i-down}{$\sigma_{\i}$};
+\end{tikzpicture}
+\end{document}
