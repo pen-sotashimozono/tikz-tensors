@@ -3,6 +3,9 @@
 One TikZ format for **tensor-network diagrams**, in one **shared theme** for
 figures, notes and slides.
 
+**Documentation:** <https://pen-sotashimozono.github.io/tikz-tensors/> — the
+reference, and every example with its code beside its picture.
+
 ```latex
 \usepackage{tikz-tensors}
 ```
@@ -190,6 +193,11 @@ figures. A figure page is a `standalone` document:
 \end{tikzpicture}
 \end{document}
 ```
+
+`python3 scripts/pages.py` builds the documentation site into `_site/`
+(gitignored) from `docs/api.md`, `examples/` and the reference pictures; the
+Pages workflow publishes it from `main`. An example's first line is its title
+on the site, `%% <title>`, and the comment under it its description.
 
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
 (SVG and PDF, gitignored) with LuaLaTeX and `pdftocairo`; the pictures in this

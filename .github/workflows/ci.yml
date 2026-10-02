@@ -2,7 +2,9 @@ name: CI
 
 # Every change answers these, each its own job and runner:
 #   version     did the version move exactly as the change requires, and do the
-#               rules behind that still hold (tests/test_version.py, test_lint.py)
+#               rules behind that still hold (tests/test_version.py, test_lint.py),
+#               and does the documentation site build with every link whole
+#               (tests/test_pages.py)
 #   theme       are the generated colour files in step with theme/tokens.toml
 #   rules       is every style and command drawn somewhere, and does every
 #               example follow the figure rules (no TeX needed)
