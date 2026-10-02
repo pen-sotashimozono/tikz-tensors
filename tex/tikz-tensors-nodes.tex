@@ -1,0 +1,100 @@
+% tikz-tensors-nodes.tex -- node types: what a single tensor looks like, and
+% what the layout and the contraction rules need to know about it.
+%
+% A node type is a TikZ style built on `tn node'. It says three things:
+%   its outline   a TikZ shape, a fill (paper unless a convention fills it) and
+%                 the size at which it reads as the same weight as the others
+%   its size      tn wide, tn tall, tn small, tn flat resize any outline
+%   its indices   where they leave it, as three properties a layout reads back
+%                 when it places the node:
+%     tn leg anchor=<anchor>  the point its index down the site leaves from,
+%                             and the point a stack puts on the site's line
+%                             (center unless the shape says otherwise)
+%     tn points=left|right    which way the shape points; an index that carries
+%                             a direction (tn arrow) takes it from here
+%     tn single=up|down       the side on which it has one index however many
+%                             sites it spans (the apex of a triangle)
+% A user's own type is a style of the same kind and is a type like these: a
+% kite pointing up is {tn node, kite, tn fill=green1, tn single=up}.
+% The package's types are named for their shape and never for what they mean;
+% a meaning is a style of the user's notation built on one of them.
+\gdef\tn@legat{center}
+\gdef\tn@pts{}
+\gdef\tn@single{}
+\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
+         tn points/.code={\gdef\tn@pts{#1}},
+         tn single/.code={\gdef\tn@single{#1}}}
+% Read a type's index properties without drawing it: \tn@legat, \tn@pts and
+% \tn@single afterwards hold what the style <#1> sets.
+\def\tn@props#1{%
+  \gdef\tn@legat{center}\gdef\tn@pts{}\gdef\tn@single{}%
+  \begingroup\tikzset{#1}\endgroup}
+
+% Each shape carries the size at which it reads as the same weight as the
+% others -- a triangle has to be larger than a box to hold a label, a diamond a
+% little less -- and paper fill, so that an index drawn to its centre is covered
+% by it. A fill of a convention's own replaces the paper. A triangle's index
+% leaves from a corner of its flat side -- the index continues that side's own
+% line rather than leaving from the middle of a slanted edge, which is how a
+% canonical form is read; pointing right that is corner 3, pointing left corner
+% 2 (one shape at a 180 degree turn, so no single anchor names both).
+\tikzset{
+  tn box/.style            = {tn node, rectangle, fill=grey1, minimum size=7mm,
+                              inner sep=1pt},
+  tn circle/.style         = {tn node, circle, fill=grey1, minimum size=8mm},
+  tn capsule/.style        = {tn node, rectangle, rounded corners=4mm,
+                              fill=grey1, minimum size=8mm},
+  tn rounded/.style        = {tn node, rectangle, rounded corners=1.2mm,
+                              fill=grey1, minimum size=7.5mm, inner sep=1pt},
+  tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
+                              shape border rotate=-90, fill=grey1,
+                              minimum size=10.5mm, font=\small,
+                              tn leg anchor=corner 3, tn points=right},
+  tn triangle left/.style  = {tn triangle right, shape border rotate=90,
+                              tn leg anchor=corner 2, tn points=left},
+  tn triangle up/.style    = {tn node, isosceles triangle,
+                              isosceles triangle stretches, shape border rotate=90,
+                              fill=grey1, minimum width=10.5mm, minimum height=9mm,
+                              font=\small, tn single=up},
+  tn triangle down/.style  = {tn triangle up, shape border rotate=-90,
+                              tn single=down},
+  tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
+                              font=\small},
+  tn wide/.style           = {minimum width=17mm},
+  tn tall/.style           = {minimum height=17mm},
+  tn small/.style          = {minimum size=6mm, font=\scriptsize},
+  tn flat/.style           = {minimum width=10.5mm, minimum height=6mm},
+  tn dot/.style            = {tn node, circle, fill=stroke, minimum size=1.8mm},
+  tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
+}
+
+% Two types are named for the structure that draws them rather than for a
+% shape, because a layout needs something to draw with and a convention needs
+% somewhere to colour it. Both are plain outlines here.
+%   tn gate  a gate on indices that run through it (also a MERA's disentangler)
+%   tn env   the block at either end of a stack: the rest of the network,
+%            already contracted -- the L and R of an effective Hamiltonian, the
+%            fixed points of a uniform state. It spans every layer of its stack
+%            and has one index in each.
+\tikzset{
+  tn gate/.style = {tn rounded, inner sep=3pt, font=\small},
+  tn env/.style  = {tn box, minimum width=\tn@envw, font=\small},
+}
+
+% ---- placing a node ----------------------------------------------------------
+% \tn@place{<type>}{<name>}{<x>}{<y>}{<label>}
+% How every layout puts a tensor down: at (<x>,<y>), or, when its type gives
+% its index an anchor of its own, moved across so that the anchor is there --
+% a probe of the same type, drawn nowhere, measures how far. Which way it points
+% and its single side are kept with the node (n@<name>@pt, n@<name>@one), for
+% the routes that later meet it.
+\def\tn@place#1#2#3#4#5{%
+  \tn@props{#1}%
+  \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}%
+  \ifx\tn@legat\tn@center
+    \node[#1] (#2) at (#3,#4) {#5};
+  \else
+    \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
+    \tn@anc{tn@probe}{\tn@legat}\tn@d=\tn@ax\relax
+    \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};
+  \fi}

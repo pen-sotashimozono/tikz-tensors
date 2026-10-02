@@ -1,0 +1,137 @@
+% tikz-tensors-core.tex -- what every other module stands on: the one stroke,
+% the layer edges are drawn on, the tokens every distance is made of, and the
+% two primitives of a network, a node and an edge. Loaded by tikz-tensors.sty.
+
+% ---- edges go under nodes, always -------------------------------------------
+% A tensor is drawn over the index it carries, never under it. Left to the order
+% of the source that holds only while nobody adds a line after a node, and the
+% moment a leg is drawn to a coordinate that happens to sit inside a tensor it
+% is drawn across it. So every edge this package draws goes on a layer beneath
+% the nodes, and the rule holds whatever order the file is written in.
+%
+% \pgfsetlayers is global, so this orders every picture in the document, not only
+% the diagrams: `main' stays on top, which is pgf's own default, and `tnedges'
+% is added under it. A document that sets its own layers should include both.
+\pgfdeclarelayer{tnedges}
+\pgfsetlayers{tnedges,main}
+
+% ---- one line width ----------------------------------------------------------
+% An outline and a leg are the same stroke in a tensor diagram: a node is not a
+% heavier object than the index it carries. So every style draws with `tn line'
+% rather than carrying a width of its own, and `tn line width' moves all of them
+% at once -- on a picture, on a scope, or on a single node. A caller drawing a
+% path of its own uses `tn line' to match.
+\pgfkeys{/tn/line width/.initial=0.8pt}
+\newif\iftnarrows \tnarrowstrue
+\tikzset{
+  tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
+  tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
+  tn arrows/.is if    = tnarrows,
+}
+
+% ---- the tokens --------------------------------------------------------------
+% A figure that says where its tensors are in centimetres is a figure two
+% authors write two ways. So the package owns the geometry, and every distance
+% any module uses is one of these:
+%   pitch      between neighbouring sites of a stack: room for a triangle set
+%              across in its slot, the bond after its apex, and an arrowhead
+%   rise       between neighbouring layers
+%   treepitch  pitch in a tree ([tree]): half, because a tree's leaves are
+%   treerise   tensors of one site each and nothing is set across in its slot
+%   gpitch     along a bond of a two-dimensional grid
+%   slot       the size of a tensor that is not there: an open index ends at the
+%              border an absent tensor of this size would have, so a gap in a
+%              picture is the shape of what is missing from it
+%   stub       the least an open index shows beyond its own tensor, where the
+%              border of the next slot is nearer than that
+%   envw       the width of an environment block
+%   gap        the space either side of an equals sign; twice it between rows
+%   inset      how far a bond runs under the tensor it meets
+%
+% \tnset{<token>=<length>, ...}
+% Changes them. It belongs in a notation file, the one place where a user's
+% taste in spacing is said once for every figure; a figure itself has no
+% lengths in it (tests/lint.py), so it cannot. `line width' is here too.
+\def\tn@pitch{18mm}
+\def\tn@rise{15mm}
+\def\tn@treepitch{9mm}
+\def\tn@treerise{15mm}
+\def\tn@gpitch{18mm}
+\def\tn@slot{9mm}
+\def\tn@stub{4mm}
+\def\tn@envw{7mm}
+\def\tn@gap{4mm}
+\def\tn@inset{1.6pt}
+\pgfkeys{/tn/set/.is family}
+\def\tn@token#1{\pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#1\endcsname{##1}}}}
+\tn@token{pitch}\tn@token{rise}\tn@token{treepitch}\tn@token{treerise}
+\tn@token{gpitch}\tn@token{slot}\tn@token{stub}\tn@token{envw}\tn@token{gap}
+\tn@token{inset}
+\pgfkeys{/tn/set/line width/.code={\pgfkeyssetvalue{/tn/line width}{#1}}}
+\newcommand{\tnset}[1]{\pgfkeys{/tn/set/.cd, #1}}
+
+% ---- storage and measurement -------------------------------------------------
+% Every module keeps what it knows about a stack or a node under a name of its
+% own, \tn@<key> (global, so that it outlives the \foreach that set it), and
+% measures with these. \tn@d is the one scratch length.
+\newdimen\tn@d
+\def\tn@set#1#2{\expandafter\xdef\csname tn@#1\endcsname{#2}}
+\def\tn@get#1{\csname tn@#1\endcsname}
+\def\tn@len#1#2{\pgfmathsetlength\tn@d{#2}\edef#1{\the\tn@d}}
+% Where an anchor of a node is, as \tn@ax and \tn@ay.
+\def\tn@anc#1#2{%
+  \pgf@process{\pgfpointanchor{#1}{#2}}%
+  \edef\tn@ax{\the\pgf@x}\edef\tn@ay{\the\pgf@y}}
+\def\tn@sleft{left}\def\tn@sright{right}\def\tn@sup{up}\def\tn@sdown{down}
+\def\tn@center{center}
+
+% ---- a network is nodes and edges --------------------------------------------
+% These are the network itself. Everything in the other modules is built of
+% them, and a diagram that has no use for the rest can be drawn out of these
+% alone:
+%
+%   \node[tn node, tn fill=blue1, circle] (a) at (0,0) {$A$};
+%   \node[tn node] (b) at (2,0) {$B$};            % a box: the plain tensor
+%   \tnbond{(a) -- (b)}                           % an index between them
+%   \tnbond[tn edge=exact]{(b) -- ++(1,0)}        % one in a colour of its own
+%
+% tn node is what every tensor shares -- one stroke, no inner padding -- and the
+% shape is TikZ's, a rectangle unless another is asked for. Its outline is the
+% theme's `stroke' and so is tn edge's, so a tensor and the index it carries are
+% drawn in one ink by default: a tensor is not a different kind of mark from its
+% index, and an outline in its own colour should be something a preset says on
+% purpose. It draws rather than leaving `draw' unset, because a node with no
+% draw is not drawn at all and a bare tn node has to be a tensor you can see.
+%
+% outer sep=0pt, because a bond would otherwise stop short of the tensor it runs
+% to. TikZ keeps a path half a line width clear of a node's border so that it
+% meets the outside of the stroke rather than overlapping it -- but `minimum
+% size' already counts the stroke, so the border IS the outside of it, and the
+% half width is added to a clearance that is already there. Measured at 700 dpi
+% on two triangles: a one-pixel gap between the tensor and its bond. It also
+% puts every anchor on the line that is drawn: with TikZ's default a corner
+% anchor sits half a width outside the stroke. tn fill is the solid
+% convention -- a step of a scale, outlined in the one ink -- so the colour of a
+% tensor is its fill and every outline in a diagram is the same stroke.
+\tikzset{
+  tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
+                      outer sep=0pt, text=ttfg},
+  tn fill/.style   = {draw=stroke, fill=#1},
+  tn fill/.default = grey2,
+  tn edge/.style   = {tn line, draw=#1},
+  tn edge/.default = stroke,
+}
+
+% \tnbond[<style>]{<path>}
+% One edge, drawn under the nodes. The path is written out in full, so it can
+% end wherever it needs to -- on a node, on a coordinate, or on nothing:
+%   \tnbond{(A1) -- (A2)}             a bond between two tensors
+%   \tnbond{(A3) -- ++(0.55,0)}       an open index, with no other end
+%   \tnbond[tn arrow]{(A1) -- (A2)}   one with an arrowhead
+% Every line any module draws is drawn by this. It is the one command here a
+% figure on the lattice has no use for: it is for extending the package, and
+% for pictures that are not on a lattice at all. A `node' written inside the
+% path rides the layer with it, so a label that has to stay readable where it
+% crosses a tensor belongs in a \node of its own.
+\newcommand{\tnbond}[2][tn edge]{%
+  \begin{pgfonlayer}{tnedges}\draw[#1] #2;\end{pgfonlayer}}

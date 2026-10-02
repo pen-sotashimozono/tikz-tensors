@@ -1,0 +1,184 @@
+% tikz-tensors-stack.tex -- the stack: the lattice a figure of an algorithm is
+% drawn on, sites across and named layers down, and the tensors in its slots.
+%
+% A stack is a block of the canvas (placed after what is on the row). Its
+% tensors are placed in it and recorded -- which stack, which layers and which
+% sites each covers -- and that record is all the contraction rules
+% (tikz-tensors-connect.tex) read: a tensor's indices follow from where it is
+% and from its type, never from a coordinate.
+
+% The centre of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
+% \tn@ly. Column 0 and column n+1 are the slots just beyond the ends.
+\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
+\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@get{#1@rise}}}
+
+% \tnstack[left=<label>, right=<label>, tree]{<name>}{<sites>}{<layers>}
+% A grid of <sites> slots across and the <layers> down, top to bottom, placed
+% after what is already on the row (an equals sign, or another stack, whose
+% end slot and its own keep them a pitch apart) and centred on the row, so that
+% the stacks of an equation line up. left= and right= put an environment at
+% either end. Without one, the stack keeps the slot beyond its end as far as
+% that slot's border, which is where an open index there ends -- so an index
+% opened later never runs into the equals sign before it.
+%
+%   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
+%
+% [tree] draws the stack as a tree is usually drawn: at the tree's own pitch
+% and rise, a tensor across several sites keeping its own size, centred over
+% them, and an index between two tensors that do not line up turning a corner
+% rather than stretching either -- up from the lower one, across at half
+% height, up into the upper one where its base can take it.
+%
+% The environment is the node <name>-left or <name>-right. Every slot, and the
+% ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
+% is what a label for something that is not a tensor is placed on.
+\pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
+         /tn/stack/right/.initial=,
+         /tn/stack/tree/.code={\def\tn@istree{1}}}
+\newcommand{\tnstack}[4][]{%
+  \def\tn@istree{0}%
+  \pgfkeys{/tn/stack/.cd, left=, right=, #1}%
+  \tn@set{#2@tree}{\tn@istree}%
+  \ifnum\tn@istree=1 \tn@set{#2@pitch}{\tn@treepitch}\tn@set{#2@rise}{\tn@treerise}%
+  \else \tn@set{#2@pitch}{\tn@pitch}\tn@set{#2@rise}{\tn@rise}\fi
+  \pgfkeysgetvalue{/tn/stack/left}\tn@envl
+  \pgfkeysgetvalue{/tn/stack/right}\tn@envr
+  \tn@set{#2@n}{#3}%
+  \tn@set{#2@layers}{#4}%
+  \global\tn@c=0
+  \foreach \tn@l in {#4}{%
+    \global\advance\tn@c by 1
+    \tn@set{#2@k@\tn@l}{\the\tn@c}\tn@set{#2@name@\the\tn@c}{\tn@l}}%
+  \tn@set{#2@L}{\the\tn@c}%
+  % A row after \tnbreak hangs a gap under everything drawn so far, keeping the
+  % slot above its top layer as far as that slot's border -- where an index
+  % opened upward ends -- as a stack keeps the slots beyond its ends.
+  \tn@block{0pt}{\tn@gap+(\tn@get{#2@L}+1)/2*\tn@get{#2@rise}-\tn@slot/2}%
+  \tn@set{#2@y0}{\the\tn@line@y}%
+  \ifx\tn@envl\@empty
+    \tn@set{#2@hasl}{0}%
+    \tn@len\tn@xz{\the\tn@cursor-\tn@slot/2}%
+  \else
+    \tn@set{#2@hasl}{1}%
+    \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
+  \fi
+  \tn@set{#2@x0}{\tn@xz}%
+  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@get{#2@rise}+\tn@slot}%
+  \ifx\tn@envl\@empty\else
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
+  \fi
+  \ifx\tn@envr\@empty
+    \tn@set{#2@hasr}{0}%
+    \tn@colx{#2}{#3+1}\tn@reach{\tn@cx-\tn@slot/2}%
+  \else
+    \tn@set{#2@hasr}{1}%
+    \tn@colx{#2}{#3+1}%
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};
+    \tn@reach{\tn@cx+\tn@envw/2}%
+  \fi
+  \pgfmathtruncatemacro\tn@nn{#3+1}%
+  \foreach \tn@l in {#4}{%
+    \tn@layy{#2}{\tn@get{#2@k@\tn@l}}%
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \tn@colx{#2}{\tn@i}%
+      \path[overlay] (\tn@cx,\tn@ly) coordinate (#2-\tn@l-\tn@i-slot);}}%
+}
+
+% \tnlayer{<stack>}{<layer>}{<entry>, ...}
+% The layer's slots, left to right, one entry each:
+%   <type>/<label>                 a tensor in that slot
+%   <type>/<label>/<span>          one tensor across <span> slots: a gate, a
+%                                  two-site tensor, as wide as the slots
+%   <type>/<label>/<span>/<down>   ... and down <down> layers, as tall as
+%                                  they are, with an index into each: the
+%                                  zipper of zip-up. The layers below leave
+%                                  its slots as `.'
+%   .                              nothing: the slot is empty
+%   -                              nothing, but the layer's index runs
+%                                  through, along the layer
+%   |                              nothing, but the site's index runs
+%                                  through, down the site
+%   dots                           the dots of a chain that goes on (not `...'
+%                                  which \foreach reads as a range)
+% A type with a comma in it goes in braces, {coef, circle}/$A$, and so does a
+% label with a slash in it, gate/{$U(\delta t/2)$}/2. The tensor of
+% site i is the node <stack>-<layer>-i; one that spans is named by its first
+% site and its top layer.
+\def\tn@entry#1/#2/#3/#4/#5\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}%
+  \def\tn@span{#3}\def\tn@vspan{#4}}
+\def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
+\def\tn@cdots{dots}
+\newcommand{\tnlayer}[3]{%
+  \ifcsname tn@#1@k@#2\endcsname\else
+    \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
+  \edef\tn@k{\tn@get{#1@k@#2}}%
+  \global\tn@c=1
+  \foreach \tn@e in {#3}{%
+    \expandafter\tn@entry\tn@e/////\tn@end
+    \edef\tn@i{\the\tn@c}%
+    \ifx\tn@span\@empty \def\tn@span{1}\fi
+    \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
+    \ifx\tn@sty\tn@cdot
+    \else\ifx\tn@sty\tn@cE
+      \tn@set{#1@o@#2@\tn@i}{-}%
+    \else\ifx\tn@sty\tn@cB
+      \tn@set{#1@o@#2@\tn@i}{|}%
+    \else\ifx\tn@sty\tn@cdots
+      \tn@set{#1@o@#2@\tn@i}{D}%
+      \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
+      \node[tn label] at (\tn@cx,\tn@ly) {$\cdots$};
+    \else
+      \tn@layy{#1}{\tn@k+(\tn@vspan-1)/2}%
+      \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
+      \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
+      \tn@len\tn@hh{(\tn@vspan-1)*\tn@get{#1@rise}+\tn@slot}%
+      \ifnum\tn@get{#1@tree}=1 \def\tn@span@w{1}\else\let\tn@span@w\tn@span\fi
+      \edef\tn@opt{\tn@sty\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
+                   \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
+      \edef\tn@nm{#1-#2-\tn@i}%
+      \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
+      \pgfmathtruncatemacro\tn@last{\tn@i+\tn@span-1}%
+      \pgfmathtruncatemacro\tn@kb{\tn@k+\tn@vspan-1}%
+      \tn@set{n@\tn@nm @s}{#1}\tn@set{n@\tn@nm @l}{#2}%
+      \tn@set{n@\tn@nm @k}{\tn@k}\tn@set{n@\tn@nm @kb}{\tn@kb}%
+      \tn@set{n@\tn@nm @a}{\tn@i}\tn@set{n@\tn@nm @b}{\tn@last}%
+      \foreach \tn@q in {\tn@k,...,\tn@kb}{%
+        \foreach \tn@j in {\tn@i,...,\tn@last}{%
+          \tn@set{#1@o@\tn@get{#1@name@\tn@q}@\tn@j}{\tn@nm}}}%
+    \fi\fi\fi\fi
+    \global\advance\tn@c by \tn@span\relax
+  }%
+}
+
+% What occupies slot <#3> of layer <#2> of stack <#1>, as \tn@o, and what kind
+% of thing that is, as \tn@kd:
+%   0 nothing  1 a tensor (\tn@o is its name)  2 `-'  3 `|'  4 `dots'
+%   5 the environment on the left (column 0)  6 on the right (column n+1)
+\def\tn@occ#1#2#3{%
+  \ifnum#3=0 \ifnum\tn@get{#1@hasl}=1 \def\tn@o{L}\else\def\tn@o{}\fi
+  \else\ifnum#3>\tn@get{#1@n} \ifnum\tn@get{#1@hasr}=1 \def\tn@o{R}\else\def\tn@o{}\fi
+  \else\ifcsname tn@#1@o@#2@#3\endcsname \edef\tn@o{\tn@get{#1@o@#2@#3}}%
+  \else\def\tn@o{}\fi\fi\fi
+  \ifx\tn@o\@empty\def\tn@kd{0}%
+  \else\ifx\tn@o\tn@cE\def\tn@kd{2}%
+  \else\ifx\tn@o\tn@cB\def\tn@kd{3}%
+  \else\ifx\tn@o\tn@cD\def\tn@kd{4}%
+  \else\ifx\tn@o\tn@cL\def\tn@kd{5}%
+  \else\ifx\tn@o\tn@cR\def\tn@kd{6}%
+  \else\def\tn@kd{1}\fi\fi\fi\fi\fi\fi}
+
+% From slot <#3> of site <#2>, step by <#4> through every `|' -- the site's
+% index running through -- and leave the first layer that is not one in
+% \tn@kw, which may be just off the grid.
+\def\tn@walk#1#2#3#4{\pgfmathtruncatemacro\tn@kw{#3}\tn@walkstep{#1}{#2}{#4}}
+\def\tn@walkstep#1#2#3{%
+  \let\tn@next\relax
+  \ifnum\tn@kw>0 \ifnum\tn@kw>\tn@get{#1@L}\else
+    \edef\tn@ln{\tn@get{#1@name@\tn@kw}}%
+    \tn@occ{#1}{\tn@ln}{#2}%
+    \ifnum\tn@kd=3
+      \pgfmathtruncatemacro\tn@kw{\tn@kw+(#3)}%
+      \def\tn@next{\tn@walkstep{#1}{#2}{#3}}%
+    \fi
+  \fi\fi
+  \tn@next}
