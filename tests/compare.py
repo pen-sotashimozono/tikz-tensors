@@ -127,8 +127,12 @@ def compare(rendered: pathlib.Path) -> tuple[str, str]:
         diff = rendered.with_name(f"{name}-diff.txt")
         diff.write_text("only in the reference:\n" + "\n".join(only_ref) +
                         "\n\nonly in the render:\n" + "\n".join(only_new) + "\n")
+        # The first few, in the log itself, so a failure on a runner can be read
+        # without fetching the artifact.
+        sample = ([f"      - {t}" for t in only_ref[:4]] +
+                  [f"      + {t}" for t in only_new[:4]])
         return "FAIL", (f"{bad} of {total} drawn things differ ({share:.1%}, limit "
-                        f"{TOLERANCE:.0%}); see {diff.name}")
+                        f"{TOLERANCE:.0%}); see {diff.name}\n" + "\n".join(sample))
     return "ok", f"{bad} of {total} drawn things differ"
 
 
