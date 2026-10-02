@@ -75,7 +75,20 @@ it, and both come off the lint ratchet. New: `10-heff-single-site` and
 stacks. `13-low-rank` is a five-site tensor and its MPS approximation,
 side by side: one entry spanning five slots is exactly as wide as five sites, so
 the two share their width, their columns and the depth of every index without
-the file saying so. `\tnapprox` is `\tneq` with an approximately-equals sign. Examples are named for the object they draw, not the algorithm that
+the file saying so. `\tnapprox` is `\tneq` with an approximately-equals sign.
+
+In a stack a triangle's physical index leaves from the corner of its flat side,
+not its centre: the index continues that side's own line, which is how a
+canonical form is read. The triangle is set across in its slot so that the
+corner is on the site's line, and the grid stays straight. A shape says where
+its index leaves with `tn leg anchor` (the triangles set `corner 3` and
+`corner 2`; everything else is its centre). The pitch is 15 mm, so that a
+triangle moved across still clears its neighbour, and an open index shows at
+least 4 mm beyond its own tensor.
+
+`tests/cases/inline.tex` has the expansion twice: drawn downward, and along the
+line as one stack, which `baseline=-0.5ex` sets on the math axis — the one to
+copy for running text. Examples are named for the object they draw, not the algorithm that
 uses it: one H_eff serves DMRG, TDVP and VUMPS alike. `07-fixed-point` stays as it is: it compares two places the physical
 index can leave a triangle, and a stack takes it from the centre.
 

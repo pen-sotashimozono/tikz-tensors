@@ -1,5 +1,10 @@
 % The package inside an ordinary article: loaded after xcolor with options and
-% alongside hyperref (no option clash), a diagram inline in an equation.
+% alongside hyperref (no option clash), a diagram inline in an equation -- the
+% same expansion twice, once drawn downward and once along the line.
+%
+% The horizontal one is the one to copy for running text: it is one stack, so
+% it is centred on y = 0, and `baseline=-0.5ex' puts that line on the math
+% axis, where the = and the \psi beside it sit. Nothing else in it is placed.
 \documentclass{article}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath}
@@ -20,5 +25,18 @@
     \draw[cont] (b.south) -- ++(0,-0.8) node[leg, below] {$\mathbf r_2$};
   \end{tikzpicture}
   \quad\text{in {\color{ForestGreen}text} and {\color{ele}ele}.}
+\]
+\[
+  \psi(\mathbf r_1, \mathbf r_2) \;=\;
+  \begin{tikzpicture}[baseline=-0.5ex]
+    \tnstack{X}{3}{ket}
+    \tnlayer{X}{ket}{fn/$\varphi$, coef/$C$, fn/$\varphi$}
+    \tnconnect{X}
+    \tnopen[cont]{left}{X-ket-1}
+    \tnopen[cont]{right}{X-ket-3}
+    \tnput[left]{X-ket-1-left}{$\mathbf r_1$}
+    \tnput[right]{X-ket-3-right}{$\mathbf r_2$}
+  \end{tikzpicture}
+  \quad\text{along the line.}
 \]
 \end{document}

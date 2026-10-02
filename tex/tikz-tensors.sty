@@ -142,6 +142,16 @@
 }
 
 % ---- shapes ------------------------------------------------------------------
+% `tn leg anchor' says where a tensor's physical index leaves it, for the
+% commands that place tensors on a grid: its centre, unless the shape says
+% otherwise. A triangle says a corner of its flat side -- the index continues
+% that side's own line rather than leaving from the middle of a slanted edge,
+% which is how a canonical form is read -- and a stack sets the triangle in its
+% slot so that the corner, not the centre, is on the site's line.
+\makeatletter
+\gdef\tn@legat{center}
+\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}}}
+\makeatother
 % Each shape carries the size at which it reads as the same weight as the
 % others -- a triangle has to be larger than a box to hold a label, a diamond a
 % little less -- and paper fill, so that an index drawn to its centre is covered
@@ -156,8 +166,10 @@
                               fill=grey1, minimum size=7.5mm, inner sep=1pt},
   tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
                               shape border rotate=-90, fill=grey1,
-                              minimum size=10.5mm, font=\small},
-  tn triangle left/.style  = {tn triangle right, shape border rotate=90},
+                              minimum size=10.5mm, font=\small,
+                              tn leg anchor=corner 3},
+  tn triangle left/.style  = {tn triangle right, shape border rotate=90,
+                              tn leg anchor=corner 2},
   tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
                               font=\small},
   tn wide/.style           = {minimum width=17mm},
@@ -358,11 +370,15 @@
 %   slot    the size of a tensor that is not there: an open index ends at the
 %           border an absent tensor of this size would have, so a gap in a
 %           picture is the shape of what is missing from it
+%   stub    the least an open index shows beyond its own tensor, where the
+%           border of the next slot is nearer than that (a triangle set across
+%           to put its corner on the line reaches most of the way there)
 %   envw    the width of an environment block
 %   gap     the space either side of an equals sign
 \makeatletter
-\def\tn@pitch{13mm}
+\def\tn@pitch{15mm}
 \def\tn@slot{9mm}
+\def\tn@stub{4mm}
 \def\tn@envw{7mm}
 \def\tn@gap{4mm}
 \newdimen\tn@cursor \newdimen\tn@right \newdimen\tn@d \newcount\tn@c
@@ -439,7 +455,20 @@
 % by its first site.
 \def\tn@entry#1/#2/#3/#4\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}\def\tn@span{#3}}
 \def\tn@dot{.}\def\tn@dash{-}
-\def\tn@place#1#2#3#4{\node[#1] (#2) at (#3) {#4};}
+% A tensor in a slot: centred on the slot, or, when its shape gives its leg an
+% anchor of its own, moved across so that the anchor is on the site's line. A
+% probe of the same shape, drawn nowhere, measures how far.
+\def\tn@center{center}
+\def\tn@place#1#2#3#4#5{%
+  \gdef\tn@legat{center}%
+  \begingroup\tikzset{#1}\endgroup
+  \ifx\tn@legat\tn@center
+    \node[#1] (#2) at (#3,#4) {#5};
+  \else
+    \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
+    \pgfextractx{\tn@d}{\pgfpointanchor{tn@probe}{\tn@legat}}%
+    \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};
+  \fi}
 \newcommand{\tnlayer}[3]{%
   \ifcsname tn@#1@k@#2\endcsname\else
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
@@ -457,7 +486,7 @@
       \tn@len\tn@w{(\tn@span-1)*\tn@pitch+\tn@slot}%
       \edef\tn@opt{\tn@sty\ifnum\tn@span>1 , minimum width=\tn@w\fi}%
       \edef\tn@nm{#1-#2-\tn@i}%
-      \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx,\tn@ly}{\tn@lab}%
+      \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
       \pgfmathtruncatemacro\tn@last{\tn@i+\tn@span-1}%
       \tn@set{n@\tn@nm @s}{#1}\tn@set{n@\tn@nm @l}{#2}%
       \tn@set{n@\tn@nm @a}{\tn@i}\tn@set{n@\tn@nm @b}{\tn@last}%
@@ -535,7 +564,8 @@
 
 % \tnopen[<style>]{<direction>}{<node>, ...}
 % An open index from each tensor, up, down, left or right, ending at the border
-% the tensor in the next slot would have. Its end is <node>-<direction>; a
+% the tensor in the next slot would have, and at least `stub' beyond its own
+% border. Its end is <node>-<direction>; a
 % tensor across several slots has one up or down per site,
 % <node>-<direction>-1, -2, ...
 \newcommand{\tnopen}[3][tn edge]{%
@@ -548,6 +578,9 @@
     \ifx\tn@dir\tn@t
       \tn@colx{\tn@s}{\tn@b}\let\tn@xa\tn@cx
       \tn@colx{\tn@s}{\tn@b+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
+      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{east}}%
+      \tn@len\tn@xc{\the\tn@d+\tn@stub}%
+      \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
       \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
       \coordinate (\tn@nm-right) at (\tn@xb,\tn@y);
       \tn@reach{\tn@xb}%
@@ -555,6 +588,9 @@
     \def\tn@t{left}\ifx\tn@dir\tn@t
       \tn@colx{\tn@s}{\tn@a}\let\tn@xa\tn@cx
       \tn@colx{\tn@s}{\tn@a-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
+      \pgfextractx{\tn@d}{\pgfpointanchor{\tn@nm}{west}}%
+      \tn@len\tn@xc{\the\tn@d-\tn@stub}%
+      \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
       \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
       \coordinate (\tn@nm-left) at (\tn@xb,\tn@y);
     \fi
