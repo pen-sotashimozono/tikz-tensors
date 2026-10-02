@@ -1,0 +1,95 @@
+% Fixed-point equations for a uniform MPS, and the same two drawn twice to
+% compare where the physical index leaves a tensor.
+%
+% Above: the transfer matrix. E is not drawn as a thing of its own, because it
+% is not one -- it is the ket tensor A and its conjugate joined along the
+% physical index. l carries two bond indices, one into each layer, which is why
+% it is drawn tall rather than as a site: it lives in the doubled space. Solve
+% l E = lambda l and an infinite chain has what it needs in place of an end.
+%
+% Below: the same column with the Hamiltonian's MPO tensor between the layers,
+% so L carries three indices. The eigenvalue form is honest only block by block:
+% an MPO for a local Hamiltonian is upper triangular with ones on the diagonal,
+% so its transfer matrix has eigenvalue one with a Jordan block, and the block
+% carrying the extensive part needs the energy per site subtracted and is a
+% geometric sum rather than an eigenvector. The picture is the contraction, not
+% the solver.
+%
+% Left and right are the same equations with the index taken from the tensor's
+% centre and from the bottom corner of its flat side. On the left the column is
+% the line through the middle of everything; on the right it is the flat side
+% carried on down, and the MPO has to move onto that line with it, which is the
+% thing to look at -- the choice is not only about the leg, it decides where the
+% rest of the column sits.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \node[leg, anchor=south] at (1.6,1.9)  {index from the centre};
+  \node[leg, anchor=south] at (8.0,1.9)  {index from the edge};
+
+  % ---- transfer matrix, index from the centre ---------------------------
+  \node[tn node, minimum width=7mm, minimum height=34mm] (l) at (0,0) {$l$};
+  \node[canl] (A)  at (1.6,1.05)  {$A$};
+  \node[canl] (Ab) at (1.6,-1.05) {$\bar A$};
+  \tnbond[disc]{(l.east |- A) -- (A)}   \tnbond[disc]{(l.east |- Ab) -- (Ab)}
+  \tnbond[disc]{(A.south) -- (Ab.north)}
+  \tnbond[disc]{(A) -- ++(0.95,0)}      \tnbond[disc]{(Ab) -- ++(0.95,0)}
+  \node at (3.5,0) {$=\;\lambda$};
+  \node[tn node, minimum width=7mm, minimum height=34mm] (r) at (4.4,0) {$l$};
+  \tnbond[disc]{([yshift=10.5mm]r.east) -- ++(0.95,0)}
+  \tnbond[disc]{([yshift=-10.5mm]r.east) -- ++(0.95,0)}
+
+  % ---- transfer matrix, index from the edge -----------------------------
+  \begin{scope}[xshift=6.4cm]
+    \node[tn node, minimum width=7mm, minimum height=34mm] (l2) at (0,0) {$l$};
+    \node[canl] (C)  at (1.6,1.05)  {$A$};
+    \node[canl] (Cb) at (1.6,-1.05) {$\bar A$};
+    \tnbond[disc]{(l2.east |- C) -- (C)}   \tnbond[disc]{(l2.east |- Cb) -- (Cb)}
+    \tnbond[disc]{(C.corner 3) -- (Cb.corner 2)}
+    \tnbond[disc]{(C) -- ++(0.95,0)}       \tnbond[disc]{(Cb) -- ++(0.95,0)}
+    \node at (3.5,0) {$=\;\lambda$};
+    \node[tn node, minimum width=7mm, minimum height=34mm] (r2) at (4.4,0) {$l$};
+    \tnbond[disc]{([yshift=10.5mm]r2.east) -- ++(0.95,0)}
+    \tnbond[disc]{([yshift=-10.5mm]r2.east) -- ++(0.95,0)}
+  \end{scope}
+
+  % ---- Hamiltonian transfer matrix, index from the centre ---------------
+  \begin{scope}[yshift=-4.8cm]
+    \node[tn node, minimum width=7mm, minimum height=44mm] (L) at (0,0) {$L$};
+    \node[canl] (B)  at (1.6,1.45)  {$A$};
+    \node[mpo]  (W)  at (1.6,0)     {$W$};
+    \node[canl] (Bb) at (1.6,-1.45) {$\bar A$};
+    \tnbond[disc]{(L.east |- B) -- (B)}   \tnbond[disc]{(L) -- (W)}
+    \tnbond[disc]{(L.east |- Bb) -- (Bb)}
+    \tnbond[disc]{(B.south) -- (W.north)} \tnbond[disc]{(W.south) -- (Bb.north)}
+    \tnbond[disc]{(B) -- ++(0.95,0)}      \tnbond[disc]{(W) -- ++(0.95,0)}
+    \tnbond[disc]{(Bb) -- ++(0.95,0)}
+    \node at (3.5,0) {$=\;\lambda$};
+    \node[tn node, minimum width=7mm, minimum height=44mm] (Lr) at (4.4,0) {$L$};
+    \tnbond[disc]{([yshift=14.5mm]Lr.east) -- ++(0.95,0)}
+    \tnbond[disc]{(Lr.east) -- ++(0.95,0)}
+    \tnbond[disc]{([yshift=-14.5mm]Lr.east) -- ++(0.95,0)}
+  \end{scope}
+
+  % ---- Hamiltonian transfer matrix, index from the edge -----------------
+  % W moves onto the edge's line, which is the consequence worth seeing
+  \begin{scope}[xshift=6.4cm, yshift=-4.8cm]
+    \node[tn node, minimum width=7mm, minimum height=44mm] (M) at (0,0) {$L$};
+    \node[canl] (D)  at (1.6,1.45)  {$A$};
+    \node[canl] (Db) at (1.6,-1.45) {$\bar A$};
+    \node[mpo]  (V)  at (D.corner 3 |- 0,0) {$W$};
+    \tnbond[disc]{(M.east |- D) -- (D)}   \tnbond[disc]{(M) -- (V)}
+    \tnbond[disc]{(M.east |- Db) -- (Db)}
+    \tnbond[disc]{(D.corner 3) -- (V.north)} \tnbond[disc]{(V.south) -- (Db.corner 2)}
+    \tnbond[disc]{(D) -- ++(0.95,0)}      \tnbond[disc]{(V) -- ++(1.3,0)}
+    \tnbond[disc]{(Db) -- ++(0.95,0)}
+    \node at (3.5,0) {$=\;\lambda$};
+    \node[tn node, minimum width=7mm, minimum height=44mm] (Mr) at (4.4,0) {$L$};
+    \tnbond[disc]{([yshift=14.5mm]Mr.east) -- ++(0.95,0)}
+    \tnbond[disc]{(Mr.east) -- ++(0.95,0)}
+    \tnbond[disc]{([yshift=-14.5mm]Mr.east) -- ++(0.95,0)}
+  \end{scope}
+\end{tikzpicture}
+\end{document}

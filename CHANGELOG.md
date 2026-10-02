@@ -5,6 +5,25 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.4.0 — 2026-10-02
+
+`\tnrow` places tensors left to right, each a given gap clear of the one before
+it — measured between their borders, not their centres, so the spacing is right
+whatever shapes and sizes are in the row and stays right when one of them
+changes. `\tnchain` spreads a row evenly along a line, which is what a chain of
+like tensors wants; this is for a row of unlike ones, where the distance that
+matters is the gap and working the centres out by hand is both tedious and the
+first thing to go stale. Site i becomes `<prefix>i` and `<prefix>i-leg`, as in
+`\tnchain`.
+
+The superblock in `examples/06-dmrg.tex` is built on it: a row of two shapes of
+different widths and heights, and not one position in it written out. Its free
+indices end where the absent two-site tensor's own legs would be — the bond
+indices at that tensor's centre height, the physical ones half its height
+shorter, at its near edge — because a gap is only a gap if what is missing would
+fit in it. They are deliberately not all at one depth: a tensor's bond legs and
+its physical legs do not leave it at one height either.
+
 ## v0.3.0 — 2026-10-01
 
 What a matrix-product state needs that the earlier notation could not say. Its
