@@ -26,6 +26,13 @@ tiers of coarse-graining and the top tensor).
 - **Into a triangle from the side.** An index meeting a triangle away from its
   apex ends just inside the base, not at the middle, which off the apex is
   outside it.
+- **`\tnstack[tree]`** draws a stack as a tree is usually drawn: a tensor
+  across several sites keeps its own size, centred over them, the sites are
+  half the pitch apart, and an index between two tensors that do not line up
+  turns a corner — up from the lower one, across at half height, up into the
+  base of the upper one — instead of stretching either. `18-ttn` and
+  `19-mera` are drawn this way; a chain is not, because there the stretched
+  gate laid on its indices is the point.
 - **Rows keep the slot above them**, as stacks keep the slots beyond their
   ends, so an index opened upward on a second row clears the first. Every
   picture with two rows is a little taller.

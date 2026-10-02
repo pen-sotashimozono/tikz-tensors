@@ -89,7 +89,9 @@ A style with a comma, or a label with a slash, goes in braces:
 - Two tensors one above the other meet on every site they both cover if they
   cover the same ones, and otherwise once, in the middle of the sites they
   share — which is what places the branches of a tree (`tn triangle up`,
-  `tn single`) and the layers of a MERA.
+  `tn single`) and the layers of a MERA. `\tnstack[tree]` keeps every tensor
+  its own size and routes those indices with corners, as trees are usually
+  drawn.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`).

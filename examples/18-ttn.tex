@@ -2,10 +2,11 @@
 % centre on top.
 %
 % Each isometry W takes two indices up to one: the triangle points toward the
-% root, which is the direction it is isometric in, and it is as wide as the
-% sites under it. Its one upper index leaves from the apex, in the middle of
-% those sites, and meets the tensor above there -- the grid joins two tensors
-% of different widths once, in the middle of the sites they share, so no
+% root, which is the direction it is isometric in. It is drawn as a tree is
+% drawn ([tree]): every tensor its own size, centred over the sites it joins,
+% its one upper index leaving the apex and turning a corner into the base of
+% the tensor above. Where the two meet is the grid's one rule -- tensors of
+% different extent meet once, in the middle of the sites they share -- so no
 % position in this file is worked out. Sixteen sites, eight, four, two, one.
 %
 % The centre is the one tensor that is not isometric, and with the last
@@ -21,7 +22,7 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack{T}{16}{root, w16, w8, w4, w2}
+  \tnstack[tree]{T}{16}{root, w16, w8, w4, w2}
   \tnlayer{T}{root}{., ., ., ., ., ., ., centre/$C$/2, ., ., ., ., ., ., .}
   \tnlayer{T}{w16}{iso/$W$/16}
   \tnlayer{T}{w8}{iso/$W$/8, iso/$W$/8}

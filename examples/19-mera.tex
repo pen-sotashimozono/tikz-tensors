@@ -15,14 +15,16 @@
 % the isometries under it at their apexes, an isometry meets the disentangler
 % it overlaps by half in the middle of that half, and the top tensor, two
 % sites wide in the middle of the network, meets the last isometry at its
-% apex. The layers are `apart': nothing joins two tensors side by side.
+% apex. The layers are `apart': nothing joins two tensors side by side, and
+% the stack is drawn as a tree ([tree]), every tensor its own size and every
+% index that does not line up turning a corner on its way.
 \documentclass[border=4pt]{standalone}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz-tensors}
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
+  \tnstack[tree]{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
   \tnlayer{M}{top}{., ., ., ., ., ., ., centre/$\tau$/2, ., ., ., ., ., ., .}
   \tnlayer{M}{w4}{iso/$w$/16}
   \tnlayer{M}{w3}{iso/$w$/8, iso/$w$/8}

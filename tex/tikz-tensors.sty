@@ -399,9 +399,14 @@
 %           to put its corner on the line reaches most of the way there)
 %   envw    the width of an environment block
 %   gap     the space either side of an equals sign; twice it between rows
+% A stack drawn as a tree ([tree]) has a pitch and a rise of its own: half the
+% pitch across, because a tree's leaves are tensors of one site each and
+% nothing is set across in its slot.
 \makeatletter
 \def\tn@pitch{18mm}
 \def\tn@rise{15mm}
+\def\tn@treepitch{9mm}  % across, in a tree: leaves as close as their tensors allow
+\def\tn@treerise{15mm}
 \def\tn@slot{9mm}
 \def\tn@stub{4mm}
 \def\tn@envw{7mm}
@@ -417,8 +422,8 @@
 \def\tn@set#1#2{\expandafter\xdef\csname tn@#1\endcsname{#2}}
 \def\tn@get#1{\csname tn@#1\endcsname}
 \def\tn@len#1#2{\pgfmathsetlength\tn@d{#2}\edef#1{\the\tn@d}}
-\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@pitch}}
-\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@rise}}
+\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
+\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@get{#1@rise}}}
 \def\tn@reach#1{\tn@len\tn@e{#1}\ifdim\tn@e>\tn@right \global\tn@right=\tn@e\fi}
 \def\tn@line#1#2#3#4#5{\tnbond[#1]{(#2,#3) -- (#4,#5)}}
 % A height inside tensor #1 at every site it covers, as \tn@ay: its middle,
@@ -454,13 +459,24 @@
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
 %
+% [tree] draws the stack as a tree is usually drawn: a tensor across several
+% sites keeps its own size, centred over them, and an index between two
+% tensors that do not line up turns a corner rather than stretching either --
+% up from the lower one, across at half height, up into the upper one where
+% its base can take it.
+%
 % The environment is the node <name>-left or <name>-right. Every slot, and the
 % ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
 % is what a label for something that is not a tensor is placed on.
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
-         /tn/stack/right/.initial=}
+         /tn/stack/right/.initial=,
+         /tn/stack/tree/.code={\def\tn@istree{1}}}
 \newcommand{\tnstack}[4][]{%
+  \def\tn@istree{0}%
   \pgfkeys{/tn/stack/.cd, left=, right=, #1}%
+  \tn@set{#2@tree}{\tn@istree}%
+  \ifnum\tn@istree=1 \tn@set{#2@pitch}{\tn@treepitch}\tn@set{#2@rise}{\tn@treerise}%
+  \else \tn@set{#2@pitch}{\tn@pitch}\tn@set{#2@rise}{\tn@rise}\fi
   \pgfkeysgetvalue{/tn/stack/left}\tn@envl
   \pgfkeysgetvalue{/tn/stack/right}\tn@envr
   \tn@set{#2@n}{#3}%
@@ -480,7 +496,7 @@
   % opened upward ends -- as a stack keeps the slots beyond its ends.
   \ifnum\tn@brk=1
     \tn@anc{current bounding box}{south}\tn@d=\tn@ay\relax%
-    \tn@len\tn@yz{\the\tn@d-\tn@gap-(\tn@get{#2@L}+1)/2*\tn@rise+\tn@slot/2}%
+    \tn@len\tn@yz{\the\tn@d-\tn@gap-(\tn@get{#2@L}+1)/2*\tn@get{#2@rise}+\tn@slot/2}%
     \global\tn@line@y=\tn@yz \global\tn@brk=0
   \fi
   \tn@set{#2@y0}{\the\tn@line@y}%
@@ -492,7 +508,7 @@
     \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
   \fi
   \tn@set{#2@x0}{\tn@xz}%
-  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@rise+\tn@slot}%
+  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@get{#2@rise}+\tn@slot}%
   \ifx\tn@envl\@empty\else
     \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
   \fi
@@ -584,9 +600,10 @@
     \else
       \tn@layy{#1}{\tn@k+(\tn@vspan-1)/2}%
       \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
-      \tn@len\tn@w{(\tn@span-1)*\tn@pitch+\tn@slot}%
-      \tn@len\tn@hh{(\tn@vspan-1)*\tn@rise+\tn@slot}%
-      \edef\tn@opt{\tn@sty\ifnum\tn@span>1 , minimum width=\tn@w\fi
+      \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
+      \tn@len\tn@hh{(\tn@vspan-1)*\tn@get{#1@rise}+\tn@slot}%
+      \ifnum\tn@get{#1@tree}=1 \def\tn@span@w{1}\else\let\tn@span@w\tn@span\fi
+      \edef\tn@opt{\tn@sty\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
                    \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
       \edef\tn@nm{#1-#2-\tn@i}%
       \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
@@ -711,9 +728,40 @@
     \ifnum#4=\tn@oa \tn@colx{#1}{(\tn@oa+\tn@ob)/2}\def\tn@draw{1}\fi
   \fi
   \ifnum\tn@draw=1
-    \tn@inner{#2}\let\tn@ya\tn@ay
-    \tn@inner{#3}\let\tn@yb\tn@ay
-    \tn@line{\tn@down}{\tn@cx}{\tn@ya}{\tn@cx}{\tn@yb}%
+    \ifnum\tn@get{#1@tree}=1 \tn@elbow{#2}{#3}%
+    \else
+      \tn@inner{#2}\let\tn@ya\tn@ay
+      \tn@inner{#3}\let\tn@yb\tn@ay
+      \tn@line{\tn@down}{\tn@cx}{\tn@ya}{\tn@cx}{\tn@yb}%
+    \fi
+  \fi}
+% Where an index at x = \tn@cx meets tensor #1 of a tree, as \tn@xc: straight
+% on if its base reaches that far, else as far out as its base comfortably
+% takes an index -- three fifths of the way to its edge. A triangle is half as
+% wide at mid-height, where `east' is, as at its base.
+\def\tn@meet#1{%
+  \tn@anc{#1}{center}\let\tn@mx\tn@ax
+  \tn@anc{#1}{east}\tn@len\tn@hw{\tn@ax-\tn@mx}%
+  \edef\tn@one{\tn@get{n@#1@one}}%
+  \ifx\tn@one\@empty\else \tn@len\tn@hw{2*\tn@hw}\fi
+  \tn@len\tn@off{abs(\tn@cx-\tn@mx)}%
+  \ifdim\tn@off>\tn@hw
+    \tn@len\tn@xc{min(max(\tn@cx,\tn@mx-0.6*\tn@hw),\tn@mx+0.6*\tn@hw)}%
+  \else \let\tn@xc\tn@cx \fi}
+% The index from lower tensor #2 up to upper tensor #1 of a tree: straight up
+% where both meet it at one x, else up, across at half height, and up again.
+\def\tn@elbow#1#2{%
+  \tn@meet{#1}\let\tn@xu\tn@xc
+  \tn@meet{#2}\let\tn@xl\tn@xc
+  \tn@inner{#1}\let\tn@yu\tn@ay
+  \tn@inner{#2}\let\tn@yl\tn@ay
+  \tn@anc{#1}{south}\let\tn@ys\tn@ay
+  \tn@anc{#2}{north}\tn@len\tn@ym{(\tn@ys+\tn@ay)/2}%
+  \ifdim\tn@xu=\tn@xl
+    \tn@line{\tn@down}{\tn@xl}{\tn@yl}{\tn@xu}{\tn@yu}%
+  \else
+    \tnbond[\tn@down, rounded corners=1.5pt]{(\tn@xl,\tn@yl) -- (\tn@xl,\tn@ym)
+      -- (\tn@xu,\tn@ym) -- (\tn@xu,\tn@yu)}%
   \fi}
 % One pair of neighbouring slots along a layer.
 \def\tn@hlink#1#2{%
@@ -809,8 +857,21 @@
   \tn@colx{\tn@s}{#4}%
   \edef\tn@one{\tn@get{n@#2@one}}%
   \ifx\tn@one\tn@dir \tn@anc{#2}{center}\else \tn@inner{#2}\fi
-  \tn@d=\tn@ay\relax%
-  \tn@line{#1}{\tn@cx}{\the\tn@d}{\tn@cx}{\tn@yb}%
+  \let\tn@ystart\tn@ay
+  \def\tn@straight{1}%
+  \ifnum\tn@get{\tn@s @tree}=1
+    \let\tn@xs\tn@cx \tn@meet{#2}%
+    \ifdim\tn@xc=\tn@xs\else \def\tn@straight{0}\fi
+  \fi
+  \ifnum\tn@straight=1
+    \tn@line{#1}{\tn@cx}{\tn@ystart}{\tn@cx}{\tn@yb}%
+  \else
+    \ifx\tn@dir\tn@sdown \tn@anc{#2}{south}\else \tn@anc{#2}{north}\fi
+    \tn@len\tn@ym{(\tn@ay+\tn@yb)/2}%
+    \tnbond[#1, rounded corners=1.5pt]{(\tn@xc,\tn@ystart) -- (\tn@xc,\tn@ym)
+      -- (\tn@xs,\tn@ym) -- (\tn@xs,\tn@yb)}%
+    \let\tn@cx\tn@xs
+  \fi
   \coordinate (#5) at (\tn@cx,\tn@yb);}
 \def\tn@isv{0}
 \def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
