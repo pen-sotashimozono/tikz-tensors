@@ -24,6 +24,19 @@ down, again on a stack). In the notation: `corner` and `side`, the
 environment of a two-dimensional network in the environment's colour, and
 `isodown`, an isometry pointing down.
 
+No tensor of the notation is a square any more. `coef` is a circle in the
+array colour (`coef` = `blue1`): a `tn capsule`, whose corners are now half
+its height, so it is a circle at one site's size and stretches to a stadium
+across several; `op` is
+a plain rounded box; a CTM side is a circle. Rounded boxes stay what they were
+(an MPO tensor, a gate, a corner). A square says nothing a circle does not,
+and on a lattice turned by 45 degrees it reads as a diamond. `03-mps` loses
+its second row, which compared the two.
+
+On a grid, a tensor on a bond is turned with the lattice, so that the bond
+meets it as it would on a chain — at a vertex of the diamond, not the middle
+of a side — with its label upright.
+
 Not yet: TRG, which splits each tensor along a diagonal of the lattice and
 needs an index that is neither along a layer nor down a site.
 

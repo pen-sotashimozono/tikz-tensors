@@ -169,7 +169,7 @@
   tn box/.style            = {tn node, rectangle, fill=grey1, minimum size=7mm,
                               inner sep=1pt},
   tn circle/.style         = {tn node, circle, fill=grey1, minimum size=8mm},
-  tn capsule/.style        = {tn node, rectangle, rounded corners=3.5mm,
+  tn capsule/.style        = {tn node, rectangle, rounded corners=4mm,
                               fill=grey1, minimum size=8mm},
   tn rounded/.style        = {tn node, rectangle, rounded corners=1.2mm,
                               fill=grey1, minimum size=7.5mm, inner sep=1pt},
@@ -545,7 +545,8 @@
 % a PEPS, a two-dimensional partition function. The tensor at column i, row j
 % is the node <name>-i-j. `legs' gives each one an index out of the plane,
 % drawn straight down and ending at <name>-i-j-down; `bonds=' puts a tensor of
-% its own on every bond, half way along -- the weights of a simple update.
+% its own on every bond, half way along -- the weights of a simple update --
+% turned with the lattice so that the bond meets it as it would on a chain.
 % The grid is placed as a stack is, after what is on the row and centred on
 % it, so it takes part in an equation or a row like any stack.
 \def\tn@gpitch{18mm}  % along a bond of the lattice
@@ -596,7 +597,13 @@
   \tn@line{tn edge}{\tn@xa}{\tn@ya}{\tn@gx}{\tn@gy}%
   \ifx\tn@gbond\@empty\else
     \tn@len\tn@mx{(\tn@xa+\tn@gx)/2}\tn@len\tn@my{(\tn@ya+\tn@gy)/2}%
-    \expandafter\tn@place\expandafter{\tn@bsty}{#1-#2-#3-#4}{\tn@mx}{\tn@my}{\tn@blab}%
+    % turned with the lattice, so that the bond meets it where it would on a
+    % chain -- at a vertex of a diamond, not the middle of a side -- and its
+    % label, a node of its own, upright
+    \edef\tn@opt{\tn@bsty, rotate=45}%
+    \expandafter\tn@place\expandafter{\tn@opt}{#1-#2-#3-#4}{\tn@mx}{\tn@my}{}%
+    \edef\tn@opt{\tn@bsty, draw=none, fill=none}%
+    \expandafter\tn@place\expandafter{\tn@opt}{#1-#2-#3-#4-label}{\tn@mx}{\tn@my}{\tn@blab}%
   \fi}
 
 % \tnlayer{<stack>}{<layer>}{<entry>, ...}
