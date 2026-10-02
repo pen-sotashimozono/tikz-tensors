@@ -2,7 +2,8 @@ name: CI
 
 # Three questions for every change, each its own check:
 #   version  did the version move exactly as the change requires, and do the
-#            rules behind that still hold (tests/test_version.py; seconds, no TeX)
+#            rules behind that still hold (tests/test_version.py; seconds, no TeX),
+#            and does every example follow the figure rules (tests/lint.py)
 #   theme    are the generated colour files in step with theme/tokens.toml
 #   test     does everything compile with LuaLaTeX and pdfLaTeX, and look as it did
 # The rendered pages (and a diff image for any that changed) are uploaded as
@@ -40,8 +41,10 @@ jobs:
           base="$BASE"
           if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then base=HEAD~1; fi
           python3 scripts/version.py check --base "$base"
-      - name: The version rules themselves
+      - name: The version rules and the figure rules themselves
         run: python3 -m unittest discover -s tests -v
+      - name: Every example follows the figure rules (docs/roadmap.md)
+        run: python3 tests/lint.py
 
   theme:
     runs-on: ubuntu-latest

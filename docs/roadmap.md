@@ -28,8 +28,10 @@ files drift; layout is.
 
 ## The rules
 
-These are the `gofmt` of the package. Each is checked by `tests/lint.py`
-(phase 0), not left to review.
+These are the `gofmt` of the package, checked by `tests/lint.py` rather than
+left to review. Rules 1–4 are checked now, together with a fixed frame (the
+standard preamble and one bare `tikzpicture`); 5 and 6 are about commands that
+do not exist yet and arrive in the linter with them.
 
 1. **No lengths in a figure.** An example states topology and roles; the
    package owns every distance: the site pitch, the layer gap, the stub length
@@ -126,7 +128,7 @@ touches off the lint ratchet.
 
 | phase | adds | examples |
 |---|---|---|
-| 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step | — |
+| 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step — **done** | — |
 | 1 | stack, env, `\tnopen`, equation row | `06`, `07`, `09` rewritten; TDVP, fitting |
 | 2 | fused index, cap, delta | MPO × MPS, zip-up, density matrix, sampling |
 | 3 | `iso` at any angle, tree placement | SVD/QR, TTN, MERA |
