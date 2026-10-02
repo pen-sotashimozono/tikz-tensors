@@ -1,0 +1,43 @@
+% An expectation value after a TEBD step: <psi(t)| O |psi(t)> with one Trotter
+% gate shown on each side.
+%
+% It is a number, so the diagram has no free index anywhere -- that is the test
+% to apply to a picture like this. The ket chain runs along the top, its
+% conjugate along the bottom, every physical index of the one meets the matching
+% index of the other, and the bond indices at the two ends are closed around.
+%
+% Between them, read downward: the gate that evolved the ket, the operator being
+% measured, and the gate's conjugate coming back up to the bra. The gate appears
+% twice because the bra carries its adjoint, which is the whole reason a
+% two-layer picture is the honest one for a measured quantity -- a single layer
+% would be an amplitude, not an expectation.
+%
+% Only one site carries O, and the rest of the column is the physical index
+% running straight through: that is what makes it a local observable.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[x=1.25cm]
+  \tnchain{S}{(0,0)}{(4,0)}{coef/$A$/c, coef/$A$/c, coef/$A$/c,
+                            coef/$A$/c, coef/$A$/c}
+  \tnchain{T}{(0,-4.15)}{(4,-4.15)}{coef/$\bar A$/c, coef/$\bar A$/c,
+                                  coef/$\bar A$/c, coef/$\bar A$/c,
+                                  coef/$\bar A$/c}
+  \foreach \i [evaluate=\i as \j using int(\i+1)] in {1,...,4}{
+    \tnbond[disc]{(S\i) -- (S\j)}  \tnbond[disc]{(T\i) -- (T\j)}%
+  }
+
+  % every physical index of the ket meets the matching index of the bra
+  \foreach \i in {1,...,5}{ \tnbond[disc]{(S\i.south) -- (T\i.north)}}
+
+  % the bond indices at the two ends, closed around: no free index, a number
+  \tnbond[disc]{(S1) -- ++(-0.55,0) |- (T1)}
+  \tnbond[disc]{(S5) -- ++(0.55,0) |- (T5)}
+
+  % the gate on the ket, the operator, the gate's adjoint on the bra
+  \tngate{U}{$U$}{S2-leg,S3-leg}{8mm}
+  \node[op, minimum size=9mm] (O) at (S3-leg |- 0,-2.2) {$\hat O$};
+  \tngate{Ud}{$U^{\dagger}$}{S2-leg,S3-leg}{28.5mm}
+\end{tikzpicture}
+\end{document}

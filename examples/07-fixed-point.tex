@@ -1,0 +1,40 @@
+% The left fixed point of a uniform MPS: l E = lambda l, where E is one column
+% of the transfer matrix.
+%
+% E is not drawn as a thing of its own, because it is not one -- it is the ket
+% tensor A and its conjugate stacked and joined along the physical index, and
+% the picture says that more plainly than the letter does. l carries two bond
+% indices, one into each layer, which is why it is drawn tall rather than as a
+% site: it lives in the doubled space, not on the chain.
+%
+% A is left-canonical, so the same triangle as in the chain; the lower row is
+% its conjugate and is the same tensor, which is why it is the same shape. The
+% physical index between them is the contraction that makes E a map from the
+% doubled bond space to itself, and it continues both tensors' own flat sides,
+% so the column reads as one object.
+%
+% Solve it and you have what an infinite chain needs in place of an end: the
+% boundary that reproduces itself under one more site.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[x=1.3cm]
+  % ---- l E --------------------------------------------------------------
+  \node[tn node, minimum width=7mm, minimum height=28mm] (l) at (0,0) {$l$};
+  \node[canl] (A)  at (1.25,0.85)  {$A$};
+  \node[canl] (Ab) at (1.25,-0.85) {$\bar A$};
+
+  \tnbond[disc]{(l.east |- A) -- (A)}
+  \tnbond[disc]{(l.east |- Ab) -- (Ab)}
+  \tnbond[disc]{(A.corner 3) -- (Ab.corner 2)}
+  \tnbond[disc]{(A) -- ++(0.5,0)}
+  \tnbond[disc]{(Ab) -- ++(0.5,0)}
+
+  % ---- = lambda l -------------------------------------------------------
+  \node at (2.45,0) {$=\;\lambda$};
+  \node[tn node, minimum width=7mm, minimum height=28mm] (r) at (3.25,0) {$l$};
+  \tnbond[disc]{([yshift=8.5mm]r.east) -- ++(0.5,0)}
+  \tnbond[disc]{([yshift=-8.5mm]r.east) -- ++(0.5,0)}
+\end{tikzpicture}
+\end{document}
