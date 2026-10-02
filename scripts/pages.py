@@ -15,8 +15,9 @@ Everything on it is read from the repository, so it cannot drift from it:
   and dark.
 
 No TeX is needed: the pictures are the committed references. Standard library
-only. .github/workflows/pages.yml publishes the site from main, which is always
-a release; tests/test_pages.py builds it and checks every link.
+only. The Documenter workflows publish it to gh-pages (scripts/publish.py):
+each release, and a preview of each pull request; tests/test_pages.py builds
+it and checks every link.
 """
 from __future__ import annotations
 
@@ -200,12 +201,33 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
 <header class="top">
   <a class="brand" href="{up}index.html">tikz-tensors <span class="ver">v{version.version()}</span></a>
   <nav>{nav}<a href="{REPO}">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
     onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{{localStorage.setItem('theme',r.dataset.theme)}}catch(e){{}}">◐</button>
 </header>
 <main>
 {body}
 </main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {{
+  const root = new URL("{up}", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {{
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {{
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      }};
+    }}).catch(() => {{}});
+}})();
+</script>
 <footer>tikz-tensors v{version.version()} · <a href="{REPO}">source</a> ·
 <a href="{REPO}/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
@@ -343,6 +365,8 @@ code{background:var(--soft);padding:.1em .35em;border-radius:4px}
 .top nav{display:flex;gap:16px;flex-wrap:wrap;flex:1}
 .top nav a{color:var(--muted)}
 .top nav a[aria-current]{color:var(--fg);font-weight:600}
+.versions{background:var(--card);color:var(--fg);border:1px solid var(--line);
+  border-radius:6px;padding:2px 6px;font:inherit;font-size:14px}
 .mode{background:none;border:1px solid var(--line);border-radius:6px;color:var(--fg);
   cursor:pointer;padding:2px 8px;font-size:16px}
 main{max-width:1120px;margin:0 auto;padding:24px}

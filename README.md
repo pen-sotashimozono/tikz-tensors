@@ -195,8 +195,13 @@ figures. A figure page is a `standalone` document:
 ```
 
 `python3 scripts/pages.py` builds the documentation site into `_site/`
-(gitignored) from `docs/api.md`, `examples/` and the reference pictures; the
-Pages workflow publishes it from `main`. An example's first line is its title
+(gitignored) from `docs/api.md`, `examples/` and the reference pictures. As
+Julia's Documenter does, the workflows publish it to the `gh-pages` branch
+(`scripts/publish.py`): `Documenter.yml` puts every release from `main` at
+`v<version>/` and `stable/`, which the site root redirects to, and a switcher
+in each page's header moves between them; `DocumenterPreview.yml` publishes a
+pull request's site at `previews/PR<n>/`, links it in the pull request, and
+removes it when the pull request closes. Pages serves the `gh-pages` branch. An example's first line is its title
 on the site, `%% <title>`, and the comment under it its description.
 
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`

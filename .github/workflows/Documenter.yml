@@ -1,0 +1,45 @@
+name: Documenter
+
+# The documentation site (scripts/pages.py), published as Julia's Documenter
+# publishes: the built site is committed to the gh-pages branch, one copy per
+# version (scripts/publish.py), and GitHub Pages serves that branch.
+#
+# main is always a release (.github/workflows/release.yml), so every push to
+# main publishes the site as v<version>/ -- kept, one per release -- and as
+# stable/, which the root redirects to. A push that leaves the version where it
+# was (a fix to the docs) publishes over the same version. Pull requests get a
+# preview of their own (DocumenterPreview.yml).
+#
+# The repository's Settings -> Pages -> Source is "Deploy from a branch",
+# gh-pages, / (root).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: python3 scripts/pages.py _site
+      - name: Publish to gh-pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="v$(python3 scripts/version.py)"
+          scripts/gh-pages.sh checkout gh-pages
+          python3 scripts/publish.py gh-pages _site "$version" stable
+          scripts/gh-pages.sh push gh-pages "docs: $version from ${GITHUB_SHA::7}"
