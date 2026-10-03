@@ -1,40 +1,48 @@
-% A specimen of types a figure declares, not a diagram.
+% A specimen of types that name their indices, not a diagram.
 %
-% \tntype names a type and says what it is: its outline, the sides it has
-% indices on (tn legs) and how many (tn rank). A chain's ends have rank 2 and
-% its bulk rank 3, which the picture is held to when it ends: every tensor
-% with a rank has that many indices drawn, or the figure is an error.
-% \tnopen{rest} draws what is still free -- on a block, of every tensor whose
-% type says its sides, each toward its own side; on a tensor, all of its own.
-% A grid's site, and a tree's, the same.
+% \tntype names a type, and tn index names its indices, each on a side, in an
+% order: a chain's bulk has l, r and s, its ends one bond each. A picture
+% that ends with a named index not drawn is an error. Several indices on one
+% side leave the tensor apart, and two tensors beside each other are joined
+% index by index in order: W has two left, joined to V's two right. A port is
+% named by the index's name (P-ket-1:r) or its place in order (W-a-2:3), and
+% \tnopen{rest} draws what is still free -- of a block, of each tensor whose
+% type names its indices; of a tensor, all of its own; of a port, that one.
+% A tree's site and a grid's take names the same way.
 \documentclass[border=5pt]{standalone}
 \usepackage{tikz-tensors}
-\tntype{bulk}{tn circle, tn legs={left, right, down}, tn rank=3}
-\tntype{edge}{tn circle, tn rank=2}
-\tntype{site}{tn box, tn legs={left, right, up, down}, tn rank=4}
-\tntype{cell}{tn circle, tn rank=5}
-\tntype{iso}{tn triangle up, tn legs={up, down}, tn rank=3}
+\tntype{bulk}{tn circle, tn index={l:left, r:right, s:down}}
+\tntype{first}{tn circle, tn index={r:right, s:down}}
+\tntype{last}{tn circle, tn index={l:left, s:down}}
+\tntype{pair}{tn box, tn index={a:right, b:right, p:down}}
+\tntype{split}{tn box, tn index={a:left, b:left, u:up, d:down, e:down}}
+\tntype{iso}{tn triangle up, tn index={top:up, x:down, y:down}}
+\tntype{cell}{tn circle, tn index={w:nw, n:ne, e:se, s:sw, p:down}}
 \begin{document}
 \begin{tikzpicture}
   \tnstack{P}{5}{ket}
-  \tnlayer{P}{ket}{edge/$A$, 3*bulk/$A$, edge/$A$}
-  \tnconnect{P}
+  \tnlayer{P}{ket}{first/$A$, 3*bulk/$A$, last/$A$}
+  \tnconnect[apart={P-ket-1:r}]{P}
+  \tnjoin{P-ket-1:r}{P-ket-2:l}
   \tnopen[label=$n_{#1}$]{rest}{P}
-  \tnopen{down}{P-ket-1, P-ket-5}
-  \tnshow{P-ket-1, P-ket-2}
+  \tnshow{P-ket-1, P-ket-3}
   \tnbreak
-  \tnstack{O}{1}{a}
-  \tnlayer{O}{a}{site/$W$}
-  \tnopen{rest}{O-a-1}
+  \tnstack{W}{2}{a}
+  \tnlayer{W}{a}{pair/$V$, split/$W$}
+  \tnconnect{W}
+  \tnopen{down}{W-a-2}
+  \tnopen{rest}{W-a-2:3, W-a-1}
+  \tnshow{W-a-2}
   \tnstack[tree]{T}{2}{top, leaves}
   \tnlayer{T}{top}{iso/$V$/2}
   \tnlayer{T}{leaves}{2*tn circle/$x$}
-  \tnconnect{T}
+  \tnconnect[apart={leaves}]{T}
   \tnopen{rest}{T}
   \tnopen{down}{T}
   \tnbreak
   \tngrid{G}{2}{2}{cell/$T$}
   \tnconnect{G}
   \tnopen{rest}{G-1-1, G-2-1, G-1-2, G-2-2}
+  \tnshow{G-1-1}
 \end{tikzpicture}
 \end{document}

@@ -5,11 +5,11 @@
 % across so that the corner is on the site's line (tn leg anchor); which way
 % it points, which the arrow on its bond follows (tn points); and the
 % side on which it has one index however many sites it spans -- S, below
-% (tn single); and the sides it has indices on at all -- M, with a left and a
-% down index only, joined to nothing on its right and opened nowhere above
-% (tn legs). The triangles have the first three built in; any outline can be
-% given them. And how many indices it has (tn rank=<n>): a picture that ends
-% with another number of them drawn is an error.
+% (tn single); and its indices, named, each on a side -- M, with an index
+% left, l, and two down, s and t, and none right or up, so that it is joined
+% to nothing on its right and opened nowhere above; s and t, two on one side
+% of one site, leave it apart (tn index). The triangles have the first three
+% built in; any outline can be given them.
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
@@ -23,9 +23,10 @@
   \tnopen{up}{R}
   \tnopen{down}{R}
   \tnstack{N}{2}{a}
-  \tnlayer{N}{a}{{tn box, tn legs={left, down}}/$M$, tn box/$B$}
+  \tnlayer{N}{a}{{tn box, tn index={l:left, s:down, t:down}}/$M$, tn box/$B$}
   \tnconnect{N}
   \tnopen{up}{N}
   \tnopen{down}{N}
+  \tnopen{rest}{N-a-1}
 \end{tikzpicture}
 \end{document}

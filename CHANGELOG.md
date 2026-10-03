@@ -5,6 +5,31 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.16.0 — 2026-10-03
+
+A tensor's indices are named by its type, as an ITensor's are: which index
+is which is the figure's to say, not the layout's.
+
+`tn index={<name>:<side>, ...}` names a type's indices, each leaving on a
+side, in an order. Several may leave on one side -- `{a:left, b:left}` --
+and are spread across the tensor's outline; one per site or layer it covers
+sits on the lattice as before. Two tensors side by side, or one over the
+other, are joined index by index in order, and a different number on the two
+is an error; a tensor that names none meets them with one. A picture that
+ends with a named index not drawn is an error naming it.
+
+A port is named by its index -- `T:l` -- or its place in the type's order --
+`T:1` -- as well as by side, in `\tnjoin`, `\tnconnect`'s `apart=`, and
+`\tnopen{rest}`, which also takes a single port. A named index opened ends
+at the coordinate `<tensor>-<name>`. `\tnshow` writes each index by name.
+
+Removed, before 1.0: `tn legs` and `tn rank`, which `tn index` says (the
+sides it names, and how many). `\tntype` no longer checks a rank against
+the sides.
+
+No example changes. `tests/cases/types.tex` is the specimen; the reference's
+index picture adds M's two indices down on one site.
+
 ## v0.15.0 — 2026-10-03
 
 A type says how many indices a tensor has, and the figure is held to it.

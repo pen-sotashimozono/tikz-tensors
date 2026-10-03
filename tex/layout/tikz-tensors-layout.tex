@@ -23,6 +23,7 @@
 %   openport{<style>}{<tensor>}{<side>}{<key>}
 %                                  that one port, opened outward
 %   portkey{<tensor>}{<side>}{<n>} the key of its <n>th port on <side>
+%   mapindex{<tensor>}             the port of each index its type names
 %
 % A new layout is a file that declares its kind, a command that places a block
 % (\tn@block, tikz-tensors-canvas.tex), places its tensors (\tn@place,
@@ -100,15 +101,17 @@
 % properties are kept by \tn@place. Each block placed is a new generation, so
 % that a name used again in a later picture is a new tensor with free ports.
 \newcount\tn@gen
-% The block keeps the list of its tensors (<block>@nodes), and a tensor whose
-% type says its rank goes on the list the picture checks when it ends.
+% The block keeps the list of its tensors (<block>@nodes). A tensor whose type
+% names its indices (tn index) has each put on a port of its own by the
+% layout, and goes on the list the picture checks when it ends.
 \def\tn@record#1#2#3#4#5#6{%
   \tn@set{n@#1@s}{#2}\tn@set{n@#1@a}{#3}\tn@set{n@#1@b}{#4}%
   \tn@set{n@#1@k}{#5}\tn@set{n@#1@kb}{#6}\tn@set{n@#1@g}{\the\tn@gen}%
   \edef\tn@rl{\tn@get{#2@nodes}}%
   \ifx\tn@rl\@empty \tn@set{#2@nodes}{#1}\else \tn@set{#2@nodes}{\tn@rl,#1}\fi
-  \ifcsname tn@n@#1@rank\endcsname \edef\tn@rl{\tn@get{n@#1@rank}}%
+  \ifcsname tn@n@#1@index\endcsname \edef\tn@rl{\tn@get{n@#1@index}}%
     \ifx\tn@rl\@empty\else
+      \tn@op{#2}{mapindex}{#1}%
       \ifx\tn@ranked\@empty \xdef\tn@ranked{#1}\else \xdef\tn@ranked{\tn@ranked,#1}\fi
     \fi\fi}
 \def\tn@newblock#1#2{% block, kind
@@ -142,8 +145,8 @@
       \string\tnopen or \string\tnjoin.}\fi}
 
 % Has tensor <#1> an index on side <#2> at all? \tn@hasl is 1 if its type
-% does not say (tn legs not given: every side the layout gives it) or names
-% the side, else 0. \tn@needleg is an error for a command that names one.
+% does not name its indices (every side the layout gives it) or names one on
+% that side, else 0. \tn@needleg is an error for a command that names one.
 \def\tn@hasleg#1#2{%
   \ifcsname tn@n@#1@legs\endcsname \edef\tn@hl{\tn@get{n@#1@legs}}\else \def\tn@hl{}\fi
   \ifx\tn@hl\@empty \def\tn@hasl{1}%
@@ -154,7 +157,89 @@
 \def\tn@needleg#1#2#3{\tn@hasleg{#1}{#2}%
   \ifnum\tn@hasl=0
     \PackageError{tikz-tensors}{#3: `#1' has no index on its #2 side; its type
-      says tn legs={\tn@hl}}{}\fi}
+      says tn index={\tn@get{n@#1@index}}}{}\fi}
+
+% ---- named indices ------------------------------------------------------------
+% A tensor whose type says tn index={<name>:<side>, ...} has those indices:
+% n@<t>@ix@<name> is its side and n@<t>@ik@<name> its port's key, which the
+% layout gives it (mapindex); n@<t>@io@<n> is the name of the <n>th, and
+% n@<t>@isp@<side> is 1 when the indices on that side are not one per site or
+% layer but spread across the tensor (\tn@spread, in the layout).
+\def\tn@isnamed#1{\ifcsname tn@n@#1@index\endcsname
+  \expandafter\ifx\csname tn@n@#1@index\endcsname\@empty \def\tn@named{0}%
+  \else \def\tn@named{1}\fi \else \def\tn@named{0}\fi}
+% each index of tensor <#1> in order: <#2>{<name>}{<side>}
+\def\tn@eachindex#1#2{%
+  \edef\tn@eil{\tn@get{n@#1@index}}%
+  \foreach \tn@ei in \tn@eil{\expandafter\tn@eione\tn@ei\tn@end{#2}}}
+\def\tn@eione#1:#2\tn@end#3{#3{#1}{#2}}
+% The indices of <#1> on side <#2>, in order, as \tn@onside (names) and
+% \tn@nonside (how many).
+\newcount\tn@onc
+\def\tn@sideindices#1#2{\gdef\tn@onside{}\global\tn@onc=0
+  \edef\tn@sidewant{#2}%
+  \tn@eachindex{#1}\tn@sidepick
+  \edef\tn@nonside{\the\tn@onc}}
+\def\tn@sidepick#1#2{\edef\tn@sidegot{#2}%
+  \ifx\tn@sidegot\tn@sidewant \global\advance\tn@onc by 1
+    \ifx\tn@onside\@empty \xdef\tn@onside{#1}\else \xdef\tn@onside{\tn@onside,#1}\fi\fi}
+% A layout's mapindex puts index <#2> of <#1> on <#3> at key <#4>.
+\newcount\tn@ixo
+\def\tn@ixput#1#2#3#4{%
+  \tn@set{n@#1@ix@#2}{#3}\tn@key{#4}\tn@set{n@#1@ik@#2}{\tn@kk}}
+\def\tn@ixorder#1{\global\tn@ixo=0 \def\tn@ixon{#1}\tn@eachindex{#1}\tn@ixordone}
+\def\tn@ixordone#1#2{\global\advance\tn@ixo by 1
+  \tn@set{n@\tn@ixon @io@\the\tn@ixo}{#1}}
+
+% ---- naming a port ---------------------------------------------------------------
+% \tn@port{<tensor>:<which>[:<n>]}{<command>}: the port a figure names, as
+% \tn@pn (the tensor), \tn@ps (its side) and \tn@pkey (its key) -- and the
+% index's name as \tn@pnm, if it has one. <which> is
+%   a side             the <n>th index on that side (the first unless said)
+%   a number           the <n>th index of the tensor, in its type's order
+%   a name             the index of that name (tn index)
+\def\tn@sidenames{left,right,up,down,nw,ne,se,sw}
+\def\tn@port#1#2{%
+  \tn@pspec#1:::\tn@end
+  \tn@isnode{\tn@pn}{#2}\tn@isnamed{\tn@pn}\def\tn@pnm{}%
+  \edef\tn@pst{\noexpand\in@{,\tn@ps,}{,\tn@sidenames,}}\tn@pst
+  \ifin@
+    \tn@needleg{\tn@pn}{\tn@ps}{#2}%
+    \ifx\tn@pk\@empty \def\tn@pk{1}\fi
+    \ifnum\tn@named=1
+      \tn@sideindices{\tn@pn}{\tn@ps}%
+      \ifnum\tn@pk>\tn@nonside
+        \PackageError{tikz-tensors}{#2: `\tn@pn' has \tn@nonside\space
+          \ifnum\tn@nonside=1 index\else indices\fi\space on its \tn@ps\space
+          side, not \tn@pk}{}\def\tn@pk{1}\fi
+      \foreach \tn@x [count=\tn@xc] in \tn@onside{%
+        \ifnum\tn@xc=\tn@pk \xdef\tn@pnmg{\tn@x}\fi}%
+      \let\tn@pnm\tn@pnmg \edef\tn@pkey{\tn@get{n@\tn@pn @ik@\tn@pnm}}%
+    \else
+      \tn@nop{\tn@pn}{portkey}{\tn@pn}{\tn@ps}{\tn@pk}%
+    \fi
+  \else
+    \ifnum\tn@named=0
+      \PackageError{tikz-tensors}{#2: `\tn@ps' is not a side, and `\tn@pn'
+        has no named indices (tn index)}{}%
+    \else
+      \edef\tn@pdig{\detokenize\expandafter{\romannumeral-0\tn@ps}}%
+      \ifx\tn@pdig\@empty
+        \ifcsname tn@n@\tn@pn @io@\tn@ps\endcsname
+          \edef\tn@pnm{\tn@get{n@\tn@pn @io@\tn@ps}}%
+        \else
+          \PackageError{tikz-tensors}{#2: `\tn@pn' has no index number
+            \tn@ps; it has \tn@get{n@\tn@pn @rank}}{}\edef\tn@pnm{\tn@get{n@\tn@pn @io@1}}%
+        \fi
+      \else \let\tn@pnm\tn@ps \fi
+      \ifcsname tn@n@\tn@pn @ix@\tn@pnm\endcsname\else
+        \PackageError{tikz-tensors}{#2: `\tn@pn' has no index `\tn@pnm'; its
+          type says tn index={\tn@get{n@\tn@pn @index}}}{}%
+        \edef\tn@pnm{\tn@get{n@\tn@pn @io@1}}\fi
+      \edef\tn@ps{\tn@get{n@\tn@pn @ix@\tn@pnm}}%
+      \edef\tn@pkey{\tn@get{n@\tn@pn @ik@\tn@pnm}}%
+    \fi
+  \fi}
 
 % A bond the figure leaves out (\tnconnect's apart= naming a port): marked by
 % port, as a port is marked drawn, and read where the layout would join it.
@@ -165,10 +250,15 @@
 
 % ---- a tensor's indices, counted ----------------------------------------------
 % \tn@ports{<tensor>}{<visit>}: <visit>{<tensor>}{<side>}{<key>} on each port
-% of the tensor, on the sides it has, in the order the layout gives them.
+% of the tensor -- its named indices in order, with \tn@pnm the name, or the
+% ports the layout gives it on every side, with \tn@pnm empty.
 % \tn@drawn{<tensor>} counts the ones drawn, as \tn@ndrawn; \tn@nports all.
 \newcount\tn@ndr \newcount\tn@npt
-\def\tn@ports#1#2{\let\tn@portvisit#2\tn@nop{#1}{ports}{#1}}
+\def\tn@ports#1#2{\let\tn@portvisit#2\tn@isnamed{#1}%
+  \ifnum\tn@named=1 \def\tn@pvn{#1}\tn@eachindex{#1}\tn@portnamed
+  \else \def\tn@pnm{}\tn@nop{#1}{ports}{#1}\fi}
+\def\tn@portnamed#1#2{\def\tn@pnm{#1}%
+  \tn@portvisit{\tn@pvn}{#2}{\tn@get{n@\tn@pvn @ik@#1}}}
 \def\tn@countport#1#2#3{\global\advance\tn@npt by 1
   \tn@ifused{#1}{#2}{#3}\ifnum\tn@isused=1 \global\advance\tn@ndr by 1 \fi}
 \def\tn@drawn#1{\global\tn@ndr=0 \global\tn@npt=0
@@ -179,45 +269,41 @@
 % \tntype{<name>}{<options>}
 % A type of the figure's own: the style <name>, which is <options>, and which
 % a tensor of it says it is -- \tnshow and an error name it. What a type is
-% (tikz-tensors-nodes.tex) is said in its options: its outline, and the sides
-% it has indices on (tn legs) and how many (tn rank), which the layout then
-% holds a figure to. A type's own sides are its indices, at least one each:
-% a rank smaller than the sides it names is an error here.
-%   \tntype{site}{tn circle, tn legs={left, right, down}, tn rank=3}
+% (tikz-tensors-nodes.tex) is said in its options: its outline, and its
+% indices (tn index), named, which the layout then holds a figure to.
+%   \tntype{site}{tn circle, tn index={l:left, r:right, s:down}}
 \newcommand{\tntype}[2]{%
-  \tikzset{#1/.style={#2, tn@tname={#1}}}%
-  \tn@props{#1}%
-  \ifx\tn@rank\@empty\else \ifx\tn@legs\@empty\else
-    \global\tn@npt=0 \foreach \tn@x in \tn@legs{\global\advance\tn@npt by 1 }%
-    \ifnum\tn@rank<\tn@npt
-      \PackageError{tikz-tensors}{\string\tntype{#1}: tn rank=\tn@rank, but
-        it has indices on \the\tn@npt\space sides (tn legs={\tn@legs})}{}\fi
-  \fi\fi}
+  \tikzset{#1/.style={#2, tn@tname={#1}}}\tn@props{#1}}
 % how a tensor is named in a message: <tensor>, and (type <name>) if it has one
 \def\tn@called#1{`#1'\ifcsname tn@n@#1@tname\endcsname
   \expandafter\ifx\csname tn@n@#1@tname\endcsname\@empty\else
   \space(type \tn@get{n@#1@tname})\fi\fi}
 
-% When a picture ends, every tensor of it whose type says tn rank=<n> has <n>
-% of its indices drawn -- joined, or opened -- or the figure is an error: an
-% index left out by accident, or one too many, is caught where it is made
-% rather than in print. A picture inside a picture is checked with it.
+% When a picture ends, every index a type names (tn index) is drawn -- joined,
+% or opened -- or the figure is an error naming the ones that are not: an
+% index left out by accident is caught where it is made rather than in print.
+% A picture inside a picture is checked with it.
 \gdef\tn@ranked{}
+\def\tn@pnm{}
 \newcount\tn@depth
 \def\tn@checkranks{%
   \foreach \tn@rn in \tn@ranked{%
     \expandafter\tn@checkrank\expandafter{\tn@rn}}%
   \gdef\tn@ranked{}}
+\newcount\tn@nud
 \def\tn@checkrank#1{%
-  \tn@drawn{#1}\edef\tn@rk{\tn@get{n@#1@rank}}%
-  \ifnum\tn@ndrawn=\tn@rk\else
-    \PackageError{tikz-tensors}{\tn@called{#1} has rank \tn@rk, and
-      \tn@ndrawn\space of its indices are drawn%
-      \ifnum\tn@rk>\tn@nports\space (its layout gives it only \tn@nports)\fi}{%
-      Its type says tn rank=\tn@rk. \string\tnshow{#1} writes each of its
-      indices to the log, drawn or free; \string\tnopen{rest}{#1} opens the
-      free ones.}%
+  \gdef\tn@undrawn{}\global\tn@nud=0 \tn@ports{#1}\tn@undrawnport
+  \ifx\tn@undrawn\@empty\else
+    \PackageError{tikz-tensors}{\tn@called{#1}: \ifnum\tn@nud=1 its index
+      \tn@undrawn\space is\else its indices \tn@undrawn\space are\fi\space
+      not drawn}{Its type says tn index={\tn@get{n@#1@index}}, and a picture
+      draws every index it names. \string\tnshow{#1} writes each of them to
+      the log; \string\tnopen{rest}{#1} opens the free ones.}%
   \fi}
+\def\tn@undrawnport#1#2#3{\tn@ifused{#1}{#2}{#3}%
+  \ifnum\tn@isused=0 \global\advance\tn@nud by 1
+    \ifx\tn@undrawn\@empty \xdef\tn@undrawn{\tn@pnm}%
+    \else \xdef\tn@undrawn{\tn@undrawn, \tn@pnm}\fi\fi}
 \tikzset{every picture/.append style={%
   execute at begin picture={\global\advance\tn@depth by 1 },
   execute at end picture={\global\advance\tn@depth by -1
@@ -357,9 +443,10 @@
   \fi\fi}
 % \tnopen{rest}{<item>, ...} opens every index of each item not yet drawn,
 % each toward its own side: on a tensor, all its free ones; on a block, those
-% of each of its tensors whose type says its sides (tn legs) -- a tensor that
-% does not say them has as many as a layout gives it, which is more than it
-% means. An index left out by apart= is not opened.
+% of each of its tensors whose type names its indices (tn index) -- a tensor
+% that does not has as many as a layout gives it, which is more than it
+% means; on a port (\tn@port), that index. An index left out by apart= is
+% not opened. A named index opened ends at <tensor>-<name>.
 \def\tn@srest{rest}
 \newcommand{\tnopen}[3][]{%
   \tn@openkeys{#1}%
@@ -369,7 +456,12 @@
 \def\tn@openrest#1{%
   \tn@xlist{#1}%
   \foreach \tn@it in \tn@xl{%
-    \ifcsname tn@\tn@it @kind\endcsname
+    \expandafter\tn@hascolon\tn@it:\tn@end
+    \ifnum\tn@colon=1
+      \expandafter\tn@port\expandafter{\tn@it}{\string\tnopen}%
+      \tn@free{\tn@pn}{\tn@ps}{\tn@pkey}{\string\tnopen}%
+      \tn@nop{\tn@pn}{openport}{\tn@oedge}{\tn@pn}{\tn@ps}{\tn@pkey}%
+    \else\ifcsname tn@\tn@it @kind\endcsname
       \edef\tn@rns{\tn@get{\tn@it @nodes}}%
       \foreach \tn@rn in \tn@rns{%
         \edef\tn@rl{\tn@get{n@\tn@rn @legs}}%
@@ -377,7 +469,9 @@
     \else
       \tn@isnode{\tn@it}{\string\tnopen}%
       \expandafter\tn@restnode\expandafter{\tn@it}%
-    \fi}}
+    \fi\fi}}
+\def\tn@hascolon#1:#2\tn@end{\def\tn@cl{#2}%
+  \ifx\tn@cl\@empty \def\tn@colon{0}\else \def\tn@colon{1}\fi}
 \def\tn@restnode#1{\tn@ports{#1}\tn@restport}
 \def\tn@restport#1#2#3{%
   \tn@ifused{#1}{#2}{#3}\tn@ifcut{#1}{#2}{#3}%
@@ -399,11 +493,13 @@
   \tn@openkeys{#1}\def\tn@dir{down}%
   \tn@isnode{#2}{\string\tnopenswap}\tn@nop{#2}{openswap}{\tn@oedge}{#2}}
 
-% \tnjoin[edge=<style>]{<tensor>:<side>[:<n>]}{<tensor>:<side>[:<n>]}
+% \tnjoin[edge=<style>]{<port>}{<port>}
 % One index between two ports the layout does not join: the bond that closes
 % a periodic chain, a trace, a bond that skips over its neighbours. Both
-% tensors are in one block; <n> picks the port on that side when there are
-% several, the first unless said. How it runs is the layout's to say. It is
+% tensors are in one block. A port is <tensor>:<side>[:<n>] -- the <n>th
+% index on that side, the first unless said -- or, of a tensor whose type
+% names its indices, <tensor>:<name> or <tensor>:<n>, the <n>th of them
+% (\tn@port). How it runs is the layout's to say. It is
 % drawn from the first port to the second, which is the way an arrow on it
 % points; a port that is drawn already is an error.
 \def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
@@ -412,21 +508,20 @@
   \ifx\tn@ap\@empty
     \ifx\tn@apartl\@empty \xdef\tn@apartl{#1}\else \xdef\tn@apartl{\tn@apartl,#1}\fi
   \else
-    \tn@pspec#1:#2::\tn@end \tn@isnode{\tn@pn}{\string\tnconnect}%
-    \ifx\tn@pk\@empty \def\tn@pk{1}\fi
-    \tn@nop{\tn@pn}{portkey}{\tn@pn}{\tn@ps}{\tn@pk}%
+    \tn@port{#1:#2}{\string\tnconnect}%
     \tn@cut{\tn@pn}{\tn@ps}{\tn@pkey}%
   \fi}
 \pgfkeys{/tn/join/.is family, /tn/join/edge/.initial=tn edge}
 \newcommand{\tnjoin}[3][]{%
   \pgfkeys{/tn/join/.cd, edge=tn edge, #1}\pgfkeysgetvalue{/tn/join/edge}\tn@jedge
-  \tn@pspec#2:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
-  \tn@needleg{\tn@pn}{\tn@ps}{\string\tnjoin}%
+  \tn@port{#2}{\string\tnjoin}%
   \edef\tn@ja{\tn@get{n@\tn@pn @s}}%
-  \tn@pspec#3:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
-  \tn@needleg{\tn@pn}{\tn@ps}{\string\tnjoin}%
+  \edef\tn@jargs{{\tn@pn}{\tn@ps}{\tn@pkey}}%
+  \tn@port{#3}{\string\tnjoin}%
   \edef\tn@jb{\tn@get{n@\tn@pn @s}}%
+  \edef\tn@jargs{\tn@jargs{\tn@pn}{\tn@ps}{\tn@pkey}}%
   \ifx\tn@ja\tn@jb\else
     \PackageError{tikz-tensors}{\string\tnjoin: `#2' and `#3' are in two
       blocks}{An index is joined inside one stack, tree or grid.}\fi
-  \tn@op{\tn@ja}{join}{\tn@jedge}{#2}{#3}}
+  \expandafter\tn@joinop\expandafter{\tn@jargs}}
+\def\tn@joinop#1{\tn@op{\tn@ja}{join}{\tn@jedge}#1}
