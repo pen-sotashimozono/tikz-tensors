@@ -20,6 +20,9 @@
 %                             Not said, every side a layout gives it; said,
 %                             a layout joins and opens those sides alone, and
 %                             a command that names another is an error.
+%     tn rank=<n>             how many indices it has. Not said, as many as a
+%                             figure draws; said, a picture that ends with
+%                             another number of them drawn is an error.
 % A user's own type is a style of the same kind and is a type like these: a
 % kite pointing up is {tn node, kite, tn fill=green3, tn single=up}.
 % The package's types are named for their shape and never for what they mean;
@@ -45,14 +48,20 @@
 \gdef\tn@pts{}
 \gdef\tn@single{}
 \gdef\tn@legs{}
+\gdef\tn@rank{}
+\gdef\tn@tname{}
 \tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
          tn points/.code={\gdef\tn@pts{#1}},
          tn single/.code={\gdef\tn@single{#1}},
-         tn legs/.code={\xdef\tn@legs{\zap@space#1 \@empty}}}
-% Read a type's index properties without drawing it: \tn@legat, \tn@pts and
-% \tn@single afterwards hold what the style <#1> sets.
+         tn legs/.code={\xdef\tn@legs{\zap@space#1 \@empty}},
+         tn rank/.code={\pgfmathtruncatemacro\tn@rk{#1}\global\let\tn@rank\tn@rk},
+         tn@tname/.code={\gdef\tn@tname{#1}}}
+% Read a type's index properties without drawing it: \tn@legat, \tn@pts,
+% \tn@single, \tn@legs, \tn@rank and \tn@tname afterwards hold what the
+% style <#1> sets.
 \def\tn@props#1{%
   \gdef\tn@legat{center}\gdef\tn@pts{}\gdef\tn@single{}\gdef\tn@legs{}%
+  \gdef\tn@rank{}\gdef\tn@tname{}%
   \begingroup\tikzset{#1}\endgroup}
 
 % Each shape carries the size at which it reads as the same weight as the
@@ -122,7 +131,8 @@
 \def\tn@place#1#2#3#4#5{%
   \tn@props{#1}%
   \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}\tn@set{n@#2@legs}{\tn@legs}%
-  \tn@set{n@#2@type}{\detokenize{#1}}%
+  \tn@set{n@#2@type}{\detokenize{#1}}\tn@set{n@#2@rank}{\tn@rank}%
+  \tn@set{n@#2@tname}{\tn@tname}%
   \ifx\tn@legat\tn@center
     \node[#1] (#2) at (#3,#4) {#5};\tn@tracenode{#2}%
   \else

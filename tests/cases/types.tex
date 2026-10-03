@@ -1,0 +1,40 @@
+% A specimen of types a figure declares, not a diagram.
+%
+% \tntype names a type and says what it is: its outline, the sides it has
+% indices on (tn legs) and how many (tn rank). A chain's ends have rank 2 and
+% its bulk rank 3, which the picture is held to when it ends: every tensor
+% with a rank has that many indices drawn, or the figure is an error.
+% \tnopen{rest} draws what is still free -- on a block, of every tensor whose
+% type says its sides, each toward its own side; on a tensor, all of its own.
+% A grid's site, and a tree's, the same.
+\documentclass[border=5pt]{standalone}
+\usepackage{tikz-tensors}
+\tntype{bulk}{tn circle, tn legs={left, right, down}, tn rank=3}
+\tntype{edge}{tn circle, tn rank=2}
+\tntype{site}{tn box, tn legs={left, right, up, down}, tn rank=4}
+\tntype{cell}{tn circle, tn rank=5}
+\tntype{iso}{tn triangle up, tn legs={up, down}, tn rank=3}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{P}{5}{ket}
+  \tnlayer{P}{ket}{edge/$A$, 3*bulk/$A$, edge/$A$}
+  \tnconnect{P}
+  \tnopen[label=$n_{#1}$]{rest}{P}
+  \tnopen{down}{P-ket-1, P-ket-5}
+  \tnshow{P-ket-1, P-ket-2}
+  \tnbreak
+  \tnstack{O}{1}{a}
+  \tnlayer{O}{a}{site/$W$}
+  \tnopen{rest}{O-a-1}
+  \tnstack[tree]{T}{2}{top, leaves}
+  \tnlayer{T}{top}{iso/$V$/2}
+  \tnlayer{T}{leaves}{2*tn circle/$x$}
+  \tnconnect{T}
+  \tnopen{rest}{T}
+  \tnopen{down}{T}
+  \tnbreak
+  \tngrid{G}{2}{2}{cell/$T$}
+  \tnconnect{G}
+  \tnopen{rest}{G-1-1, G-2-1, G-1-2, G-2-2}
+\end{tikzpicture}
+\end{document}

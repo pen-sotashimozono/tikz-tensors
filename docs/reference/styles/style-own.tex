@@ -3,14 +3,14 @@
 % Styles named for what they mean, built on the package's, in the preamble or
 % a notation file; a figure then uses them as it uses the package's own,
 % as a type in \tnlayer and an edge type in edge=. Here a state in Vidal's
-% form: tensors and the weights on the bonds between them.
+% form: tensors and the weights on the bonds between them. A tensor's style
+% is best a type (\tntype), which can say what the layout is to hold it to:
+% a weight has an index left and right and nothing else, two in all.
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
-\tikzset{
-  site/.style   = {tn circle, tn fill=blue3},
-  weight/.style = {tn diamond, tn small, tn fill=green3},
-  phys/.style   = {tn wavy, draw=warm4},
-}
+\tntype{site}{tn circle, tn fill=blue3}
+\tntype{weight}{tn diamond, tn small, tn fill=green3, tn legs={left, right}, tn rank=2}
+\tikzset{phys/.style = {tn wavy, draw=warm4}}
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{a}

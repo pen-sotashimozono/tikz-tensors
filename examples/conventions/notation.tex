@@ -41,40 +41,43 @@
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
-  fn/.style         = {tn circle, draw=ele, fill=ele!12},
-  fnwide/.style     = {tn capsule, tn wide, draw=ele, fill=ele!12},
-  fntall/.style     = {tn capsule, tn tall, draw=ele, fill=ele!12},
-  coef/.style       = {tn capsule, tn fill=coef},
-  coefwide/.style   = {tn capsule, tn wide, tn fill=coef},
-  coeftall/.style   = {tn capsule, tn tall, tn fill=coef},
-  op/.style         = {tn rounded},
-  opwide/.style     = {op, tn wide},
   frame/.style      = {tn frame},
-  canl/.style       = {tn triangle right, tn fill=canl},
-  canr/.style       = {tn triangle left, tn fill=canr},
-  center/.style     = {tn diamond, tn fill=center},
-  centerbond/.style = {center, tn small},
-  mpo/.style        = {tn rounded, tn fill=mpo},
   tn gate/.append style = {fill=gate!25},
-  gate/.style       = {tn gate},
   tn env/.append style  = {fill=env!25},
   cont/.style       = {tn wavy, draw=ele},
   disc/.style       = {tn edge},
   gauge/.style      = {tn arrow},
   leg/.style        = {tn label},
   fused/.style      = {tn double},
-  delta/.style      = {tn dot},
-  basis/.style      = {tn circle, tn small},
-  iso/.style        = {tn triangle up, tn flat, tn fill=canl},
-  disentangler/.style = {gate, tn flat},
-  isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
-  corner/.style     = {tn rounded, fill=env!25},
-  side/.style       = {tn circle, fill=env!25},
-  coarse/.style     = {tn capsule, tn fill=blue2},
   half1/.style      = {tn fill=warm2},
   half2/.style      = {tn fill=green2},
   half3/.style      = {tn fill=warm1},
-  half4/.style      = {tn fill=green1},
-  ctrl/.style       = {tn dot},
-  targ/.style       = {tn oplus},
+  half4/.style      = {tn fill=green1}
 }
+% The tensors of the notation are types (\tntype): a tensor drawn in one says
+% which, in \tnshow and in an error.
+\tntype{fn}          {tn circle, draw=ele, fill=ele!12}
+\tntype{fnwide}      {tn capsule, tn wide, draw=ele, fill=ele!12}
+\tntype{fntall}      {tn capsule, tn tall, draw=ele, fill=ele!12}
+\tntype{coef}        {tn capsule, tn fill=coef}
+\tntype{coefwide}    {tn capsule, tn wide, tn fill=coef}
+\tntype{coeftall}    {tn capsule, tn tall, tn fill=coef}
+\tntype{op}          {tn rounded}
+\tntype{opwide}      {op, tn wide}
+\tntype{canl}        {tn triangle right, tn fill=canl}
+\tntype{canr}        {tn triangle left, tn fill=canr}
+\tntype{center}      {tn diamond, tn fill=center}
+\tntype{centerbond}  {center, tn small}
+\tntype{mpo}         {tn rounded, tn fill=mpo}
+\tntype{gate}        {tn gate}
+\tntype{delta}       {tn dot}
+\tntype{basis}       {tn circle, tn small}
+\tntype{iso}         {tn triangle up, tn flat, tn fill=canl}
+\tntype{disentangler}{gate, tn flat}
+\tntype{isodown}     {tn triangle down, tn flat, tn fill=canl}
+\tntype{corner}      {tn rounded, fill=env!25}
+\tntype{side}        {tn circle, fill=env!25}
+\tntype{coarse}      {tn capsule, tn fill=blue2}
+\tntype{ctrl}        {tn dot}
+\tntype{targ}        {tn oplus}
+

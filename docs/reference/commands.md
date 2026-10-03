@@ -62,6 +62,12 @@ of the plane), or the lattice's own directions `nw`, `ne`, `se`, `sw` — the
 indices toward that neighbour that no bond takes — or `around`, all four:
 the edge of a piece of a larger lattice.
 
+`rest` opens every index not yet drawn, each toward its own side: on a
+tensor, all of its free ones; on a block, those of each tensor whose type
+says its sides (`tn legs`) — a type that does not say them has every side
+its layout gives it, which is more than it means. An index left out by
+`apart=` is not opened.
+
 | key | |
 |---|---|
 | `edge=<edge type>` | the edge type |
@@ -98,11 +104,20 @@ step contracts into one, or a part of a network set apart.
 |---|---|
 | `label=<text>` | written above the frame's right corner |
 
+### `\tntype{<name>}{<options>}`
+A type of one's own: the style `<name>`, which is `<options>`, and which a
+tensor drawn in it says it is — `\tnshow` and an error name it. It says what
+a tensor is: its outline, the sides it has indices on (`tn legs`) and how
+many (`tn rank`), which the layout then holds a figure to. A rank smaller
+than the sides it names is an error. In the preamble or a notation file:
+`\tntype{site}{tn circle, tn legs={left, right, down}, tn rank=3}`.
+
 ### `\tnshow{<tensor>, ...}`
 Writes what the package made of each tensor to the log: its block, the sites
-and layers it covers, its type, the sides it has indices on (said by
-`tn legs`, or every side its layout gives it), and each index — drawn, left
-out by `apart=`, or free. Nothing is drawn; it is for finding out why a
+and layers it covers, its type, its rank (said by `tn rank`) and how many of
+its indices are drawn, the sides it has indices on (said by `tn legs`, or
+every side its layout gives it), and each index — drawn, left out by
+`apart=`, or free. Nothing is drawn; it is for finding out why a
 figure looks as it does.
 
 ### `\tnput[<placement>]{<name>}{<text>}`, `\tnmid[<placement>]{<name>}{<name>}{<text>}`

@@ -314,20 +314,22 @@
     \ifx\tn@one\tn@pks \pgfmathsetmacro\tn@pkey{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}%
     \else \pgfmathtruncatemacro\tn@pkey{\tn@get{n@#1@a}+(#3)-1}\fi
   \fi\fi}
-% \tnshow on a stack: every port, side by side, drawn or free
-\def\tn@stack@show#1{%
+% Every port of a tensor on a stack, side by side: one per layer it spans left
+% and right, one per site up and down -- one, in the middle, on a side its
+% type names single.
+\def\tn@stack@ports#1{%
   \edef\tn@one{\tn@get{n@#1@one}}%
   \foreach \tn@ss in {left,right,up,down}{%
     \tn@hasleg{#1}{\tn@ss}%
     \ifnum\tn@hasl=1
       \ifx\tn@ss\tn@one
-        \pgfmathsetmacro\tn@q{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}\tn@showport{#1}{\tn@ss}{\tn@q}%
+        \pgfmathsetmacro\tn@q{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}\tn@portvisit{#1}{\tn@ss}{\tn@q}%
       \else
         \ifx\tn@ss\tn@sleft \def\tn@sr{k}\def\tn@srb{kb}\else
         \ifx\tn@ss\tn@sright \def\tn@sr{k}\def\tn@srb{kb}\else
           \def\tn@sr{a}\def\tn@srb{b}\fi\fi
         \edef\tn@slo{\tn@get{n@#1@\tn@sr}}\edef\tn@shi{\tn@get{n@#1@\tn@srb}}%
-        \foreach \tn@q in {\tn@slo,...,\tn@shi}{\tn@showport{#1}{\tn@ss}{\tn@q}}%
+        \foreach \tn@q in {\tn@slo,...,\tn@shi}{\tn@portvisit{#1}{\tn@ss}{\tn@q}}%
       \fi
     \fi}}
 \def\tn@showport#1#2#3{%
@@ -528,6 +530,21 @@
   \fi
   \coordinate (#5) at (\tn@cx,\tn@yb);
   \tn@openlabel{#5}}
+% One port of tensor #2, side #3, key #4, opened that way: ending at
+% <tensor>-<side> if it is the only one on that side, else -<side>-<m>, the
+% <m>th of them -- the names \tnopen gives on a tensor.
+\def\tn@stack@openport#1#2#3#4{%
+  \edef\tn@dir{#3}\tn@vdir
+  \ifnum\tn@isv=1 \edef\tn@lo{\tn@get{n@#2@a}}\edef\tn@hi{\tn@get{n@#2@b}}%
+  \else \edef\tn@lo{\tn@get{n@#2@k}}\edef\tn@hi{\tn@get{n@#2@kb}}\fi
+  \edef\tn@one{\tn@get{n@#2@one}}%
+  \ifx\tn@one\tn@dir \let\tn@hi\tn@lo \fi
+  \ifnum\tn@lo=\tn@hi \def\tn@onm{#2-#3}%
+  \else \pgfmathtruncatemacro\tn@m{(#4)-\tn@lo+1}\edef\tn@onm{#2-#3-\tn@m}\fi
+  \ifnum\tn@isv=1
+    \ifx\tn@one\tn@dir \tn@vopenx{#1}{#2}{\tn@lo}{#4}{\tn@onm}%
+    \else \tn@vopen{#1}{#2}{#4}{\tn@onm}\fi
+  \else \tn@hopen{#1}{#2}{#4}{\tn@onm}\fi}
 \def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
   \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
 \def\tn@stack@opennode#1#2{%
