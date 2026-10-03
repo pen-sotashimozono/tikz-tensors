@@ -30,6 +30,8 @@
 %   the environment of a two-dimensional network, contracted from its
 %   boundary, is the environment's colour: a corner as a rounded box, a side
 %   as a circle;
+%   a factor of a tensor split in two -- a half of a site of the tensor
+%   renormalization group -- is the array colour, its shape the split's;
 %   in a quantum circuit, a gate on one qubit is a gate, and a controlled NOT
 %   is its control, an ink dot, joined to its target, a circled plus.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
@@ -64,6 +66,7 @@
   isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
   corner/.style     = {tn rounded, fill=env!25},
   side/.style       = {tn circle, fill=env!25},
+  factor/.style     = {tn fill=coef},
   ctrl/.style       = {tn dot},
   targ/.style       = {tn oplus},
 }

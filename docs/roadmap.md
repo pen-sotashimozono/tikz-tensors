@@ -141,7 +141,7 @@ touches off the lint ratchet.
 | 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `14-heff-two-site`, `13-expectation` rewritten; single-site and bond H_eff, fixed point, low rank |
 | 2 | fused index (`tn double`), delta (`tn dot`), basis caps, tensors across layers, `\|` and `dots` slots, rows — **done** (v0.6.0) | MPO × MPS, zip-up, CP, sampling (`11-mpo-mps`, `12-zip-up`, `04-cp`, `10-sampling`); every legacy example rewritten |
 | 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`03-svd-qr`, `19-ttn`, `20-mera`), |
-| 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, HOTRG (`21-peps`, `22-simple-update`, `23-ctmrg`, `24-hotrg`); TRG still needs diagonal indices |
+| 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, TRG, HOTRG (`21-peps` to `25-hotrg`); TRG on a split grid (v0.13.0) |
 | 4½ | modules (core, nodes, edges, canvas, stack, connect, grid, labels); a tensor's indices as ports; `\tnjoin`; `<n>*` in a layer; `\tnset`; the coordinate commands removed — **done** (v0.9.0) | periodic MPS (`07-periodic-mps`) |
 | 4¾ | folders (`core/`, `style/`, `layout/`); the abstract layout, with stack, tree and grid as layouts; ports recorded once drawn — **done** (v0.10.0) | the grid on `\tnconnect`/`\tnopen` (`21-peps`, `22-simple-update`); TRG is next: a layout of its own |
 | 5 | machine learning | neural networks as diagrams: what is a tensor (weights, feature maps) and what is not (activations) |

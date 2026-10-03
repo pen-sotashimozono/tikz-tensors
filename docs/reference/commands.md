@@ -44,6 +44,7 @@ A square lattice of one tensor, turned by 45 degrees.
 | key | |
 |---|---|
 | `bonds=<type>/<label>` | a tensor on every bond, turned with the lattice |
+| `split` | every site drawn as the two halves of a singular value decomposition, as in the tensor renormalization group: triangles one above the other on the sites with i+j even, side by side on the others, their flat sides carrying the bonds of the lattice and their apexes joined; the type is the halves' |
 | `scale=<factor>`, `pitch=<factor>`, `size=<factor>`, `stub=<factor>` | as on a stack: the grid at factors of the notation's distances and sizes |
 
 ### `\tnconnect[<keys>]{<block>}`
@@ -56,7 +57,10 @@ Every index the block's layout implies.
 | `apart={<layer>, ...}` | layers with no index along them (a stack only) |
 
 ### `\tnopen[<keys>]{<direction>}{<tensor or block>, ...}`
-Open indices toward `up`, `down`, `left` or `right` (a grid: `down`).
+Open indices toward `up`, `down`, `left` or `right`. On a grid, `down` (out
+of the plane), or the lattice's own directions `nw`, `ne`, `se`, `sw` — the
+indices toward that neighbour that no bond takes — or `around`, all four:
+the edge of a piece of a larger lattice.
 
 | key | |
 |---|---|
@@ -85,6 +89,14 @@ A relation sign after everything on the row; the next block goes after it.
 
 ### `\tnbreak`
 The next block starts a new row, under everything drawn so far.
+
+### `\tnframe[<keys>]{<tensor>, ...}`
+A dashed box around the named tensors, said by what it frames: the tensors a
+step contracts into one, or a part of a network set apart.
+
+| key | |
+|---|---|
+| `label=<text>` | written above the frame's right corner |
 
 ### `\tnput[<placement>]{<name>}{<text>}`, `\tnmid[<placement>]{<name>}{<name>}{<text>}`
 A label at a named point, or midway between two. A label on an open index

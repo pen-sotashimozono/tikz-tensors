@@ -5,6 +5,33 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.13.0 — 2026-10-03
+
+The tensor renormalization group: a grid can be drawn split, and opened at
+its edges.
+
+`\tngrid[split]` draws every site as the two halves a singular value
+decomposition leaves, as TRG splits a lattice: on the sites with i+j even the
+halves are one above the other (`<grid>-i-j-top`, `-bottom`), on the others
+side by side (`-left`, `-right`); each is a triangle whose flat side carries
+its two bonds of the lattice and whose apex meets the other half's, and
+`\tnconnect` joins them. The bonds of a split grid run corner to corner.
+`\tnopen` on a grid takes the lattice's own directions, `nw`, `ne`, `se`,
+`sw`, and `around` for all four: the edge of a piece of a larger lattice, its
+ends `<grid>-i-j-<direction>`, its labels beyond them on the diagonal.
+
+`\tnframe[label=<text>]{<tensor>, ...}` draws a dashed box around the named
+tensors: the tensors a step contracts into one.
+
+New example, `24-trg`: a TRG step, the split of T in two ways and the
+contraction of four halves into the T' of a lattice turned by 45 degrees. The
+two that came after it are renumbered, `25-hotrg` and `26-toffoli`. The
+examples' notation names `factor`, a half of a split tensor.
+
+`tn size` scales a rounded outline's radius with it, so a capsule drawn
+smaller stays a capsule; the gates of `26-toffoli`, drawn at 0.7, have
+correspondingly smaller corners.
+
 ## v0.12.0 — 2026-10-03
 
 Breaking: every scale of the palette runs in five steps, pale to dark, and
