@@ -115,6 +115,19 @@ every figure keeps working.</p>
     }).catch(() => {});
 })();
 </script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+</script>
 <footer>tikz-tensors v0.12.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
