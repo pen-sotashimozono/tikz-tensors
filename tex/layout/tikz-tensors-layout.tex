@@ -187,11 +187,16 @@
   \pgfkeys{/tn/open/.cd, edge=tn edge, #1}%
   \pgfkeysgetvalue{/tn/open/edge}\tn@oedge}
 % A layout calls this on the coordinate at the end of each index it opens.
+% Toward a diagonal of a grid, the label goes beyond it on that diagonal.
+\def\tn@olpos@nw{above left}\def\tn@olpos@ne{above right}
+\def\tn@olpos@se{below right}\def\tn@olpos@sw{below left}
 \def\tn@openlabel#1{%
   \global\advance\tn@ocount by 1
   \ifx\tn@dir\tn@sdown \def\tn@olpos{below}%
   \else\ifx\tn@dir\tn@sup \def\tn@olpos{above}%
-  \else \let\tn@olpos\tn@dir \fi\fi
+  \else\ifcsname tn@olpos@\tn@dir\endcsname
+    \edef\tn@olpos{\csname tn@olpos@\tn@dir\endcsname}%
+  \else \let\tn@olpos\tn@dir \fi\fi\fi
   \ifx\tn@olmode\tn@olt
     \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@olab{\the\tn@ocount}}%
   \else\ifx\tn@olmode\tn@oll

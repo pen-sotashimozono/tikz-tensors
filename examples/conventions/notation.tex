@@ -30,6 +30,12 @@
 %   the environment of a two-dimensional network, contracted from its
 %   boundary, is the environment's colour: a corner as a rounded box, a side
 %   as a circle;
+%   in the tensor renormalization group, the tensor of the coarser lattice
+%   is the array's shape a step paler, and the four halves a split leaves
+%   are four tensors, so four colours: the two factors of one decomposition
+%   two steps of one hue (warm for the halves above and below, green for
+%   those to the left and right), the first factor the stronger -- one
+%   colour, one tensor;
 %   in a quantum circuit, a gate on one qubit is a gate, and a controlled NOT
 %   is its control, an ink dot, joined to its target, a circled plus.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
@@ -64,6 +70,11 @@
   isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
   corner/.style     = {tn rounded, fill=env!25},
   side/.style       = {tn circle, fill=env!25},
+  coarse/.style     = {tn capsule, tn fill=blue2},
+  half1/.style      = {tn fill=warm2},
+  half2/.style      = {tn fill=green2},
+  half3/.style      = {tn fill=warm1},
+  half4/.style      = {tn fill=green1},
   ctrl/.style       = {tn dot},
   targ/.style       = {tn oplus},
 }

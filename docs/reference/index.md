@@ -27,7 +27,7 @@ A figure is made of two kinds of statement, kept in two places.
 | place | `\tnstack` and `\tnlayer`, or `\tngrid` | a block of slots, and the tensor in each |
 | connect | `\tnconnect` | every index the block's layout implies |
 | open, join | `\tnopen`, `\tnopenswap`, `\tnjoin` | the other indices: open ones, crossed ones, ones between two ports |
-| label | `\tnput`, `\tnmid` | text on what is not an open index |
+| label | `\tnput`, `\tnmid`, `\tnframe` | text on what is not an open index, a frame around a group |
 | between blocks | `\tneq`, `\tnapprox`, `\tnbreak` | a relation sign, or a new row |
 
 ## Step by step
@@ -77,4 +77,6 @@ predicts the rest.
 | `<tensor>-<dir>` | the end of a tensor's own index opened that way |
 | `<tensor>-<dir>-<n>` | ... the n-th, when it has several that way |
 | `<grid>-<i>-<j>-down` | the end of a grid tensor's index out of the plane |
+| `<grid>-<i>-<j>-<nw/ne/se/sw>` | the end of a grid site's index of the lattice opened that way |
+| `<grid>-<i>-<j>-top`, `-bottom`, `-left`, `-right` | the halves of a site of a `split` grid: top and bottom where i+j is even, left and right where it is odd |
 | `<tensor>:<side>[:<n>]` | a port, for `\tnjoin` |

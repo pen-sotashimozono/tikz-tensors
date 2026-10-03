@@ -14,3 +14,30 @@
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
 \newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};\tn@tracenode{tn@lab}%
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
+
+% \tnframe[label=<text>]{<tensor>, ...}
+% A dashed box around the named tensors, a gap/2 clear of them, with <text>
+% above its right corner: the tensors a step contracts into one, or a part of
+% a network set apart. Said by what it frames and never by a coordinate, like
+% a label. It counts as drawn when the next equals sign is placed.
+\pgfkeys{/tn/frame/.is family, /tn/frame/label/.initial=}
+\newdimen\tn@fxa \newdimen\tn@fya \newdimen\tn@fxb \newdimen\tn@fyb
+\newcommand{\tnframe}[2][]{%
+  \pgfkeys{/tn/frame/.cd, label=, #1}\pgfkeysgetvalue{/tn/frame/label}\tn@flab
+  \global\tn@fxa=\maxdimen \global\tn@fya=\maxdimen
+  \global\tn@fxb=-\maxdimen \global\tn@fyb=-\maxdimen
+  \foreach \tn@fn in {#2}{%
+    \tn@anc{\tn@fn}{south west}%
+    \ifdim\tn@ax<\tn@fxa \global\tn@fxa=\tn@ax\fi
+    \ifdim\tn@ay<\tn@fya \global\tn@fya=\tn@ay\fi
+    \tn@anc{\tn@fn}{north east}%
+    \ifdim\tn@ax>\tn@fxb \global\tn@fxb=\tn@ax\fi
+    \ifdim\tn@ay>\tn@fyb \global\tn@fyb=\tn@ay\fi}%
+  \tn@len\tn@fw{\the\tn@fxb-\the\tn@fxa+\tn@gap}%
+  \tn@len\tn@fh{\the\tn@fyb-\the\tn@fya+\tn@gap}%
+  \tn@len\tn@fx{(\the\tn@fxa+\the\tn@fxb)/2}\tn@len\tn@fy{(\the\tn@fya+\the\tn@fyb)/2}%
+  \node[tn frame, rectangle, inner sep=0pt, minimum width=\tn@fw, minimum height=\tn@fh]
+    (tn@frame) at (\tn@fx,\tn@fy) {};\tn@tracenode{tn@frame}%
+  \tn@anc{tn@frame}{east}\tn@reach{\tn@ax}%
+  \ifx\tn@flab\@empty\else
+    \expandafter\tnput\expandafter[above right]{tn@frame.north east}{\tn@flab}\fi}

@@ -24,10 +24,18 @@
 % picture, or one that is to stand out. The label keeps its size, which is the
 % size of the equations beside it. A layout says it for a block or a layer
 % drawn smaller (size=, scale=; tikz-tensors-layout.tex).
-\tikzset{tn size/.code={%
+%
+% An outline with rounded corners says its radius with tn@radius, so that
+% tn size scales the radius with the outline: a capsule drawn smaller stays a
+% capsule instead of a box whose corners overrun its sides.
+\tikzset{tn@radius/.code={\def\tn@rad{#1}\tikzset{rounded corners=#1}},
+  tn size/.code={%
   \pgfmathsetlengthmacro\tn@szw{(\pgfkeysvalueof{/pgf/minimum width})*(#1)}%
   \pgfmathsetlengthmacro\tn@szh{(\pgfkeysvalueof{/pgf/minimum height})*(#1)}%
-  \pgfkeyslet{/pgf/minimum width}\tn@szw \pgfkeyslet{/pgf/minimum height}\tn@szh}}
+  \pgfkeyslet{/pgf/minimum width}\tn@szw \pgfkeyslet{/pgf/minimum height}\tn@szh
+  \ifx\tn@rad\@empty\else
+    \pgfmathsetlengthmacro\tn@szr{(\tn@rad)*(#1)}\tikzset{rounded corners=\tn@szr}\fi}}
+\def\tn@rad{}
 \gdef\tn@legat{center}
 \gdef\tn@pts{}
 \gdef\tn@single{}
@@ -52,9 +60,9 @@
   tn box/.style            = {tn node, rectangle, fill=grey1, minimum size=7mm,
                               inner sep=1pt},
   tn circle/.style         = {tn node, circle, fill=grey1, minimum size=8mm},
-  tn capsule/.style        = {tn node, rectangle, rounded corners=4mm,
+  tn capsule/.style        = {tn node, rectangle, tn@radius=4mm,
                               fill=grey1, minimum size=8mm},
-  tn rounded/.style        = {tn node, rectangle, rounded corners=1.2mm,
+  tn rounded/.style        = {tn node, rectangle, tn@radius=1.2mm,
                               fill=grey1, minimum size=7.5mm, inner sep=1pt},
   tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
                               shape border rotate=-90, fill=grey1,

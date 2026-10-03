@@ -256,7 +256,7 @@ SECTIONS = [(0, "The theme"),
             (13, "Algorithms on a chain"),
             (19, "Trees and MERA"),
             (21, "Two dimensions"),
-            (25, "Quantum circuits")]
+            (26, "Quantum circuits")]
 
 
 def section(ex: "Example") -> str:
@@ -282,7 +282,7 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
 <link rel="stylesheet" href="{up}assets/theme.css">
 <link rel="stylesheet" href="{up}assets/site.css">
 <meta name="tt-root" content="{up}">
-<script>try{{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}}catch(e){{}}</script>
+<script>try{{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}}catch(e){{}}</script>
 </head>
 <body>
 <header class="top">
@@ -415,6 +415,13 @@ def traced_figure(name: str, up: str, scale: float, alt: str) -> str:
 # not with the page. Without it the site is the same, less those two.
 ENGINE = ROOT / ".engine"
 LIVE = False
+# Side by side: the example's code on the left and its picture on the right,
+# the picture kept in view, so that a line and what it draws are pointed at
+# together. Remembered, as the theme is.
+SIDE_BUTTON = ('<button class="pill side-btn" type="button" title="Code on the left, '
+               'the picture on the right, kept in view" onclick="const r=document.documentElement,'
+               's=r.dataset.layout===\'side\';if(s)delete r.dataset.layout;else r.dataset.layout=\'side\';'
+               'try{localStorage.setItem(\'layout\',s?\'\':\'side\')}catch(e){}">⇆ Side by side</button>')
 LIVE_BUTTON = '<button class="pill live-btn" type="button">Edit live</button>'
 # What every live figure is drawn with: the examples' preamble, so that a
 # figure is the file it is on the page.
@@ -650,12 +657,12 @@ def example_page(exs: list[Example], i: int) -> str:
     text = "".join(f"<p>{autolink(html.escape(prose(p), quote=False))}</p>" for p in e.paras)
     source = e.path.read_text()
     body = f"""<p class="crumb"><a href="../examples.html">Examples</a> / {e.number}</p>
-<h1>{html.escape(e.title)}</h1>
-<div class="traced">
+<h1 class="with-button">{html.escape(e.title)}{SIDE_BUTTON}</h1>
+<div class="traced example">
 {traced_figure(e.name, "../", 1.5, f"{e.title}: {e.lead}")}
 <div class="split">
 <div class="prose">{text}</div>
-<div>
+<div class="codecol">
 <h2 class="with-button">The picture{LIVE_BUTTON if LIVE else ""}</h2>
 <p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
 <pre class="code">{traced_code(e.picture, source, "../")}</pre>
@@ -741,7 +748,7 @@ def pictured(body: str) -> tuple[str, str]:
     text = "".join(f"<p>{autolink(html.escape(prose(t), quote=False))}</p>" for t in pic.paras)
     source = (ROOT / pic.path).read_text()
     return body.replace(line.group(), ""), (
-        f'{text}<div class="traced">'
+        f'{text}<div class="traced example">'
         f'{traced_figure(pic.name, "", 1.5, pic.paras[0] if pic.paras else pic.name)}'
         f'<p class="def-head">Drawn by <a href="{REPO}/blob/main/{pic.path}">{pic.path}</a></p>'
         f'<pre class="code">{traced_code(pic.code, source, "")}</pre></div>')
@@ -956,6 +963,25 @@ pre.code .ln.live{cursor:default}
 pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
   box-shadow:inset 3px 0 #cf222e}
 .hint{margin:-.2em 0 .4em}
+h1.with-button{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+h1 .side-btn{font-size:14px}
+:root[data-layout=side] .side-btn{background:var(--accent);color:var(--card);border-color:var(--accent)}
+@media (max-width:820px){.side-btn{display:none}}
+/* Side by side (SIDE_BUTTON, kept like the theme): an example's
+   code on the left and its picture on the right, the picture staying in view
+   while the code scrolls, so that pointing at a line shows what it draws. */
+@media (min-width:821px){
+:root[data-layout=side] main{max-width:1480px}
+:root[data-layout=side] .example{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  gap:8px 28px;align-items:start}
+:root[data-layout=side] .example>.split{display:contents}
+:root[data-layout=side] .example .codecol{grid-column:1;grid-row:1}
+:root[data-layout=side] .example .codecol>h2{margin-top:0}
+:root[data-layout=side] .example>figure.paper{grid-column:2;grid-row:1;position:sticky;top:64px;margin:0}
+:root[data-layout=side] .example .prose{grid-column:1/-1;grid-row:2}
+:root[data-layout=side] .example>.def-head{grid-column:1;grid-row:1;align-self:start;margin:0}
+:root[data-layout=side] .example>pre.code{grid-column:1;grid-row:1;margin-top:1.6em}
+}
 h2.with-button{display:flex;align-items:center;gap:12px}
 button.pill{font:inherit;font-size:13px;font-weight:400;cursor:pointer;color:var(--fg);
   background:var(--soft);border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);
