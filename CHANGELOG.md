@@ -26,12 +26,17 @@ ends `<grid>-i-j-<direction>`, its labels beyond them on the diagonal.
 `\tnframe[label=<text>]{<tensor>, ...}` draws a dashed box around the named
 tensors: the tensors a step contracts into one.
 
-New example, `24-trg`: a TRG step, the split of T in two ways and the
+New example, `24-trg`: a TRG step, the unit cell of two sites framed, the split of T in two ways and the
 contraction of four halves into the T' of a lattice turned by 45 degrees. The
 two that came after it are renumbered, `25-hotrg` and `26-toffoli`. In it
 one colour is one tensor: T, T' a step paler, and the four halves S1 to S4,
 each pair from one decomposition two steps of one hue (the examples'
 notation names them `half1` to `half4`, and `coarse`).
+
+On the documentation site, the ⇆ button beside the light-and-dark one puts an
+example's code beside its picture, the picture staying in view as the code
+scrolls, so that pointing at a line lights up what it draws without the two
+being a screen apart; the page remembers it, as it does the theme.
 
 `tn size` scales a rounded outline's radius with it, so a capsule drawn
 smaller stays a capsule; the gates of `26-toffoli`, drawn at 0.7, have

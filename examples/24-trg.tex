@@ -5,8 +5,9 @@
 % split in two, and four of the halves are contracted into the tensor T' of a
 % lattice twice as coarse.
 %
-% The split is a singular value decomposition, truncated, so the first row is
-% only approximately equal. It goes two ways, by the colour of the site on the
+% The unit cell is two sites, one of each colour of the checkerboard, because
+% the two are split two ways. The split is a singular value decomposition,
+% truncated, so the first row is only approximately equal. It goes two ways, by the colour of the site on the
 % checkerboard: on one colour the indices up the lattice go to one half and
 % those down it to the other, on the other colour the indices to the left and
 % to the right; each half is a triangle whose flat side carries its two
@@ -33,6 +34,7 @@
   \tngrid[scale=0.8]{A}{2}{1}{coef/$T$}
   \tnconnect{A}
   \tnopen{around}{A}
+  \tnframe[label=unit cell]{A-1-1, A-2-1}
   \tnapprox
   \tngrid[split, scale=0.8]{B}{2}{1}{half1/$S_1$, half3/$S_3$, half2/$S_2$, half4/$S_4$}
   \tnconnect{B}
