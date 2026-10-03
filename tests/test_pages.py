@@ -34,7 +34,7 @@ class Site(unittest.TestCase):
         exs = docsite.examples()
         self.assertEqual([e.number for e in exs], sorted(e.number for e in exs))
         for e in exs:
-            self.assertIn(docsite.section(e), [t for _, t in docsite.SECTIONS])
+            self.assertIn(docsite.section(e), [t for _, t, _ in docsite.SECTIONS])
 
     def test_every_link_inside_the_site_resolves(self):
         for name in self.pages:

@@ -28,10 +28,11 @@ orders are close.
 
 On the documentation site, every command of the package in a code block links
 to its entry in the reference (`api.html#tnopen`), and every style of it to
-the styles. The reference draws each command as a block of its own, as
-Documenter draws a docstring: the signature in a bar along the top, a badge,
-a link to the file under `tex/` that defines it, and the description and its
-keys inside.
+the styles. The reference and the examples are laid out as a Pinax gallery
+is: each section a card of its own, numbered and counted, with its summary in
+a grey box, and each command or figure in it a card -- the signature or the
+title on top, the description or the picture, buttons to the file under
+`tex/` or `examples/` (and the figure's SVG), and a numbered caption.
 
 ## v0.10.0 — 2026-10-02
 

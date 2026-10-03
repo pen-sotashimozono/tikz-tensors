@@ -222,16 +222,25 @@ class Example:
 # The examples in order, from single tensors up to two-dimensional networks:
 # the number each section starts at. Every example falls in one
 # (tests/test_pages.py).
-SECTIONS = [(0, "The theme"),
-            (1, "Single tensors and decompositions"),
-            (6, "Matrix product states"),
-            (13, "Algorithms on a chain"),
-            (19, "Trees and MERA"),
-            (21, "Two dimensions")]
+SECTIONS = [(0, "The theme",
+             "The colours and shapes of the notation, drawn from theme/tokens.toml."),
+            (1, "Single tensors and decompositions",
+             "One tensor at a time: expanded in a basis, its indices exchanged, and "
+             "the decompositions every algorithm is made of."),
+            (6, "Matrix product states",
+             "A chain of tensors, its canonical forms and its center, and what is "
+             "done to it."),
+            (13, "Algorithms on a chain",
+             "What DMRG and TEBD contract: expectation values, effective "
+             "Hamiltonians, Trotter steps, fixed points."),
+            (19, "Trees and MERA",
+             "Networks that coarse-grain a chain, layer by layer."),
+            (21, "Two dimensions",
+             "A lattice of tensors, its environment, and its renormalisation.")]
 
 
 def section(ex: "Example") -> str:
-    return [title for start, title in SECTIONS if int(ex.number) >= start][-1]
+    return [title for start, title, _ in SECTIONS if int(ex.number) >= start][-1]
 
 
 def examples() -> list[Example]:
@@ -299,14 +308,55 @@ def figure(ex: Example, up: str) -> str:
             f'alt="{html.escape(ex.title)}: {html.escape(ex.lead)}"></figure>')
 
 
+# A page is a column of shelves, as Pinax lays out a gallery: a shelf is a
+# card with its number, title and count over a rule, a summary in a grey box,
+# and its items -- figures, commands -- each a card of its own, a title on
+# top, buttons under it and a numbered caption at the foot.
+def shelf(ident: str, number: str, title: str, items: list[str], summary: str = "",
+          edit: str = "", rest: str = "", layout: str = "grid") -> str:
+    count = f' <span class="count">({len(items)})</span>' if items else ""
+    pen = f' <a class="edit" href="{edit}" title="Edit on GitHub">✎</a>' if edit else ""
+    return (f'<section class="shelf" id="{ident}"><header class="shelf-head"><h2>'
+            f'<span class="num">{number}</span> {title}{count}{pen}</h2></header>'
+            + (f'<div class="summary">{summary}</div>' if summary else "")
+            + (f'<div class="sheet">{rest}</div>' if rest else "")
+            + (f'<div class="items {layout}">{"".join(items)}</div>' if items else "")
+            + "</section>")
+
+
+def card(title: str, body: str, buttons: list[str], caption: str, ident: str = "",
+         kind: str = "") -> str:
+    anchor = f' id="{ident}"' if ident else ""
+    pill = f'<span class="kind">{kind}</span>' if kind else ""
+    return (f'<article class="item"{anchor}><header class="item-title">{title}{pill}</header>'
+            f'<div class="item-body">{body}</div>'
+            + (f'<div class="pills">{"".join(buttons)}</div>' if buttons else "")
+            + f'<p class="caption">{caption}</p></article>')
+
+
+def button(href: str, text: str, download: bool = False) -> str:
+    return f'<a class="pill" href="{href}"{" download" if download else ""}>{text}</a>'
+
+
+def gallery(exs: list[Example], up: str, sections: list) -> str:
+    out = ""
+    for k, (_, title, summary) in enumerate(SECTIONS):
+        if title not in sections:
+            continue
+        items = [card(f'<a href="{up}examples/{e.name}.html">{html.escape(e.title)}</a>',
+                      f'<a href="{up}examples/{e.name}.html">{figure(e, up)}</a>',
+                      [button(f"{up}figures/{e.name}.svg", "↓ svg", download=True),
+                       button(f"{REPO}/blob/main/examples/{e.name}.tex", "‹/› source")],
+                      f'<span class="num">Fig. {int(e.number)}.</span> '
+                      f'{html.escape(prose(e.lead), quote=False)}')
+                 for e in exs if section(e) == title]
+        out += shelf(f"sec-{k}", f"Sec. {k}.", html.escape(title), items,
+                     summary=f"<p>{html.escape(summary)}</p>")
+    return out
+
+
 def index_page(exs: list[Example]) -> str:
-    gallery = ""
-    for _, title in SECTIONS[1:]:
-        cards = "".join(
-            f'<a class="card" href="examples/{e.name}.html">{figure(e, "")}'
-            f'<span class="num">{e.number}</span> {html.escape(e.title)}</a>'
-            for e in exs if section(e) == title)
-        gallery += f'<h3>{html.escape(title)}</h3><div class="gallery">{cards}</div>'
+    shelves = gallery(exs, "", [t for _, t, _ in SECTIONS[1:]])
 
     shown = next(e for e in exs if e.name == "08-canonical")
     body = f"""<section class="hero">
@@ -341,29 +391,18 @@ shapes only.</p>
 <code>\\usepackage{{tikz-tensors}}</code>. The <a href="api.html">reference</a>
 lists the whole interface; every example below shows its code.</p>
 </section>
-<section>
 <h2>Examples</h2>
-{gallery}
-</section>"""
+{shelves}"""
     return page("Overview", "index.html", body)
 
 
 def examples_page(exs: list[Example]) -> str:
-    groups = ""
-    for _, title in SECTIONS:
-        rows = "".join(
-            f'<li><a href="examples/{e.name}.html"><span class="num">{e.number}</span> '
-            f'{html.escape(e.title)}</a><span class="lead">'
-            f'{html.escape(prose(e.lead), quote=False)}</span></li>'
-            for e in exs if section(e) == title)
-        if rows:
-            groups += f'<h2>{html.escape(title)}</h2><ul class="list">{rows}</ul>'
     body = f"""<h1>Examples</h1>
 <p>Each one draws one object an algorithm uses and is named for that object,
 in order from single tensors up to two-dimensional networks. Every page shows
 the file as it is in <code>examples/</code> and the picture CI checks it
 draws.</p>
-{groups}"""
+{gallery(exs, "", [t for _, t, _ in SECTIONS])}"""
     return page("Examples", "examples.html", body)
 
 
@@ -401,36 +440,50 @@ def defined_in() -> dict[str, str]:
 
 
 def api_page() -> str:
-    """docs/api.md, each command's entry a block of its own, as Documenter
-    draws a docstring: the signature in a bar along the top, what it is, where
-    it is defined, and the description and its keys under it."""
+    """docs/api.md as shelves: each `##' section a shelf, its first paragraphs
+    the summary, and each `###' command a card of its own -- the signature on
+    top, the description and its keys, where it is defined, and its number."""
     text = (ROOT / "docs" / "api.md").read_text()
     where = defined_in()
-    parts, toc = [], []
-    for part in re.split(r"(?m)^(?=#{2,3} )", text):
-        if not part.startswith("### "):
-            body, t = markdown(part)
-            parts.append(body)
-            toc += t
-            continue
-        head, _, rest = part.partition("\n")
-        sigs = re.findall(r"`([^`]+)`", head)
-        names = [n for sig in sigs for n in re.findall(r"\\tn[a-z]+", sig)]
-        ident = names[0][1:] if names else slug(head)
-        toc.append((3, ident, ", ".join(f"<code>{html.escape(n)}</code>" for n in names)))
-        body, _ = markdown(rest)
-        src = where.get(names[0]) if names else None
-        source = (f'<a class="src" href="{REPO}/blob/main/{src}">source</a>' if src else "")
-        lines = "".join(f'<code class="sig">{latex(sig)}</code>' for sig in sigs)
-        parts.append(
-            f'<article class="doc" id="{ident}"><header>'
-            f'<div class="sigs">{lines}</div><span class="kind">Command</span>{source}'
-            f'</header><div class="doc-body">{body}</div></article>')
+    edit = f"{REPO}/edit/main/docs/api.md"
+    intro, *sections = re.split(r"(?m)^(?=## )", text)
+    head, _ = markdown(intro)
+    shelves, toc, n = [], [], 0
+    for k, sec in enumerate(sections, 1):
+        title_line, _, sec = sec.partition("\n")
+        title = inline(title_line[3:])
+        ident = slug(title)
+        lead, *entries = re.split(r"(?m)^(?=### )", sec)
+        chunks = re.split(r"\n\s*\n", lead.strip())
+        cut = next((i for i, c in enumerate(chunks) if re.match(r"(```|\||[-*] )", c)),
+                   len(chunks))
+        summary, _ = markdown("\n\n".join(chunks[:cut]))
+        rest, _ = markdown("\n\n".join(chunks[cut:]))
+        toc.append((2, ident, title))
+        items = []
+        for entry in entries:
+            n += 1
+            first, _, body = entry.partition("\n")
+            sigs = re.findall(r"`([^`]+)`", first)
+            names = [m for sig in sigs for m in re.findall(r"\\tn[a-z]+", sig)]
+            cmd = names[0][1:] if names else slug(first)
+            toc.append((3, cmd, ", ".join(f"<code>{html.escape(m)}</code>" for m in names)))
+            src = where.get(names[0]) if names else None
+            items.append(card(
+                "".join(f'<code class="sig">{latex(sig)}</code>' for sig in sigs),
+                markdown(body)[0],
+                [button(f"{REPO}/blob/main/{src}", f"‹/› {src.rpartition('/')[2]}")] if src else [],
+                f'<span class="num">Cmd. {n}.</span> '
+                + ", ".join(f"<code>{html.escape(m)}</code>" for m in names)
+                + f' <a class="edit" href="{edit}" title="Edit on GitHub">✎</a>',
+                ident=cmd, kind="Command"))
+        shelves.append(shelf(ident, f"Sec. {k}.", title, items, summary=summary,
+                             edit=edit, rest=rest, layout="stack"))
     contents = "".join(f'<li class="l{lvl}"><a href="#{ident}">{text}</a></li>'
-                       for lvl, ident, text in toc if lvl in (2, 3))
+                       for lvl, ident, text in toc)
     return page("Reference", "api.html",
                 f'<div class="with-toc"><aside><ul class="toc">{contents}</ul></aside>'
-                f'<article>{"".join(parts)}</article></div>')
+                f'<div>{head}{"".join(shelves)}</div></div>')
 
 
 def notation_page() -> str:
@@ -490,18 +543,7 @@ a.ref:hover{border-bottom-color:var(--accent);text-decoration:none}
 figure.paper{margin:12px 0;padding:16px;background:#fff;border:1px solid var(--line);
   border-radius:8px;text-align:center;overflow-x:auto}
 figure.paper img{max-width:100%;height:auto}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.card{display:block;color:var(--fg);background:var(--card);border:1px solid var(--line);
-  border-radius:10px;padding:10px 12px 12px;font-weight:550}
-.card:hover{border-color:var(--accent);text-decoration:none}
-.card figure.paper{margin:0 0 8px;padding:8px;height:150px;display:flex;
-  align-items:center;justify-content:center}
-.card figure.paper img{max-height:130px;width:auto!important}
 .num{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:400;margin-right:4px}
-.list{list-style:none;padding:0}
-.list li{padding:10px 0;border-bottom:1px solid var(--line);display:grid;
-  grid-template-columns:minmax(200px,280px) 1fr;gap:16px}
-.lead{color:var(--muted);font-size:15px}
 .crumb{color:var(--muted);margin:0}
 .prose p{margin:.2em 0 .9em}
 details{margin:.6em 0}
@@ -519,24 +561,52 @@ summary{cursor:pointer;color:var(--muted)}
 table{border-collapse:collapse;margin:.6em 0;font-size:15px}
 td:first-child code{white-space:nowrap}
 .toc code{background:none;padding:0;color:inherit}
-article.doc{border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);
-  border-left:4px solid var(--accent);border-radius:8px;margin:22px 0;
-  background:var(--card);overflow:hidden;scroll-margin-top:64px}
-article.doc:target{box-shadow:0 0 0 2px var(--accent)}
-article.doc>header{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;
-  background:color-mix(in srgb,var(--accent) 12%,var(--card));
-  border-bottom:1px solid color-mix(in srgb,var(--fg) 20%,transparent)}
-article.doc .sigs{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
-code.sig{background:none;padding:0;font-size:14px;font-weight:600;overflow-wrap:anywhere}
-article.doc .kind{font-size:12px;color:var(--accent);border:1px solid var(--accent);
-  border-radius:999px;padding:0 8px;white-space:nowrap}
-article.doc .src{font-size:12px;color:var(--muted);white-space:nowrap}
-article.doc .doc-body{padding:4px 14px 6px}
-article.doc .doc-body>p:first-child{margin-top:.6em}
-article.doc .doc-body table{width:100%}
-article.doc .doc-body td:first-child{width:38%}
 th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--muted);font-weight:600}
+.shelf{background:var(--card);border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);
+  border-radius:14px;padding:18px 22px 22px;margin:24px 0;scroll-margin-top:64px;
+  box-shadow:0 1px 3px color-mix(in srgb,var(--fg) 8%,transparent)}
+.shelf-head{border-bottom:1px solid color-mix(in srgb,var(--fg) 18%,transparent);
+  margin-bottom:14px;padding-bottom:8px}
+.shelf-head h2{margin:0;font-size:20px}
+.shelf-head .num,.caption .num{color:var(--accent);font-weight:650;margin-right:2px}
+.count{color:var(--muted);font-weight:400}
+.edit{color:var(--muted);font-weight:400;font-size:.8em;margin-left:4px}
+.edit:hover{color:var(--accent);text-decoration:none}
+.summary{background:var(--soft);border-radius:10px;padding:10px 16px;margin:0 0 16px;
+  color:var(--fg)}
+.summary p{margin:.35em 0}
+.sheet{margin:0 0 4px}
+.sheet>ul{margin:.2em 0;padding-left:1.3em}
+.sheet>ul li{margin:.35em 0}
+.items.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.items.stack{display:flex;flex-direction:column;gap:16px}
+.item{background:var(--card);border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);
+  border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;
+  scroll-margin-top:64px}
+.item:target{box-shadow:0 0 0 2px var(--accent)}
+.item-title{text-align:center;font-weight:600;display:flex;flex-wrap:wrap;
+  align-items:center;justify-content:center;gap:4px 10px;padding-bottom:8px}
+.item-title a{color:var(--fg)}
+.item-title .kind{font-size:12px;font-weight:400;color:var(--accent);
+  border:1px solid var(--accent);border-radius:999px;padding:0 8px}
+.items.grid .item-body{flex:1;display:flex;align-items:center;justify-content:center}
+.items.grid .item-body>a{display:block;width:100%}
+.items.grid figure.paper{margin:0;padding:8px;height:150px;display:flex;
+  align-items:center;justify-content:center}
+.items.grid figure.paper img{max-height:130px;width:auto!important}
+.item-body>p:first-child{margin-top:0}
+.item-body table{width:100%}
+.item-body td:first-child{width:38%}
+.pills{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.pill{font-size:13px;color:var(--fg);background:var(--soft);
+  border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);border-radius:999px;
+  padding:2px 12px;white-space:nowrap}
+.pill:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+.caption{text-align:center;font-size:14px;color:var(--muted);margin:6px 0 0}
+.items.grid .caption{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+  overflow:hidden}
+code.sig{background:none;padding:0;font-size:14px;font-weight:600;overflow-wrap:anywhere}
 """
 
 
