@@ -34,6 +34,8 @@ pre.code{background:var(--card);border:1px solid var(--line);border-radius:8px;
 .tx-math{color:var(--green3)}
 .tx-cmd{color:var(--accent)}
 .tx-brace{color:var(--warm2)}
+a.ref{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
+a.ref:hover{border-bottom-color:var(--accent);text-decoration:none}
 :root[data-theme=dark] .tx-math{color:var(--green1)}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green1)}}
 figure.paper{margin:12px 0;padding:16px;background:#fff;border:1px solid var(--line);

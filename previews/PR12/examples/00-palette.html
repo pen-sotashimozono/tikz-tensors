@@ -34,7 +34,7 @@
 
   <span class="tx-comment">% the steps: three blocks, discrete, because three is how many there are</span>
   <span class="tx-cmd">\foreach</span> <span class="tx-cmd">\step</span>/<span class="tx-cmd">\hex</span>/<span class="tx-cmd">\fig</span>/<span class="tx-cmd">\dark</span>/<span class="tx-cmd">\x</span>/<span class="tx-cmd">\r</span> in <span class="tx-cmd">\tnpalette</span> <span class="tx-brace">{</span>
-    <span class="tx-cmd">\filldraw</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\step</span>, draw=ttline, tn line<span class="tx-brace">]</span>
+    <span class="tx-cmd">\filldraw</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\step</span>, draw=ttline, <a class="ref" href="../api.html#styles">tn line</a><span class="tx-brace">]</span>
       (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>) rectangle ++(<span class="tx-cmd">\wide</span>,0.56);
     <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=north west, font=<span class="tx-cmd">\scriptsize</span>, text=ttfg<span class="tx-brace">]</span>
       at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-0.10) <span class="tx-brace">{</span><span class="tx-cmd">\step</span><span class="tx-brace">}</span>;
@@ -52,7 +52,7 @@
       <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=west, font=<span class="tx-cmd">\tiny</span>, text=ttmuted<span class="tx-brace">]</span>
         at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.36) <span class="tx-brace">{</span>light:<span class="tx-brace">}</span>;
     <span class="tx-cmd">\fi</span>
-    <span class="tx-cmd">\fill</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\c</span>, draw=ttline, tn line<span class="tx-brace">]</span>
+    <span class="tx-cmd">\fill</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\c</span>, draw=ttline, <a class="ref" href="../api.html#styles">tn line</a><span class="tx-brace">]</span>
       (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.78-<span class="tx-cmd">\i</span>*0.52) rectangle ++(1.0,0.34);
     <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=west, font=<span class="tx-cmd">\tiny</span>, text=ttfg<span class="tx-brace">]</span>
       at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>+1.12,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.61-<span class="tx-cmd">\i</span>*0.52) <span class="tx-brace">{</span><span class="tx-cmd">\token</span><span class="tx-brace">}</span>;
@@ -80,7 +80,7 @@
 
   <span class="tx-comment">% the steps: three blocks, discrete, because three is how many there are</span>
   <span class="tx-cmd">\foreach</span> <span class="tx-cmd">\step</span>/<span class="tx-cmd">\hex</span>/<span class="tx-cmd">\fig</span>/<span class="tx-cmd">\dark</span>/<span class="tx-cmd">\x</span>/<span class="tx-cmd">\r</span> in <span class="tx-cmd">\tnpalette</span> <span class="tx-brace">{</span>
-    <span class="tx-cmd">\filldraw</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\step</span>, draw=ttline, tn line<span class="tx-brace">]</span>
+    <span class="tx-cmd">\filldraw</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\step</span>, draw=ttline, <a class="ref" href="../api.html#styles">tn line</a><span class="tx-brace">]</span>
       (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>) rectangle ++(<span class="tx-cmd">\wide</span>,0.56);
     <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=north west, font=<span class="tx-cmd">\scriptsize</span>, text=ttfg<span class="tx-brace">]</span>
       at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-0.10) <span class="tx-brace">{</span><span class="tx-cmd">\step</span><span class="tx-brace">}</span>;
@@ -98,7 +98,7 @@
       <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=west, font=<span class="tx-cmd">\tiny</span>, text=ttmuted<span class="tx-brace">]</span>
         at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.36) <span class="tx-brace">{</span>light:<span class="tx-brace">}</span>;
     <span class="tx-cmd">\fi</span>
-    <span class="tx-cmd">\fill</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\c</span>, draw=ttline, tn line<span class="tx-brace">]</span>
+    <span class="tx-cmd">\fill</span><span class="tx-brace">[</span>color=<span class="tx-cmd">\c</span>, draw=ttline, <a class="ref" href="../api.html#styles">tn line</a><span class="tx-brace">]</span>
       (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.78-<span class="tx-cmd">\i</span>*0.52) rectangle ++(1.0,0.34);
     <span class="tx-cmd">\node</span><span class="tx-brace">[</span>anchor=west, font=<span class="tx-cmd">\tiny</span>, text=ttfg<span class="tx-brace">]</span>
       at (<span class="tx-cmd">\x</span>*<span class="tx-cmd">\col</span>+1.12,-<span class="tx-cmd">\r</span>*<span class="tx-cmd">\pitch</span>-1.61-<span class="tx-cmd">\i</span>*0.52) <span class="tx-brace">{</span><span class="tx-cmd">\token</span><span class="tx-brace">}</span>;
