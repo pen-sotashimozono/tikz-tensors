@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CTMRG environment · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 23</p>
+<h1>CTMRG environment</h1>
+<figure class="paper"><img style="width:200pt" src="../figures/23-ctmrg.svg" alt="CTMRG environment: The corner transfer matrix environment of one site of an infinite two-dimensional network"></figure>
+<div class="split">
+<div class="prose"><p>The corner transfer matrix environment of one site of an infinite two-dimensional network.</p><p>Everything outside the site is contracted into eight tensors: four corners C, each a quarter of the plane, and four sides T, each a half-row or half-column running off to infinity. They are the environment, and drawn in its colour. CTMRG grows them by absorbing a row or column of the lattice into the sides and corners and truncating with projectors, until they stop changing; then a local expectation value is this picture with the operator put into the middle.</p><p>a is the site in the middle: for a PEPS, the tensor and its conjugate joined along the physical index, so its bonds are double – and the bonds between C and T are the environment's own, of dimension chi.</p></div>
+<div>
+<h2>The picture</h2>
+<pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>side/<span class="tx-math">$T$</span>, coef/<span class="tx-math">$a$</span>, side/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnconnect</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnmid</span><span class="tx-brace">{</span>E-top-1<span class="tx-brace">}</span><span class="tx-brace">{</span>E-top-2<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$\chi$</span><span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></pre>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span>
+<span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>side/<span class="tx-math">$T$</span>, coef/<span class="tx-math">$a$</span>, side/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnconnect</span><span class="tx-brace">{</span>E<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnmid</span><span class="tx-brace">{</span>E-top-1<span class="tx-brace">}</span><span class="tx-brace">{</span>E-top-2<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$\chi$</span><span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/23-ctmrg.tex">examples/23-ctmrg.tex</a></p>
+</div>
+</div>
+<nav class="pager"><a href="22-simple-update.html">← Simple update</a><a href="24-hotrg.html">A HOTRG step →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>

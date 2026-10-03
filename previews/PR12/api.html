@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · tikz-tensors</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <nav><a href="index.html">Overview</a><a href="examples.html">Examples</a><a href="api.html" aria-current=page>Reference</a><a href="notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<div class="with-toc"><aside><ul class="toc"><li class="l2"><a href="#conventions">Conventions</a></li><li class="l2"><a href="#names-a-figure-can-refer-to">Names a figure can refer to</a></li><li class="l2"><a href="#commands">Commands</a></li><li class="l3"><a href="#tnstack-lt-keys-gt-lt-name-gt-lt-sites-gt-lt-layers-gt"><code>\tnstack</code></a></li><li class="l3"><a href="#tnlayer-lt-stack-gt-lt-layer-gt-lt-entry-gt"><code>\tnlayer</code></a></li><li class="l3"><a href="#tngrid-lt-keys-gt-lt-name-gt-lt-columns-gt-lt-rows-gt-lt-type-gt-lt-label-gt"><code>\tngrid</code></a></li><li class="l3"><a href="#tnconnect-lt-keys-gt-lt-block-gt"><code>\tnconnect</code></a></li><li class="l3"><a href="#tnopen-lt-keys-gt-lt-direction-gt-lt-tensor-or-block-gt"><code>\tnopen</code></a></li><li class="l3"><a href="#tnopenswap-lt-keys-gt-lt-tensor-gt"><code>\tnopenswap</code></a></li><li class="l3"><a href="#tnjoin-lt-keys-gt-lt-port-gt-lt-port-gt"><code>\tnjoin</code></a></li><li class="l3"><a href="#tneq-lt-keys-gt-tnapprox-lt-keys-gt"><code>\tneq</code>, <code>\tnapprox</code></a></li><li class="l3"><a href="#tnbreak"><code>\tnbreak</code></a></li><li class="l3"><a href="#tnput-lt-placement-gt-lt-name-gt-lt-text-gt-tnmid-lt-placement-gt-lt-name-gt-lt-name-gt-lt-text-gt"><code>\tnput</code>, <code>\tnmid</code></a></li><li class="l3"><a href="#tnset-lt-key-gt-lt-value-gt"><code>\tnset</code></a></li><li class="l3"><a href="#tnbond-lt-edge-type-gt-lt-path-gt"><code>\tnbond</code></a></li><li class="l2"><a href="#styles">Styles</a></li></ul></aside><article><h1 id="the-interface">The interface</h1>
+<p>Everything a figure or a notation file may use, in one place. A name that is not here is internal (<code>\tn@...</code>) and may change in any release. <code>tests/coverage.py</code> holds this page and the code to each other: a public name missing here, or a name here that the code does not define, fails the tests. Until 1.0 a name may still be renamed or removed in a minor version, and the CHANGELOG says so; from 1.0, only in a major one.</p>
+<h2 id="conventions">Conventions</h2>
+<p>These are the rules every command keeps, so that one that is learned predicts the rest.</p>
+<ul><li><strong>Every optional argument is <code>key=value</code>.</strong> No command takes a bare style or a bare text in brackets. (<code>\tnput</code> and <code>\tnmid</code> take TikZ's placement keys, <code>above</code>, <code>below=2pt</code>, and <code>\tnbond</code> TikZ's path options, which are keys too.)</li><li><strong>The things a command draws are its mandatory arguments, in this order:</strong> the block, then what in it (a layer, a direction), then the content.</li><li><strong>Edge types are <code>edge=</code></strong>, and where a command draws two kinds of index, <code>along=</code> (along the layers) and <code>down=</code> (down the sites).</li><li><strong>A figure places, then connects, then opens, then labels.</strong> A block is placed (<code>\tnstack</code> and <code>\tnlayer</code>, or <code>\tngrid</code>), its implied indices drawn (<code>\tnconnect</code>), the rest opened or joined (<code>\tnopen</code>, <code>\tnjoin</code>), and only then are labels put on what is not an open index (<code>\tnput</code>, <code>\tnmid</code>).</li><li><strong>Every index is drawn once.</strong> Opening or joining one that is drawn already is an error; opening a whole block skips the ones that are taken.</li><li><strong>No lengths and no coordinates in a figure.</strong> Distances are tokens, set once in a notation with <code>\tnset</code>; positions are slots.</li></ul>
+<h2 id="names-a-figure-can-refer-to">Names a figure can refer to</h2>
+<div class="table"><table><thead><tr><th>name</th><th>is</th></tr></thead><tbody><tr><td><code>&lt;stack&gt;-&lt;layer&gt;-&lt;i&gt;</code></td><td>the tensor in slot i of a layer (one that spans is named by its first slot and top layer)</td></tr><tr><td><code>&lt;grid&gt;-&lt;i&gt;-&lt;j&gt;</code></td><td>the tensor at column i, row j of a grid</td></tr><tr><td><code>&lt;grid&gt;-&lt;i&gt;-&lt;j&gt;-a</code>, <code>-b</code></td><td>the tensor on the bond after it along a row, along a column (<code>bonds=</code>)</td></tr><tr><td><code>&lt;stack&gt;-left</code>, <code>&lt;stack&gt;-right</code></td><td>the environment blocks of a stack</td></tr><tr><td><code>&lt;stack&gt;-&lt;layer&gt;-&lt;i&gt;-slot</code></td><td>the centre of a slot, tensor or not, including columns 0 and n+1</td></tr><tr><td><code>&lt;stack&gt;-&lt;i&gt;-&lt;dir&gt;</code></td><td>the end of site i's index opened <code>up</code> or <code>down</code> on the whole stack</td></tr><tr><td><code>&lt;stack&gt;-&lt;layer&gt;-&lt;dir&gt;</code></td><td>the end of a layer's index opened <code>left</code> or <code>right</code> on the whole stack, or running from an environment block into an empty slot</td></tr><tr><td><code>&lt;tensor&gt;-&lt;dir&gt;</code></td><td>the end of a tensor's own index opened that way</td></tr><tr><td><code>&lt;tensor&gt;-&lt;dir&gt;-&lt;n&gt;</code></td><td>... the n-th, when it has several that way</td></tr><tr><td><code>&lt;grid&gt;-&lt;i&gt;-&lt;j&gt;-down</code></td><td>the end of a grid tensor's index out of the plane</td></tr><tr><td><code>&lt;tensor&gt;:&lt;side&gt;[:&lt;n&gt;]</code></td><td>a port, for <code>\tnjoin</code></td></tr></tbody></table></div>
+<h2 id="commands">Commands</h2>
+<h3 id="tnstack-lt-keys-gt-lt-name-gt-lt-sites-gt-lt-layers-gt"><code>\tnstack[&lt;keys&gt;]{&lt;name&gt;}{&lt;sites&gt;}{&lt;layers&gt;}</code></h3>
+<p>A stack: <code>&lt;sites&gt;</code> slots across, the named <code>&lt;layers&gt;</code> down, placed on the canvas after what is on the row.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>left=&lt;label&gt;</code>, <code>right=&lt;label&gt;</code></td><td>an environment block at that end, drawn in <code>tn env</code></td></tr><tr><td><code>tree</code></td><td>the tree layout: tree pitch, tensors at their own size, indices that turn corners</td></tr></tbody></table></div>
+<h3 id="tnlayer-lt-stack-gt-lt-layer-gt-lt-entry-gt"><code>\tnlayer{&lt;stack&gt;}{&lt;layer&gt;}{&lt;entry&gt;, ...}</code></h3>
+<p>The layer's slots, left to right: <code>&lt;type&gt;/&lt;label&gt;</code>, <code>&lt;type&gt;/&lt;label&gt;/&lt;span&gt;</code>, <code>&lt;type&gt;/&lt;label&gt;/&lt;span&gt;/&lt;down&gt;</code>, <code>.</code> (empty), <code>-</code> (the layer's index runs through), <code>|</code> (the site's index runs through), <code>dots</code>, and <code>&lt;n&gt;*&lt;entry&gt;</code> for any of them repeated. A run of like entries is always one <code>&lt;n&gt;*&lt;entry&gt;</code>.</p>
+<h3 id="tngrid-lt-keys-gt-lt-name-gt-lt-columns-gt-lt-rows-gt-lt-type-gt-lt-label-gt"><code>\tngrid[&lt;keys&gt;]{&lt;name&gt;}{&lt;columns&gt;}{&lt;rows&gt;}{&lt;type&gt;/&lt;label&gt;}</code></h3>
+<p>A square lattice of one tensor, turned by 45 degrees.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>bonds=&lt;type&gt;/&lt;label&gt;</code></td><td>a tensor on every bond, turned with the lattice</td></tr></tbody></table></div>
+<h3 id="tnconnect-lt-keys-gt-lt-block-gt"><code>\tnconnect[&lt;keys&gt;]{&lt;block&gt;}</code></h3>
+<p>Every index the block's layout implies.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>along=&lt;edge type&gt;</code></td><td>the indices along the layers (on a grid, every bond)</td></tr><tr><td><code>down=&lt;edge type&gt;</code></td><td>the indices down the sites</td></tr><tr><td><code>apart={&lt;layer&gt;, ...}</code></td><td>layers with no index along them (a stack only)</td></tr></tbody></table></div>
+<h3 id="tnopen-lt-keys-gt-lt-direction-gt-lt-tensor-or-block-gt"><code>\tnopen[&lt;keys&gt;]{&lt;direction&gt;}{&lt;tensor or block&gt;, ...}</code></h3>
+<p>Open indices toward <code>up</code>, <code>down</code>, <code>left</code> or <code>right</code> (a grid: <code>down</code>).</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>edge=&lt;edge type&gt;</code></td><td>the edge type</td></tr><tr><td><code>label=&lt;text&gt;</code></td><td>a label at the end of each index, beyond it; <code>#1</code> is its number among the indices this command opens</td></tr><tr><td><code>labels={&lt;text&gt;, ...}</code></td><td>the labels one by one, in the same order</td></tr></tbody></table></div>
+<h3 id="tnopenswap-lt-keys-gt-lt-tensor-gt"><code>\tnopenswap[&lt;keys&gt;]{&lt;tensor&gt;}</code></h3>
+<p>The two indices down from a tensor across two sites, crossed. Its keys are <code>\tnopen</code>'s: <code>edge=</code>, <code>label=</code>, <code>labels=</code>.</p>
+<h3 id="tnjoin-lt-keys-gt-lt-port-gt-lt-port-gt"><code>\tnjoin[&lt;keys&gt;]{&lt;port&gt;}{&lt;port&gt;}</code></h3>
+<p>One index between two ports of one block, <code>&lt;tensor&gt;:&lt;side&gt;[:&lt;n&gt;]</code>; drawn from the first to the second.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>edge=&lt;edge type&gt;</code></td><td>the edge type</td></tr></tbody></table></div>
+<h3 id="tneq-lt-keys-gt-tnapprox-lt-keys-gt"><code>\tneq[&lt;keys&gt;]</code>, <code>\tnapprox[&lt;keys&gt;]</code></h3>
+<p>A relation sign after everything on the row; the next block goes after it.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>factor=&lt;text&gt;</code></td><td>written after the sign, <code>\tneq[factor=$\lambda$]</code></td></tr></tbody></table></div>
+<h3 id="tnbreak"><code>\tnbreak</code></h3>
+<p>The next block starts a new row, under everything drawn so far.</p>
+<h3 id="tnput-lt-placement-gt-lt-name-gt-lt-text-gt-tnmid-lt-placement-gt-lt-name-gt-lt-name-gt-lt-text-gt"><code>\tnput[&lt;placement&gt;]{&lt;name&gt;}{&lt;text&gt;}</code>, <code>\tnmid[&lt;placement&gt;]{&lt;name&gt;}{&lt;name&gt;}{&lt;text&gt;}</code></h3>
+<p>A label at a named point, or midway between two. A label on an open index goes in <code>\tnopen</code>'s <code>label=</code> instead.</p>
+<h3 id="tnset-lt-key-gt-lt-value-gt"><code>\tnset{&lt;key&gt;=&lt;value&gt;, ...}</code></h3>
+<p>The tokens, for a notation file (a figure may not use it).</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>pitch=</code>, <code>rise=</code></td><td>between sites, between layers of a stack</td></tr><tr><td><code>treepitch=</code>, <code>treerise=</code></td><td>the same, in a tree</td></tr><tr><td><code>gpitch=</code></td><td>along a bond of a grid</td></tr><tr><td><code>slot=</code></td><td>the size of a tensor that is not there, where an open index ends</td></tr><tr><td><code>stub=</code></td><td>the least an open index shows beyond its tensor</td></tr><tr><td><code>envw=</code></td><td>the width of an environment block</td></tr><tr><td><code>gap=</code></td><td>either side of a relation sign; twice it between rows</td></tr><tr><td><code>inset=</code></td><td>how far a bond runs under the tensor it meets</td></tr><tr><td><code>line width=</code></td><td>the one stroke of outlines and indices</td></tr></tbody></table></div>
+<h3 id="tnbond-lt-edge-type-gt-lt-path-gt"><code>\tnbond[&lt;edge type&gt;]{&lt;path&gt;}</code></h3>
+<p>One edge drawn under the nodes, along a TikZ path written out. For extending the package and for pictures that are not on a layout; a figure may not use it.</p>
+<h2 id="styles">Styles</h2>
+<div class="table"><table><thead><tr><th>style</th><th></th></tr></thead><tbody><tr><td><code>tn node</code></td><td>the bare tensor every type is built on</td></tr><tr><td><code>tn box</code>, <code>tn circle</code>, <code>tn capsule</code>, <code>tn rounded</code>, <code>tn diamond</code></td><td>outlines</td></tr><tr><td><code>tn triangle right</code>, <code>tn triangle left</code>, <code>tn triangle up</code>, <code>tn triangle down</code></td><td>triangles</td></tr><tr><td><code>tn dot</code></td><td>a copy tensor</td></tr><tr><td><code>tn wide</code>, <code>tn tall</code>, <code>tn small</code>, <code>tn flat</code></td><td>sizes</td></tr><tr><td><code>tn fill</code></td><td>solid fill, outlined in the one ink</td></tr><tr><td><code>tn frame</code></td><td>a dashed box</td></tr><tr><td><code>tn gate</code>, <code>tn env</code></td><td>the types a gate and an environment block are drawn in, for a notation to colour</td></tr><tr><td><code>tn leg anchor</code>, <code>tn points</code>, <code>tn single</code></td><td>a type's index properties, read by the layouts</td></tr><tr><td><code>tn edge</code>, <code>tn wavy</code>, <code>tn arrow</code>, <code>tn double</code></td><td>edge types</td></tr><tr><td><code>tn arrows</code></td><td><code>tn arrows=false</code> turns every arrowhead off</td></tr><tr><td><code>tn line</code>, <code>tn line width</code></td><td>the one stroke, for a path of one's own</td></tr><tr><td><code>tn label</code></td><td>the text of a label</td></tr></tbody></table></div></article></div>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
