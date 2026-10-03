@@ -86,5 +86,11 @@ article.doc .src:hover{border-color:var(--accent);color:var(--accent);text-decor
 article.doc .doc-body>p:first-child{margin-top:.7em}
 article.doc .doc-body table{width:100%}
 article.doc .doc-body td:first-child{width:38%}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 20px}
+.tabs a{padding:6px 14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a[aria-current]{color:var(--fg);font-weight:600;border-bottom-color:var(--accent)}
+.tabs a:hover{text-decoration:none;color:var(--fg)}
+.def-head{margin:.8em 0 0;font-size:14px;color:var(--muted)}
+span.sig{font-weight:600}
 th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--muted);font-weight:600}
