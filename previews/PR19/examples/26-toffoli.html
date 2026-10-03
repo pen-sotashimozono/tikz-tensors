@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toffoli gate · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<meta name="tt-root" content="../">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.17.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 26</p>
+<h1 class="with-button">Toffoli gate<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
+<div class="traced example">
+<figure class="paper"><span class="stage"><img style="width:373pt" src="../figures/26-toffoli.svg" alt="Toffoli gate: The Toffoli gate"><svg class="trace" viewBox="0 0 248.348 250.938" aria-hidden="true"><rect class="hl" data-line="25" x="6.15" y="128.21" width="4.53" height="4.53" rx="2"/><rect class="hl" data-line="25" x="41.87" y="128.21" width="4.53" height="4.53" rx="2"/><rect class="hl" data-line="25" x="75.34" y="125.97" width="9.02" height="9.01" rx="2"/><polyline class="hl" data-line="26" points="8.61,130.48 43.94,130.48"/><polyline class="hl" data-line="26" points="44.32,130.48 76.48,130.48"/><polyline class="hl" data-line="27" points="8.42,130.48 8.42,109.64"/><rect class="hl" data-line="27" x="2.79" y="100.39" width="11.26" height="10.25" rx="2"/><polyline class="hl" data-line="27" points="44.13,130.48 44.13,109.64"/><rect class="hl" data-line="27" x="38.97" y="98.03" width="10.33" height="12.61" rx="2"/><polyline class="hl" data-line="27" points="79.85,130.48 79.85,109.64"/><rect class="hl" data-line="27" x="74.67" y="100.39" width="10.36" height="10.25" rx="2"/><polyline class="hl" data-line="28" points="8.42,130.48 8.42,151.31"/><polyline class="hl" data-line="28" points="44.13,130.48 44.13,151.31"/><polyline class="hl" data-line="28" points="79.85,130.48 79.85,151.31"/><rect class="hl" data-line="30" x="116.98" y="127.45" width="10.14" height="6.05" rx="2"/><rect class="hl" data-line="31" x="227.24" y="14.88" width="16.88" height="16.89" rx="2"/><rect class="hl" data-line="32" x="197.70" y="38.92" width="4.53" height="4.53" rx="2"/><rect class="hl" data-line="32" x="231.17" y="36.67" width="9.02" height="9.02" rx="2"/><rect class="hl" data-line="33" x="226.40" y="50.60" width="18.56" height="16.89" rx="2"/><rect class="hl" data-line="34" x="161.99" y="74.64" width="4.52" height="4.52" rx="2"/><rect class="hl" data-line="34" x="231.17" y="72.39" width="9.02" height="9.01" rx="2"/><rect class="hl" data-line="35" x="227.24" y="86.32" width="16.88" height="16.88" rx="2"/><rect class="hl" data-line="36" x="197.70" y="110.36" width="4.53" height="4.52" rx="2"/><rect class="hl" data-line="36" x="231.17" y="108.11" width="9.02" height="9.02" rx="2"/><rect class="hl" data-line="37" x="226.40" y="122.03" width="18.56" height="16.89" rx="2"/><rect class="hl" data-line="38" x="161.99" y="146.07" width="4.52" height="4.52" rx="2"/><rect class="hl" data-line="38" x="231.17" y="143.82" width="9.02" height="9.03" rx="2"/><rect class="hl" data-line="39" x="191.53" y="157.75" width="16.87" height="16.88" rx="2"/><rect class="hl" data-line="39" x="227.24" y="157.75" width="16.88" height="16.88" rx="2"/><rect class="hl" data-line="40" x="227.24" y="175.61" width="16.88" height="16.88" rx="2"/><rect class="hl" data-line="41" x="161.99" y="199.64" width="4.52" height="4.53" rx="2"/><rect class="hl" data-line="41" x="195.45" y="197.40" width="9.02" height="9.01" rx="2"/><rect class="hl" data-line="42" x="155.80" y="211.33" width="16.89" height="16.88" rx="2"/><rect class="hl" data-line="42" x="190.68" y="211.33" width="18.57" height="16.88" rx="2"/><rect class="hl" data-line="43" x="161.99" y="235.36" width="4.52" height="4.53" rx="2"/><rect class="hl" data-line="43" x="195.45" y="233.12" width="9.02" height="9.01" rx="2"/><polyline class="hl" data-line="44" points="200.16,41.18 232.32,41.18"/><polyline class="hl" data-line="44" points="164.44,76.90 199.96,76.90"/><polyline class="hl" data-line="44" points="199.96,76.90 232.32,76.90"/><polyline class="hl" data-line="44" points="200.16,112.61 232.32,112.61"/><polyline class="hl" data-line="44" points="164.44,148.34 199.96,148.34"/><polyline class="hl" data-line="44" points="199.96,148.34 232.32,148.34"/><polyline class="hl" data-line="44" points="164.44,201.91 196.59,201.91"/><polyline class="hl" data-line="44" points="164.44,237.62 196.59,237.62"/><polyline class="hl" data-line="44" points="164.24,76.90 164.24,148.34"/><polyline class="hl" data-line="44" points="164.24,148.34 164.24,201.91"/><polyline class="hl" data-line="44" points="164.24,201.91 164.24,219.77"/><polyline class="hl" data-line="44" points="164.24,219.77 164.24,237.62"/><polyline class="hl" data-line="44" points="199.96,41.18 199.96,112.61"/><polyline class="hl" data-line="44" points="199.96,112.61 199.96,166.19"/><polyline class="hl" data-line="44" points="199.96,166.19 199.96,201.91"/><polyline class="hl" data-line="44" points="199.96,201.91 199.96,219.77"/><polyline class="hl" data-line="44" points="199.96,219.77 199.96,237.62"/><polyline class="hl" data-line="44" points="235.68,23.33 235.68,41.18"/><polyline class="hl" data-line="44" points="235.68,41.18 235.68,59.04"/><polyline class="hl" data-line="44" points="235.68,59.04 235.68,76.90"/><polyline class="hl" data-line="44" points="235.68,76.90 235.68,94.76"/><polyline class="hl" data-line="44" points="235.68,94.76 235.68,112.61"/><polyline class="hl" data-line="44" points="235.68,112.61 235.68,130.48"/><polyline class="hl" data-line="44" points="235.68,130.48 235.68,148.34"/><polyline class="hl" data-line="44" points="235.68,148.34 235.68,166.19"/><polyline class="hl" data-line="44" points="235.68,166.19 235.68,184.05"/><polyline class="hl" data-line="45" points="164.24,76.90 164.24,14.40"/><rect class="hl" data-line="45" x="158.61" y="5.15" width="11.27" height="10.25" rx="2"/><polyline class="hl" data-line="45" points="199.96,41.18 199.96,14.40"/><rect class="hl" data-line="45" x="194.80" y="2.79" width="10.33" height="12.61" rx="2"/><polyline class="hl" data-line="45" points="235.68,23.33 235.68,14.40"/><rect class="hl" data-line="45" x="230.49" y="5.15" width="10.38" height="10.25" rx="2"/><polyline class="hl" data-line="46" points="164.24,237.62 164.24,246.55"/><polyline class="hl" data-line="46" points="199.96,237.62 199.96,246.55"/><polyline class="hl" data-line="46" points="235.68,184.05 235.68,246.55"/></svg></span></figure>
+<div class="split">
+<div class="prose"><p>The Toffoli gate – a NOT on the third qubit controlled by the first two, the gate the modular arithmetic of Shor's algorithm is built from – and its decomposition into gates of one qubit and controlled NOTs: H, T and its adjoint, and six CNOTs, in thirteen steps.</p><p>Time runs down: a qubit is a site and a step of the circuit a layer, so a gate on one qubit is a tensor in a slot, and a controlled NOT a dot and a circled plus in one layer, joined along it. Where a CNOT acts on the first and the third qubit, the second qubit's wire crosses its line (+). The layers of gates on one qubit are apart, with nothing along them.</p><p>Thirteen steps would be half a page tall at the notation's distances; the circuit is drawn compact instead – both stacks at 0.7 of the notation's distances and sizes, the decomposition's layers closer still – by factors, not lengths.</p></div>
+<div class="codecol">
+<h2 class="with-button">The picture<button class="pill live-btn" type="button">Edit live</button></h2>
+<p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
+<pre class="code"><span class="ln" data-line="23"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="24">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7<span class="tx-brace">]</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span></span><span class="ln" data-line="25">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span><span class="tx-brace">{</span>2*ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="26">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="27">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="28">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="29">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a></span><span class="ln" data-line="30">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7, rise=0.6<span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>h1, x1, t1, x2, t2, x3, t3, x4, t4, h2, x5, t5, x6<span class="tx-brace">}</span></span><span class="ln" data-line="31">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span></span><span class="ln" data-line="32">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x1<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="33">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x2<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x3<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x4<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t4<span class="tx-brace">}</span><span class="tx-brace">{</span>|, 2*gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x5<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t5<span class="tx-brace">}</span><span class="tx-brace">{</span>gate/<span class="tx-math">$T$</span>, gate/<span class="tx-math">$T^\dagger$</span>, |<span class="tx-brace">}</span></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x6<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>h1, t1, t2, t3, t4, h2, t5<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="45">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="46">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="47"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span></pre>
+<textarea class="live-code" spellcheck="false" hidden>\begin{tikzpicture}
+  \tnstack[scale=0.7]{G}{3}{x}
+  \tnlayer{G}{x}{2*ctrl/, targ/}
+  \tnconnect{G}
+  \tnopen[labels={$a$, $b$, $c$}]{up}{G}
+  \tnopen{down}{G}
+  \tneq
+  \tnstack[scale=0.7, rise=0.6]{D}{3}{h1, x1, t1, x2, t2, x3, t3, x4, t4, h2, x5, t5, x6}
+  \tnlayer{D}{h1}{2*|, gate/$H$}
+  \tnlayer{D}{x1}{|, ctrl/, targ/}
+  \tnlayer{D}{t1}{2*|, gate/$T^\dagger$}
+  \tnlayer{D}{x2}{ctrl/, +, targ/}
+  \tnlayer{D}{t2}{2*|, gate/$T$}
+  \tnlayer{D}{x3}{|, ctrl/, targ/}
+  \tnlayer{D}{t3}{2*|, gate/$T^\dagger$}
+  \tnlayer{D}{x4}{ctrl/, +, targ/}
+  \tnlayer{D}{t4}{|, 2*gate/$T$}
+  \tnlayer{D}{h2}{2*|, gate/$H$}
+  \tnlayer{D}{x5}{ctrl/, targ/, |}
+  \tnlayer{D}{t5}{gate/$T$, gate/$T^\dagger$, |}
+  \tnlayer{D}{x6}{ctrl/, targ/, |}
+  \tnconnect[apart={h1, t1, t2, t3, t4, h2, t5}]{D}
+  \tnopen[labels={$a$, $b$, $c$}]{up}{D}
+  \tnopen{down}{D}
+\end{tikzpicture}</textarea>
+<p class="small live-status" hidden></p>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="ln" data-line="18"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span></span><span class="ln" data-line="19"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span></span><span class="ln" data-line="20"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span></span><span class="ln" data-line="21"><span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span></span><span class="ln" data-line="22"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span><span class="ln" data-line="23"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="24">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7<span class="tx-brace">]</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span></span><span class="ln" data-line="25">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span><span class="tx-brace">{</span>2*ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="26">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="27">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="28">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span></span><span class="ln" data-line="29">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a></span><span class="ln" data-line="30">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7, rise=0.6<span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>h1, x1, t1, x2, t2, x3, t3, x4, t4, h2, x5, t5, x6<span class="tx-brace">}</span></span><span class="ln" data-line="31">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span></span><span class="ln" data-line="32">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x1<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="33">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x2<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x3<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x4<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t4<span class="tx-brace">}</span><span class="tx-brace">{</span>|, 2*gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x5<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t5<span class="tx-brace">}</span><span class="tx-brace">{</span>gate/<span class="tx-math">$T$</span>, gate/<span class="tx-math">$T^\dagger$</span>, |<span class="tx-brace">}</span></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x6<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>h1, t1, t2, t3, t4, h2, t5<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="45">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="46">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span></span><span class="ln" data-line="47"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="48"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/26-toffoli.tex">examples/26-toffoli.tex</a></p>
+</div>
+</div>
+</div>
+<nav class="pager"><a href="25-hotrg.html">← A HOTRG step</a><span></span></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.17.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>

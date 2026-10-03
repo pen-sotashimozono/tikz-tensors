@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview · tikz-tensors</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/site.css">
+<meta name="tt-root" content="">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.17.0</span></a>
+  <nav><a href="index.html" aria-current=page>Overview</a><a href="examples.html">Examples</a><a href="live.html">Playground</a><a href="api.html">Reference</a><a href="notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<section class="hero">
+<h1>tikz-tensors</h1>
+<p>One TikZ format for <strong>tensor-network diagrams</strong>. A figure says
+which tensors there are and how they are contracted; the package decides every
+length and every coordinate, so two people who draw the same network write the
+same file.</p>
+</section>
+<section class="split">
+<div>
+<h2>A figure</h2>
+<p>A stack of layers, filled slot by slot, connected, and its open indices
+labelled. No number in it is a length.</p>
+<pre class="code"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span>
+<span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>5<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, gate<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>2*canl/<span class="tx-math">$A$</span>, center/<span class="tx-math">$C$</span>, 2*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>gate<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$e^{-i\,\delta t\,\hat h}$</span>/2, |<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>S-ket-1<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>S-ket-5<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>label=<span class="tx-math">$n_{#1}$</span><span class="tx-brace">]</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
+  <a class="ref" href="commands.html#tnput"><span class="tx-cmd">\tnmid</span></a><span class="tx-brace">{</span>S-ket-1<span class="tx-brace">}</span><span class="tx-brace">{</span>S-ket-2<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$D$</span><span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></pre>
+</div>
+<div>
+<h2>Its picture</h2>
+<figure class="paper"><img style="width:434pt" src="figures/08-canonical.svg" alt="Mixed canonical form: A finite matrix product state in mixed canonical form, with a two-site gate about to be applied"></figure>
+<p class="small">The file is <a href="examples/08-canonical.html">example
+08</a>, without its comment.</p>
+<p class="small">The styles <code>canl</code>, <code>center</code>,
+<code>canr</code>, <code>gauge</code> come from the
+<a href="notation.html">notation</a>, which is the user's; the package draws
+shapes only.</p>
+</div>
+</section>
+<section>
+<h2>Install</h2>
+<p>Put <code>tex/</code> on TeX's search path —
+<code>TEXINPUTS=/path/to/tikz-tensors/tex//:</code> — and
+<code>\usepackage{tikz-tensors}</code>. The <a href="api.html">reference</a>
+lists the whole interface; every example below shows its code.</p>
+</section>
+<section>
+<h2>Examples</h2>
+<h3>Single tensors and decompositions</h3><div class="gallery"><a class="card" href="examples/01-expansion.html"><figure class="paper"><img style="width:363pt" src="figures/01-expansion.svg" alt="Expansion in a basis: The two-electron expansion and its Hartree-Fock restriction"></figure><span class="num">01</span> Expansion in a basis</a><a class="card" href="examples/02-swap.html"><figure class="paper"><img style="width:382pt" src="figures/02-swap.svg" alt="Exchanging two fermions: Exchanging two fermions flips the sign of the amplitude"></figure><span class="num">02</span> Exchanging two fermions</a><a class="card" href="examples/03-svd-qr.html"><figure class="paper"><img style="width:442pt" src="figures/03-svd-qr.svg" alt="SVD and QR: The two decompositions every algorithm here is made of, applied to one tensor of a chain"></figure><span class="num">03</span> SVD and QR</a><a class="card" href="examples/04-cp.html"><figure class="paper"><img style="width:478pt" src="figures/04-cp.svg" alt="CP decomposition: A rank-R CP decomposition of a three-index tensor"></figure><span class="num">04</span> CP decomposition</a><a class="card" href="examples/05-low-rank.html"><figure class="paper"><img style="width:863pt" src="figures/05-low-rank.svg" alt="Low-rank approximation: A state on five sites, and its approximation by a matrix product state of bond dimension D"></figure><span class="num">05</span> Low-rank approximation</a></div><h3>Matrix product states</h3><div class="gallery"><a class="card" href="examples/06-mps.html"><figure class="paper"><img style="width:353pt" src="figures/06-mps.svg" alt="Matrix product state: A matrix product state"></figure><span class="num">06</span> Matrix product state</a><a class="card" href="examples/07-periodic-mps.html"><figure class="paper"><img style="width:319pt" src="figures/07-periodic-mps.svg" alt="Periodic MPS: A matrix product state with periodic boundaries"></figure><span class="num">07</span> Periodic MPS</a><a class="card" href="examples/08-canonical.html"><figure class="paper"><img style="width:434pt" src="figures/08-canonical.svg" alt="Mixed canonical form: A finite matrix product state in mixed canonical form, with a two-site gate about to be applied"></figure><span class="num">08</span> Mixed canonical form</a><a class="card" href="examples/09-center.html"><figure class="paper"><img style="width:511pt" src="figures/09-center.svg" alt="The orthogonality center: The orthogonality center sits on a site or on a bond, and the notation has to say both, because the two are one SVD apart and a method moves between them every sweep"></figure><span class="num">09</span> The orthogonality center</a><a class="card" href="examples/10-sampling.html"><figure class="paper"><img style="width:389pt" src="figures/10-sampling.svg" alt="Sampling an amplitude: An amplitude of a matrix product state"></figure><span class="num">10</span> Sampling an amplitude</a><a class="card" href="examples/11-mpo-mps.html"><figure class="paper"><img style="width:820pt" src="figures/11-mpo-mps.svg" alt="MPO applied to an MPS: An MPO applied to an MPS, the naive way"></figure><span class="num">11</span> MPO applied to an MPS</a><a class="card" href="examples/12-zip-up.html"><figure class="paper"><img style="width:392pt" src="figures/12-zip-up.svg" alt="Zip-up: Zip-up"></figure><span class="num">12</span> Zip-up</a></div><h3>Algorithms on a chain</h3><div class="gallery"><a class="card" href="examples/13-expectation.html"><figure class="paper"><img style="width:353pt" src="figures/13-expectation.svg" alt="Expectation value after a step: An expectation value after a TEBD step"></figure><span class="num">13</span> Expectation value after a step</a><a class="card" href="examples/14-heff-two-site.html"><figure class="paper"><img style="width:273pt" src="figures/14-heff-two-site.svg" alt="Two-site effective Hamiltonian: The two-site effective Hamiltonian"></figure><span class="num">14</span> Two-site effective Hamiltonian</a><a class="card" href="examples/15-heff-single-site.html"><figure class="paper"><img style="width:196pt" src="figures/15-heff-single-site.svg" alt="Single-site effective Hamiltonian: The single-site effective Hamiltonian, applied to the center"></figure><span class="num">15</span> Single-site effective Hamiltonian</a><a class="card" href="examples/16-heff-bond.html"><figure class="paper"><img style="width:196pt" src="figures/16-heff-bond.svg" alt="Bond effective Hamiltonian: The bond (zero-site) effective Hamiltonian, applied to the center on a bond"></figure><span class="num">16</span> Bond effective Hamiltonian</a><a class="card" href="examples/17-trotter.html"><figure class="paper"><img style="width:539pt" src="figures/17-trotter.svg" alt="Trotter steps: A step of TEBD, written two ways"></figure><span class="num">17</span> Trotter steps</a><a class="card" href="examples/18-fixed-point.html"><figure class="paper"><img style="width:294pt" src="figures/18-fixed-point.svg" alt="Fixed points of a uniform MPS: Fixed-point equations for a uniform MPS"></figure><span class="num">18</span> Fixed points of a uniform MPS</a></div><h3>Trees and MERA</h3><div class="gallery"><a class="card" href="examples/19-ttn.html"><figure class="paper"><img style="width:609pt" src="figures/19-ttn.svg" alt="Tree tensor network: A tree tensor network on sixteen sites"></figure><span class="num">19</span> Tree tensor network</a><a class="card" href="examples/20-mera.html"><figure class="paper"><img style="width:594pt" src="figures/20-mera.svg" alt="MERA: A binary MERA on sixteen sites, all the way up"></figure><span class="num">20</span> MERA</a></div><h3>Two dimensions</h3><div class="gallery"><a class="card" href="examples/21-peps.html"><figure class="paper"><img style="width:372pt" src="figures/21-peps.svg" alt="PEPS: A projected entangled pair state on a four-by-four lattice"></figure><span class="num">21</span> PEPS</a><a class="card" href="examples/22-simple-update.html"><figure class="paper"><img style="width:264pt" src="figures/22-simple-update.svg" alt="Simple update: A PEPS in the form simple update keeps it"></figure><span class="num">22</span> Simple update</a><a class="card" href="examples/23-ctmrg.html"><figure class="paper"><img style="width:200pt" src="figures/23-ctmrg.svg" alt="CTMRG environment: The corner transfer matrix environment of one site of an infinite two-dimensional network"></figure><span class="num">23</span> CTMRG environment</a><a class="card" href="examples/24-trg.html"><figure class="paper"><img style="width:498pt" src="figures/24-trg.svg" alt="A TRG step: One step of the tensor renormalization group of Levin and Nave, on the square lattice of a two-dimensional partition function"></figure><span class="num">24</span> A TRG step</a><a class="card" href="examples/25-hotrg.html"><figure class="paper"><img style="width:366pt" src="figures/25-hotrg.svg" alt="A HOTRG step: One step of the higher-order tensor renormalisation group, along one direction"></figure><span class="num">25</span> A HOTRG step</a></div><h3>Quantum circuits</h3><div class="gallery"><a class="card" href="examples/26-toffoli.html"><figure class="paper"><img style="width:373pt" src="figures/26-toffoli.svg" alt="Toffoli gate: The Toffoli gate"></figure><span class="num">26</span> Toffoli gate</a></div>
+</section>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.17.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
