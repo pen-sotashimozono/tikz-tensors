@@ -1,0 +1,16 @@
+%% tn line, tn line width
+%
+% The one stroke every outline and index is drawn in, for a path of one's own
+% -- here a brace over two tensors, drawn between their names and no
+% coordinate. tn line width sets it.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{3*tn box/$A$}
+  \tnconnect{S}
+  \tnopen{down}{S}
+  \draw[tn line, rounded corners=2pt] (S-a-1.north west) -- ++(0,0.25) -| (S-a-2.north east);
+\end{tikzpicture}
+\end{document}

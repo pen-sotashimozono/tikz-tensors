@@ -58,12 +58,24 @@ class Site(unittest.TestCase):
     def test_code_links_every_command_to_the_reference(self):
         text = (self.out / "examples/08-canonical.html").read_text()
         for command in ("tnstack", "tnlayer", "tnconnect", "tnopen"):
-            self.assertIn(f'href="../api.html#{command}"', text)
+            self.assertIn(f'href="../commands.html#{command}"', text)
+        styles = (self.out / "styles.html").read_text()
+        self.assertIn('href="commands.html#tnlayer"', styles)
+        self.assertIn('href="styles.html#tn-box"', styles)
 
-    def test_the_reference_is_docs_api(self):
-        text = (self.out / "api.html").read_text()
-        for command in re.findall(r"^### `(\\tn[a-z]+)", (ROOT / "docs/api.md").read_text(), re.M):
-            self.assertIn(command, text)
+    def test_the_reference_is_docs_reference(self):
+        text = (self.out / "commands.html").read_text()
+        doc = (ROOT / "docs/reference/commands.md").read_text()
+        for command in re.findall(r"^### `(\\tn[a-z]+)", doc, re.M):
+            self.assertIn(f'id="{command[1:]}"', text)
+
+    def test_every_style_has_a_definition_and_a_picture(self):
+        text = (self.out / "styles.html").read_text()
+        plain = re.sub(r"<[^>]+>", "", text)
+        for name in re.findall(r"`(tn [a-z ]+?)`", (ROOT / "docs/reference/styles.md").read_text()):
+            self.assertIn(f"{name}/.", plain, f"{name} has no definition on the page")
+        for path in (ROOT / "docs/reference/styles").glob("*.tex"):
+            self.assertIn(f"figures/{path.stem}.svg", text)
 
 
 class Publish(unittest.TestCase):

@@ -1,51 +1,8 @@
-# The interface
+# Commands
 
-Everything a figure or a notation file may use, in one place. A name that is
-not here is internal (`\tn@...`) and may change in any release.
-`tests/coverage.py` holds this page and the code to each other: a public name
-missing here, or a name here that the code does not define, fails the tests.
-Until 1.0 a name may still be renamed or removed in a minor version, and the
-CHANGELOG says so; from 1.0, only in a major one.
-
-## Conventions
-
-These are the rules every command keeps, so that one that is learned
-predicts the rest.
-
-- **Every optional argument is `key=value`.** No command takes a bare style
-  or a bare text in brackets. (`\tnput` and `\tnmid` take TikZ's placement
-  keys, `above`, `below=2pt`, and `\tnbond` TikZ's path options, which are
-  keys too.)
-- **The things a command draws are its mandatory arguments, in this order:**
-  the block, then what in it (a layer, a direction), then the content.
-- **Edge types are `edge=`**, and where a command draws two kinds of index,
-  `along=` (along the layers) and `down=` (down the sites).
-- **A figure places, then connects, then opens, then labels.** A block is
-  placed (`\tnstack` and `\tnlayer`, or `\tngrid`), its implied indices drawn
-  (`\tnconnect`), the rest opened or joined (`\tnopen`, `\tnjoin`), and only
-  then are labels put on what is not an open index (`\tnput`, `\tnmid`).
-- **Every index is drawn once.** Opening or joining one that is drawn
-  already is an error; opening a whole block skips the ones that are taken.
-- **No lengths and no coordinates in a figure.** Distances are tokens, set
-  once in a notation with `\tnset`; positions are slots.
-
-## Names a figure can refer to
-
-| name | is |
-|---|---|
-| `<stack>-<layer>-<i>` | the tensor in slot i of a layer (one that spans is named by its first slot and top layer) |
-| `<grid>-<i>-<j>` | the tensor at column i, row j of a grid |
-| `<grid>-<i>-<j>-a`, `-b` | the tensor on the bond after it along a row, along a column (`bonds=`) |
-| `<stack>-left`, `<stack>-right` | the environment blocks of a stack |
-| `<stack>-<layer>-<i>-slot` | the center of a slot, tensor or not, including columns 0 and n+1 |
-| `<stack>-<i>-<dir>` | the end of site i's index opened `up` or `down` on the whole stack |
-| `<stack>-<layer>-<dir>` | the end of a layer's index opened `left` or `right` on the whole stack, or running from an environment block into an empty slot |
-| `<tensor>-<dir>` | the end of a tensor's own index opened that way |
-| `<tensor>-<dir>-<n>` | ... the n-th, when it has several that way |
-| `<grid>-<i>-<j>-down` | the end of a grid tensor's index out of the plane |
-| `<tensor>:<side>[:<n>]` | a port, for `\tnjoin` |
-
-## Commands
+Every command a figure or a notation file may use, each with its keys. The
+[overview](index.md) says how they combine into a figure; the
+[styles](styles.md) are what they draw in.
 
 ### `\tnstack[<keys>]{<name>}{<sites>}{<layers>}`
 A stack: `<sites>` slots across, the named `<layers>` down, placed on the
@@ -135,20 +92,3 @@ One edge drawn under the nodes, along a TikZ path written out. For extending
 the package and for pictures that are not on a layout; a figure may not use
 it.
 
-## Styles
-
-| style | |
-|---|---|
-| `tn node` | the bare tensor every type is built on |
-| `tn box`, `tn circle`, `tn capsule`, `tn rounded`, `tn diamond` | outlines |
-| `tn triangle right`, `tn triangle left`, `tn triangle up`, `tn triangle down` | triangles |
-| `tn dot` | a copy tensor |
-| `tn wide`, `tn tall`, `tn small`, `tn flat` | sizes |
-| `tn fill` | solid fill, outlined in the one ink |
-| `tn frame` | a dashed box |
-| `tn gate`, `tn env` | the types a gate and an environment block are drawn in, for a notation to colour |
-| `tn leg anchor`, `tn points`, `tn single` | a type's index properties, read by the layouts |
-| `tn edge`, `tn wavy`, `tn arrow`, `tn double` | edge types |
-| `tn arrows` | `tn arrows=false` turns every arrowhead off |
-| `tn line`, `tn line width` | the one stroke, for a path of one's own |
-| `tn label` | the text of a label |

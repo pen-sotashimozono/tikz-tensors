@@ -1,0 +1,16 @@
+%% tn label
+%
+% The text of a label: what label= and labels= write at the end of an open
+% index, and what \tnput and \tnmid write anywhere else.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{3*tn box/$A$}
+  \tnconnect{S}
+  \tnopen[label=$i_{#1}$]{down}{S}
+  \tnmid{S-a-1}{S-a-2}{$D$}
+  \tnput{S-a-2.north}{$k$}
+\end{tikzpicture}
+\end{document}

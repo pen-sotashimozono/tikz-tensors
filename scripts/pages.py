@@ -5,8 +5,9 @@
 
 Everything on it is read from the repository, so it cannot drift from it:
 
-- the reference (`api.html`) is docs/api.md, the page tests/coverage.py holds
-  to the code;
+- the reference is docs/reference/, the pages tests/coverage.py holds to the
+  code: index.md (`api.html`), commands.md and styles.md, whose pictures are
+  docs/reference/styles/ and drawn by CI as the examples are;
 - each example page shows the file in examples/ and the picture in
   tests/reference/ that CI checks that file draws -- the code beside the
   picture is the code that drew it;
@@ -41,17 +42,27 @@ TOKEN = re.compile(r"(?P<comment>(?<!\\)%.*)|(?P<math>(?<!\\)\$[^$\n]*\$)"
                    r"|(?P<cmd>\\(?:[A-Za-z@]+|.))|(?P<brace>[{}\[\]])")
 
 
+REFERENCE = ROOT / "docs" / "reference"
+# the reference's pages: its Markdown, the page it becomes, and its tab
+REF_PAGES = [("index.md", "api.html", "Overview"), ("commands.md", "commands.html", "Commands"),
+             ("styles.md", "styles.html", "Styles")]
+
+
+REF_HTML = {h for _, h, _ in REF_PAGES}
+
+
 def api_anchors() -> dict[str, str]:
-    """Each public command, and `tn ...' for the styles, to its place in the
-    reference: the id of the heading of docs/api.md that names it."""
-    _, toc = markdown((ROOT / "docs" / "api.md").read_text(), code=False)
+    """Each public command and style to its place in the reference: the page
+    and the id of the heading that names it (commands.html#tnopen)."""
     anchors = {}
-    for level, ident, text in toc:
-        if level == 3:
-            for name in re.findall(r"\\tn[a-z]+", html.unescape(re.sub(r"<[^>]+>", "", text))):
-                anchors.setdefault(name, ident)
-        elif level == 2 and slug(text) == "styles":
-            anchors["tn "] = ident
+    for md, html_name, _ in REF_PAGES[1:]:
+        _, toc = markdown((REFERENCE / md).read_text(), code=False)
+        for level, ident, text in toc:
+            if level != 3:
+                continue
+            plain = html.unescape(re.sub(r"<[^>]+>", "", text))
+            for name in re.findall(r"\\tn[a-z]+|\btn [a-z ]+?(?=,|$)", plain):
+                anchors.setdefault(name, f"{html_name}#{ident}")
     return anchors
 
 
@@ -63,8 +74,7 @@ def latex(code: str, up: str | None = None) -> str:
     With <up> (the way to the site's root), a command of the package links to
     its entry in the reference, and a style of it (tn ...) to the styles."""
     links = ANCHORS if up is not None else {}
-    styles = set(re.findall(r"`(tn [a-z ]+?)`", (ROOT / "docs" / "api.md").read_text())) \
-        if up is not None else set()
+    styles = {n for n in links if n.startswith("tn ")}
 
     def text(t: str) -> str:
         if not styles:
@@ -73,7 +83,7 @@ def latex(code: str, up: str | None = None) -> str:
         for m in re.finditer("|".join(re.escape(n) for n in
                                       sorted(styles, key=len, reverse=True)), t):
             out.append(html.escape(t[pos:m.start()]))
-            out.append(f'<a class="ref" href="{up}api.html#{links["tn "]}">'
+            out.append(f'<a class="ref" href="{up}{links[m.group()]}">'
                        f'{html.escape(m.group())}</a>')
             pos = m.end()
         out.append(html.escape(t[pos:]))
@@ -85,14 +95,14 @@ def latex(code: str, up: str | None = None) -> str:
         kind, word = m.lastgroup, m.group()
         span = f'<span class="tx-{kind}">{html.escape(word)}</span>'
         if kind == "cmd" and word in links:
-            span = f'<a class="ref" href="{up}api.html#{links[word]}">{span}</a>'
+            span = f'<a class="ref" href="{up}{links[word]}">{span}</a>'
         out.append(span)
         pos = m.end()
     out.append(text(code[pos:]))
     return "".join(out)
 
 
-# ---- Markdown, the subset docs/api.md uses ---------------------------------------
+# ---- Markdown, the subset docs/reference/ uses ---------------------------------------
 def inline(text: str) -> str:
     """Code spans, bold and links; the code spans are set aside first, so that
     bold may hold one and nothing inside one is read as Markdown."""
@@ -120,6 +130,9 @@ def link(target: str) -> str:
     """A link in the repository's own Markdown, as one that works on the site."""
     if re.match(r"[a-z]+:", target) or target.startswith("#"):
         return target
+    for md, html_name, _ in REF_PAGES:
+        if target == md:
+            return html_name
     return f"{REPO}/blob/main/{target.lstrip('./')}"
 
 
@@ -144,9 +157,9 @@ def markdown(text: str, code: bool = True) -> tuple[str, list[tuple[int, str, st
             i = j + 1
         elif m := re.match(r"(#{1,4}) (.*)", line):
             level, body = len(m.group(1)), inline(m.group(2))
-            # a command's entry is anchored at its name: api.html#tnopen
-            name = re.match(r"`\\(tn[a-z]+)", m.group(2))
-            ident = name.group(1) if name else slug(body)
+            # a command's entry is anchored at its name: commands.html#tnopen
+            name = re.match(r"`\\(tn[a-z]+)|`(tn [a-z ]+)`", m.group(2))
+            ident = (name.group(1) or slug(name.group(2))) if name else slug(body)
             toc.append((level, ident, body))
             out.append(f'<h{level} id="{ident}">{body}</h{level}>')
             i += 1
@@ -242,7 +255,7 @@ def examples() -> list[Example]:
 def page(title: str, here: str, body: str, depth: int = 0) -> str:
     up = "../" * depth
     nav = "".join(
-        f'<a href="{up}{href}"{" aria-current=page" if href == here else ""}>{label}</a>'
+        f'<a href="{up}{href}"{" aria-current=page" if href == here or (href == "api.html" and here in REF_HTML) else ""}>{label}</a>'
         for href, label in NAV)
     return f"""<!doctype html>
 <html lang="en">
@@ -392,19 +405,88 @@ def example_page(exs: list[Example], i: int) -> str:
 
 
 def defined_in() -> dict[str, str]:
-    """Each public command, and the file under tex/ that defines it."""
+    """Each public command and style, and the file under tex/ that defines it."""
     where = {}
     for path in sorted((ROOT / "tex").rglob("*.tex")) + [ROOT / "tex" / "tikz-tensors.sty"]:
-        for name in re.findall(r"\\newcommand\{(\\tn[a-z]+)\}", path.read_text()):
-            where[name] = path.relative_to(ROOT).as_posix()
+        text = path.read_text()
+        rel = path.relative_to(ROOT).as_posix()
+        for name in re.findall(r"\\newcommand\{(\\tn[a-z]+)\}", text):
+            where[name] = rel
+        for name in re.findall(r"(?<![\w-])(tn [a-z ]+?)/\.(?!append)", text):
+            where.setdefault(name, rel)
     return where
 
 
-def api_page() -> str:
-    """docs/api.md, each command's entry a block of its own, as Documenter
-    draws a docstring: the signature in a bar along the top, what it is, where
-    it is defined, and the description and its keys under it."""
-    text = (ROOT / "docs" / "api.md").read_text()
+def definition(name: str) -> str:
+    """The keys that define the style <name>, as tex/ writes them."""
+    out = []
+    for path in sorted((ROOT / "tex").rglob("*.tex")):
+        text = path.read_text()
+        for m in re.finditer(rf"(?<![\w-]){re.escape(name)}/\.(?!append)([a-z ]+?)\s*=\s*", text):
+            k, depth = m.end(), 0
+            while k < len(text):
+                c = text[k]
+                if c == "{":
+                    depth += 1
+                elif c == "}":
+                    if depth == 0:
+                        break
+                    depth -= 1
+                    if depth == 0:
+                        k += 1
+                        break
+                elif c in ",\n" and depth == 0:
+                    break
+                k += 1
+            value = re.sub(r"\s*\n\s*", " ", text[m.end():k].strip())
+            out.append(f"{name}/.{m.group(1)} = {value}")
+    return "\n".join(out)
+
+
+class Picture:
+    """A picture of the styles page, docs/reference/styles/<name>.tex: its
+    title, its description, and the part of it worth reading."""
+    def __init__(self, path: pathlib.Path):
+        text = path.read_text()
+        self.name = path.stem
+        self.path = path.relative_to(ROOT).as_posix()
+        self.svg = ROOT / "tests" / "reference" / f"{self.name}.svg"
+        head = []
+        for line in text.splitlines()[1:]:
+            if not line.startswith("%"):
+                break
+            head.append(line[1:].strip())
+        self.paras = [" ".join(p.split()) for p in "\n".join(head).split("\n\n") if p.strip()]
+        pre = text.split(r"\usepackage{tikz-tensors}", 1)[1].split(r"\begin{document}", 1)[0]
+        pic = re.search(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", text, re.S).group()
+        self.code = (pre.strip() + "\n" if pre.strip() else "") + pic
+
+
+def pictured(body: str) -> tuple[str, str]:
+    """An entry's Markdown without the line that names its picture, and the
+    picture: its description, the drawing, and the code that drew it."""
+    line = re.search(r"(?m)^\[[^\]]*\]\((styles/[a-z-]+\.tex)\)\s*$", body)
+    if not line:
+        return body, ""
+    pic = Picture(REFERENCE / line.group(1))
+    if not pic.svg.exists():
+        sys.exit(f"{pic.svg.relative_to(ROOT)}: no reference picture for {pic.path}")
+    text = "".join(f"<p>{html.escape(prose(t), quote=False)}</p>" for t in pic.paras)
+    m = re.search(r'width="([\d.]+)', pic.svg.read_text()[:400])
+    width = f' style="width:{float(m.group(1)) * 1.5:.0f}pt"' if m else ""
+    return body.replace(line.group(), ""), (
+        f'{text}<figure class="paper"><img{width} src="figures/{pic.name}.svg" '
+        f'alt="{html.escape(pic.paras[0] if pic.paras else pic.name)}"></figure>'
+        f'<p class="def-head">Drawn by <a href="{REPO}/blob/main/{pic.path}">{pic.path}</a></p>'
+        f'<pre class="code">{latex(pic.code, "")}</pre>')
+
+
+def reference_page(md: str, here: str, title: str) -> str:
+    """A page of docs/reference/: its prose as it is, and each `###' entry --
+    a command, a group of styles -- a card of its own: the names on top with
+    a button to the source that defines them, then what it is, its keys, and
+    for a style its definition and a picture."""
+    text = (REFERENCE / md).read_text()
     where = defined_in()
     parts, toc = [], []
     for part in re.split(r"(?m)^(?=#{2,3} )", text):
@@ -415,21 +497,43 @@ def api_page() -> str:
             continue
         head, _, rest = part.partition("\n")
         sigs = re.findall(r"`([^`]+)`", head)
-        names = [n for sig in sigs for n in re.findall(r"\\tn[a-z]+", sig)]
-        ident = names[0][1:] if names else slug(head)
-        toc.append((3, ident, ", ".join(f"<code>{html.escape(n)}</code>" for n in names)))
+        names = [n for sig in sigs for n in re.findall(r"\\tn[a-z]+|^tn [a-z ]+$", sig)]
+        if names and names[0].startswith("\\"):
+            kind, ident = "Command", names[0][1:]
+        elif names:
+            kind, ident = "Style", slug(names[0])
+        else:
+            kind, ident = "", slug(head[4:])
+        label = (", ".join(f"<code>{html.escape(n)}</code>" for n in names)
+                 or inline(head[4:]))
+        toc.append((3, ident, label))
+        rest, picture = pictured(rest)
         body, _ = markdown(rest)
+        body += picture
+        if kind == "Style":
+            defs = "\n".join(definition(n) for n in names)
+            body += (f'<p class="def-head">Defined as</p>'
+                     f'<pre class="code">{latex(defs, "")}</pre>')
         src = where.get(names[0]) if names else None
-        source = (f'<a class="src" href="{REPO}/blob/main/{src}">‹/› {src.rpartition("/")[2]}</a>'
-                  if src else "")
-        lines = "".join(f'<code class="sig">{latex(sig)}</code>' for sig in sigs)
+        source = f'<a class="src" href="{REPO}/blob/main/{src}">‹/› source</a>' if src else ""
+        if kind == "Command":
+            lines = "".join(f'<code class="sig">{latex(sig)}</code>' for sig in sigs)
+        elif kind == "Style":
+            lines = ('<code class="sig">'
+                     + ", ".join(html.escape(n) for n in names) + "</code>")
+        else:
+            lines = f'<span class="sig">{inline(head[4:])}</span>'
+        badge = f'<span class="kind">{kind}</span>' if kind else ""
         parts.append(
             f'<article class="doc" id="{ident}"><header>'
-            f'<div class="sigs">{lines}</div><span class="kind">Command</span>{source}'
+            f'<div class="sigs">{lines}</div>{badge}{source}'
             f'</header><div class="doc-body">{body}</div></article>')
     contents = "".join(f'<li class="l{lvl}"><a href="#{ident}">{text}</a></li>'
                        for lvl, ident, text in toc if lvl in (2, 3))
-    return page("Reference", "api.html",
+    tabs = "".join(f'<a href="{h}"{" aria-current=page" if h == here else ""}>{t}</a>'
+                   for _, h, t in REF_PAGES)
+    return page(title, here,
+                f'<nav class="tabs">{tabs}</nav>'
                 f'<div class="with-toc"><aside><ul class="toc">{contents}</ul></aside>'
                 f'<article>{"".join(parts)}</article></div>')
 
@@ -536,6 +640,12 @@ article.doc .src:hover{border-color:var(--accent);color:var(--accent);text-decor
 article.doc .doc-body>p:first-child{margin-top:.7em}
 article.doc .doc-body table{width:100%}
 article.doc .doc-body td:first-child{width:38%}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 0 20px}
+.tabs a{padding:6px 14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a[aria-current]{color:var(--fg);font-weight:600;border-bottom-color:var(--accent)}
+.tabs a:hover{text-decoration:none;color:var(--fg)}
+.def-head{margin:.8em 0 0;font-size:14px;color:var(--muted)}
+span.sig{font-weight:600}
 th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--muted);font-weight:600}
 """
@@ -561,8 +671,12 @@ def build(out: pathlib.Path) -> list[str]:
         if not e.svg.exists():
             sys.exit(f"{e.svg.relative_to(ROOT)}: no reference picture for {e.name}")
         shutil.copy(e.svg, out / "figures" / e.svg.name)
+    for svg in sorted((ROOT / "tests" / "reference").glob("style-*.svg")):
+        shutil.copy(svg, out / "figures" / svg.name)
     pages = {"index.html": index_page(exs), "examples.html": examples_page(exs),
-             "api.html": api_page(), "notation.html": notation_page()}
+             "notation.html": notation_page()}
+    for md, html_name, title in REF_PAGES:
+        pages[html_name] = reference_page(md, html_name, "Reference" if md == "index.md" else title)
     for i, e in enumerate(exs):
         pages[f"examples/{e.name}.html"] = example_page(exs, i)
     for name, text in pages.items():

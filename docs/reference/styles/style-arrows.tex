@@ -1,0 +1,14 @@
+%% tn arrows
+%
+% tn arrows=false, as an option of the picture, turns every arrowhead off: the
+% same file, drawn for a reader who does not need the directions.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}[tn arrows=false]
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{tn triangle right/$A$, tn diamond/$C$, tn triangle left/$B$}
+  \tnconnect[along=tn arrow]{S}
+  \tnopen{down}{S}
+\end{tikzpicture}
+\end{document}

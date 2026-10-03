@@ -1,0 +1,14 @@
+%% tn dot
+%
+% A copy tensor: an ink dot, diagonal in all its indices, which a layout
+% meets at its center from every side.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{tn box/$A$, tn dot/, tn box/$B$}
+  \tnconnect{S}
+  \tnopen{down}{S-a-2}
+\end{tikzpicture}
+\end{document}

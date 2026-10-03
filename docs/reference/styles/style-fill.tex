@@ -1,0 +1,14 @@
+%% tn fill
+%
+% A solid fill in a colour of the theme, outlined in the one ink:
+% tn fill=<colour>.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{{tn circle, tn fill=blue1}/$A$, {tn diamond, tn fill=green1}/$C$, {tn rounded, tn fill=warm1}/$B$}
+  \tnconnect{S}
+  \tnopen{down}{S}
+\end{tikzpicture}
+\end{document}

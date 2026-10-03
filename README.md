@@ -149,8 +149,10 @@ layer has one spelling.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`). Every optional argument is `key=value`, and
-[`docs/api.md`](docs/api.md) lists the whole interface — every command, key,
-style and name a figure can refer to — and is checked against the code.
+[`docs/reference/`](docs/reference/index.md) lists the whole interface — how
+a figure is put together, every command and key, every style with what it is
+built on and a picture, and every name a figure can refer to — and is checked
+against the code.
 
 Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
 equations beside it; `pdftocairo -svg` turns them into paths, so the SVG shows
@@ -198,7 +200,7 @@ figures. A figure page is a `standalone` document:
 ```
 
 `python3 scripts/pages.py` builds the documentation site into `_site/`
-(gitignored) from `docs/api.md`, `examples/` and the reference pictures. As
+(gitignored) from `docs/reference/`, `examples/` and the reference pictures. As
 Julia's Documenter does, the workflows publish it to the `gh-pages` branch
 (`scripts/publish.py`): `Documenter.yml` puts every release from `main` at
 `v<version>/` and `stable/`, which the site root redirects to, and a switcher

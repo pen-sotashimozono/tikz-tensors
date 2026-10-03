@@ -1,0 +1,17 @@
+%% tn frame
+%
+% A dashed box, drawn around a part of a network to set it apart -- the two
+% tensors an update is about to act on. It is a path of one's own, as
+% tn line's is.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{3}{a}
+  \tnlayer{S}{a}{3*tn box/$A$}
+  \tnconnect{S}
+  \tnopen{down}{S}
+  \draw[tn frame] ([shift={(-1.5mm,1.5mm)}]S-a-2.north west)
+    rectangle ([shift={(1.5mm,-1.5mm)}]S-a-3.south east);
+\end{tikzpicture}
+\end{document}

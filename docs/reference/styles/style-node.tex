@@ -1,0 +1,12 @@
+%% tn node
+%
+% The bare tensor: an outline in the one ink around its label, with no fill
+% and no size of its own. Every type below is built on it.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{1}{a}
+  \tnlayer{S}{a}{tn node/$T$}
+\end{tikzpicture}
+\end{document}

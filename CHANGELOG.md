@@ -27,10 +27,15 @@ on the odd bonds, two steps of it -- and the layers of gates in both of its
 orders are close.
 
 On the documentation site, every command of the package in a code block links
-to its entry in the reference (`api.html#tnopen`), and every style of it to
-the styles. The reference draws each command as a card of its own: the
-signature over a rule, a badge, a button to the file under `tex/` that defines
-it, and the description and its keys inside.
+to its entry in the reference (`commands.html#tnopen`), and every style of it
+to its own (`styles.html#tn-box`). The reference is three pages, from
+`docs/reference/` (which replaces `docs/api.md`): an overview -- how a figure
+is put together from a notation's declarations and the commands, the
+conventions, the names -- then the commands and the styles. Each command and
+each group of styles is a card of its own, with a button to its source; a
+style's card shows its definition and a picture drawn with the commands
+alone, and the last shows a notation's own styles in use. The pictures,
+`docs/reference/styles/`, are compiled and compared as the examples are.
 
 ## v0.10.0 — 2026-10-02
 
