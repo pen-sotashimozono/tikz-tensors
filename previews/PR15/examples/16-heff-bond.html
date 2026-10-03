@@ -14,14 +14,12 @@
   <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.13.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
-  <button class="mode" type="button" aria-label="Code beside the picture" title="Code beside the picture"
-    onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆</button>
   <button class="mode" type="button" aria-label="Switch light or dark"
     onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
 </header>
 <main>
 <p class="crumb"><a href="../examples.html">Examples</a> / 16</p>
-<h1>Bond effective Hamiltonian</h1>
+<h1 class="with-button">Bond effective Hamiltonian<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
 <div class="traced example">
 <figure class="paper"><span class="stage"><img style="width:196pt" src="../figures/16-heff-bond.svg" alt="Bond effective Hamiltonian: The bond (zero-site) effective Hamiltonian, applied to the center on a bond"><svg class="trace" viewBox="0 0 130.657 119.318" aria-hidden="true"><rect class="hl" data-line="20" x="3.38" y="3.39" width="21.85" height="112.54" rx="2"/><rect class="hl" data-line="20" x="105.43" y="3.39" width="21.84" height="112.54" rx="2"/><rect class="hl" data-line="21" x="60.08" y="11.88" width="10.50" height="10.51" rx="2"/><polyline class="hl" data-line="23" points="14.30,17.14 58.42,17.14"/><polyline class="hl" data-line="23" points="72.24,17.14 116.35,17.14"/><polyline class="hl" data-line="23" points="14.30,59.66 65.32,59.66"/><polyline class="hl" data-line="23" points="65.32,59.66 116.35,59.66"/><polyline class="hl" data-line="23" points="14.30,102.18 52.57,102.18"/><polyline class="hl" data-line="23" points="116.35,102.18 78.09,102.18"/><rect class="hl" data-line="24" x="46.94" y="101.18" width="11.26" height="10.24" rx="2"/><rect class="hl" data-line="25" x="72.92" y="101.18" width="10.33" height="12.61" rx="2"/></svg></span></figure>
 <div class="split">

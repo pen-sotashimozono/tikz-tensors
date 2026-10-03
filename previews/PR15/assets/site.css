@@ -97,7 +97,11 @@ pre.code .ln.live{cursor:default}
 pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
   box-shadow:inset 3px 0 #cf222e}
 .hint{margin:-.2em 0 .4em}
-/* Code beside the picture (the ⇆ button, kept like the theme): an example's
+h1.with-button{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+h1 .side-btn{font-size:14px}
+:root[data-layout=side] .side-btn{background:var(--accent);color:var(--card);border-color:var(--accent)}
+@media (max-width:820px){.side-btn{display:none}}
+/* Side by side (SIDE_BUTTON, kept like the theme): an example's
    code on the left and its picture on the right, the picture staying in view
    while the code scrolls, so that pointing at a line shows what it draws. */
 @media (min-width:821px){

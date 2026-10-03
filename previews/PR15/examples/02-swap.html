@@ -14,14 +14,12 @@
   <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.13.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
-  <button class="mode" type="button" aria-label="Code beside the picture" title="Code beside the picture"
-    onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆</button>
   <button class="mode" type="button" aria-label="Switch light or dark"
     onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
 </header>
 <main>
 <p class="crumb"><a href="../examples.html">Examples</a> / 02</p>
-<h1>Exchanging two fermions</h1>
+<h1 class="with-button">Exchanging two fermions<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
 <div class="traced example">
 <figure class="paper"><span class="stage"><img style="width:382pt" src="../figures/02-swap.svg" alt="Exchanging two fermions: Exchanging two fermions flips the sign of the amplitude"><svg class="trace" viewBox="0 0 254.424 103.835" aria-hidden="true"><rect class="hl" data-line="21" x="3.38" y="3.39" width="78.54" height="24.67" rx="2"/><rect class="hl" data-line="23" x="16.13" y="26.06" width="53.03" height="62.94" rx="2"/><rect class="hl" data-line="23" x="12.37" y="87.00" width="9.53" height="12.30" rx="2"/><rect class="hl" data-line="23" x="62.83" y="87.00" width="10.66" height="14.05" rx="2"/><rect class="hl" data-line="24" x="116.77" y="32.47" width="20.88" height="9.03" rx="2"/><rect class="hl" data-line="26" x="172.50" y="3.39" width="78.54" height="24.67" rx="2"/><polyline class="hl" data-line="28" points="186.26,15.72 186.26,88.00"/><rect class="hl" data-line="28" x="181.48" y="87.00" width="9.55" height="12.30" rx="2"/><polyline class="hl" data-line="28" points="237.28,15.72 237.28,88.00"/><rect class="hl" data-line="28" x="231.95" y="87.00" width="10.66" height="14.05" rx="2"/></svg></span></figure>
 <div class="split">
