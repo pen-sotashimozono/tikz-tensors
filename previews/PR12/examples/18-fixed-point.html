@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -21,7 +21,7 @@
 <h1>Fixed points of a uniform MPS</h1>
 <figure class="paper"><img style="width:294pt" src="../figures/18-fixed-point.svg" alt="Fixed points of a uniform MPS: Fixed-point equations for a uniform MPS"></figure>
 <div class="split">
-<div class="prose"><p>Fixed-point equations for a uniform MPS.</p><p>Above: the transfer matrix. E is not drawn as a thing of its own, because it is not one – it is the ket tensor A and its conjugate joined along the physical index. l carries two bond indices, one into each layer, which is why it is drawn tall rather than as a site: it lives in the doubled space. Solve l E = lambda l and an infinite chain has what it needs in place of an end.</p><p>Below: the same column with the Hamiltonian's MPO tensor between the layers, so L carries three indices. The eigenvalue form is honest only block by block: an MPO for a local Hamiltonian is upper triangular with ones on the diagonal, so its transfer matrix has eigenvalue one with a Jordan block, and the block carrying the extensive part needs the energy per site subtracted and is a geometric sum rather than an eigenvector. The picture is the contraction, not the solver.</p><p>The physical index leaves each triangle from the corner of its flat side, and the site is that side's line carried on down. W sits on that line because every tensor of a site does: the triangles are set across in their slots to put the corner there, and a box is centred on it. An earlier version of this file drew both conventions side by side to see where the MPO went; on a grid the question does not arise.</p><p>Each right-hand side is a stack with no sites, the environment alone, whose indices end where the first site's tensors would be.</p></div>
+<div class="prose"><p>Fixed-point equations for a uniform MPS.</p><p>Above: the transfer matrix. E is not drawn as a thing of its own, because it is not one – it is the ket tensor A and its conjugate joined along the physical index. l carries two bond indices, one into each layer, which is why it is drawn tall rather than as a site: it lives in the doubled space. Solve l E = lambda l and an infinite chain has what it needs in place of an end.</p><p>Below: the same column with the Hamiltonian's MPO tensor between the layers, so L carries three indices. The eigenvalue form is honest only block by block: an MPO for a local Hamiltonian is upper triangular with ones on the diagonal, so its transfer matrix has eigenvalue one with a Jordan block, and the block carrying the extensive part needs the energy per site subtracted and is a geometric sum rather than an eigenvector. The picture is the contraction, not the solver.</p><p>The physical index leaves each triangle from the corner of its flat side, and the site is that side's line carried on down. W sits on that line because every tensor of a site does: the triangles are set across in their slots to put the corner there, and a box is centered on it. An earlier version of this file drew both conventions side by side to see where the MPO went; on a grid the question does not arise.</p><p>Each right-hand side is a stack with no sites, the environment alone, whose indices end where the first site's tensors would be.</p></div>
 <div>
 <h2>The picture</h2>
 <pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
@@ -96,7 +96,7 @@
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>

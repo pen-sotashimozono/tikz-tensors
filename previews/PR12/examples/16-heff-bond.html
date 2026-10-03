@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -19,14 +19,14 @@
 <main>
 <p class="crumb"><a href="../examples.html">Examples</a> / 16</p>
 <h1>Bond effective Hamiltonian</h1>
-<figure class="paper"><img style="width:196pt" src="../figures/16-heff-bond.svg" alt="Bond effective Hamiltonian: The bond (zero-site) effective Hamiltonian, applied to the centre on a bond"></figure>
+<figure class="paper"><img style="width:196pt" src="../figures/16-heff-bond.svg" alt="Bond effective Hamiltonian: The bond (zero-site) effective Hamiltonian, applied to the center on a bond"></figure>
 <div class="split">
-<div class="prose"><p>The bond (zero-site) effective Hamiltonian, applied to the centre on a bond: H_eff C.</p><p>Factor the centre off a site, AC = AL C, let AL join the left environment, and the centre is C, on the bond. C carries no physical index, so nothing of the Hamiltonian sits here: the MPO's bond runs straight from L to R, which is the ‘-’ slot – a layer whose index passes through. One-site TDVP evolves C backwards in time with this, and VUMPS solves for its fixed point.</p><p>The slot is the same width as a site's. The centre on a bond is a different shape (the small diamond) rather than a different slot.</p></div>
+<div class="prose"><p>The bond (zero-site) effective Hamiltonian, applied to the center on a bond: H_eff C.</p><p>Factor the center off a site, AC = AL C, let AL join the left environment, and the center is C, on the bond. C carries no physical index, so nothing of the Hamiltonian sits here: the MPO's bond runs straight from L to R, which is the ‘-’ slot – a layer whose index passes through. One-site TDVP evolves C backwards in time with this, and VUMPS solves for its fixed point.</p><p>The slot is the same width as a site's. The center on a bond is a different shape (the small diamond) rather than a different slot.</p></div>
 <div>
 <h2>The picture</h2>
 <pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">[</span>left=<span class="tx-math">$L$</span>, right=<span class="tx-math">$R$</span><span class="tx-brace">]</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, op, bra<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centrebond/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centerbond/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>op<span class="tx-brace">}</span><span class="tx-brace">{</span>-<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnput</span><span class="tx-brace">[</span>below<span class="tx-brace">]</span><span class="tx-brace">{</span>K-bra-left<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$a$</span><span class="tx-brace">}</span>
@@ -40,7 +40,7 @@
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">[</span>left=<span class="tx-math">$L$</span>, right=<span class="tx-math">$R$</span><span class="tx-brace">]</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, op, bra<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centrebond/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centerbond/<span class="tx-math">$C$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>op<span class="tx-brace">}</span><span class="tx-brace">{</span>-<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnput</span><span class="tx-brace">[</span>below<span class="tx-brace">]</span><span class="tx-brace">{</span>K-bra-left<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$a$</span><span class="tx-brace">}</span>
@@ -72,7 +72,7 @@
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>

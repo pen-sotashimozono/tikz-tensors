@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="index.html">Overview</a><a href="examples.html">Examples</a><a href="api.html">Reference</a><a href="notation.html" aria-current=page>Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -38,7 +38,7 @@ every figure keeps working.</p>
 <span class="tx-comment">%   says nothing a circle does not, and turned on a lattice it reads as a</span>
 <span class="tx-comment">%   diamond;</span>
 <span class="tx-comment">%   left- and right-canonical tensors are triangles pointing the way the gauge</span>
-<span class="tx-comment">%   runs, each in its own colour, and the orthogonality centre a green</span>
+<span class="tx-comment">%   runs, each in its own colour, and the orthogonality center a green</span>
 <span class="tx-comment">%   diamond -- small when it sits on a bond;</span>
 <span class="tx-comment">%   an operator tensor on a chain is a neutral rounded box, a gate a light</span>
 <span class="tx-comment">%   yellow one, an environment block light purple;</span>
@@ -49,8 +49,8 @@ every figure keeps working.</p>
 <span class="tx-comment">%   vector closing an index is a small circle;</span>
 <span class="tx-comment">%   an isometry of a tree or a MERA is a triangle pointing up, toward the</span>
 <span class="tx-comment">%   root, in the left-canonical colour: off a chain there is no left and</span>
-<span class="tx-comment">%   right, only toward the centre and away from it, and that is the colour</span>
-<span class="tx-comment">%   that already says `isometric toward the centre&#x27;; both it and a MERA&#x27;s</span>
+<span class="tx-comment">%   right, only toward the center and away from it, and that is the colour</span>
+<span class="tx-comment">%   that already says `isometric toward the center&#x27;; both it and a MERA&#x27;s</span>
 <span class="tx-comment">%   disentangler (a gate, flatter) are drawn flat, as a tree&#x27;s tensors are;</span>
 <span class="tx-comment">%   the environment of a two-dimensional network, contracted from its</span>
 <span class="tx-comment">%   boundary, is the environment&#x27;s colour: a corner as a rounded box, a side</span>
@@ -69,8 +69,8 @@ every figure keeps working.</p>
   frame/.style      = <span class="tx-brace">{</span>tn frame<span class="tx-brace">}</span>,
   canl/.style       = <span class="tx-brace">{</span>tn triangle right, tn fill=canl<span class="tx-brace">}</span>,
   canr/.style       = <span class="tx-brace">{</span>tn triangle left, tn fill=canr<span class="tx-brace">}</span>,
-  centre/.style     = <span class="tx-brace">{</span>tn diamond, tn fill=centre<span class="tx-brace">}</span>,
-  centrebond/.style = <span class="tx-brace">{</span>centre, tn small<span class="tx-brace">}</span>,
+  center/.style     = <span class="tx-brace">{</span>tn diamond, tn fill=center<span class="tx-brace">}</span>,
+  centerbond/.style = <span class="tx-brace">{</span>center, tn small<span class="tx-brace">}</span>,
   mpo/.style        = <span class="tx-brace">{</span>tn rounded, tn fill=mpo<span class="tx-brace">}</span>,
   tn gate/.append style = <span class="tx-brace">{</span>fill=gate!25<span class="tx-brace">}</span>,
   gate/.style       = <span class="tx-brace">{</span>tn gate<span class="tx-brace">}</span>,
@@ -111,7 +111,7 @@ every figure keeps working.</p>
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>

@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -21,7 +21,7 @@
 <h1>SVD and QR</h1>
 <figure class="paper"><img style="width:442pt" src="../figures/03-svd-qr.svg" alt="SVD and QR: The two decompositions every algorithm here is made of, applied to one tensor of a chain"></figure>
 <div class="split">
-<div class="prose"><p>The two decompositions every algorithm here is made of, applied to one tensor of a chain: T with its left bond, its physical index and its right bond.</p><p>Above, the SVD with the left bond and the physical index grouped: T = U S V^dagger. U keeps both of those and is isometric from the left; S is the singular values, the centre on a bond; V^dagger carries the right bond and is isometric from the right. Truncate S and this is the step that keeps a bond dimension bounded.</p><p>Below, the QR of the same grouping: T = Q R. Q is isometric from the left and R is what is left over – not diagonal, not isometric, a plain array – and it is what gets pushed into the next site when a chain is brought to canonical form. QR is the cheaper of the two when nothing is truncated.</p><p>The arrows are not written: each bond takes its direction from the triangle it leaves, and an open bond of a triangle points in.</p></div>
+<div class="prose"><p>The two decompositions every algorithm here is made of, applied to one tensor of a chain: T with its left bond, its physical index and its right bond.</p><p>Above, the SVD with the left bond and the physical index grouped: T = U S V^dagger. U keeps both of those and is isometric from the left; S is the singular values, the center on a bond; V^dagger carries the right bond and is isometric from the right. Truncate S and this is the step that keeps a bond dimension bounded.</p><p>Below, the QR of the same grouping: T = Q R. Q is isometric from the left and R is what is left over – not diagonal, not isometric, a plain array – and it is what gets pushed into the next site when a chain is brought to canonical form. QR is the cheaper of the two when nothing is truncated.</p><p>The arrows are not written: each bond takes its direction from the triangle it leaves, and an open bond of a triangle points in.</p></div>
 <div>
 <h2>The picture</h2>
 <pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
@@ -32,7 +32,7 @@
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>T<span class="tx-brace">}</span>
   <span class="tx-cmd">\tneq</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>canl/<span class="tx-math">$U$</span>, centrebond/<span class="tx-math">$S$</span>, canr/<span class="tx-math">$V^{\dagger}$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>canl/<span class="tx-math">$U$</span>, centerbond/<span class="tx-math">$S$</span>, canr/<span class="tx-math">$V^{\dagger}$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>U-ket-1<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>U-ket-3<span class="tx-brace">}</span>
@@ -65,7 +65,7 @@
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>T<span class="tx-brace">}</span>
   <span class="tx-cmd">\tneq</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>canl/<span class="tx-math">$U$</span>, centrebond/<span class="tx-math">$S$</span>, canr/<span class="tx-math">$V^{\dagger}$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>canl/<span class="tx-math">$U$</span>, centerbond/<span class="tx-math">$S$</span>, canr/<span class="tx-math">$V^{\dagger}$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>U<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>U-ket-1<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnopen</span><span class="tx-brace">[</span>edge=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>U-ket-3<span class="tx-brace">}</span>
@@ -110,7 +110,7 @@
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>

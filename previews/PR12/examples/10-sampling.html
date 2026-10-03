@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -21,12 +21,12 @@
 <h1>Sampling an amplitude</h1>
 <figure class="paper"><img style="width:389pt" src="../figures/10-sampling.svg" alt="Sampling an amplitude: An amplitude of a matrix product state"></figure>
 <div class="split">
-<div class="prose"><p>An amplitude of a matrix product state: psi(s_1, ..., s_5), every physical index closed by a basis vector.</p><p>This is what sampling evaluates. With the centre on the first site and every tensor to its right isometric, the marginal of s_1 needs only C – the rest of the chain contracts to the identity – so s_1 is drawn first, fixed, and the centre moves on; each later s_i is conditioned on the ones before it in the same way, and the sample costs one sweep.</p><p>The basis vectors are a layer of their own, small circles, each closing the index above it.</p></div>
+<div class="prose"><p>An amplitude of a matrix product state: psi(s_1, ..., s_5), every physical index closed by a basis vector.</p><p>This is what sampling evaluates. With the center on the first site and every tensor to its right isometric, the marginal of s_1 needs only C – the rest of the chain contracts to the identity – so s_1 is drawn first, fixed, and the center moves on; each later s_i is conditioned on the ones before it in the same way, and the sample costs one sweep.</p><p>The basis vectors are a layer of their own, small circles, each closing the index above it.</p></div>
 <div>
 <h2>The picture</h2>
 <pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>5<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, basis<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centre/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>center/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>basis<span class="tx-brace">}</span><span class="tx-brace">{</span>basis/<span class="tx-math">$s_1$</span>, basis/<span class="tx-math">$s_2$</span>, basis/<span class="tx-math">$s_3$</span>, basis/<span class="tx-math">$s_4$</span>,
                      basis/<span class="tx-math">$s_5$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
@@ -39,7 +39,7 @@
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>5<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, basis<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>centre/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>center/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>basis<span class="tx-brace">}</span><span class="tx-brace">{</span>basis/<span class="tx-math">$s_1$</span>, basis/<span class="tx-math">$s_2$</span>, basis/<span class="tx-math">$s_3$</span>, basis/<span class="tx-math">$s_4$</span>,
                      basis/<span class="tx-math">$s_5$</span><span class="tx-brace">}</span>
   <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
@@ -48,7 +48,7 @@
 <p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/10-sampling.tex">examples/10-sampling.tex</a></p>
 </div>
 </div>
-<nav class="pager"><a href="09-centre.html">← The orthogonality centre</a><a href="11-mpo-mps.html">MPO applied to an MPS →</a></nav>
+<nav class="pager"><a href="09-center.html">← The orthogonality center</a><a href="11-mpo-mps.html">MPO applied to an MPS →</a></nav>
 </main>
 <script>
 /* The versions published beside this one (scripts/publish.py writes
@@ -70,7 +70,7 @@
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>

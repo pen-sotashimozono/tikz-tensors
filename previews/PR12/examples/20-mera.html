@@ -10,7 +10,7 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.11.0</span></a>
   <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
   <button class="mode" type="button" aria-label="Switch light or dark"
@@ -21,12 +21,12 @@
 <h1>MERA</h1>
 <figure class="paper"><img style="width:594pt" src="../figures/20-mera.svg" alt="MERA: A binary MERA on sixteen sites, all the way up"></figure>
 <div class="split">
-<div class="prose"><p>A binary MERA on sixteen sites, all the way up: four tiers of coarse-graining – sixteen sites, eight, four, two, one – and the top tensor that closes it.</p><p>Read upward. In each of the first three tiers the disentanglers u act first, on pairs that straddle the blocks the isometries are about to join, and remove the entanglement across those block boundaries; then each isometry w takes a block of two sites to one. The fourth tier has two sites left and only joins them: a disentangler there would act on the same pair the isometry does, and has nothing to straddle. The top tensor is the state on the one site that remains – the one tensor of the network that is neither an isometry nor a unitary, so it is the centre.</p><p>Every index here is placed by one rule: two tensors of different extent meet once, in the middle of the sites they share. So a disentangler meets the isometries under it at their apexes, an isometry meets the disentangler it overlaps by half in the middle of that half, and the top tensor, two sites wide in the middle of the network, meets the last isometry at its apex. The layers are ‘apart’: nothing joins two tensors side by side, and the stack is drawn as a tree ([tree]), every tensor its own size and every index that does not line up turning a corner on its way.</p><p>The layout – tiers of isometries and disentanglers, the disentanglers flat boxes between the triangles, each index turning a corner on its way up – is modelled on the MERA in the figures on the front page of tensornetwork.org (https://tensornetwork.org/, Apache-2.0). The drawing is this package's own; the arrangement is theirs.</p></div>
+<div class="prose"><p>A binary MERA on sixteen sites, all the way up: four tiers of coarse-graining – sixteen sites, eight, four, two, one – and the top tensor that closes it.</p><p>Read upward. In each of the first three tiers the disentanglers u act first, on pairs that straddle the blocks the isometries are about to join, and remove the entanglement across those block boundaries; then each isometry w takes a block of two sites to one. The fourth tier has two sites left and only joins them: a disentangler there would act on the same pair the isometry does, and has nothing to straddle. The top tensor is the state on the one site that remains – the one tensor of the network that is neither an isometry nor a unitary, so it is the center.</p><p>Every index here is placed by one rule: two tensors of different extent meet once, in the middle of the sites they share. So a disentangler meets the isometries under it at their apexes, an isometry meets the disentangler it overlaps by half in the middle of that half, and the top tensor, two sites wide in the middle of the network, meets the last isometry at its apex. The layers are ‘apart’: nothing joins two tensors side by side, and the stack is drawn as a tree ([tree]), every tensor its own size and every index that does not line up turning a corner on its way.</p><p>The layout – tiers of isometries and disentanglers, the disentanglers flat boxes between the triangles, each index turning a corner on its way up – is modelled on the MERA in the figures on the front page of tensornetwork.org (https://tensornetwork.org/, Apache-2.0). The drawing is this package's own; the arrangement is theirs.</p></div>
 <div>
 <h2>The picture</h2>
 <pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">[</span>tree<span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>16<span class="tx-brace">}</span><span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., centre/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., center/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w4<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$w$</span>/16<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*iso/<span class="tx-math">$w$</span>/8<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u3<span class="tx-brace">}</span><span class="tx-brace">{</span>4*., disentangler/<span class="tx-math">$u$</span>/8, 4*.<span class="tx-brace">}</span>
@@ -45,7 +45,7 @@
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
 <span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnstack</span><span class="tx-brace">[</span>tree<span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>16<span class="tx-brace">}</span><span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span>
-  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., centre/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., center/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w4<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$w$</span>/16<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*iso/<span class="tx-math">$w$</span>/8<span class="tx-brace">}</span>
   <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u3<span class="tx-brace">}</span><span class="tx-brace">{</span>4*., disentangler/<span class="tx-math">$u$</span>/8, 4*.<span class="tx-brace">}</span>
@@ -82,7 +82,7 @@
     }).catch(() => {});
 })();
 </script>
-<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<footer>tikz-tensors v0.11.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
 <a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>
