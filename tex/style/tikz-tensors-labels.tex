@@ -26,7 +26,8 @@
   \pgfkeys{/tn/frame/.cd, label=, #1}\pgfkeysgetvalue{/tn/frame/label}\tn@flab
   \global\tn@fxa=\maxdimen \global\tn@fya=\maxdimen
   \global\tn@fxb=-\maxdimen \global\tn@fyb=-\maxdimen
-  \foreach \tn@fn in {#2}{%
+  \tn@xlist{#2}%
+  \foreach \tn@fn in \tn@xl{%
     \tn@anc{\tn@fn}{south west}%
     \ifdim\tn@ax<\tn@fxa \global\tn@fxa=\tn@ax\fi
     \ifdim\tn@ay<\tn@fya \global\tn@fya=\tn@ay\fi

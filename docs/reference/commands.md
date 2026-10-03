@@ -54,7 +54,7 @@ Every index the block's layout implies.
 |---|---|
 | `along=<edge type>` | the indices along the layers (on a grid, every bond) |
 | `down=<edge type>` | the indices down the sites |
-| `apart={<layer>, ...}` | layers with no index along them (a stack only) |
+| `apart={<layer or port>, ...}` | layers with no index along them (a stack only), and ports whose bond is left out: `apart={g1, S-ket-2:right}` |
 
 ### `\tnopen[<keys>]{<direction>}{<tensor or block>, ...}`
 Open indices toward `up`, `down`, `left` or `right`. On a grid, `down` (out
@@ -97,6 +97,13 @@ step contracts into one, or a part of a network set apart.
 | key | |
 |---|---|
 | `label=<text>` | written above the frame's right corner |
+
+### `\tnshow{<tensor>, ...}`
+Writes what the package made of each tensor to the log: its block, the sites
+and layers it covers, its type, the sides it has indices on (said by
+`tn legs`, or every side its layout gives it), and each index — drawn, left
+out by `apart=`, or free. Nothing is drawn; it is for finding out why a
+figure looks as it does.
 
 ### `\tnput[<placement>]{<name>}{<text>}`, `\tnmid[<placement>]{<name>}{<name>}{<text>}`
 A label at a named point, or midway between two. A label on an open index

@@ -15,6 +15,11 @@
 %                             a direction (tn arrow) takes it from here
 %     tn single=up|down       the side on which it has one index however many
 %                             sites it spans (the apex of a triangle)
+%     tn legs={<side>, ...}   the sides it has indices on at all -- up, down,
+%                             left, right (on a grid: nw, ne, se, sw, down).
+%                             Not said, every side a layout gives it; said,
+%                             a layout joins and opens those sides alone, and
+%                             a command that names another is an error.
 % A user's own type is a style of the same kind and is a type like these: a
 % kite pointing up is {tn node, kite, tn fill=green3, tn single=up}.
 % The package's types are named for their shape and never for what they mean;
@@ -39,13 +44,15 @@
 \gdef\tn@legat{center}
 \gdef\tn@pts{}
 \gdef\tn@single{}
+\gdef\tn@legs{}
 \tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
          tn points/.code={\gdef\tn@pts{#1}},
-         tn single/.code={\gdef\tn@single{#1}}}
+         tn single/.code={\gdef\tn@single{#1}},
+         tn legs/.code={\xdef\tn@legs{\zap@space#1 \@empty}}}
 % Read a type's index properties without drawing it: \tn@legat, \tn@pts and
 % \tn@single afterwards hold what the style <#1> sets.
 \def\tn@props#1{%
-  \gdef\tn@legat{center}\gdef\tn@pts{}\gdef\tn@single{}%
+  \gdef\tn@legat{center}\gdef\tn@pts{}\gdef\tn@single{}\gdef\tn@legs{}%
   \begingroup\tikzset{#1}\endgroup}
 
 % Each shape carries the size at which it reads as the same weight as the
@@ -114,7 +121,8 @@
 % the routes that later meet it.
 \def\tn@place#1#2#3#4#5{%
   \tn@props{#1}%
-  \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}%
+  \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}\tn@set{n@#2@legs}{\tn@legs}%
+  \tn@set{n@#2@type}{\detokenize{#1}}%
   \ifx\tn@legat\tn@center
     \node[#1] (#2) at (#3,#4) {#5};\tn@tracenode{#2}%
   \else

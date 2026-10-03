@@ -34,7 +34,7 @@ and `examples/conventions/notation.tex` is the one the examples are drawn in.
 ### `tn gate`, `tn env`
 [picture](styles/style-gate-env.tex)
 
-### `tn leg anchor`, `tn points`, `tn single`
+### `tn leg anchor`, `tn points`, `tn single`, `tn legs`
 [picture](styles/style-index.tex)
 
 ## Indices

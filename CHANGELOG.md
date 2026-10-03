@@ -5,6 +5,31 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.14.0 — 2026-10-03
+
+What a layout decides without being told, a figure can say and read back:
+the first step toward types that carry their indices, as an ITensor does.
+
+`tn legs={<side>, ...}` says the sides a type has indices on: up, down,
+left, right (nw, ne, se, sw, down on a grid). Not said, a tensor has every
+side its layout gives it, as before. Said, `\tnconnect` joins those sides
+alone, `\tnopen` on a block opens them alone, and `\tnopen` or `\tnjoin`
+naming another side of the tensor is an error.
+
+`\tnconnect[apart=]` takes ports as well as layers: `apart={S-ket-2:right}`
+leaves out that one bond.
+
+A list of names takes ranges wherever a command takes tensors or ports:
+`S-ket-{2..4}`, `P-{1..4}-2`, `S-b-{1..2}:right` (`\tnopen`, `\tnconnect`'s
+`apart=`, `\tnframe`, `\tnshow`).
+
+`\tnshow{<tensor>, ...}` writes what the package made of a tensor to the log:
+its block, the sites and layers it covers, its type, the sides it has indices
+on, and each index, drawn, left out or free.
+
+No figure changes. `tests/cases/structure.tex` is the specimen of all four;
+the styles page shows `tn legs`.
+
 ## v0.13.0 — 2026-10-03
 
 The tensor renormalization group: a grid can be drawn split, and opened at

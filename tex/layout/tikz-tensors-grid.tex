@@ -165,21 +165,27 @@
 \def\tn@grid@connect#1{%
   \ifx\tn@apart\@empty\else
     \PackageError{tikz-tensors}{\string\tnconnect: apart= names layers of a
-      stack; a grid has none}{}\fi
+      stack, which a grid has none of, or the ports of bonds to leave out}{}\fi
   \edef\tn@gc{\tn@get{#1@cols}}\edef\tn@gr{\tn@get{#1@rows}}%
   \foreach \tn@i in {1,...,\tn@gc}{\foreach \tn@j in {1,...,\tn@gr}{%
     \ifnum\tn@i<\tn@gc
       \pgfmathtruncatemacro\tn@in{\tn@i+1}%
+      \tn@gbondok{#1-\tn@i-\tn@j}{se}{#1-\tn@in-\tn@j}{nw}%
+    \fi
+    \ifnum\tn@i<\tn@gc\relax \ifnum\tn@gok=1
       \tn@use{#1-\tn@i-\tn@j}{se}{0}\tn@use{#1-\tn@in-\tn@j}{nw}{0}%
       \tn@gport{#1}{\tn@i}{\tn@j}{se}\let\tn@xa\tn@px \let\tn@ya\tn@py
       \tn@gport{#1}{\tn@in}{\tn@j}{nw}\tn@line{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
-    \fi
+    \fi\fi
     \ifnum\tn@j<\tn@gr
       \pgfmathtruncatemacro\tn@jn{\tn@j+1}%
+      \tn@gbondok{#1-\tn@i-\tn@j}{sw}{#1-\tn@i-\tn@jn}{ne}%
+    \fi
+    \ifnum\tn@j<\tn@gr\relax \ifnum\tn@gok=1
       \tn@use{#1-\tn@i-\tn@j}{sw}{0}\tn@use{#1-\tn@i-\tn@jn}{ne}{0}%
       \tn@gport{#1}{\tn@i}{\tn@j}{sw}\let\tn@xa\tn@px \let\tn@ya\tn@py
       \tn@gport{#1}{\tn@i}{\tn@jn}{ne}\tn@line{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
-    \fi
+    \fi\fi
     \ifnum\tn@get{#1@split}=1
       \pgfmathtruncatemacro\tn@gpar{mod(\tn@i+\tn@j,2)}%
       \ifnum\tn@gpar=0
@@ -217,6 +223,17 @@
   \coordinate (#2-#3-#4-#5) at (\tn@xb,\tn@yb);
   \tn@reach{\tn@xb}%
   \begingroup\let\tn@dir\tn@gd \tn@openlabel{#2-#3-#4-#5}\endgroup}
+% may the bond from <#1> toward <#2> to <#3> toward <#4> be drawn? \tn@gok
+\def\tn@gbondok#1#2#3#4{\def\tn@gok{1}%
+  \tn@hasleg{#1}{#2}\ifnum\tn@hasl=0 \def\tn@gok{0}\fi
+  \tn@hasleg{#3}{#4}\ifnum\tn@hasl=0 \def\tn@gok{0}\fi
+  \tn@ifcut{#1}{#2}{0}\ifnum\tn@iscut=1 \def\tn@gok{0}\fi
+  \tn@ifcut{#3}{#4}{0}\ifnum\tn@iscut=1 \def\tn@gok{0}\fi}
+\def\tn@grid@portkey#1#2#3{\def\tn@pkey{0}}
+\def\tn@grid@show#1{%
+  \foreach \tn@ss in {nw,ne,se,sw,down}{%
+    \tn@hasleg{#1}{\tn@ss}%
+    \ifnum\tn@hasl=1 \tn@showport{#1}{\tn@ss}{0}\fi}}
 % the directions <#1> names: one of nw, ne, se, sw, or around (all four), as
 % \tn@gdl; down is \tn@gdl empty
 \def\tn@sides{nw,ne,se,sw}\def\tn@saround{around}
@@ -256,6 +273,6 @@
       \ifnum\tn@isused=0 \tn@gopen{#1}{#2-\tn@i-\tn@j}{#2-\tn@i-\tn@j-down}\fi
     \else
       \foreach \tn@gs in \tn@gdl{%
-        \tn@ifused{#2-\tn@i-\tn@j}{\tn@gs}{0}%
-        \ifnum\tn@isused=0 \tn@gside{#1}{#2}{\tn@i}{\tn@j}{\tn@gs}\fi}%
+        \tn@ifused{#2-\tn@i-\tn@j}{\tn@gs}{0}\tn@hasleg{#2-\tn@i-\tn@j}{\tn@gs}%
+        \ifnum\tn@isused\tn@hasl=01 \tn@gside{#1}{#2}{\tn@i}{\tn@j}{\tn@gs}\fi}%
     \fi}}}
