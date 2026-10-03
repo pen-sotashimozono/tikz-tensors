@@ -77,6 +77,20 @@ class Site(unittest.TestCase):
         for path in (ROOT / "docs/reference/styles").glob("*.tex"):
             self.assertIn(f"figures/{path.stem}.svg", text)
 
+    def test_the_overview_builds_a_figure_step_by_step(self):
+        text = (self.out / "api.html").read_text()
+        steps = sorted((ROOT / "docs/reference/steps").glob("step-*.tex"))
+        self.assertGreater(len(steps), 1)
+        for path in steps:
+            self.assertIn(f'id="{path.stem}"', text)
+            self.assertIn(f"figures/{path.stem}.svg", text)
+        # every step adds something, and only what it adds is marked
+        cards = re.findall(r'<article class="doc step".*?</article>', text, re.S)
+        self.assertEqual(len(cards), len(steps))
+        for card in cards:
+            self.assertIn('class="ln add"', card)
+        self.assertEqual(cards[-1].count('class="ln add"'), 7)
+
 
 class Publish(unittest.TestCase):
     def test_versions_side_by_side_and_previews_come_and_go(self):

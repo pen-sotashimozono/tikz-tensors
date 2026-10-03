@@ -34,8 +34,11 @@ is put together from a notation's declarations and the commands, the
 conventions, the names -- then the commands and the styles. Each command and
 each group of styles is a card of its own, with a button to its source; a
 style's card shows its definition and a picture drawn with the commands
-alone, and the last shows a notation's own styles in use. The pictures,
-`docs/reference/styles/`, are compiled and compared as the examples are.
+alone, and the last shows a notation's own styles in use. The overview builds
+one figure a command at a time: each step's code, what it adds marked in red,
+beside what it draws. The pictures,
+`docs/reference/styles/` and `docs/reference/steps/`, are compiled and
+compared as the examples are.
 
 ## v0.10.0 — 2026-10-02
 

@@ -10,8 +10,9 @@ artifact to download -- which is why this prints markdown rather than copying
 pictures anywhere.
 
 A page is shown when its source changed (examples/, tests/cases/,
-docs/reference/styles/) or when its picture changed (tests/reference/), the
-second catching a style edit that moves a page nobody touched. Standard library only.
+docs/reference/styles/, docs/reference/steps/) or when its picture changed
+(tests/reference/), the second catching a style edit that moves a page nobody
+touched. Standard library only.
 """
 from __future__ import annotations
 
@@ -21,7 +22,8 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-WATCHED = ("examples", "tests/cases", "docs/reference/styles", "tests/reference")
+WATCHED = ("examples", "tests/cases", "docs/reference/styles", "docs/reference/steps",
+           "tests/reference")
 # ?sanitize=true makes raw.githubusercontent.com serve an SVG as an image, so
 # GitHub shows it inline instead of as text.
 RAW = "https://raw.githubusercontent.com/{repo}/{sha}/tests/reference/{name}.svg?sanitize=true"
@@ -49,7 +51,7 @@ def main() -> int:
         print("No page is drawn differently from the base.")
         return 0
     for name in pages:
-        src = next((f"{d}/{name}.tex" for d in ("examples", "tests/cases", "docs/reference/styles")
+        src = next((f"{d}/{name}.tex" for d in WATCHED[:-1]
                     if (ROOT / d / f"{name}.tex").is_file()), None)
         url = RAW.format(repo=a.repo, sha=a.sha, name=name)
         print(f"**{name}**" + (f" — `{src}`" if src else "") + "\n")

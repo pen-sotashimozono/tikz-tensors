@@ -30,19 +30,16 @@ A figure is made of two kinds of statement, kept in two places.
 | label | `\tnput`, `\tnmid` | text on what is not an open index |
 | between blocks | `\tneq`, `\tnapprox`, `\tnbreak` | a relation sign, or a new row |
 
-A matrix product state, in the examples' notation, is a whole figure:
+## Step by step
 
-```latex
-\tnstack{P}{5}{ket}
-\tnlayer{P}{ket}{3*coef/$A$, dots, coef/$A$}
-\tnconnect{P}
-\tnopen[labels={$n_1$, $n_2$, $n_3$, $n_N$}]{down}{P}
-\tnmid{P-ket-1}{P-ket-2}{$D$}
-```
+One figure, built a command at a time in the examples' notation: on the left
+the figure so far, what the step adds marked; on the right what it draws.
+`canl`, `center`, `canr`, `gate` and `gauge` are the notation's declarations;
+every other word is a command or a name the stack gave. Nothing in it is a
+length or a coordinate, so two people who draw the same network write the
+same file.
 
-`coef` is a declaration of the notation (`tn capsule, tn fill=coef`); every
-other word is a command or a name the stack gave. Nothing in it is a length
-or a coordinate, so two people who draw the same network write the same file.
+[the steps](steps/)
 
 ## Conventions
 

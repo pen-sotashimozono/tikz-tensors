@@ -22,6 +22,7 @@ it and checks every link.
 """
 from __future__ import annotations
 
+import difflib
 import html
 import pathlib
 import re
@@ -481,6 +482,47 @@ def pictured(body: str) -> tuple[str, str]:
         f'<pre class="code">{latex(pic.code, "")}</pre>')
 
 
+def code_lines(code: str, added: set[int]) -> str:
+    """LaTeX source as HTML a line at a time, the lines numbered in <added>
+    marked as new."""
+    return "".join(f'<span class="ln{" add" if k in added else ""}">{latex(line, "") or " "}</span>'
+                     for k, line in enumerate(code.splitlines()))
+
+
+def walkthrough() -> str:
+    """docs/reference/steps/step-<n>.tex in order: each step's code, what it
+    adds to the step before marked, beside the picture it draws."""
+    out, before = [], []
+    paths = sorted((REFERENCE / "steps").glob("step-*.tex"), key=lambda p: int(p.stem[5:]))
+    for n, path in enumerate(paths, 1):
+        pic = Picture(path)
+        if not pic.svg.exists():
+            sys.exit(f"{pic.svg.relative_to(ROOT)}: no reference picture for {pic.path}")
+        title = path.read_text().partition("\n")[0][3:].strip()
+        code = re.search(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",
+                         path.read_text(), re.S).group()
+        lines = code.splitlines()
+        added = set()
+        for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, before, lines).get_opcodes():
+            if tag in ("insert", "replace"):
+                added.update(range(j1, j2))
+        before = lines
+        m = re.search(r'width="([\d.]+)', pic.svg.read_text()[:400])
+        width = f' style="width:{float(m.group(1)) * 1.3:.0f}pt"' if m else ""
+        # a picture too wide to read at half the card goes under its code
+        wide = " wide" if m and float(m.group(1)) > 260 else ""
+        text = "".join(f"<p>{html.escape(prose(t), quote=False)}</p>" for t in pic.paras)
+        out.append(
+            f'<article class="doc step" id="step-{n}"><header><div class="sigs">'
+            f'<span class="sig">Step {n}. {html.escape(title)}</span></div>'
+            f'<a class="src" href="{REPO}/blob/main/{pic.path}">‹/› source</a></header>'
+            f'<div class="doc-body">{text}<div class="pair{wide}">'
+            f'<pre class="code diff">{code_lines(code, added)}</pre>'
+            f'<figure class="paper"><img{width} src="figures/{pic.name}.svg" '
+            f'alt="{html.escape(title)}"></figure></div></div></article>')
+    return "".join(out)
+
+
 def reference_page(md: str, here: str, title: str) -> str:
     """A page of docs/reference/: its prose as it is, and each `###' entry --
     a command, a group of styles -- a card of its own: the names on top with
@@ -491,6 +533,13 @@ def reference_page(md: str, here: str, title: str) -> str:
     parts, toc = [], []
     for part in re.split(r"(?m)^(?=#{2,3} )", text):
         if not part.startswith("### "):
+            marker = re.search(r"(?m)^\[[^\]]*\]\(steps/\)\s*$", part)
+            if marker:
+                head_html, t = markdown(part[:marker.start()])
+                tail_html, t2 = markdown(part[marker.end():])
+                parts.append(head_html + walkthrough() + tail_html)
+                toc += t + t2
+                continue
             body, t = markdown(part)
             parts.append(body)
             toc += t
@@ -646,6 +695,20 @@ article.doc .doc-body td:first-child{width:38%}
 .tabs a:hover{text-decoration:none;color:var(--fg)}
 .def-head{margin:.8em 0 0;font-size:14px;color:var(--muted)}
 span.sig{font-weight:600}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center}
+.pair figure.paper{margin:.6em 0}
+.pair.wide{grid-template-columns:minmax(0,1fr)}
+@media (max-width:820px){.pair{grid-template-columns:minmax(0,1fr)}}
+pre.diff{--diff:#cf222e;white-space:pre-wrap}
+:root[data-theme=dark] pre.diff{--diff:#ff6b6b}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) pre.diff{--diff:#ff6b6b}}
+pre.diff .ln{display:block;padding-left:18px;margin-left:-14px;text-indent:-2.2em;
+  border-left:3px solid transparent}
+pre.diff .ln{padding-left:calc(18px + 2.2em)}
+pre.diff .ln.add{background:color-mix(in srgb,var(--diff) 15%,transparent);
+  border-left-color:var(--diff)}
+pre.diff .ln.add::before{content:"+";position:absolute;margin-left:-13px;text-indent:0;
+  color:var(--diff);font-weight:700}
 th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--muted);font-weight:600}
 """
@@ -671,7 +734,8 @@ def build(out: pathlib.Path) -> list[str]:
         if not e.svg.exists():
             sys.exit(f"{e.svg.relative_to(ROOT)}: no reference picture for {e.name}")
         shutil.copy(e.svg, out / "figures" / e.svg.name)
-    for svg in sorted((ROOT / "tests" / "reference").glob("style-*.svg")):
+    for svg in sorted([*(ROOT / "tests" / "reference").glob("style-*.svg"),
+                       *(ROOT / "tests" / "reference").glob("step-*.svg")]):
         shutil.copy(svg, out / "figures" / svg.name)
     pages = {"index.html": index_page(exs), "examples.html": examples_page(exs),
              "notation.html": notation_page()}

@@ -8,10 +8,11 @@
 #   tests/run.sh rules              # 2
 #   tests/run.sh compare [--update] # 3, on the LuaLaTeX PDFs already in tests/out/
 #
-# 1. examples/*.tex, tests/cases/*.tex and docs/reference/styles/*.tex (the
-#    pictures of the reference's styles page) compile, with no warning from LaTeX or
-#    a package and the log naming this version of the package (the
-#    \ProvidesPackage line, as scripts/version.py reads it).
+# 1. examples/*.tex, tests/cases/*.tex, and the reference's pictures --
+#    docs/reference/styles/*.tex and docs/reference/steps/*.tex -- compile,
+#    with no warning from LaTeX or a package and the log naming this version
+#    of the package (the \ProvidesPackage line, as scripts/version.py reads
+#    it).
 # 2. tests/coverage.py: every style and command in tex/ is used by some case;
 #    tests/lint.py: every example follows the figure rules (docs/roadmap.md).
 # 3. The LuaLaTeX pages, as SVG from pdftocairo, draw what tests/reference/*.svg
@@ -36,7 +37,8 @@ compile() {
   version="$(python3 scripts/version.py)"
   rm -rf "$OUT/$engine"
   mkdir -p "$OUT/$engine"
-  for src in examples/*.tex tests/cases/*.tex docs/reference/styles/*.tex; do
+  for src in examples/*.tex tests/cases/*.tex docs/reference/styles/*.tex \
+             docs/reference/steps/*.tex; do
     name="$(basename "$src" .tex)"
     log="$OUT/$engine/$name.log"
     if ! "$engine" -interaction=nonstopmode -halt-on-error -output-directory="$OUT/$engine" \
