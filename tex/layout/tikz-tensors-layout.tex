@@ -128,7 +128,72 @@
       \tn@kk) is drawn already}{An index is drawn once, by \string\tnconnect,
       \string\tnopen or \string\tnjoin.}\fi}
 
-% A height inside tensor #1 at every site it covers, as \tn@ay: its middle,
+% Has tensor <#1> an index on side <#2> at all? \tn@hasl is 1 if its type
+% does not say (tn legs not given: every side the layout gives it) or names
+% the side, else 0. \tn@needleg is an error for a command that names one.
+\def\tn@hasleg#1#2{%
+  \ifcsname tn@n@#1@legs\endcsname \edef\tn@hl{\tn@get{n@#1@legs}}\else \def\tn@hl{}\fi
+  \ifx\tn@hl\@empty \def\tn@hasl{1}%
+  \else
+    \edef\tn@hlt{\noexpand\in@{,#2,}{,\tn@hl,}}\tn@hlt
+    \ifin@ \def\tn@hasl{1}\else \def\tn@hasl{0}\fi
+  \fi}
+\def\tn@needleg#1#2#3{\tn@hasleg{#1}{#2}%
+  \ifnum\tn@hasl=0
+    \PackageError{tikz-tensors}{#3: `#1' has no index on its #2 side; its type
+      says tn legs={\tn@hl}}{}\fi}
+
+% A bond the figure leaves out (\tnconnect's apart= naming a port): marked by
+% port, as a port is marked drawn, and read where the layout would join it.
+\def\tn@cut#1#2#3{\tn@key{#3}\tn@set{x@\tn@get{n@#1@g}@#1@#2@\tn@kk}{1}}
+\def\tn@ifcut#1#2#3{\tn@key{#3}%
+  \ifcsname tn@x@\tn@get{n@#1@g}@#1@#2@\tn@kk\endcsname
+    \def\tn@iscut{1}\else\def\tn@iscut{0}\fi}
+
+% ---- lists of names -------------------------------------------------------------
+% \tn@xlist{<list>}: the list, with every item written <pre>{<a>..<b>}<post>
+% made the items <pre>a<post>, ..., <pre>b<post> -- S-ket-{2..4}, P-{1..4}-2
+% -- as \tn@xl. Every command that takes a list of tensors or ports reads it
+% through this.
+\def\tn@xlist#1{%
+  \gdef\tn@xl{}%
+  \foreach \tn@xi in {#1}{\expandafter\tn@xone\tn@xi{\tn@nil}\relax\tn@end}}
+\def\tn@xone#1#{\tn@xtwo{#1}}
+\def\tn@xtwo#1#2#3\tn@end{%
+  \def\tn@xr{#2}\def\tn@xnil{\tn@nil}%
+  \ifx\tn@xr\tn@xnil \tn@xadd{#1}%
+  \else
+    \tn@xpost#3%
+    \tn@xab#2\tn@end
+    \foreach \tn@xk in {\tn@xa,...,\tn@xb}{\tn@xadd{#1\tn@xk\tn@xp}}%
+  \fi}
+\def\tn@xpost#1#{\def\tn@xp{#1}\@gobble}
+\def\tn@xab#1..#2\tn@end{\edef\tn@xa{#1}\edef\tn@xb{#2}}
+\def\tn@xadd#1{\ifx\tn@xl\@empty \xdef\tn@xl{#1}\else \xdef\tn@xl{\tn@xl,#1}\fi}
+
+% ---- a tensor, shown ------------------------------------------------------------
+% \tnshow{<tensor>, ...}
+% What the package made of each tensor, written to the log (and the terminal):
+% its block, the sites and layers it covers, its type, the sides its type
+% gives it indices on, and each index -- its side, where on it, and whether it
+% is drawn yet, joined or opened. Everything a layout decided without being
+% told, said; for finding out why a figure looks as it does.
+\newcommand{\tnshow}[1]{%
+  \tn@xlist{#1}%
+  \foreach \tn@sn in \tn@xl{\expandafter\tn@show\expandafter{\tn@sn}}}
+\def\tn@show#1{%
+  \tn@isnode{#1}{\string\tnshow}%
+  \edef\tn@sb{\tn@get{n@#1@s}}\edef\tn@sk{\tn@get{\tn@sb @kind}}%
+  \def\tn@skg{grid}\ifx\tn@sk\tn@skg \def\tn@skr{rows}\else \def\tn@skr{layers}\fi
+  \typeout{tikz-tensors: #1 -- a tensor of \tn@sk\space `\tn@sb',
+    sites \tn@get{n@#1@a}..\tn@get{n@#1@b}, \tn@skr\space
+    \tn@get{n@#1@k}..\tn@get{n@#1@kb}}%
+  \ifcsname tn@n@#1@type\endcsname
+    \typeout{\space\space type: \tn@get{n@#1@type}}\fi
+  \ifcsname tn@n@#1@legs\endcsname \edef\tn@hl{\tn@get{n@#1@legs}}\else\def\tn@hl{}\fi
+  \typeout{\space\space sides with indices: \ifx\tn@hl\@empty every side its
+    layout gives it (tn legs not said)\else \tn@hl\fi}%
+  \tn@nop{#1}{show}{#1}}
 % unless it is a triangle pointing up or down, which is only as tall as its
 % middle near its apex -- then just inside its base.
 \def\tn@inner#1{%
@@ -163,6 +228,11 @@
 \newcommand{\tnconnect}[2][]{%
   \pgfkeys{/tn/connect/.cd, along=tn edge, down=tn edge, apart=, #1}%
   \pgfkeysgetvalue{/tn/connect/apart}\tn@apart
+  % apart= names layers, and ports: a port is one bond left out
+  \expandafter\tn@xlist\expandafter{\tn@apart}\gdef\tn@apartl{}%
+  \foreach \tn@ai in \tn@xl{%
+    \expandafter\tn@apartone\tn@ai:\tn@end}%
+  \let\tn@apart\tn@apartl
   \pgfkeysgetvalue{/tn/connect/along}\tn@along
   \pgfkeysgetvalue{/tn/connect/down}\tn@down
   \tn@op{#2}{connect}{#2}}
@@ -210,7 +280,8 @@
 \newcommand{\tnopen}[3][]{%
   \tn@openkeys{#1}%
   \edef\tn@dir{#2}%
-  \foreach \tn@it in {#3}{%
+  \tn@xlist{#3}%
+  \foreach \tn@it in \tn@xl{%
     \ifcsname tn@\tn@it @kind\endcsname
       \expandafter\tn@op\expandafter{\tn@it}{openblock}{\tn@oedge}{\tn@it}%
     \else
@@ -233,12 +304,24 @@
 % drawn from the first port to the second, which is the way an arrow on it
 % points; a port that is drawn already is an error.
 \def\tn@pspec#1:#2:#3:#4\tn@end{\def\tn@pn{#1}\def\tn@ps{#2}\def\tn@pk{#3}}
+% one item of apart=: a layer, kept in \tn@apartl, or a port, marked cut
+\def\tn@apartone#1:#2\tn@end{\def\tn@ap{#2}%
+  \ifx\tn@ap\@empty
+    \ifx\tn@apartl\@empty \xdef\tn@apartl{#1}\else \xdef\tn@apartl{\tn@apartl,#1}\fi
+  \else
+    \tn@pspec#1:#2::\tn@end \tn@isnode{\tn@pn}{\string\tnconnect}%
+    \ifx\tn@pk\@empty \def\tn@pk{1}\fi
+    \tn@nop{\tn@pn}{portkey}{\tn@pn}{\tn@ps}{\tn@pk}%
+    \tn@cut{\tn@pn}{\tn@ps}{\tn@pkey}%
+  \fi}
 \pgfkeys{/tn/join/.is family, /tn/join/edge/.initial=tn edge}
 \newcommand{\tnjoin}[3][]{%
   \pgfkeys{/tn/join/.cd, edge=tn edge, #1}\pgfkeysgetvalue{/tn/join/edge}\tn@jedge
   \tn@pspec#2:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
+  \tn@needleg{\tn@pn}{\tn@ps}{\string\tnjoin}%
   \edef\tn@ja{\tn@get{n@\tn@pn @s}}%
   \tn@pspec#3:::\tn@end \tn@isnode{\tn@pn}{\string\tnjoin}%
+  \tn@needleg{\tn@pn}{\tn@ps}{\string\tnjoin}%
   \edef\tn@jb{\tn@get{n@\tn@pn @s}}%
   \ifx\tn@ja\tn@jb\else
     \PackageError{tikz-tensors}{\string\tnjoin: `#2' and `#3' are in two

@@ -5,7 +5,10 @@
 % across so that the corner is on the site's line (tn leg anchor); which way
 % it points, which the arrow on its bond follows (tn points); and the
 % side on which it has one index however many sites it spans -- S, below
-% (tn single). The triangles have them built in; any outline can be given them.
+% (tn single); and the sides it has indices on at all -- M, with a left and a
+% down index only, joined to nothing on its right and opened nowhere above
+% (tn legs). The triangles have the first three built in; any outline can be
+% given them.
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
@@ -18,5 +21,10 @@
   \tnlayer{R}{a}{{tn rounded, tn single=down}/$S$/2}
   \tnopen{up}{R}
   \tnopen{down}{R}
+  \tnstack{N}{2}{a}
+  \tnlayer{N}{a}{{tn box, tn legs={left, down}}/$M$, tn box/$B$}
+  \tnconnect{N}
+  \tnopen{up}{N}
+  \tnopen{down}{N}
 \end{tikzpicture}
 \end{document}

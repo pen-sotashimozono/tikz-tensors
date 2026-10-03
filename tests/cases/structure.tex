@@ -1,0 +1,23 @@
+% A specimen of what a tensor is made of, not a diagram.
+%
+% A type that says the sides it has indices on (tn legs): M has a left and a
+% down index and nothing else, so \tnconnect gives it no bond to its right
+% and \tnopen{up} on the whole stack passes it by. A bond left out by naming
+% one of its ports in apart=, and two by a range, S-b-{1..2}:right. A range
+% in \tnopen. And \tnshow, which writes what the package made of two tensors
+% to the log -- the test is that it compiles, without a warning.
+\documentclass[border=5pt]{standalone}
+\usepackage{tikz-tensors}
+\tikzset{halfopen/.style={tn box, tn legs={left, down}}}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{5}{a, b}
+  \tnlayer{S}{a}{2*tn box/$A$, halfopen/$M$, 2*tn box/$B$}
+  \tnlayer{S}{b}{5*tn box/$C$}
+  \tnconnect[apart={S-a-4:right, S-b-{1..2}:right}]{S}
+  \tnopen{down}{S-b-{2..4}}
+  \tnopen{up}{S}
+  \tnframe[label=frame]{S-b-{1..2}}
+  \tnshow{S-a-3, S-a-4}
+\end{tikzpicture}
+\end{document}

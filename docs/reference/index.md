@@ -58,6 +58,13 @@ predicts the rest.
   placed (`\tnstack` and `\tnlayer`, or `\tngrid`), its implied indices drawn
   (`\tnconnect`), the rest opened or joined (`\tnopen`, `\tnjoin`), and only
   then are labels put on what is not an open index (`\tnput`, `\tnmid`).
+- **A list of names takes ranges.** Wherever a command takes tensors or
+  ports, `S-ket-{2..4}` is `S-ket-2, S-ket-3, S-ket-4`, and the range may
+  stand anywhere in the name (`P-{1..4}-2`, `S-b-{1..2}:right`).
+- **What a layout decides, a type can say.** A stack joins every side of a
+  tensor it can; a type that says `tn legs={left, down}` has those sides and
+  no others, and a command naming another is an error. `\tnshow` writes out
+  what was made of a tensor.
 - **Every index is drawn once.** Opening or joining one that is drawn
   already is an error; opening a whole block skips the ones that are taken.
 - **No lengths and no coordinates in a figure.** Distances are tokens, set

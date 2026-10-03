@@ -302,6 +302,44 @@
   \ifx\tn@t\tn@sdown \tn@anc{#1}{south}\else \tn@anc{#1}{north}\fi
   \let\tn@pe\tn@ay}
 
+% The key of the <#3>th port of tensor <#1> on side <#2>, as \tn@pkey: the
+% layer it is on (left, right) or the site (up, down), or the middle of the
+% sites on a side its type names single -- the key \tn@use marks it by.
+\def\tn@stack@portkey#1#2#3{%
+  \edef\tn@pks{#2}%
+  \ifx\tn@pks\tn@sleft \pgfmathtruncatemacro\tn@pkey{\tn@get{n@#1@k}+(#3)-1}%
+  \else\ifx\tn@pks\tn@sright \pgfmathtruncatemacro\tn@pkey{\tn@get{n@#1@k}+(#3)-1}%
+  \else
+    \edef\tn@one{\tn@get{n@#1@one}}%
+    \ifx\tn@one\tn@pks \pgfmathsetmacro\tn@pkey{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}%
+    \else \pgfmathtruncatemacro\tn@pkey{\tn@get{n@#1@a}+(#3)-1}\fi
+  \fi\fi}
+% \tnshow on a stack: every port, side by side, drawn or free
+\def\tn@stack@show#1{%
+  \edef\tn@one{\tn@get{n@#1@one}}%
+  \foreach \tn@ss in {left,right,up,down}{%
+    \tn@hasleg{#1}{\tn@ss}%
+    \ifnum\tn@hasl=1
+      \ifx\tn@ss\tn@one
+        \pgfmathsetmacro\tn@q{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}\tn@showport{#1}{\tn@ss}{\tn@q}%
+      \else
+        \ifx\tn@ss\tn@sleft \def\tn@sr{k}\def\tn@srb{kb}\else
+        \ifx\tn@ss\tn@sright \def\tn@sr{k}\def\tn@srb{kb}\else
+          \def\tn@sr{a}\def\tn@srb{b}\fi\fi
+        \edef\tn@slo{\tn@get{n@#1@\tn@sr}}\edef\tn@shi{\tn@get{n@#1@\tn@srb}}%
+        \foreach \tn@q in {\tn@slo,...,\tn@shi}{\tn@showport{#1}{\tn@ss}{\tn@q}}%
+      \fi
+    \fi}}
+\def\tn@showport#1#2#3{%
+  \tn@ifused{#1}{#2}{#3}\tn@ifcut{#1}{#2}{#3}%
+  \edef\tn@spd{#2}%
+  \ifx\tn@spd\tn@sleft \def\tn@spw{on layer \tn@kk}\else
+  \ifx\tn@spd\tn@sright \def\tn@spw{on layer \tn@kk}\else
+  \ifx\tn@spd\tn@sup \def\tn@spw{at site \tn@kk}\else
+  \ifx\tn@spd\tn@sdown \def\tn@spw{at site \tn@kk}\else \def\tn@spw{}\fi\fi\fi\fi
+  \typeout{\space\space index #2 \tn@spw: \ifnum\tn@isused=1 drawn\else
+    \ifnum\tn@iscut=1 left out (apart=)\else free\fi\fi}}
+
 % ---- connect -----------------------------------------------------------------
 % Every index the stack implies, and nothing else: along a layer between
 % neighbouring slots that are both filled (or `-'), border to border; down a
@@ -358,6 +396,12 @@
     \ifnum#4=\tn@oa \edef\tn@col{(\tn@oa+\tn@ob)/2}\def\tn@draw{1}\fi
   \fi
   \ifnum\tn@draw=1
+    \tn@hasleg{#2}{down}\ifnum\tn@hasl=0 \def\tn@draw{0}\fi
+    \tn@hasleg{#3}{up}\ifnum\tn@hasl=0 \def\tn@draw{0}\fi
+    \tn@ifcut{#2}{down}{\tn@col}\ifnum\tn@iscut=1 \def\tn@draw{0}\fi
+    \tn@ifcut{#3}{up}{\tn@col}\ifnum\tn@iscut=1 \def\tn@draw{0}\fi
+  \fi
+  \ifnum\tn@draw=1
     \tn@colx{#1}{\tn@col}%
     \tn@use{#2}{down}{\tn@col}\tn@use{#3}{up}{\tn@col}%
     \tn@facing{\tn@down}{#2}{#3}%
@@ -385,6 +429,11 @@
     \def\tn@sa{1}\fi
   \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\or
     \def\tn@sb{1}\fi
+  % a side its type does not give it, or a bond apart= leaves out, is no bond
+  \ifnum\tn@ka=1 \tn@hasleg{\tn@oa}{right}\ifnum\tn@hasl=0 \def\tn@sa{0}\fi
+    \tn@ifcut{\tn@oa}{right}{\tn@lk}\ifnum\tn@iscut=1 \def\tn@sa{0}\fi\fi
+  \ifnum\tn@kb=1 \tn@hasleg{\tn@ob}{left}\ifnum\tn@hasl=0 \def\tn@sb{0}\fi
+    \tn@ifcut{\tn@ob}{left}{\tn@lk}\ifnum\tn@iscut=1 \def\tn@sb{0}\fi\fi
   \ifnum\tn@sa\tn@sb=11
     % a bond: from the right border of the one to the left border of the other
     \def\tn@pa{}\def\tn@pb{}%
@@ -482,6 +531,7 @@
 \def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
   \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
 \def\tn@stack@opennode#1#2{%
+  \tn@needleg{#2}{\tn@dir}{\string\tnopen}%
   \tn@vdir
   \ifnum\tn@isv=1
     \edef\tn@a{\tn@get{n@#2@a}}\edef\tn@b{\tn@get{n@#2@b}}%
@@ -516,6 +566,8 @@
           \xdef\tn@lastn{\tn@o}%
         \fi}%
       \ifx\tn@dir\tn@sdown \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else \tn@hasleg{\tn@pick}{\tn@dir}\ifnum\tn@hasl=0
+        \let\tn@pick\@empty\fi\fi
       \ifx\tn@pick\@empty\else
         \edef\tn@one{\tn@get{n@\tn@pick @one}}%
         \ifx\tn@one\tn@dir
@@ -540,6 +592,8 @@
           \xdef\tn@lastn{\tn@o}%
         \fi}%
       \ifx\tn@dir\tn@sright \let\tn@pick\tn@lastn \else \let\tn@pick\tn@first \fi
+      \ifx\tn@pick\@empty\else \tn@hasleg{\tn@pick}{\tn@dir}\ifnum\tn@hasl=0
+        \let\tn@pick\@empty\fi\fi
       \ifx\tn@pick\@empty\else
         \edef\tn@lk{\tn@get{#2@k@\tn@l}}%
         \tn@ifused{\tn@pick}{\tn@dir}{\tn@lk}%
