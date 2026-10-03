@@ -13,10 +13,13 @@
 % indices of the lattice and whose apex points at its other half, and the
 % index between the halves is the bond the truncation keeps. The lattice is
 % drawn turned, as every grid is, so the two ways are one above the other and
-% side by side.
+% side by side. The two splits leave four tensors, S1 and S3 above and below,
+% S2 and S4 left and right, and each has its own colour: the same colour is
+% the same tensor, here and wherever it appears in the lattice.
 %
 % Split, the lattice falls into squares of four halves around its plaquettes.
-% Each square is contracted into one tensor, T', framed here for one of them,
+% Each square -- one of each of the four halves -- is contracted into one
+% tensor, T', a new tensor and so a new colour, framed here for one of them,
 % and the T' form a square lattice of their own -- turned against the old one
 % by 45 degrees, which is why it is drawn upright -- with a lattice spacing
 % larger by the square root of two. Repeated, the step coarse-grains the
@@ -31,18 +34,18 @@
   \tnconnect{A}
   \tnopen{around}{A}
   \tnapprox
-  \tngrid[split, scale=0.8]{B}{2}{1}{factor/$S$}
+  \tngrid[split, scale=0.8]{B}{2}{1}{half1/$S_1$, half3/$S_3$, half2/$S_2$, half4/$S_4$}
   \tnconnect{B}
   \tnopen{around}{B}
   \tnbreak
-  \tngrid[split, scale=0.8]{C}{3}{3}{factor/$S$}
+  \tngrid[split, scale=0.8]{C}{3}{3}{half1/$S_1$, half3/$S_3$, half2/$S_2$, half4/$S_4$}
   \tnconnect{C}
   \tnopen{around}{C}
   \tnframe[label=$T'$]{C-1-1-bottom, C-2-1-left, C-1-2-right, C-2-2-top}
   \tneq
   \tnstack[scale=0.8]{Q}{2}{a, b}
-  \tnlayer{Q}{a}{2*coef/$T'$}
-  \tnlayer{Q}{b}{2*coef/$T'$}
+  \tnlayer{Q}{a}{2*coarse/$T'$}
+  \tnlayer{Q}{b}{2*coarse/$T'$}
   \tnconnect{Q}
   \tnopen{up}{Q}
   \tnopen{down}{Q}

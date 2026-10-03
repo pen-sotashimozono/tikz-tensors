@@ -44,7 +44,7 @@ A square lattice of one tensor, turned by 45 degrees.
 | key | |
 |---|---|
 | `bonds=<type>/<label>` | a tensor on every bond, turned with the lattice |
-| `split` | every site drawn as the two halves of a singular value decomposition, as in the tensor renormalization group: triangles one above the other on the sites with i+j even, side by side on the others, their flat sides carrying the bonds of the lattice and their apexes joined; the type is the halves' |
+| `split` | every site drawn as the two halves of a singular value decomposition, as in the tensor renormalization group: triangles one above the other on the sites with i+j even, side by side on the others, their flat sides carrying the bonds of the lattice and their apexes joined; the type is the halves', four of them — `<top>, <bottom>, <left>, <right>`, the four tensors the splits leave — or one for all |
 | `scale=<factor>`, `pitch=<factor>`, `size=<factor>`, `stub=<factor>` | as on a stack: the grid at factors of the notation's distances and sizes |
 
 ### `\tnconnect[<keys>]{<block>}`
