@@ -13,7 +13,7 @@ reference, and every example with its code beside its picture.
 | | |
 |---|---|
 | ![expansion](tests/reference/01-expansion.svg) | ![swap](tests/reference/02-swap.svg) |
-| ![canonical](tests/reference/04-canonical.svg) | ![mera](tests/reference/19-mera.svg) |
+| ![canonical](tests/reference/08-canonical.svg) | ![mera](tests/reference/20-mera.svg) |
 
 ## Shapes, not meanings
 
@@ -92,7 +92,7 @@ layers down, at one pitch the package owns, with a block (the rest of the
 network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 ```latex
-\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-heff-two-site.tex
+\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/14-heff-two-site.tex
 \tnlayer{H}{op}{2*mpo/$W$}
 \tnconnect{H}
 \tnopen{up}{H-op-1, H-op-2}
@@ -128,7 +128,7 @@ layer has one spelling.
   does not: the bond that closes a periodic chain, a trace, a bond that skips
   its neighbours. Two ports facing each other with nothing between are joined
   straight; any other index runs along the gutters between columns and
-  layers, so it never passes through a tensor (example 24).
+  layers, so it never passes through a tensor (example 07).
 - `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
   one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
   `\tnopen{down}{P}` its physical indices, straight down.
@@ -292,6 +292,29 @@ quarter of a point. A moved leg, a changed colour or a lost label fails, and a
 `test`, and the rendered pages are the `rendered` artifact of the run.
 `tests/cases/styles.tex` shows every style side by side — a new style is
 added there.
+
+## Acknowledgements and related work
+
+The graphical notation is the field's common one — tensors as shapes, indices
+as lines, triangles for isometries — and
+[tensornetwork.org](https://tensornetwork.org/) (Apache-2.0) is where much of
+it is laid out; the algorithms the examples draw are the ones it reviews. Two
+examples take their layout from the figures on its front page:
+[`19-ttn`](examples/19-ttn.tex) (the tree tensor network) and
+[`20-mera`](examples/20-mera.tex) (the MERA). Their drawings are this
+package's own; the arrangement is theirs, and each file says so.
+
+Other tools for tensor-network diagrams:
+
+- [tikz-tensor-networks](https://ctan.org/pkg/tikz-tensor-networks)
+  ([tenkz](https://github.com/LionSR/tenkz)) — a TikZ package on CTAN that
+  draws a diagram from a description of the network: MPS, PEPS, string and
+  channel diagrams. More general than this one; this one fixes every length
+  and lints figures so that one network has one spelling.
+- [mptikz](https://github.com/arolandi97/mptikz) — TikZ functions for
+  one-dimensional networks, MPS and MPO.
+- [TensorTrace](https://www.tensortrace.com/) — an application for drawing
+  networks and generating the code that contracts them.
 
 ## Licence
 

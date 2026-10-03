@@ -139,8 +139,13 @@ def required(base: str, old: str) -> tuple[str | None, str]:
     if STY in touched and PROVIDES.sub("", read(STY, base) or "") == PROVIDES.sub("", read(STY) or ""):
         del touched[STY]
     package = sorted(f for f in touched if f.startswith(PACKAGE))
+    # A reference picture counts as changed when what it drew is drawn by no
+    # reference any more: renaming one (renumbering the examples) changes no
+    # picture, and a new one is an addition, not a change.
+    now = {(ROOT / f).read_bytes() for f in files(None, "tests/reference/")}
     refs = sorted(f for f, kind in touched.items()
-                  if f.startswith("tests/reference/") and kind != "A")
+                  if f.startswith("tests/reference/") and kind != "A"
+                  and (read(f, base) or "").encode() not in now)
     if not package and not refs:
         return None, "changes nothing under tex/ or theme/ and no reference image"
     removed = sorted(api(base) - api())

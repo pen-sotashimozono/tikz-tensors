@@ -22,7 +22,7 @@ the current examples:
 
 | file | lengths written by hand | raw `\node` / `\draw` |
 |---|---|---|
-| `06-dmrg` (now `06-heff-two-site`) | `\tnGap`, `\tnThetaY`, `\tnThetaH`, `7mm`, `31mm` | `\tikzset{env/...}` local style |
+| `06-dmrg` (now `14-heff-two-site`) | `\tnGap`, `\tnThetaY`, `\tnThetaH`, `7mm`, `31mm` | `\tikzset{env/...}` local style |
 | `07-fixed-point` | `34mm`, `44mm`, `10.5mm`, `14.5mm`, `0.95`, `1.6`, `1.05`, `1.45`, `3.5`, `4.4`, `6.4cm`, `4.8cm` | 12 raw `\node`s, `=` placed by hand |
 | `08-tebd` | `x=1.45cm`, `52mm`, `92mm`, `9 ... 79 mm`, `7.6cm` | local `\tebdchain` macro |
 | `09-expectation` | `x=1.25cm`, `-4.15`, `8mm`, `28.5mm`, `-2.2`, `9mm` | raw `\node[op]` |
@@ -72,16 +72,16 @@ decompositions). "Needs" is what the package lacks for that picture.
 | algorithm | picture | needs |
 |---|---|---|
 | SVD, QR | T = U S V†, T = Q R | `iso` at any angle; equation layout |
-| canonical form | `04`, `05` | — (done) |
-| DMRG (two-site) | H_eff, `06` | **stack**, **env**, open stubs |
-| TEBD | `08` | gate drop as a token, not `9 ... 79 mm` |
+| canonical form | `08-canonical`, `09-centre` | — (done) |
+| DMRG (two-site) | H_eff, `14-heff-two-site` | **stack**, **env**, open stubs |
+| TEBD | `17-trotter-sweep` | gate drop as a token, not `9 ... 79 mm` |
 | TDVP | forward on AC, backward on C | stack, env, `centrebond` in a stack |
 | MPO × MPS, naive | two layers fused | stack, **fused index** |
 | zip-up | left: new MPS, zipper, right: two layers | stack, fused index, SVD split |
 | density-matrix algorithm | ket, W, W†, bra, traced | four-layer stack, env |
 | fitting | ⟨φ\|W\|ψ⟩ with envs | stack, env |
-| expectation value | `09` | stack (the hand-placed `-4.15`, `28.5mm` go) |
-| iDMRG, VUMPS | AL, AC, C, AR; fixed points | stack, env, equation layout (`07`) |
+| expectation value | `13-expectation` | stack (the hand-placed `-4.15`, `28.5mm` go) |
+| iDMRG, VUMPS | AL, AC, C, AR; fixed points | stack, env, equation layout (`18-fixed-point`) |
 | sampling | ψ with legs capped by basis vectors | **cap** (a vector on an index) |
 | TTN | tree, isometric toward the root | `iso` at any angle, tree placement |
 | MERA | disentanglers u, isometries w | `iso` 2→1, gate as disentangler |
@@ -93,7 +93,7 @@ decompositions). "Needs" is what the package lacks for that picture.
 Ranked by how many rows they unblock:
 
 1. **stack** — layers `ket`/`op`/`bra` in one column grid, the layer gap a
-   token. Nine algorithms, and the source of most numbers in `06`, `07`, `09`.
+   token. Nine algorithms, and the source of most numbers in `14-heff-two-site`, `18-fixed-point`, `13-expectation`.
 2. **env** — the contracted remainder of a network: L and R blocks, the
    fixed points l and r, CTM corners and edges. It spans the layers of a stack
    and gives each layer one leg at that layer's height (today `[yshift=10.5mm]`).
@@ -138,17 +138,17 @@ touches off the lint ratchet.
 | phase | adds | examples |
 |---|---|---|
 | 0 | `tests/lint.py` (the rules), `tests/lint-legacy.txt`, CI step — **done** | — |
-| 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `06`, `09` rewritten; single-site and bond H_eff, fixed point, low rank |
-| 2 | fused index (`tn double`), delta (`tn dot`), basis caps, tensors across layers, `\|` and `dots` slots, rows — **done** (v0.6.0) | MPO × MPS, zip-up, CP, sampling (`13`–`16`); every legacy example rewritten |
-| 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`17`–`19`), |
-| 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, HOTRG (`20`–`23`); TRG still needs diagonal indices |
-| 4½ | modules (core, nodes, edges, canvas, stack, connect, grid, labels); a tensor's indices as ports; `\tnjoin`; `<n>*` in a layer; `\tnset`; the coordinate commands removed — **done** (v0.9.0) | periodic MPS (`24`) |
-| 4¾ | folders (`core/`, `style/`, `layout/`); the abstract layout, with stack, tree and grid as layouts; ports recorded once drawn — **done** (v0.10.0) | the grid on `\tnconnect`/`\tnopen` (`20`, `21`); TRG is next: a layout of its own |
+| 1 | stack, env, `\tnopen`, `\tneq` — **done** (v0.5.0) | `14-heff-two-site`, `13-expectation` rewritten; single-site and bond H_eff, fixed point, low rank |
+| 2 | fused index (`tn double`), delta (`tn dot`), basis caps, tensors across layers, `\|` and `dots` slots, rows — **done** (v0.6.0) | MPO × MPS, zip-up, CP, sampling (`11-mpo-mps`, `12-zip-up`, `04-cp`, `10-sampling`); every legacy example rewritten |
+| 3 | triangles up and down, one rule for vertical indices, `tn single` — **done** (v0.7.0) | SVD/QR, TTN, MERA (`03-svd-qr`, `19-ttn`, `20-mera`), |
+| 4 | `\tngrid`, environment corners and sides — **done** (v0.8.0) | PEPS, simple update, CTMRG, HOTRG (`21-peps`, `22-simple-update`, `23-ctmrg`, `24-hotrg`); TRG still needs diagonal indices |
+| 4½ | modules (core, nodes, edges, canvas, stack, connect, grid, labels); a tensor's indices as ports; `\tnjoin`; `<n>*` in a layer; `\tnset`; the coordinate commands removed — **done** (v0.9.0) | periodic MPS (`07-periodic-mps`) |
+| 4¾ | folders (`core/`, `style/`, `layout/`); the abstract layout, with stack, tree and grid as layouts; ports recorded once drawn — **done** (v0.10.0) | the grid on `\tnconnect`/`\tnopen` (`21-peps`, `22-simple-update`); TRG is next: a layout of its own |
 | 5 | machine learning | neural networks as diagrams: what is a tensor (weights, feature maps) and what is not (activations) |
 
 ## What a figure looks like after phase 1
 
-The shape of the API, not its final spelling. The top-left equation of `07`,
+The shape of the API, not its final spelling. The top-left equation of `18-fixed-point`,
 the transfer-matrix fixed point, today is 12 lines with 9 numbers. Written on
 a stack:
 

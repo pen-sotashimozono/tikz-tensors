@@ -127,6 +127,12 @@ class VersionCheck(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("needs a major step", out)
 
+    def test_a_renamed_reference_image_needs_no_bump(self):
+        # renumbering the examples renames their pictures and changes none
+        (self.tmp / "tests/reference/a.svg").rename(self.tmp / "tests/reference/z.svg")
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+
     def test_a_changed_reference_image_needs_a_minor(self):
         (self.tmp / "tests/reference/a.svg").write_bytes(b"two")
         self.bump("patch")

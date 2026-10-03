@@ -177,6 +177,21 @@ class Example:
         self.svg = ROOT / "tests" / "reference" / f"{self.name}.svg"
 
 
+# The examples in order, from single tensors up to two-dimensional networks:
+# the number each section starts at. Every example falls in one
+# (tests/test_pages.py).
+SECTIONS = [(0, "The theme"),
+            (1, "Single tensors and decompositions"),
+            (6, "Matrix product states"),
+            (13, "Algorithms on a chain"),
+            (19, "Trees and MERA"),
+            (21, "Two dimensions")]
+
+
+def section(ex: "Example") -> str:
+    return [title for start, title in SECTIONS if int(ex.number) >= start][-1]
+
+
 def examples() -> list[Example]:
     return [Example(p) for p in sorted((ROOT / "examples").glob("*.tex"))]
 
@@ -243,11 +258,15 @@ def figure(ex: Example, up: str) -> str:
 
 
 def index_page(exs: list[Example]) -> str:
-    gallery = "".join(
-        f'<a class="card" href="examples/{e.name}.html">{figure(e, "")}'
-        f'<span class="num">{e.number}</span> {html.escape(e.title)}</a>'
-        for e in exs if e.svg.exists() and e.name != "00-palette")
-    shown = next(e for e in exs if e.name == "04-canonical")
+    gallery = ""
+    for _, title in SECTIONS[1:]:
+        cards = "".join(
+            f'<a class="card" href="examples/{e.name}.html">{figure(e, "")}'
+            f'<span class="num">{e.number}</span> {html.escape(e.title)}</a>'
+            for e in exs if section(e) == title)
+        gallery += f'<h3>{html.escape(title)}</h3><div class="gallery">{cards}</div>'
+
+    shown = next(e for e in exs if e.name == "08-canonical")
     body = f"""<section class="hero">
 <h1>tikz-tensors</h1>
 <p>One TikZ format for <strong>tensor-network diagrams</strong>. A figure says
@@ -282,21 +301,27 @@ lists the whole interface; every example below shows its code.</p>
 </section>
 <section>
 <h2>Examples</h2>
-<div class="gallery">{gallery}</div>
+{gallery}
 </section>"""
     return page("Overview", "index.html", body)
 
 
 def examples_page(exs: list[Example]) -> str:
-    rows = "".join(
-        f'<li><a href="examples/{e.name}.html"><span class="num">{e.number}</span> '
-        f'{html.escape(e.title)}</a><span class="lead">{html.escape(prose(e.lead), quote=False)}</span></li>'
-        for e in exs)
+    groups = ""
+    for _, title in SECTIONS:
+        rows = "".join(
+            f'<li><a href="examples/{e.name}.html"><span class="num">{e.number}</span> '
+            f'{html.escape(e.title)}</a><span class="lead">'
+            f'{html.escape(prose(e.lead), quote=False)}</span></li>'
+            for e in exs if section(e) == title)
+        if rows:
+            groups += f'<h2>{html.escape(title)}</h2><ul class="list">{rows}</ul>'
     body = f"""<h1>Examples</h1>
-<p>Each one draws one object an algorithm uses and is named for that object.
-Every page shows the file as it is in <code>examples/</code> and the picture CI
-checks it draws.</p>
-<ul class="list">{rows}</ul>"""
+<p>Each one draws one object an algorithm uses and is named for that object,
+in order from single tensors up to two-dimensional networks. Every page shows
+the file as it is in <code>examples/</code> and the picture CI checks it
+draws.</p>
+{groups}"""
     return page("Examples", "examples.html", body)
 
 

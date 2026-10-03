@@ -30,6 +30,12 @@ class Site(unittest.TestCase):
             self.assertIn(f"examples/{path.stem}.html", self.pages)
             self.assertTrue(path.read_text().startswith("%% "), path.name)
 
+    def test_every_example_is_in_a_section_in_order(self):
+        exs = docsite.examples()
+        self.assertEqual([e.number for e in exs], sorted(e.number for e in exs))
+        for e in exs:
+            self.assertIn(docsite.section(e), [t for _, t in docsite.SECTIONS])
+
     def test_every_link_inside_the_site_resolves(self):
         for name in self.pages:
             page = self.out / name
