@@ -391,16 +391,46 @@ def example_page(exs: list[Example], i: int) -> str:
     return page(e.title, "examples.html", body, depth=1)
 
 
+def defined_in() -> dict[str, str]:
+    """Each public command, and the file under tex/ that defines it."""
+    where = {}
+    for path in sorted((ROOT / "tex").rglob("*.tex")) + [ROOT / "tex" / "tikz-tensors.sty"]:
+        for name in re.findall(r"\\newcommand\{(\\tn[a-z]+)\}", path.read_text()):
+            where[name] = path.relative_to(ROOT).as_posix()
+    return where
+
+
 def api_page() -> str:
-    body, toc = markdown((ROOT / "docs" / "api.md").read_text())
-    def short(text):  # a command's heading by its names alone
-        names = re.findall(r"\\tn[a-z]+", html.unescape(re.sub(r"<[^>]+>", "", text)))
-        return ", ".join(f"<code>{n}</code>" for n in names) if names else text
-    contents = "".join(f'<li class="l{lvl}"><a href="#{ident}">{short(text)}</a></li>'
+    """docs/api.md, each command's entry a block of its own, as Documenter
+    draws a docstring: the signature in a bar along the top, what it is, where
+    it is defined, and the description and its keys under it."""
+    text = (ROOT / "docs" / "api.md").read_text()
+    where = defined_in()
+    parts, toc = [], []
+    for part in re.split(r"(?m)^(?=#{2,3} )", text):
+        if not part.startswith("### "):
+            body, t = markdown(part)
+            parts.append(body)
+            toc += t
+            continue
+        head, _, rest = part.partition("\n")
+        sigs = re.findall(r"`([^`]+)`", head)
+        names = [n for sig in sigs for n in re.findall(r"\\tn[a-z]+", sig)]
+        ident = names[0][1:] if names else slug(head)
+        toc.append((3, ident, ", ".join(f"<code>{html.escape(n)}</code>" for n in names)))
+        body, _ = markdown(rest)
+        src = where.get(names[0]) if names else None
+        source = (f'<a class="src" href="{REPO}/blob/main/{src}">source</a>' if src else "")
+        lines = "".join(f'<code class="sig">{latex(sig)}</code>' for sig in sigs)
+        parts.append(
+            f'<article class="doc" id="{ident}"><header>'
+            f'<div class="sigs">{lines}</div><span class="kind">Command</span>{source}'
+            f'</header><div class="doc-body">{body}</div></article>')
+    contents = "".join(f'<li class="l{lvl}"><a href="#{ident}">{text}</a></li>'
                        for lvl, ident, text in toc if lvl in (2, 3))
     return page("Reference", "api.html",
                 f'<div class="with-toc"><aside><ul class="toc">{contents}</ul></aside>'
-                f'<article>{body}</article></div>')
+                f'<article>{"".join(parts)}</article></div>')
 
 
 def notation_page() -> str:
@@ -489,6 +519,20 @@ summary{cursor:pointer;color:var(--muted)}
 table{border-collapse:collapse;margin:.6em 0;font-size:15px}
 td:first-child code{white-space:nowrap}
 .toc code{background:none;padding:0;color:inherit}
+article.doc{border:1px solid var(--line);border-radius:8px;margin:18px 0;
+  background:var(--card);overflow:hidden;scroll-margin-top:64px}
+article.doc:target{border-color:var(--accent)}
+article.doc>header{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;
+  background:var(--soft);border-bottom:1px solid var(--line)}
+article.doc .sigs{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+code.sig{background:none;padding:0;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+article.doc .kind{font-size:12px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:0 8px;white-space:nowrap}
+article.doc .src{font-size:12px;color:var(--muted);white-space:nowrap}
+article.doc .doc-body{padding:4px 14px 6px}
+article.doc .doc-body>p:first-child{margin-top:.6em}
+article.doc .doc-body table{width:100%}
+article.doc .doc-body td:first-child{width:38%}
 th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
 th{color:var(--muted);font-weight:600}
 """
