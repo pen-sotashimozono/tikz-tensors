@@ -29,7 +29,7 @@ class Rules(unittest.TestCase):
         self.assertEqual(self.body(
             r"% a comment may say 3.5cm and \node[fill=red] (0,0)",
             r"\tnstack{S}{2}{ket}",
-            r"\tnlayer{S}{ket}{canl/$A$, centre/$C_{12}$}",
+            r"\tnlayer{S}{ket}{canl/$A$, center/$C_{12}$}",
             r"\tnopen[label=$n_{#1}$]{down}{S}",
             r"\tnput[above]{S-ket-1}{$x = 0.5$}"), [])
 

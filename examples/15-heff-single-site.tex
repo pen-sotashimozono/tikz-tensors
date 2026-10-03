@@ -1,8 +1,8 @@
 %% Single-site effective Hamiltonian
 %
-% The single-site effective Hamiltonian, applied to the centre: H_eff AC.
+% The single-site effective Hamiltonian, applied to the center: H_eff AC.
 %
-% The state is in mixed canonical form with its centre AC on this site, so
+% The state is in mixed canonical form with its center AC on this site, so
 % everything to the left of it contracts into L and everything to the right
 % into R. One-site DMRG finds the lowest eigenvector of this operator, one-site
 % TDVP integrates i dAC/dt = H_eff AC with it, VUMPS solves for its fixed
@@ -19,7 +19,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack[left=$L$, right=$R$]{H}{1}{ket, op, bra}
-  \tnlayer{H}{ket}{centre/$A_C$}
+  \tnlayer{H}{ket}{center/$A_C$}
   \tnlayer{H}{op}{mpo/$W$}
   \tnconnect{H}
   \tnopen[label=$\sigma$]{down}{H-op-1}

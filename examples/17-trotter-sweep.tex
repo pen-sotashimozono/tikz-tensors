@@ -13,10 +13,10 @@
 % more pass is the whole price.
 %
 % The state is drawn in a definite mixed canonical form, which is what it is
-% when the step begins. It does not stay in that one: the orthogonality centre
+% when the step begins. It does not stay in that one: the orthogonality center
 % travels with the sweep, so after a gate on (i, i+1) and the truncation that
 % follows it sits ready for (i+1, i+2). That is the practical reason the order
-% is a sweep and not two layers -- in two layers the centre would have to be
+% is a sweep and not two layers -- in two layers the center would have to be
 % dragged back across the chain between them.
 %
 % Read downward: the state at the top, one layer per gate under it. No gate has
@@ -30,7 +30,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket, g1, g2, g3, g4}
-  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{S}{g1}{gate/$U(\delta t)$/2, 3*|}
   \tnlayer{S}{g2}{|, gate/$U(\delta t)$/2, 2*|}
   \tnlayer{S}{g3}{2*|, gate/$U(\delta t)$/2, |}
@@ -42,7 +42,7 @@
   \tnmid[right]{S-g2-6-slot}{S-g3-6-slot}{$O(\delta t^2)$ a step}
   \tnbreak
   \tnstack{T}{5}{ket, g1, g2, g3, g4, g5, g6, g7, g8}
-  \tnlayer{T}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{T}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{T}{g1}{gate/{$U(\delta t/2)$}/2, 3*|}
   \tnlayer{T}{g2}{|, gate/{$U(\delta t/2)$}/2, 2*|}
   \tnlayer{T}{g3}{2*|, gate/{$U(\delta t/2)$}/2, |}

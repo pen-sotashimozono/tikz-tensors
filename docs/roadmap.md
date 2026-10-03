@@ -72,10 +72,10 @@ decompositions). "Needs" is what the package lacks for that picture.
 | algorithm | picture | needs |
 |---|---|---|
 | SVD, QR | T = U S V†, T = Q R | `iso` at any angle; equation layout |
-| canonical form | `08-canonical`, `09-centre` | — (done) |
+| canonical form | `08-canonical`, `09-center` | — (done) |
 | DMRG (two-site) | H_eff, `14-heff-two-site` | **stack**, **env**, open stubs |
 | TEBD | `17-trotter-sweep` | gate drop as a token, not `9 ... 79 mm` |
-| TDVP | forward on AC, backward on C | stack, env, `centrebond` in a stack |
+| TDVP | forward on AC, backward on C | stack, env, `centerbond` in a stack |
 | MPO × MPS, naive | two layers fused | stack, **fused index** |
 | zip-up | left: new MPS, zipper, right: two layers | stack, fused index, SVD split |
 | density-matrix algorithm | ket, W, W†, bra, traced | four-layer stack, env |
@@ -114,14 +114,14 @@ Ranked by how many rows they unblock:
 
 Decided so far: stay inside the ramp as it is and extend it only when a role
 cannot be said with it. The palette works because each colour is a role and not a decoration. Today the
-roles are a chain's: `canl`, `canr`, `centre`, `mpo`, `gate`, `coef`. The other
+roles are a chain's: `canl`, `canr`, `center`, `mpo`, `gate`, `coef`. The other
 algorithms bring roles that do not have a colour yet, and the open decisions
 are these:
 
 | new role | used by | proposal | open question |
 |---|---|---|---|
 | env | DMRG, TDVP, fitting, VUMPS, CTMRG | **decided**: `purple1` at 25%, one colour for L and R; the gate moved to `yellow1` | — |
-| isometry, not on a chain | TTN, MERA w, TRG S, HOTRG U, CTMRG P | `canl`'s colour for "isometric toward the centre", whatever the angle | in a tree there is no left and right, so one colour; is `canr` then only the 1D mirror? |
+| isometry, not on a chain | TTN, MERA w, TRG S, HOTRG U, CTMRG P | `canl`'s colour for "isometric toward the center", whatever the angle | in a tree there is no left and right, so one colour; is `canr` then only the 1D mirror? |
 | disentangler | MERA u, TNR | `gate` (it is a unitary on two indices) | — |
 | partition-function T | TRG, HOTRG | `coef` (a plain array) | — |
 | delta / copy | MPO, CP, TRG | ink dot, no fill | — |

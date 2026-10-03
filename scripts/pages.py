@@ -286,7 +286,7 @@ labelled. No number in it is a length.</p>
 {figure(shown, "")}
 <p class="small">The file is <a href="examples/{shown.name}.html">example
 {shown.number}</a>, without its comment.</p>
-<p class="small">The styles <code>canl</code>, <code>centre</code>,
+<p class="small">The styles <code>canl</code>, <code>center</code>,
 <code>canr</code>, <code>gauge</code> come from the
 <a href="notation.html">notation</a>, which is the user's; the package draws
 shapes only.</p>

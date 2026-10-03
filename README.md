@@ -35,7 +35,7 @@ stand for.
 | `tn gate`, `tn env` | a gate, and the blocks at the ends of a stack |
 
 What a shape *means* — that a circle on a wavy leg is a function of position, a
-triangle an isometry, a diamond the orthogonality centre — is a **notation**,
+triangle an isometry, a diamond the orthogonality center — is a **notation**,
 and a notation belongs to whoever draws in it. Keep yours as a file of styles
 named for the meaning and built from the shapes, and `\input` it after the
 package:
@@ -49,7 +49,7 @@ package:
 
 [`examples/conventions/notation.tex`](examples/conventions/notation.tex) is the
 one the examples here are drawn in: `fn` a function of position on `cont` wavy
-legs, `coef` an array, `op` an operator, `canl`/`canr`/`centre` the canonical
+legs, `coef` an array, `op` an operator, `canl`/`canr`/`center` the canonical
 form, `mpo`, `gate`, `disc` and `gauge`. It is an example of a notation, not
 part of the package. A notation may also change the package's spacing, once
 for all its figures: `\tnset{pitch=20mm, rise=14mm}`.
@@ -118,7 +118,7 @@ layer has one spelling.
 
 - `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
   a bond with an arrow takes its direction from the triangles it joins, so a
-  canonical form's arrows all point at the centre without being written.
+  canonical form's arrows all point at the center without being written.
 - `\tnopen[edge=…, label=…]{<up|down|left|right>}{<tensor or stack>, …}`
   opens indices; given a stack, every site (or layer) at once.
   `label=$\sigma_{#1}$` labels each end, `#1` its number;

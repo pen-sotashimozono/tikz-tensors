@@ -5,6 +5,16 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.11.0 — 2026-10-03
+
+`centre` is `center`, everywhere.
+
+Breaking: the colour `centre` (and the theme token `--centre`) is `center`.
+In the notation of the examples the styles `centre` and `centrebond` are
+`center` and `centerbond`, and the example `09-centre` is `09-center`. The
+comments, the docs and the reference use the American spelling as well. Every
+picture is drawn as before; the palette's label for green1 reads `center`.
+
 ## v0.10.0 — 2026-10-02
 
 Folders, and the abstract layout: stack, tree and grid as layouts of one kind.

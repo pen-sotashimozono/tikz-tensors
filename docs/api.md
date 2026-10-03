@@ -37,7 +37,7 @@ predicts the rest.
 | `<grid>-<i>-<j>` | the tensor at column i, row j of a grid |
 | `<grid>-<i>-<j>-a`, `-b` | the tensor on the bond after it along a row, along a column (`bonds=`) |
 | `<stack>-left`, `<stack>-right` | the environment blocks of a stack |
-| `<stack>-<layer>-<i>-slot` | the centre of a slot, tensor or not, including columns 0 and n+1 |
+| `<stack>-<layer>-<i>-slot` | the center of a slot, tensor or not, including columns 0 and n+1 |
 | `<stack>-<i>-<dir>` | the end of site i's index opened `up` or `down` on the whole stack |
 | `<stack>-<layer>-<dir>` | the end of a layer's index opened `left` or `right` on the whole stack, or running from an environment block into an empty slot |
 | `<tensor>-<dir>` | the end of a tensor's own index opened that way |

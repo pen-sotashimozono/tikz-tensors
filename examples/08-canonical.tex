@@ -2,8 +2,8 @@
 %
 % A finite matrix product state in mixed canonical form, with a two-site gate
 % about to be applied: one step of TEBD. The triangles say which tensors are
-% isometric -- canl to the left of the centre, canr to the right -- and the
-% arrows on the bonds say which way the gauge runs. The centre is the one
+% isometric -- canl to the left of the center, canr to the right -- and the
+% arrows on the bonds say which way the gauge runs. The center is the one
 % tensor that is not isometric, and it is also the one drawn as a diamond:
 % shape and colour both single it out, which is the point, because the norm and
 % every local expectation value can be read off it alone.
@@ -11,7 +11,7 @@
 % A stack of two layers, the state and the gate. The arrows are not written:
 % a bond takes its direction from the triangles it joins, away from one
 % pointing right and into one pointing left, so every arrow runs toward the
-% centre wherever the centre is put. The physical index leaves each triangle
+% center wherever the center is put. The physical index leaves each triangle
 % at the corner of its flat side and continues that side's line.
 %
 % The gate has no legs of its own. The indices run past it and a node covers an
@@ -28,7 +28,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket, gate}
-  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{S}{gate}{2*|, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
   \tnconnect[along=gauge]{S}
   \tnopen[edge=gauge]{left}{S-ket-1}

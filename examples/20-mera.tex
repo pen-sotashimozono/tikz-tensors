@@ -10,7 +10,7 @@
 % only joins them: a disentangler there would act on the same pair the
 % isometry does, and has nothing to straddle. The top tensor is the state on
 % the one site that remains -- the one tensor of the network that is neither
-% an isometry nor a unitary, so it is the centre.
+% an isometry nor a unitary, so it is the center.
 %
 % Every index here is placed by one rule: two tensors of different extent
 % meet once, in the middle of the sites they share. So a disentangler meets
@@ -33,7 +33,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack[tree]{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
-  \tnlayer{M}{top}{7*., centre/$\tau$/2, 7*.}
+  \tnlayer{M}{top}{7*., center/$\tau$/2, 7*.}
   \tnlayer{M}{w4}{iso/$w$/16}
   \tnlayer{M}{w3}{2*iso/$w$/8}
   \tnlayer{M}{u3}{4*., disentangler/$u$/8, 4*.}

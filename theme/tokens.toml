@@ -121,7 +121,7 @@ exact    = "blue3"   # exact / reference results
 [mps]
 canl   = "blue1"    # left-canonical: isometric from the left
 canr   = "warm1"    # right-canonical: isometric from the right
-centre = "green1"   # the orthogonality centre, on a site or on a bond
+center = "green1"   # the orthogonality center, on a site or on a bond
 mpo    = "grey2"    # operator tensors sitting on the chain
 gate   = "yellow1"  # a gate over one site or several
 env    = "purple1"  # an environment: the rest of the network, contracted

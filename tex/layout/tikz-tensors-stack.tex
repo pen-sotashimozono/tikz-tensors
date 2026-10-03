@@ -9,7 +9,7 @@
 % from where it is and from its type, never from a coordinate.
 \tn@kind{stack}{}
 
-% The centre of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
+% The center of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
 % \tn@ly. Column 0 and column n+1 are the slots just beyond the ends; a
 % fraction is a line between two.
 \def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
@@ -19,7 +19,7 @@
 % \tnstack[left=<label>, right=<label>, tree]{<name>}{<sites>}{<layers>}
 % A grid of <sites> slots across and the <layers> down, top to bottom, placed
 % after what is already on the row (an equals sign, or another stack, whose
-% end slot and its own keep them a pitch apart) and centred on the row, so that
+% end slot and its own keep them a pitch apart) and centered on the row, so that
 % the stacks of an equation line up. left= and right= put an environment at
 % either end. Without one, the stack keeps the slot beyond its end as far as
 % that slot's border, which is where an open index there ends -- so an index

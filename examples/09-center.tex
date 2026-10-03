@@ -1,13 +1,13 @@
-%% The orthogonality centre
+%% The orthogonality center
 %
-% The orthogonality centre sits on a site or on a bond, and the notation has to
+% The orthogonality center sits on a site or on a bond, and the notation has to
 % say both, because the two are one SVD apart and a method moves between them
 % every sweep.
 %
-% Above: the centre on a site. C carries a physical index like every other
+% Above: the center on a site. C carries a physical index like every other
 % tensor on the chain, and is the only one that is not isometric.
 %
-% Below: the centre on a bond. Take C = U Lambda V^dagger, absorb U into the
+% Below: the center on a bond. Take C = U Lambda V^dagger, absorb U into the
 % site on its left and V^dagger into the site on its right, and both of those
 % become isometric -- so the chain is A A A to the left and B B to the right,
 % five sites still, and what is left over is Lambda, which lives between two
@@ -25,14 +25,14 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{5}{ket}
-  \tnlayer{S}{ket}{2*canl/$A$, centre/$C$, 2*canr/$B$}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnconnect[along=gauge]{S}
   \tnopen[edge=gauge]{left}{S-ket-1}
   \tnopen[edge=gauge]{right}{S-ket-5}
   \tnopen[label=$n_{#1}$]{down}{S}
   \tnbreak
   \tnstack{T}{6}{ket}
-  \tnlayer{T}{ket}{3*canl/$A$, centrebond/$\Lambda$, 2*canr/$B$}
+  \tnlayer{T}{ket}{3*canl/$A$, centerbond/$\Lambda$, 2*canr/$B$}
   \tnconnect[along=gauge]{T}
   \tnopen[edge=gauge]{left}{T-ket-1}
   \tnopen[edge=gauge]{right}{T-ket-6}

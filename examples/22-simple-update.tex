@@ -3,7 +3,7 @@
 % A PEPS in the form simple update keeps it: a tensor Gamma on every site and a
 % diagonal matrix lambda on every bond.
 %
-% The lambdas are the analogue of the Schmidt values of a chain, the centre on
+% The lambdas are the analogue of the Schmidt values of a chain, the center on
 % a bond, and they are drawn as it is. They are not exact here -- a lattice
 % with loops has no canonical form -- but they are what the update uses as one:
 % to apply a gate to a bond, absorb the lambdas around its two tensors, apply,
@@ -15,7 +15,7 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tngrid[bonds=centrebond/$\lambda$]{S}{3}{3}{coef/$\Gamma$}
+  \tngrid[bonds=centerbond/$\lambda$]{S}{3}{3}{coef/$\Gamma$}
   \tnconnect{S}
   \tnopen{down}{S}
 \end{tikzpicture}

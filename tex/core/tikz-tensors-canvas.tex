@@ -2,7 +2,7 @@
 % a row, rows one under another, relation signs between.
 %
 % A block is anything a layout places as one piece -- a stack, a grid. Blocks
-% are placed from a cursor, on a row centred on y = 0. A block that follows
+% are placed from a cursor, on a row centered on y = 0. A block that follows
 % another with nothing between them stands beside it; \tneq and \tnapprox
 % write a sign after everything on the row and move the cursor past it;
 % \tnbreak starts a row under everything drawn so far. So a picture of an
@@ -21,10 +21,10 @@
 \def\tn@reach#1{\tn@len\tn@e{#1}\ifdim\tn@e>\tn@right \global\tn@right=\tn@e\fi}
 
 % \tn@block{<space before, beside a block>}{<how far the block hangs below its
-% centre line, and the space above it>}
+% center line, and the space above it>}
 % Begin a block: beside the one before it (after <#1> more), or after the sign
 % before it, or at the margin of a new row hung <#2> under everything above.
-% \tn@cursor is then where the block starts and \tn@line@y its centre line.
+% \tn@cursor is then where the block starts and \tn@line@y its center line.
 \def\tn@block#1#2{%
   \ifnum\tn@fresh=0 \ifnum\tn@afterrel=0
     \global\tn@cursor=\tn@right \global\advance\tn@cursor by #1\relax
@@ -46,7 +46,7 @@
 
 % \tneq[factor=<text>]       an equals sign
 % \tnapprox[factor=<text>]   an approximately-equals sign
-% After everything drawn so far, centred on the row like the blocks, with
+% After everything drawn so far, centered on the row like the blocks, with
 % <factor> after it if there is one (\tneq[factor=$\lambda$]); the next block
 % starts after it.
 \pgfkeys{/tn/rel/.is family, /tn/rel/factor/.initial=}
