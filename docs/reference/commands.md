@@ -64,9 +64,10 @@ the edge of a piece of a larger lattice.
 
 `rest` opens every index not yet drawn, each toward its own side: on a
 tensor, all of its free ones; on a block, those of each tensor whose type
-says its sides (`tn legs`) — a type that does not say them has every side
-its layout gives it, which is more than it means. An index left out by
-`apart=` is not opened.
+names its indices (`tn index`) — a type that does not has every index its
+layout gives it, which is more than it means; on a port, that one index
+(`\tnopen{rest}{W-a-2:u}`). An index left out by `apart=` is not opened. A
+named index opened ends at the coordinate `<tensor>-<name>`.
 
 | key | |
 |---|---|
@@ -79,8 +80,10 @@ The two indices down from a tensor across two sites, crossed. Its keys are
 `\tnopen`'s: `edge=`, `label=`, `labels=`.
 
 ### `\tnjoin[<keys>]{<port>}{<port>}`
-One index between two ports of one block, `<tensor>:<side>[:<n>]`; drawn from
-the first to the second.
+One index between two ports of one block; drawn from the first to the
+second. A port is `<tensor>:<side>[:<n>]`, the `<n>`th index on that side
+(the first unless said), or, of a tensor whose type names its indices,
+`<tensor>:<name>` or `<tensor>:<n>`, its `<n>`th index in the type's order.
 
 | key | |
 |---|---|
@@ -107,16 +110,15 @@ step contracts into one, or a part of a network set apart.
 ### `\tntype{<name>}{<options>}`
 A type of one's own: the style `<name>`, which is `<options>`, and which a
 tensor drawn in it says it is — `\tnshow` and an error name it. It says what
-a tensor is: its outline, the sides it has indices on (`tn legs`) and how
-many (`tn rank`), which the layout then holds a figure to. A rank smaller
-than the sides it names is an error. In the preamble or a notation file:
-`\tntype{site}{tn circle, tn legs={left, right, down}, tn rank=3}`.
+a tensor is: its outline, and its indices, named (`tn index`), which the
+layout then holds a figure to. In the preamble or a notation file:
+`\tntype{site}{tn circle, tn index={l:left, r:right, s:down}}`.
 
 ### `\tnshow{<tensor>, ...}`
 Writes what the package made of each tensor to the log: its block, the sites
-and layers it covers, its type, its rank (said by `tn rank`) and how many of
-its indices are drawn, the sides it has indices on (said by `tn legs`, or
-every side its layout gives it), and each index — drawn, left out by
+and layers it covers, its type, how many indices it has and how many are
+drawn, the sides it has them on, and each index — its name, if its type
+names it, its side and place, and whether it is drawn, left out by
 `apart=`, or free. Nothing is drawn; it is for finding out why a
 figure looks as it does.
 

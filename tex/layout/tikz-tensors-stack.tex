@@ -291,6 +291,83 @@
   \fi\fi
   \tn@next}
 
+% ---- named indices ------------------------------------------------------------
+% The indices a type names on one side of a tensor across n sites (up, down)
+% or layers (left, right) take keys in lattice units across them: the j-th of
+% c at lo - 1/2 + n (j - 1/2)/c. One per site or layer, that is each site or
+% layer, as a type that names none has them; one on a side the type names
+% single, the middle. Any other number is spread across the tensor's own
+% outline instead of the lattice (n@<t>@isp@<side>): two indices left of a
+% tensor on one layer leave it a little above and below the layer's line.
+\def\tn@stack@mapindex#1{%
+  \tn@eachindex{#1}\tn@stackside
+  \edef\tn@mone{\tn@get{n@#1@one}}%
+  \foreach \tn@ms in {left,right,up,down}{%
+    \tn@sideindices{#1}{\tn@ms}%
+    \ifnum\tn@nonside>0
+      \ifx\tn@ms\tn@sleft \def\tn@mlo{k}\def\tn@mhi{kb}\else
+      \ifx\tn@ms\tn@sright \def\tn@mlo{k}\def\tn@mhi{kb}\else
+        \def\tn@mlo{a}\def\tn@mhi{b}\fi\fi
+      \edef\tn@mlo{\tn@get{n@#1@\tn@mlo}}\edef\tn@mhi{\tn@get{n@#1@\tn@mhi}}%
+      \ifx\tn@ms\tn@mone
+        \pgfmathsetmacro\tn@mlo{(\tn@mlo+\tn@mhi)/2}\let\tn@mhi\tn@mlo \fi
+      \pgfmathsetmacro\tn@mn{\tn@mhi-\tn@mlo+1}%
+      \pgfmathtruncatemacro\tn@msp{\tn@mn==\tn@nonside ? 0 : 1}%
+      \tn@set{n@#1@isp@\tn@ms}{\tn@msp}%
+      \foreach \tn@mx [count=\tn@mj] in \tn@onside{%
+        \tn@ixput{#1}{\tn@mx}{\tn@ms}%
+          {\tn@mlo-0.5+\tn@mn*(\tn@mj-0.5)/\tn@nonside}}%
+    \fi}%
+  \tn@ixorder{#1}}
+\def\tn@stackside#1#2{%
+  \edef\tn@sst{\noexpand\in@{,#2,}{,left,right,up,down,}}\tn@sst
+  \ifin@\else
+    \PackageError{tikz-tensors}{tn index: index `#1' leaves on `#2'; a tensor
+      of a stack or tree has indices up, down, left or right}{}\fi}
+\def\tn@isspread#1#2{\ifcsname tn@n@#1@isp@#2\endcsname
+  \edef\tn@spr{\tn@get{n@#1@isp@#2}}\else \def\tn@spr{0}\fi}
+% Where the port of <#1> on side <#2> with key <#3> is: its height, for one
+% left or right, as \tn@ly (\tn@ixy); its column, for one up or down, as
+% \tn@cx (\tn@ixx). On the lattice, or across the outline when spread.
+\def\tn@ixy#1#2#3{\tn@isspread{#1}{#2}%
+  \ifnum\tn@spr=1
+    \tn@anc{#1}{north}\let\tn@iyt\tn@ay \tn@anc{#1}{south}%
+    \tn@len\tn@ly{(\tn@iyt+\tn@ay)/2-((#3)-(\tn@get{n@#1@k}+\tn@get{n@#1@kb})/2)
+      /(\tn@get{n@#1@kb}-\tn@get{n@#1@k}+1)*0.8*(\tn@iyt-\tn@ay)}%
+  \else \tn@layy{\tn@get{n@#1@s}}{#3}\fi}
+\def\tn@ixx#1#2#3{\tn@isspread{#1}{#2}%
+  \ifnum\tn@spr=1
+    \tn@anc{#1}{east}\let\tn@ixe\tn@ax \tn@anc{#1}{west}%
+    \tn@len\tn@cx{(\tn@ixe+\tn@ax)/2+((#3)-(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2)
+      /(\tn@get{n@#1@b}-\tn@get{n@#1@a}+1)*0.8*(\tn@ixe-\tn@ax)}%
+  \else \tn@colx{\tn@get{n@#1@s}}{#3}\fi}
+% The keys of the ports of <#1> on side <#2> from <#3> up to (not including)
+% <#4>, in order, as \tn@bk, and how many as \tn@nbk: its named indices
+% there, or, for a tensor whose type names none, <#5> -- the ports the layout
+% would give it there (empty if it has no index on that side).
+\newcount\tn@bkc
+\def\tn@bandkeys#1#2#3#4#5{%
+  \gdef\tn@bk{}\global\tn@bkc=0
+  \tn@isnamed{#1}%
+  \ifnum\tn@named=1
+    \pgfmathsetmacro\tn@bklo{#3}\pgfmathsetmacro\tn@bkhi{#4}%
+    \tn@sideindices{#1}{#2}%
+    \foreach \tn@bx in \tn@onside{%
+      \edef\tn@bkk{\tn@get{n@#1@ik@\tn@bx}}%
+      \ifdim\tn@bkk pt<\tn@bklo pt\else \ifdim\tn@bkk pt<\tn@bkhi pt
+        \global\advance\tn@bkc by 1
+        \ifx\tn@bk\@empty \xdef\tn@bk{\tn@bkk}\else \xdef\tn@bk{\tn@bk,\tn@bkk}\fi
+      \fi\fi}%
+  \else
+    \tn@hasleg{#1}{#2}%
+    \ifnum\tn@hasl=1 \foreach \tn@bx in {#5}{\global\advance\tn@bkc by 1
+      \ifx\tn@bk\@empty \xdef\tn@bk{\tn@bx}\else \xdef\tn@bk{\tn@bk,\tn@bx}\fi}\fi
+  \fi
+  \edef\tn@nbk{\the\tn@bkc}}
+% the <#2>th item of list <#1>, as \tn@nth
+\def\tn@nthof#1#2{\foreach \tn@nx [count=\tn@nc] in #1{%
+  \ifnum\tn@nc=#2 \xdef\tn@nth{\tn@nx}\fi}}
+
 % ---- ports -------------------------------------------------------------------
 % On a stack a tensor has one port up and one down per site it covers -- one,
 % in the middle, on a side its type names as single -- and one left and one
@@ -334,12 +411,14 @@
     \fi}}
 \def\tn@showport#1#2#3{%
   \tn@ifused{#1}{#2}{#3}\tn@ifcut{#1}{#2}{#3}%
-  \edef\tn@spd{#2}%
-  \ifx\tn@spd\tn@sleft \def\tn@spw{on layer \tn@kk}\else
-  \ifx\tn@spd\tn@sright \def\tn@spw{on layer \tn@kk}\else
-  \ifx\tn@spd\tn@sup \def\tn@spw{at site \tn@kk}\else
-  \ifx\tn@spd\tn@sdown \def\tn@spw{at site \tn@kk}\else \def\tn@spw{}\fi\fi\fi\fi
-  \typeout{\space\space index #2 \tn@spw: \ifnum\tn@isused=1 drawn\else
+  \edef\tn@spd{#2}\pgfmathtruncatemacro\tn@spk{round(#3)}%
+  \ifx\tn@spd\tn@sleft \def\tn@spw{on layer \tn@spk}\else
+  \ifx\tn@spd\tn@sright \def\tn@spw{on layer \tn@spk}\else
+  \ifx\tn@spd\tn@sup \def\tn@spw{at site \tn@spk}\else
+  \ifx\tn@spd\tn@sdown \def\tn@spw{at site \tn@spk}\else \def\tn@spw{}\fi\fi\fi\fi
+  \typeout{\space\space index \ifx\tn@pnm\@empty #2 \tn@spw\else
+    \tn@pnm\space (#2\ifx\tn@spw\@empty\else\space\tn@spw\fi)\fi
+    : \ifnum\tn@isused=1 drawn\else
     \ifnum\tn@iscut=1 left out (apart=)\else free\fi\fi}}
 
 % ---- connect -----------------------------------------------------------------
@@ -390,6 +469,54 @@
 \def\tn@vlink#1#2#3#4{% stack, upper, lower, site
   \edef\tn@ua{\tn@get{n@#2@a}}\edef\tn@ub{\tn@get{n@#2@b}}%
   \edef\tn@na{\tn@get{n@#3@a}}\edef\tn@nb{\tn@get{n@#3@b}}%
+  \tn@isnamed{#2}\let\tn@vnu\tn@named \tn@isnamed{#3}%
+  \ifnum\tn@vnu\tn@named=00 \expandafter\tn@vlinkold
+  \else \expandafter\tn@vpairs \fi{#1}{#2}{#3}{#4}}
+% Between tensors of which one names its indices: at the first site they
+% share, each index down from the upper one in the sites they share is joined
+% to the index up from the lower one there that has the same place in order.
+\def\tn@vpairs#1#2#3#4{%
+  \pgfmathtruncatemacro\tn@voa{max(\tn@ua,\tn@na)}%
+  \pgfmathtruncatemacro\tn@vob{min(\tn@ub,\tn@nb)}%
+  \ifnum#4=\tn@voa
+    \def\tn@vsame{0}\ifnum\tn@ua=\tn@na \ifnum\tn@ub=\tn@nb \def\tn@vsame{1}\fi\fi
+    \tn@vdefault{#2}{down}\tn@bandkeys{#2}{down}{\tn@voa-0.5}{\tn@vob+0.5}{\tn@vdef}%
+    \let\tn@vku\tn@bk \let\tn@vnku\tn@nbk
+    \tn@vdefault{#3}{up}\tn@bandkeys{#3}{up}{\tn@voa-0.5}{\tn@vob+0.5}{\tn@vdef}%
+    \let\tn@vkl\tn@bk
+    \ifnum\tn@vnu=0 \ifnum\tn@vnku>\tn@nbk \let\tn@vnku\tn@nbk \fi\fi
+    \tn@isnamed{#3}%
+    \ifnum\tn@named=0 \ifnum\tn@nbk>\tn@vnku \let\tn@nbk\tn@vnku \fi\fi
+    \ifnum\tn@vnku=\tn@nbk\else
+      \PackageError{tikz-tensors}{\string\tnconnect: \tn@called{#2} has
+        \tn@vnku\space \ifnum\tn@vnku=1 index\else indices\fi\space down into
+        the sites it shares with \tn@called{#3}, which has \tn@nbk\space up}{The
+        indices are joined in order, the first down to the first up; a type
+        says them with tn index.}%
+      \def\tn@nbk{0}%
+    \fi
+    \ifnum\tn@vnku=\tn@nbk \ifnum\tn@nbk>0
+      \foreach \tn@vu [count=\tn@vj] in \tn@vku{%
+        \tn@nthof\tn@vkl\tn@vj \let\tn@vl\tn@nth
+        \tn@ifcut{#2}{down}{\tn@vu}\let\tn@vc\tn@iscut \tn@ifcut{#3}{up}{\tn@vl}%
+        \ifnum\tn@vc\tn@iscut=00
+          \tn@use{#2}{down}{\tn@vu}\tn@use{#3}{up}{\tn@vl}%
+          \tn@ixx{#2}{down}{\tn@vu}\let\tn@vxu\tn@cx
+          \tn@ixx{#3}{up}{\tn@vl}\let\tn@vxl\tn@cx
+          \tn@facingx{\tn@down}{#2}{#3}{\tn@vxu}{\tn@vxl}%
+        \fi}%
+    \fi\fi
+  \fi}
+% the ports a type that names no indices has toward a neighbour up or down,
+% as \tn@vdef: one per shared site if the two cover the same sites, else the
+% middle of the ones they share; the middle of its own on a single side
+\def\tn@vdefault#1#2{%
+  \edef\tn@vone{\tn@get{n@#1@one}}\def\tn@vside{#2}%
+  \ifx\tn@vone\tn@vside
+    \pgfmathsetmacro\tn@vdef{(\tn@get{n@#1@a}+\tn@get{n@#1@b})/2}%
+  \else\ifnum\tn@vsame=1 \edef\tn@vdef{\tn@voa,...,\tn@vob}%
+  \else \pgfmathsetmacro\tn@vdef{(\tn@voa+\tn@vob)/2}\fi\fi}
+\def\tn@vlinkold#1#2#3#4{%
   \def\tn@draw{0}%
   \ifnum\tn@ua=\tn@na \ifnum\tn@ub=\tn@nb \def\tn@col{#4}\def\tn@draw{1}\fi\fi
   \ifnum\tn@draw=0
@@ -409,10 +536,14 @@
     \tn@facing{\tn@down}{#2}{#3}%
   \fi}
 % From the down port of #2 to the up port of #3, under it, both in column
-% \tn@cx: straight where the two ports line up, else down, across half way
-% between the two borders, and down again.
-\def\tn@facing#1#2#3{%
+% \tn@cx -- or, \tn@facingx, in columns <#4> and <#5>: straight where the two
+% ports line up, else down, across half way between the two borders, and down
+% again.
+\def\tn@facing#1#2#3{\tn@facingx{#1}{#2}{#3}{\tn@cx}{\tn@cx}}
+\def\tn@facingx#1#2#3#4#5{%
+  \edef\tn@fxl{#5}\edef\tn@cx{#4}%
   \tn@vport{#2}{down}\let\tn@xu\tn@px \let\tn@yu\tn@py \let\tn@eu\tn@pe
+  \let\tn@cx\tn@fxl
   \tn@vport{#3}{up}\let\tn@xl\tn@px \let\tn@yl\tn@py
   \ifdim\tn@xu=\tn@xl
     \tn@line{#1}{\tn@xu}{\tn@yu}{\tn@xl}{\tn@yl}%
@@ -421,10 +552,76 @@
     \tn@turns{#1}{(\tn@xu,\tn@yu) -- (\tn@xu,\tn@ym)
       -- (\tn@xl,\tn@ym) -- (\tn@xl,\tn@yl)}%
   \fi}
-% One pair of neighbouring slots along a layer.
+% One pair of neighbouring slots along a layer. Between two tensors of which
+% one names its indices, \tn@hpairs; a tensor that names them meets anything
+% else with the one index it has on the layer's line, if any.
 \def\tn@hlink#1#2{%
   \def\tn@same{0}%
   \ifnum\tn@ka=1 \ifx\tn@oa\tn@ob \def\tn@same{1}\fi\fi
+  \def\tn@hnm{0}%
+  \ifnum\tn@same=0
+    \ifnum\tn@ka=1 \tn@isnamed{\tn@oa}\ifnum\tn@named=1 \def\tn@hnm{1}\fi\fi
+    \ifnum\tn@kb=1 \tn@isnamed{\tn@ob}\ifnum\tn@named=1 \def\tn@hnm{1}\fi\fi
+  \fi
+  \ifnum\tn@hnm=1
+    \ifnum\tn@ka\tn@kb=11 \tn@hpairs{#1}%
+    \else \tn@hlinkone{#1}{#2}\fi
+  \else \tn@hlinkold{#1}{#2}\fi}
+% Each index right of the one on this layer (its keys from lk - 1/2 to
+% lk + 1/2) joined to the index left of the other that has the same place in
+% order.
+\def\tn@hpairs#1{%
+  \tn@bandkeys{\tn@oa}{right}{\tn@lk-0.5}{\tn@lk+0.5}{\tn@lk}%
+  \let\tn@hka\tn@bk \let\tn@hna\tn@nbk
+  \tn@bandkeys{\tn@ob}{left}{\tn@lk-0.5}{\tn@lk+0.5}{\tn@lk}%
+  % a tensor that names no indices has one wherever the other has one
+  \tn@isnamed{\tn@oa}\let\tn@hma\tn@named \tn@isnamed{\tn@ob}%
+  \ifnum\tn@hma=0 \ifnum\tn@hna>\tn@nbk \let\tn@hna\tn@nbk \fi\fi
+  \ifnum\tn@named=0 \ifnum\tn@nbk>\tn@hna \let\tn@nbk\tn@hna \fi\fi
+  \ifnum\tn@hna=\tn@nbk\else
+    \PackageError{tikz-tensors}{\string\tnconnect: \tn@called{\tn@oa} has
+      \tn@hna\space \ifnum\tn@hna=1 index\else indices\fi\space right on
+      layer `\tn@l', and \tn@called{\tn@ob} beside it \tn@nbk\space left}{The
+      indices are joined in order, the first right to the first left; a type
+      says them with tn index, and apart= leaves a bond out.}%
+    \def\tn@nbk{0}%
+  \fi
+  \ifnum\tn@hna=\tn@nbk \ifnum\tn@nbk>0
+    \let\tn@hkb\tn@bk
+    \foreach \tn@hu [count=\tn@hj] in \tn@hka{%
+      \tn@nthof\tn@hkb\tn@hj \let\tn@hv\tn@nth
+      \tn@ifcut{\tn@oa}{right}{\tn@hu}\let\tn@hc\tn@iscut
+      \tn@ifcut{\tn@ob}{left}{\tn@hv}%
+      \ifnum\tn@hc\tn@iscut=00
+        \tn@use{\tn@oa}{right}{\tn@hu}\tn@use{\tn@ob}{left}{\tn@hv}%
+        \tn@ixy{\tn@oa}{right}{\tn@hu}\let\tn@hya\tn@ly
+        \tn@ixy{\tn@ob}{left}{\tn@hv}\let\tn@hyb\tn@ly
+        \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px
+        \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px
+        \ifdim\tn@hya=\tn@hyb
+          \tn@bond{#1}{\tn@xa}{\tn@xb}{\tn@hya}{\tn@get{n@\tn@oa @pt}}{\tn@get{n@\tn@ob @pt}}%
+        \else \tn@line{#1}{\tn@xa}{\tn@hya}{\tn@xb}{\tn@hyb}\fi
+      \fi}%
+  \fi\fi}
+% A tensor that names its indices, beside an environment, the dots or a slot
+% an index runs through: it has one index on the layer's line, or none.
+\def\tn@hlinkone#1#2{%
+  \def\tn@hok{1}%
+  \ifnum\tn@ka=1 \tn@hlinkchk{\tn@oa}{right}\tn@ka\fi
+  \ifnum\tn@kb=1 \tn@hlinkchk{\tn@ob}{left}\tn@kb\fi
+  \tn@hlinkold{#1}{#2}}
+% none on the layer's line: as if its slot were empty
+\def\tn@hlinkchk#1#2#3{%
+  \tn@bandkeys{#1}{#2}{\tn@lk-0.5}{\tn@lk+0.5}{\tn@lk}%
+  \ifnum\tn@nbk=0 \def#3{0}\fi
+  \ifnum\tn@nbk>1
+    \PackageError{tikz-tensors}{\string\tnconnect: \tn@called{#1} has
+      \tn@nbk\space indices #2 on layer `\tn@l', where it meets one index}{}\fi
+  \ifnum\tn@nbk=1 \ifdim\tn@bk pt=\tn@lk pt\else
+    \PackageError{tikz-tensors}{\string\tnconnect: the index #2 of
+      \tn@called{#1} is not on the line of layer `\tn@l', where it meets one
+      index}{}\fi\fi}
+\def\tn@hlinkold#1#2{%
   \ifnum\tn@same=0
   \def\tn@sa{0}\def\tn@sb{0}%
   \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\or
@@ -486,7 +683,7 @@
 \def\tn@hopen#1#2#3#4{%
   \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@pt{\tn@get{n@#2@pt}}%
   \tn@use{#2}{\tn@dir}{#3}%
-  \tn@layy{\tn@s}{#3}\let\tn@hy\tn@ly
+  \tn@ixy{#2}{\tn@dir}{#3}\let\tn@hy\tn@ly
   \tn@hport{#2}{\tn@dir}\let\tn@xa\tn@px
   \ifx\tn@dir\tn@sright
     \tn@len\tn@xc{\tn@pe+\tn@stub}%
@@ -519,7 +716,7 @@
     \tn@walk{\tn@s}{#3}{\tn@get{n@#2@k}-1}{-1}%
     \tn@layy{\tn@s}{\tn@kw}\tn@len\tn@yb{\tn@ly-\tn@slot/2}%
   \fi
-  \tn@colx{\tn@s}{#4}%
+  \tn@ixx{#2}{\tn@dir}{#4}%
   \tn@vport{#2}{\tn@dir}%
   \ifdim\tn@px=\tn@cx
     \tn@line{#1}{\tn@cx}{\tn@py}{\tn@cx}{\tn@yb}%
@@ -539,16 +736,31 @@
   \else \edef\tn@lo{\tn@get{n@#2@k}}\edef\tn@hi{\tn@get{n@#2@kb}}\fi
   \edef\tn@one{\tn@get{n@#2@one}}%
   \ifx\tn@one\tn@dir \let\tn@hi\tn@lo \fi
-  \ifnum\tn@lo=\tn@hi \def\tn@onm{#2-#3}%
-  \else \pgfmathtruncatemacro\tn@m{(#4)-\tn@lo+1}\edef\tn@onm{#2-#3-\tn@m}\fi
+  \ifx\tn@pnm\@empty
+    \ifnum\tn@lo=\tn@hi \def\tn@onm{#2-#3}%
+    \else \pgfmathtruncatemacro\tn@m{(#4)-\tn@lo+1}\edef\tn@onm{#2-#3-\tn@m}\fi
+  \else \edef\tn@onm{#2-\tn@pnm}\fi
   \ifnum\tn@isv=1
     \ifx\tn@one\tn@dir \tn@vopenx{#1}{#2}{\tn@lo}{#4}{\tn@onm}%
-    \else \tn@vopen{#1}{#2}{#4}{\tn@onm}\fi
+    \else \pgfmathtruncatemacro\tn@osite{round(#4)}%
+      \tn@vopenx{#1}{#2}{\tn@osite}{#4}{\tn@onm}\fi
   \else \tn@hopen{#1}{#2}{#4}{\tn@onm}\fi}
 \def\tn@vdir{\def\tn@isv{1}\ifx\tn@dir\tn@sleft\def\tn@isv{0}\fi
   \ifx\tn@dir\tn@sright\def\tn@isv{0}\fi}
 \def\tn@stack@opennode#1#2{%
   \tn@needleg{#2}{\tn@dir}{\string\tnopen}%
+  \tn@isnamed{#2}%
+  \ifnum\tn@named=1 \expandafter\tn@opennamed \else \expandafter\tn@opennodeold \fi
+  {#1}{#2}}
+% A tensor that names its indices: each of them on that side, ending at
+% <tensor>-<name>.
+\def\tn@opennamed#1#2{%
+  \edef\tn@ond{\tn@dir}\tn@sideindices{#2}{\tn@dir}%
+  \foreach \tn@pnm in \tn@onside{%
+    \edef\tn@onk{\tn@get{n@#2@ik@\tn@pnm}}%
+    \tn@free{#2}{\tn@ond}{\tn@onk}{\string\tnopen}%
+    \tn@stack@openport{#1}{#2}{\tn@ond}{\tn@onk}}}
+\def\tn@opennodeold#1#2{%
   \tn@vdir
   \ifnum\tn@isv=1
     \edef\tn@a{\tn@get{n@#2@a}}\edef\tn@b{\tn@get{n@#2@b}}%
@@ -587,7 +799,10 @@
         \let\tn@pick\@empty\fi\fi
       \ifx\tn@pick\@empty\else
         \edef\tn@one{\tn@get{n@\tn@pick @one}}%
-        \ifx\tn@one\tn@dir
+        \tn@isnamed{\tn@pick}%
+        \ifnum\tn@named=1
+          \tn@openband{#1}{\tn@pick}{\tn@i}%
+        \else\ifx\tn@one\tn@dir
           \edef\tn@a{\tn@get{n@\tn@pick @a}}\edef\tn@b{\tn@get{n@\tn@pick @b}}%
           \ifnum\tn@i=\tn@a
             \tn@ifused{\tn@pick}{\tn@dir}{(\tn@a+\tn@b)/2}%
@@ -598,7 +813,7 @@
         \else
           \tn@ifused{\tn@pick}{\tn@dir}{\tn@i}%
           \ifnum\tn@isused=0 \tn@vopen{#1}{\tn@pick}{\tn@i}{#2-\tn@i-\tn@dir}\fi
-        \fi\fi}%
+        \fi\fi\fi}%
   \else
     \foreach \tn@l in \tn@ls{%
       \gdef\tn@first{}\gdef\tn@lastn{}%
@@ -613,10 +828,25 @@
         \let\tn@pick\@empty\fi\fi
       \ifx\tn@pick\@empty\else
         \edef\tn@lk{\tn@get{#2@k@\tn@l}}%
-        \tn@ifused{\tn@pick}{\tn@dir}{\tn@lk}%
-        \ifnum\tn@isused=0 \tn@hopen{#1}{\tn@pick}{\tn@lk}{#2-\tn@l-\tn@dir}\fi
+        \tn@isnamed{\tn@pick}%
+        \ifnum\tn@named=1 \tn@openband{#1}{\tn@pick}{\tn@lk}%
+        \else
+          \tn@ifused{\tn@pick}{\tn@dir}{\tn@lk}%
+          \ifnum\tn@isused=0 \tn@hopen{#1}{\tn@pick}{\tn@lk}{#2-\tn@l-\tn@dir}\fi
+        \fi
       \fi}%
   \fi}
+
+% the free named indices of <#2> toward \tn@dir at site or layer <#3>
+\def\tn@openband#1#2#3{%
+  \edef\tn@obd{\tn@dir}\tn@sideindices{#2}{\tn@dir}%
+  \foreach \tn@pnm in \tn@onside{%
+    \edef\tn@onk{\tn@get{n@#2@ik@\tn@pnm}}%
+    \ifdim\tn@onk pt<\dimexpr #3pt-0.5pt\relax\else
+    \ifdim\tn@onk pt<\dimexpr #3pt+0.5pt\relax
+      \tn@ifused{#2}{\tn@obd}{\tn@onk}%
+      \ifnum\tn@isused=0 \tn@stack@openport{#1}{#2}{\tn@obd}{\tn@onk}\fi
+    \fi\fi}}
 
 % The two indices down from a tensor across two sites, exchanged on the way,
 % drawn by \tn@swap and ending where \tnopen{down} would end them
@@ -656,37 +886,33 @@
 % column, for an index up or down, or layer, for one sideways, in lattice
 % units), lo and hi (the sites it spans, or the layers) and s (its stack).
 \def\tn@jset#1#2{\expandafter\xdef\csname tn@j@#1\endcsname{#2}}
-\def\tn@jport#1#2{%
-  \tn@pspec#1:::\tn@end
-  \edef\tn@s{\tn@get{n@\tn@pn @s}}\tn@jset{#2s}{\tn@s}%
-  \ifx\tn@pk\@empty \def\tn@pk{1}\fi
-  \tn@jset{#2d}{\tn@ps}%
+\def\tn@jport#1#2#3#4{%
+  \edef\tn@pn{#1}\edef\tn@ps{#2}\edef\tn@q{#3}\def\tn@jp{#4}%
+  \edef\tn@s{\tn@get{n@\tn@pn @s}}\tn@jset{#4s}{\tn@s}%
+  \tn@jset{#4d}{\tn@ps}%
   \ifx\tn@ps\tn@sleft \def\tn@ph{1}\else\ifx\tn@ps\tn@sright \def\tn@ph{1}%
   \else \def\tn@ph{0}\fi\fi
-  \tn@jset{#2h}{\tn@ph}%
+  \tn@jset{#4h}{\tn@ph}%
   \edef\tn@a{\tn@get{n@\tn@pn @a}}\edef\tn@b{\tn@get{n@\tn@pn @b}}%
   \edef\tn@ka{\tn@get{n@\tn@pn @k}}\edef\tn@kb{\tn@get{n@\tn@pn @kb}}%
   \ifnum\tn@ph=1
-    \tn@jset{#2lo}{\tn@a}\tn@jset{#2hi}{\tn@b}%
-    \pgfmathtruncatemacro\tn@q{\tn@ka+\tn@pk-1}\tn@jset{#2c}{\tn@q}%
+    \tn@jset{#4lo}{\tn@a}\tn@jset{#4hi}{\tn@b}%
+    \pgfmathtruncatemacro\tn@qc{round(\tn@q)}\tn@jset{#4c}{\tn@qc}%
     \tn@free{\tn@pn}{\tn@ps}{\tn@q}{\string\tnjoin}\tn@use{\tn@pn}{\tn@ps}{\tn@q}%
-    \tn@layy{\tn@s}{\tn@q}%
+    \tn@ixy{\tn@pn}{\tn@ps}{\tn@q}%
     \tn@hport{\tn@pn}{\tn@ps}%
     \ifx\tn@ps\tn@sright \tn@colx{\tn@s}{\tn@b+0.5}\else \tn@colx{\tn@s}{\tn@a-0.5}\fi
-    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@ly}%
-    \tn@jset{#2gx}{\tn@cx}\tn@jset{#2gy}{\tn@ly}%
+    \tn@jset{#4x}{\tn@px}\tn@jset{#4y}{\tn@ly}%
+    \tn@jset{#4gx}{\tn@cx}\tn@jset{#4gy}{\tn@ly}%
   \else
-    \tn@jset{#2lo}{\tn@ka}\tn@jset{#2hi}{\tn@kb}%
-    \edef\tn@one{\tn@get{n@\tn@pn @one}}%
-    \ifx\tn@one\tn@ps \pgfmathsetmacro\tn@q{(\tn@a+\tn@b)/2}%
-    \else \pgfmathsetmacro\tn@q{\tn@a+\tn@pk-1}\fi
-    \tn@jset{#2c}{\tn@q}%
+    \tn@jset{#4lo}{\tn@ka}\tn@jset{#4hi}{\tn@kb}%
+    \tn@jset{#4c}{\tn@q}%
     \tn@free{\tn@pn}{\tn@ps}{\tn@q}{\string\tnjoin}\tn@use{\tn@pn}{\tn@ps}{\tn@q}%
-    \tn@colx{\tn@s}{\tn@q}%
+    \tn@ixx{\tn@pn}{\tn@ps}{\tn@q}%
     \tn@vport{\tn@pn}{\tn@ps}%
     \ifx\tn@ps\tn@sdown \tn@layy{\tn@s}{\tn@kb+0.5}\else \tn@layy{\tn@s}{\tn@ka-0.5}\fi
-    \tn@jset{#2x}{\tn@px}\tn@jset{#2y}{\tn@py}%
-    \tn@jset{#2gx}{\tn@px}\tn@jset{#2gy}{\tn@ly}%
+    \tn@jset{#4x}{\tn@px}\tn@jset{#4y}{\tn@py}%
+    \tn@jset{#4gx}{\tn@px}\tn@jset{#4gy}{\tn@ly}%
   \fi}
 % \tn@jclear{<stack>}{<layer|site>}{<from>}{<to>}{<h>}: is every slot strictly
 % between <from> and <to> empty -- along layer number <layer> (h = 1) or down
@@ -700,8 +926,8 @@
       \else \tn@occ{#1}{\tn@get{#1@name@\tn@w}}{#2}\fi
       \ifnum\tn@kd=0 \else \gdef\tn@clear{0}\fi}%
   \fi}
-\def\tn@stack@join#1#2#3{%
-  \tn@jport{#2}{a}\tn@jport{#3}{b}%
+\def\tn@stack@join#1#2#3#4#5#6#7{%
+  \tn@jport{#2}{#3}{#4}{a}\tn@jport{#5}{#6}{#7}{b}%
   \edef\tn@s{\tn@j@as}%
   % straight: facing on one line, nothing between
   \def\tn@face{0}%

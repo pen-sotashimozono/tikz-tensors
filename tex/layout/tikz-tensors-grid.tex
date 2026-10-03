@@ -246,10 +246,29 @@
 \def\tn@grid@openport#1#2#3#4{%
   \edef\tn@gd{#3}%
   \ifx\tn@gd\tn@sdown \def\tn@dir{down}\tn@gopen{#1}{#2}{#2-down}%
+    \def\tn@gend{#2-down}%
   \else
     \edef\tn@gb{\tn@get{n@#2@s}}%
     \tn@gside{#1}{\tn@gb}{\tn@get{n@#2@a}}{\tn@get{n@#2@k}}{#3}%
-  \fi}
+    \edef\tn@gend{\tn@gb-\tn@get{n@#2@a}-\tn@get{n@#2@k}-#3}%
+  \fi
+  \ifx\tn@pnm\@empty\else \coordinate (#2-\tn@pnm) at (\tn@gend);\fi}
+% A tensor of a grid has one index each way: a type's index on a direction is
+% that port, and two on one direction are an error.
+\def\tn@grid@mapindex#1{%
+  \tn@eachindex{#1}\tn@gridside
+  \foreach \tn@ms in {nw,ne,se,sw,down}{%
+    \tn@sideindices{#1}{\tn@ms}%
+    \ifnum\tn@nonside>1
+      \PackageError{tikz-tensors}{tn index: `#1' has \tn@nonside\space indices
+        toward \tn@ms; a tensor of a grid has one each way}{}\fi
+    \ifnum\tn@nonside=1 \tn@ixput{#1}{\tn@onside}{\tn@ms}{0}\fi}%
+  \tn@ixorder{#1}}
+\def\tn@gridside#1#2{%
+  \edef\tn@sst{\noexpand\in@{,#2,}{,nw,ne,se,sw,down,}}\tn@sst
+  \ifin@\else
+    \PackageError{tikz-tensors}{tn index: index `#1' leaves on `#2'; a tensor
+      of a grid has indices toward nw, ne, se, sw, and down}{}\fi}
 % the directions <#1> names: one of nw, ne, se, sw, or around (all four), as
 % \tn@gdl; down is \tn@gdl empty
 \def\tn@sides{nw,ne,se,sw}\def\tn@saround{around}
