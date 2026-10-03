@@ -63,6 +63,19 @@ class Site(unittest.TestCase):
         self.assertIn('href="commands.html#tnlayer"', styles)
         self.assertIn('href="styles.html#tn-box"', styles)
 
+    def test_a_line_of_code_and_what_it_drew_light_up_together(self):
+        text = (self.out / "examples/08-canonical.html").read_text()
+        traced = {int(n) for n in re.findall(r'class="hl" data-line="(\d+)"', text)}
+        coded = {int(n) for n in re.findall(r'class="ln[^"]*" data-line="(\d+)"', text)}
+        lines = (ROOT / "examples/08-canonical.tex").read_text().splitlines()
+        self.assertTrue(traced)
+        self.assertLessEqual(traced, coded)
+        # each traced line is the line of a command of the package
+        for n in traced:
+            self.assertRegex(lines[n - 1], r"\\tn[a-z]+", n)
+        connect = next(n for n, line in enumerate(lines, 1) if "\\tnconnect" in line)
+        self.assertIn(connect, traced)
+
     def test_a_web_address_in_an_example_is_a_link(self):
         text = (self.out / "examples/19-ttn.html").read_text()
         self.assertIn('<a href="https://tensornetwork.org/">', text)

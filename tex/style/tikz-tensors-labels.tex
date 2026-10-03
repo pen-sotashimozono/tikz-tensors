@@ -10,7 +10,7 @@
 % re-found every time the thing it labels moves. <placement> is TikZ's: above,
 % below, left, right, center, and any of them with a distance.
 % A label counts as drawn when the next equals sign is placed.
-\newcommand{\tnput}[3][above]{\node[tn label, #1] (tn@lab) at (#2) {#3};%
+\newcommand{\tnput}[3][above]{\node[tn label, #1] (tn@lab) at (#2) {#3};\tn@tracenode{tn@lab}%
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
-\newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};%
+\newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};\tn@tracenode{tn@lab}%
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}

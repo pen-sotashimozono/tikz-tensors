@@ -54,7 +54,7 @@
   \pgfkeys{/tn/rel/.cd, factor=, #2}\pgfkeysgetvalue{/tn/rel/factor}\tn@factor
   \node[anchor=west, inner sep=0pt] (tn@eq) at
     ($(\the\tn@right,\the\tn@line@y)+(\tn@gap,0)$)
-    {$#1$\ifx\tn@factor\@empty\else\hspace{0.3em}\tn@factor\fi};
+    {$#1$\ifx\tn@factor\@empty\else\hspace{0.3em}\tn@factor\fi};\tn@tracenode{tn@eq}%
   \tn@anc{tn@eq}{east}\tn@d=\tn@ax\relax
   \global\tn@cursor=\tn@d \global\advance\tn@cursor by \tn@gap\relax
   \global\tn@right=\tn@cursor \global\tn@afterrel=1

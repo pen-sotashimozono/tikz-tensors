@@ -1,0 +1,31 @@
+% tikz-tensors-trace.tex -- what each line of a figure draws. Off unless the
+% job defines \tn@tracing before the package is loaded, as tests/run.sh does:
+% then every tensor, label and index the package draws is written to
+% <job>.trace with the line of the figure whose command drew it, and the
+% documentation site (scripts/pages.py) lights up on a figure what the line of
+% code under the pointer drew. A document never sees it.
+%
+%   n <line> <x0> <y0> <x1> <y1>    a node: a tensor, a label, a sign
+%   p <line> <path>                 an index, the points it runs through
+%   b <line> <x0> <y0> <x1> <y1>    an index whose path is not a list of
+%                                   points (crossed indices), by its box
+%   f <x0> <y0> <x1> <y1>           the picture, at its end
+% Points are in the picture's own coordinates, in pt.
+\newwrite\tn@tracefile
+\ifcsname tn@tracing\endcsname
+  \immediate\openout\tn@tracefile=\jobname.trace
+  \def\tn@tr#1{\immediate\write\tn@tracefile{#1}}
+  \def\tn@trbox#1#2{% kind, node
+    \tn@anc{#2}{south west}\let\tn@tx\tn@ax \let\tn@ty\tn@ay
+    \tn@anc{#2}{north east}%
+    \tn@tr{#1 \the\inputlineno\space\tn@tx\space\tn@ty\space\tn@ax\space\tn@ay}}
+  \def\tn@tracenode#1{\tn@trbox{n}{#1}}
+  \def\tn@tracebox#1{\tn@trbox{b}{#1}}
+  \def\tn@tracepath#1{\tn@tr{p \the\inputlineno\space#1}}
+  \tikzset{every picture/.append style={execute at end picture={%
+    \tn@anc{current bounding box}{south west}\let\tn@tx\tn@ax \let\tn@ty\tn@ay
+    \tn@anc{current bounding box}{north east}%
+    \tn@tr{f \tn@tx\space\tn@ty\space\tn@ax\space\tn@ay}}}}
+\else
+  \def\tn@tracenode#1{}\def\tn@tracebox#1{}\def\tn@tracepath#1{}
+\fi

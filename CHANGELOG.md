@@ -23,6 +23,17 @@ through, crossing -- a gate on the sites either side of a wire. The style
 `tn oplus` is a circled plus, the target of a controlled NOT, and the
 examples' notation names `ctrl` and `targ`.
 
+`\tnstack[rises={<layer>=<factor>, ...}]` sets the gap above one layer alone,
+at a factor of the stack's rise.
+
+On the documentation site, a figure lights up what a line of its code drew:
+pointing at a line of an example's code marks, in red over the picture, the
+tensors, labels and indices that line drew, and pointing at the picture
+marks the line. It is read from a trace of each reference picture,
+`tests/reference/<name>.json`, written while the tests compile (the new
+`tex/core/tikz-tensors-trace.tex`, off in a document) and compared like the
+picture. The walkthrough, the styles and the examples all have it.
+
 New example, `25-toffoli`: the Toffoli gate of Shor's algorithm and its
 decomposition into H, T, T† and six CNOTs, in thirteen steps drawn compact,
 in a new section, quantum circuits. The styles page shows `tn oplus` and

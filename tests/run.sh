@@ -24,6 +24,10 @@
 # named test, on the LuaLaTeX job's PDFs. Run with no step, this does all of
 # them in order.
 #
+# Every file is compiled traced (tex/core/tikz-tensors-trace.tex): <name>.trace
+# beside its PDF says which line drew what, and compare.py keeps it as
+# tests/reference/<name>.json for the documentation site.
+#
 # Output goes to tests/out/ (gitignored): <engine>/<name>.pdf and .log, and
 # rendered/<name>.svg with a <name>-diff.txt beside any page that changed.
 set -euo pipefail
@@ -41,8 +45,10 @@ compile() {
              docs/reference/steps/*.tex; do
     name="$(basename "$src" .tex)"
     log="$OUT/$engine/$name.log"
+    # traced (tex/core/tikz-tensors-trace.tex): <name>.trace beside the PDF
     if ! "$engine" -interaction=nonstopmode -halt-on-error -output-directory="$OUT/$engine" \
-        "$src" >/dev/null 2>&1; then
+        -jobname="$name" "\\expandafter\\def\\csname tn@tracing\\endcsname{}\\input{$src}" \
+        >/dev/null 2>&1; then
       echo "FAIL  $engine $src: does not compile"
       grep -A6 '^!' "$log" || tail -20 "$log"
       fail=1
@@ -82,6 +88,7 @@ compare() {
   mkdir -p "$OUT/rendered"
   for pdf in "$OUT"/lualatex/*.pdf; do
     pdftocairo -svg "$pdf" "$OUT/rendered/$(basename "$pdf" .pdf).svg"
+    [ -f "${pdf%.pdf}.trace" ] && cp "${pdf%.pdf}.trace" "$OUT/rendered/"
   done
   python3 tests/compare.py "$OUT/rendered" "$@"
 }

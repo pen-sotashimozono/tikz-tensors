@@ -108,9 +108,9 @@
   \tn@props{#1}%
   \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}%
   \ifx\tn@legat\tn@center
-    \node[#1] (#2) at (#3,#4) {#5};
+    \node[#1] (#2) at (#3,#4) {#5};\tn@tracenode{#2}%
   \else
     \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
     \tn@anc{tn@probe}{\tn@legat}\tn@d=\tn@ax\relax
-    \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};
+    \node[#1] (#2) at ($(#3,#4)-(\the\tn@d,0)$) {#5};\tn@tracenode{#2}%
   \fi}

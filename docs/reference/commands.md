@@ -13,6 +13,7 @@ canvas after what is on the row.
 | `left=<label>`, `right=<label>` | an environment block at that end, drawn in `tn env` |
 | `tree` | the tree layout: tree pitch, tensors at their own size, indices that turn corners |
 | `close={<layer>, ...}` | layers that sit `closerise` under the layer above them instead of a rise, as the layers of a circuit of gates |
+| `rises={<layer>=<factor>, ...}` | the gap above each named layer alone, at that factor of the stack's rise |
 | `scale=<factor>` | the whole stack at that factor of the notation: its distances, its tensors, its open indices |
 | `pitch=<factor>`, `rise=<factor>` | ... or its distances alone, between sites and between layers (`closerise` with `rise`) |
 | `size=<factor>` | ... its tensors, and the slots of absent ones |
@@ -21,7 +22,9 @@ canvas after what is on the row.
 A factor is a number, never a length, and multiplies the notation's tokens
 for this stack only: `\tnstack[scale=0.7, rise=0.6]` draws a circuit of many
 layers compact, and a stack after it is drawn at the notation's again. A
-label keeps its size, which is the size of the equations beside it.
+label keeps its size, which is the size of the equations beside it. A gap is
+set where the stack is placed, `rises={g2=0.5}`, and not on `\tnlayer`,
+because a layer's slots are named and placed before anything is put in them.
 
 ### `\tnlayer[<keys>]{<stack>}{<layer>}{<entry>, ...}`
 The layer's slots, left to right: `<type>/<label>`, `<type>/<label>/<span>`,

@@ -22,13 +22,22 @@ not. Vector pictures also make the references small, readable in a diff, and
 shown as they are by GitHub (README, the PR preview).
 
 For a page that fails, <name>-diff.txt beside it lists what is only in the
-reference and only in the render. --update copies the rendered pages over the
-references. Writes a Markdown table to $GITHUB_STEP_SUMMARY when set. Standard
+reference and only in the render.
+
+A page drawn with tracing on (tests/run.sh, tex/core/tikz-tensors-trace.tex)
+has <name>.trace beside it: which line of its file drew each tensor, label and
+index, and where. It is kept as tests/reference/<name>.json, which the
+documentation site reads to light up what a line of code drew, and compared
+the same way: the same things from the same lines, every number within
+EPSILON.
+
+--update copies the rendered pages and their traces over the references. Writes a Markdown table to $GITHUB_STEP_SUMMARY when set. Standard
 library only.
 """
 from __future__ import annotations
 
 import collections
+import json
 import os
 import pathlib
 import re
@@ -124,6 +133,42 @@ def unmatched(ref: dict, new: dict) -> tuple[list[str], list[str], int]:
     return only_ref, only_new, total
 
 
+POINT = re.compile(r"\((-?[\d.]+)pt,(-?[\d.]+)pt\)")
+
+
+def trace(path: pathlib.Path) -> dict:
+    """A <name>.trace as data: the picture's frame, and each thing drawn as
+    [line, kind, numbers...] -- a node or a box by its corners, an index by
+    the points it runs through -- in pt, to two places."""
+    out: dict = {"frame": [], "items": []}
+    for row in path.read_text().splitlines():
+        kind, _, rest = row.partition(" ")
+        if kind == "f":
+            out["frame"] = [round(float(x[:-2]), 2) for x in rest.split()]
+        elif kind in ("n", "b"):
+            line, *nums = rest.split()
+            out["items"].append([int(line), kind] + [round(float(x[:-2]), 2) for x in nums])
+        elif kind == "p":
+            line, _, path_ = rest.partition(" ")
+            nums = [round(float(v), 2) for xy in POINT.findall(path_) for v in xy]
+            out["items"].append([int(line), "p"] + nums)
+    return out
+
+
+def same_trace(a: dict, b: dict) -> str:
+    """Empty if two traces agree, else what differs first."""
+    def close(x, y):
+        return len(x) == len(y) and all(abs(u - v) <= EPSILON for u, v in zip(x, y))
+    if not close(a["frame"], b["frame"]):
+        return "the frame differs"
+    if len(a["items"]) != len(b["items"]):
+        return f"{len(b['items'])} things traced, reference {len(a['items'])}"
+    for i, (x, y) in enumerate(zip(a["items"], b["items"])):
+        if x[:2] != y[:2] or not close(x[2:], y[2:]):
+            return f"thing {i}: {y[:2]} where the reference has {x[:2]}, or it moved"
+    return ""
+
+
 def compare(rendered: pathlib.Path) -> tuple[str, str]:
     name = rendered.stem
     ref = REFERENCE / f"{name}.svg"
@@ -146,6 +191,14 @@ def compare(rendered: pathlib.Path) -> tuple[str, str]:
                   [f"      + {t}" for t in only_new[:4]])
         return "FAIL", (f"{bad} of {total} drawn things differ ({share:.1%}, limit "
                         f"{TOLERANCE:.0%}); see {diff.name}\n" + "\n".join(sample))
+    traced = rendered.with_suffix(".trace")
+    if traced.is_file():
+        kept = REFERENCE / f"{name}.json"
+        if not kept.is_file():
+            return "new", "no reference trace; run tests/run.sh --update and commit it"
+        why = same_trace(json.loads(kept.read_text()), trace(traced))
+        if why:
+            return "FAIL", f"the trace differs from tests/reference/{kept.name}: {why}"
     return "ok", f"{bad} of {total} drawn things differ"
 
 
@@ -159,6 +212,9 @@ def main() -> int:
         REFERENCE.mkdir(exist_ok=True)
         for p in pages:
             shutil.copy(p, REFERENCE / p.name)
+            if p.with_suffix(".trace").is_file():
+                (REFERENCE / f"{p.stem}.json").write_text(
+                    json.dumps(trace(p.with_suffix(".trace")), separators=(",", ":")) + "\n")
         print(f"updated {len(pages)} reference pictures in tests/reference/")
         return 0
     fail, rows = 0, []

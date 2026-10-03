@@ -46,16 +46,22 @@
 % -- as the layers of a circuit of gates are drawn. scale=, pitch=, rise=,
 % size= and stub= draw it at factors of the notation's distances and sizes
 % (tikz-tensors-layout.tex): a circuit of many layers, drawn compact.
+% rises={<layer>=<factor>, ...} sets the gap above one layer alone, at a
+% factor of the stack's rise; it is said here, where the layers' heights are
+% fixed, and not in \tnlayer, because a layer's slots are named and placed
+% before anything is put in them.
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
 %   \tnstack[close={g2}]{S}{5}{ket, g1, g2}
 %   \tnstack[scale=0.6, rise=0.8]{C}{3}{g1, g2, g3}
+%   \tnstack[rises={g2=0.5, g3=0.5}]{T}{4}{ket, g1, g2, g3}
 %
 % The environment is the node <name>-left or <name>-right. Every slot, and the
 % ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
 % is what a label for something that is not a tensor is placed on.
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
          /tn/stack/right/.initial=, /tn/stack/close/.initial=,
+         /tn/stack/rises/.initial=,
          /tn/stack/tree/.code={\def\tn@stkind{tree}}}
 \pgfkeys{/tn/stack/scale/.forward to=/tn@factor/scale,
   /tn/stack/pitch/.forward to=/tn@factor/pitch,
@@ -63,9 +69,11 @@
   /tn/stack/size/.forward to=/tn@factor/size,
   /tn/stack/stub/.forward to=/tn@factor/stub}
 \def\tn@stack@geometry#1{\tn@set{#1@pitch}{\tn@pitch}\tn@set{#1@rise}{\tn@rise}}
+% <layer>=<factor>, of rises=, as \tn@rl and \tn@rf (the factor has no `=')
+\def\tn@risepair#1=#2=#3\tn@end{\edef\tn@rl{\zap@space#1 \@empty}\def\tn@rf{#2}}
 \newcommand{\tnstack}[4][]{%
   \def\tn@stkind{stack}%
-  \pgfkeys{/tn/stack/.cd, left=, right=, close=, #1}%
+  \pgfkeys{/tn/stack/.cd, left=, right=, close=, rises=, #1}%
   \tn@newblock{#2}{\tn@stkind}%
   \tn@scaleblock{#2}%
   \tn@op{#2}{geometry}{#2}%
@@ -87,12 +95,22 @@
       \PackageError{tikz-tensors}{close=: `\tn@l' is the first layer of `#2';
         a layer is close to the one above it}{}\fi
     \tn@set{#2@close@\tn@l}{1}}%
+  \pgfkeysgetvalue{/tn/stack/rises}\tn@rises
+  \foreach \tn@rp in \tn@rises{%
+    \expandafter\tn@risepair\tn@rp=\tn@end
+    \ifcsname tn@#2@k@\tn@rl\endcsname\else
+      \PackageError{tikz-tensors}{rises=: stack `#2' has no layer `\tn@rl'}{}\fi
+    \ifnum\tn@get{#2@k@\tn@rl}=1
+      \PackageError{tikz-tensors}{rises=: `\tn@rl' is the first layer of `#2';
+        a rise is the gap above a layer}{}\fi
+    \tn@len\tn@o{\tn@rise*(\tn@rf)}\tn@set{#2@rises@\tn@rl}{\tn@o}}%
   \tn@set{#2@off@1}{0pt}%
   \ifnum\tn@get{#2@L}>1
     \foreach \tn@k in {2,...,\tn@get{#2@L}}{%
       \edef\tn@kl{\tn@get{#2@name@\tn@k}}%
-      \ifcsname tn@#2@close@\tn@kl\endcsname \let\tn@step\tn@closerise
-      \else \edef\tn@step{\tn@get{#2@rise}}\fi
+      \ifcsname tn@#2@rises@\tn@kl\endcsname \edef\tn@step{\tn@get{#2@rises@\tn@kl}}%
+      \else\ifcsname tn@#2@close@\tn@kl\endcsname \let\tn@step\tn@closerise
+      \else \edef\tn@step{\tn@get{#2@rise}}\fi\fi
       \tn@len\tn@o{\tn@get{#2@off@\the\numexpr\tn@k-1\relax}+\tn@step}%
       \tn@set{#2@off@\tn@k}{\tn@o}}%
   \fi
@@ -115,7 +133,7 @@
   \tn@set{#2@x0}{\tn@xz}%
   \tn@len\tn@h{\tn@get{#2@H}+\tn@slot}%
   \ifx\tn@envl\@empty\else
-    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
+    \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};\tn@tracenode{#2-left}%
   \fi
   \ifx\tn@envr\@empty
     \tn@set{#2@hasr}{0}%
@@ -123,7 +141,7 @@
   \else
     \tn@set{#2@hasr}{1}%
     \tn@colx{#2}{#3+1}%
-    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};
+    \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};\tn@tracenode{#2-right}%
     \tn@reach{\tn@cx+\tn@envw/2}%
   \fi
   \pgfmathtruncatemacro\tn@nn{#3+1}%
@@ -212,7 +230,7 @@
     \else\ifx\tn@sty\tn@cdots
       \tn@set{#1@o@#2@\tn@i}{D}%
       \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
-      \node[tn label] at (\tn@cx,\tn@ly) {$\cdots$};
+      \node[tn label] (tn@dots) at (\tn@cx,\tn@ly) {$\cdots$};\tn@tracenode{tn@dots}%
     \else
       \tn@layy{#1}{\tn@k}\let\tn@ytop\tn@ly
       \tn@layy{#1}{\tn@k+\tn@vspan-1}%
