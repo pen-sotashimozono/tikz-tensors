@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A TRG step · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<meta name="tt-root" content="../">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.15.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 24</p>
+<h1 class="with-button">A TRG step<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
+<div class="traced example">
+<figure class="paper"><span class="stage"><img style="width:498pt" src="../figures/24-trg.svg" alt="A TRG step: One step of the tensor renormalization group of Levin and Nave, on the square lattice of a two-dimensional partition function"><svg class="trace" viewBox="0 0 331.838 318.638" aria-hidden="true"><rect class="hl" data-line="34" x="11.48" y="27.13" width="20.15" height="20.14" rx="2"/><rect class="hl" data-line="34" x="40.35" y="55.99" width="20.14" height="20.14" rx="2"/><polyline class="hl" data-line="35" points="21.55,37.19 50.41,66.06"/><polyline class="hl" data-line="36" points="21.55,37.19 7.92,23.56"/><polyline class="hl" data-line="36" points="21.55,37.19 35.18,23.56"/><polyline class="hl" data-line="36" points="21.55,37.19 7.92,50.83"/><polyline class="hl" data-line="36" points="50.41,66.06 64.05,52.42"/><polyline class="hl" data-line="36" points="50.41,66.06 64.05,79.69"/><polyline class="hl" data-line="36" points="50.41,66.06 36.78,79.69"/><rect class="hl" data-line="37" x="5.42" y="21.06" width="61.14" height="61.14" rx="2"/><rect class="hl" data-line="37" x="64.56" y="10.35" width="39.17" height="12.71" rx="2"/><rect class="hl" data-line="39" x="113.06" y="48.02" width="10.15" height="7.22" rx="2"/><rect class="hl" data-line="39" x="138.21" y="9.80" width="12.76" height="12.75" rx="2"/><rect class="hl" data-line="39" x="136.55" y="41.74" width="12.76" height="12.75" rx="2"/><rect class="hl" data-line="39" x="160.38" y="65.56" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="39" x="192.32" y="63.90" width="12.76" height="12.76" rx="2"/><polyline class="hl" data-line="40" points="154.51,53.49 161.38,60.36"/><polyline class="hl" data-line="40" points="143.76,29.42 143.76,34.87"/><polyline class="hl" data-line="40" points="180.01,71.11 185.45,71.11"/><polyline class="hl" data-line="41" points="133.00,10.80 126.59,4.39"/><polyline class="hl" data-line="41" points="154.51,10.80 160.93,4.39"/><polyline class="hl" data-line="41" points="133.00,53.49 126.59,59.91"/><polyline class="hl" data-line="41" points="204.08,60.36 210.48,53.94"/><polyline class="hl" data-line="41" points="204.08,81.86 210.48,88.28"/><polyline class="hl" data-line="41" points="161.38,81.86 154.96,88.28"/><rect class="hl" data-line="43" x="93.94" y="108.28" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="92.27" y="140.22" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="38.17" y="164.05" width="12.75" height="12.75" rx="2"/><rect class="hl" data-line="43" x="70.11" y="162.39" width="12.75" height="12.75" rx="2"/><rect class="hl" data-line="43" x="16.01" y="186.21" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="14.34" y="218.15" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="116.10" y="164.05" width="12.76" height="12.75" rx="2"/><rect class="hl" data-line="43" x="148.04" y="162.39" width="12.76" height="12.75" rx="2"/><rect class="hl" data-line="43" x="93.94" y="186.21" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="92.27" y="218.15" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="38.17" y="241.98" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="70.11" y="240.32" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="171.87" y="186.21" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="170.21" y="218.15" width="12.75" height="12.76" rx="2"/><rect class="hl" data-line="43" x="116.10" y="241.98" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="148.04" y="240.32" width="12.76" height="12.76" rx="2"/><rect class="hl" data-line="43" x="93.94" y="264.15" width="12.75" height="12.75" rx="2"/><rect class="hl" data-line="43" x="92.27" y="296.09" width="12.76" height="12.75" rx="2"/><polyline class="hl" data-line="44" points="110.24,151.98 117.10,158.85"/><polyline class="hl" data-line="44" points="88.73,151.98 81.86,158.85"/><polyline class="hl" data-line="44" points="99.49,127.91 99.49,133.35"/><polyline class="hl" data-line="44" points="81.86,180.35 88.73,187.21"/><polyline class="hl" data-line="44" points="39.17,180.35 32.31,187.21"/><polyline class="hl" data-line="44" points="57.79,169.60 63.24,169.60"/><polyline class="hl" data-line="44" points="32.31,229.91 39.17,236.77"/><polyline class="hl" data-line="44" points="21.55,205.84 21.55,211.28"/><polyline class="hl" data-line="44" points="159.80,180.35 166.67,187.21"/><polyline class="hl" data-line="44" points="117.10,180.35 110.24,187.21"/><polyline class="hl" data-line="44" points="135.73,169.60 141.17,169.60"/><polyline class="hl" data-line="44" points="110.24,229.91 117.10,236.77"/><polyline class="hl" data-line="44" points="88.73,229.91 81.86,236.77"/><polyline class="hl" data-line="44" points="99.49,205.84 99.49,211.28"/><polyline class="hl" data-line="44" points="81.86,258.28 88.73,265.15"/><polyline class="hl" data-line="44" points="57.79,247.52 63.24,247.52"/><polyline class="hl" data-line="44" points="166.67,229.91 159.80,236.77"/><polyline class="hl" data-line="44" points="177.42,205.84 177.42,211.28"/><polyline class="hl" data-line="44" points="117.10,258.28 110.24,265.15"/><polyline class="hl" data-line="44" points="135.73,247.52 141.17,247.52"/><polyline class="hl" data-line="44" points="99.49,283.77 99.49,289.22"/><polyline class="hl" data-line="45" points="88.73,109.28 82.31,102.87"/><polyline class="hl" data-line="45" points="110.24,109.28 116.65,102.87"/><polyline class="hl" data-line="45" points="39.17,158.85 32.76,152.43"/><polyline class="hl" data-line="45" points="10.80,187.21 4.38,180.80"/><polyline class="hl" data-line="45" points="10.80,229.91 4.38,236.33"/><polyline class="hl" data-line="45" points="159.80,158.85 166.21,152.43"/><polyline class="hl" data-line="45" points="39.17,258.28 32.76,264.70"/><polyline class="hl" data-line="45" points="188.17,187.21 194.58,180.80"/><polyline class="hl" data-line="45" points="188.17,229.91 194.58,236.33"/><polyline class="hl" data-line="45" points="159.80,258.28 166.21,264.70"/><polyline class="hl" data-line="45" points="110.24,307.84 116.65,314.25"/><polyline class="hl" data-line="45" points="88.73,307.84 82.31,314.25"/><rect class="hl" data-line="46" x="64.05" y="134.15" width="70.88" height="70.89" rx="2"/><rect class="hl" data-line="46" x="132.93" y="122.64" width="15.72" height="13.51" rx="2"/><rect class="hl" data-line="48" x="204.92" y="205.54" width="10.15" height="6.05" rx="2"/><rect class="hl" data-line="49" x="245.96" y="181.49" width="20.14" height="20.14" rx="2"/><rect class="hl" data-line="49" x="286.77" y="181.49" width="20.14" height="20.14" rx="2"/><rect class="hl" data-line="50" x="245.96" y="215.50" width="20.14" height="20.14" rx="2"/><rect class="hl" data-line="50" x="286.77" y="215.50" width="20.14" height="20.14" rx="2"/><polyline class="hl" data-line="51" points="263.50,191.55 289.37,191.55"/><polyline class="hl" data-line="51" points="263.50,225.57 289.37,225.57"/><polyline class="hl" data-line="51" points="256.02,191.55 256.02,225.57"/><polyline class="hl" data-line="51" points="296.84,191.55 296.84,225.57"/><polyline class="hl" data-line="52" points="256.02,191.55 256.02,167.74"/><polyline class="hl" data-line="52" points="296.84,191.55 296.84,167.74"/><polyline class="hl" data-line="53" points="256.02,225.57 256.02,249.38"/><polyline class="hl" data-line="53" points="296.84,225.57 296.84,249.38"/><polyline class="hl" data-line="54" points="248.55,191.55 225.41,191.55"/><polyline class="hl" data-line="54" points="248.55,225.57 225.41,225.57"/><polyline class="hl" data-line="55" points="304.32,191.55 327.45,191.55"/><polyline class="hl" data-line="55" points="304.32,225.57 327.45,225.57"/></svg></span></figure>
+<div class="split">
+<div class="prose"><p>One step of the tensor renormalization group of Levin and Nave, on the square lattice of a two-dimensional partition function: every tensor T is split in two, and four of the halves are contracted into the tensor T' of a lattice twice as coarse.</p><p>The unit cell is two sites, one of each colour of the checkerboard, because the two are split two ways. The split is a singular value decomposition, truncated, so the first row is only approximately equal. It goes two ways, by the colour of the site on the checkerboard: on one colour the indices up the lattice go to one half and those down it to the other, on the other colour the indices to the left and to the right; each half is a triangle whose flat side carries its two indices of the lattice and whose apex points at its other half, and the index between the halves is the bond the truncation keeps. The lattice is drawn turned, as every grid is, so the two ways are one above the other and side by side. The two splits leave four tensors, S1 and S3 above and below, S2 and S4 left and right, and each has its own colour: the same colour is the same tensor, here and wherever it appears in the lattice.</p><p>Split, the lattice falls into squares of four halves around its plaquettes. Each square – one of each of the four halves – is contracted into one tensor, T', a new tensor and so a new colour, framed here for one of them, and the T' form a square lattice of their own – turned against the old one by 45 degrees, which is why it is drawn upright – with a lattice spacing larger by the square root of two. Repeated, the step coarse-grains the whole lattice.</p></div>
+<div class="codecol">
+<h2 class="with-button">The picture<button class="pill live-btn" type="button">Edit live</button></h2>
+<p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
+<pre class="code"><span class="ln" data-line="33"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>A<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>coef/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>A<span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>A<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnframe"><span class="tx-cmd">\tnframe</span></a><span class="tx-brace">[</span>label=unit cell<span class="tx-brace">]</span><span class="tx-brace">{</span>A-1-1, A-2-1<span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tnapprox</span></a></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>split, scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>B<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>half1/<span class="tx-math">$S_1$</span>, half3/<span class="tx-math">$S_3$</span>, half2/<span class="tx-math">$S_2$</span>, half4/<span class="tx-math">$S_4$</span><span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>B<span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>B<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnbreak"><span class="tx-cmd">\tnbreak</span></a></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>split, scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>C<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>half1/<span class="tx-math">$S_1$</span>, half3/<span class="tx-math">$S_3$</span>, half2/<span class="tx-math">$S_2$</span>, half4/<span class="tx-math">$S_4$</span><span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>C<span class="tx-brace">}</span></span><span class="ln" data-line="45">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>C<span class="tx-brace">}</span></span><span class="ln" data-line="46">  <a class="ref" href="../commands.html#tnframe"><span class="tx-cmd">\tnframe</span></a><span class="tx-brace">[</span>label=<span class="tx-math">$T&#x27;$</span><span class="tx-brace">]</span><span class="tx-brace">{</span>C-1-1-bottom, C-2-1-left, C-1-2-right, C-2-2-top<span class="tx-brace">}</span></span><span class="ln" data-line="47">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a></span><span class="ln" data-line="48">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>a, b<span class="tx-brace">}</span></span><span class="ln" data-line="49">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>a<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coarse/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span></span><span class="ln" data-line="50">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>b<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coarse/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span></span><span class="ln" data-line="51">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="52">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="53">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="54">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="55">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="56"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span></pre>
+<textarea class="live-code" spellcheck="false" hidden>\begin{tikzpicture}
+  \tngrid[scale=0.8]{A}{2}{1}{coef/$T$}
+  \tnconnect{A}
+  \tnopen{around}{A}
+  \tnframe[label=unit cell]{A-1-1, A-2-1}
+  \tnapprox
+  \tngrid[split, scale=0.8]{B}{2}{1}{half1/$S_1$, half3/$S_3$, half2/$S_2$, half4/$S_4$}
+  \tnconnect{B}
+  \tnopen{around}{B}
+  \tnbreak
+  \tngrid[split, scale=0.8]{C}{3}{3}{half1/$S_1$, half3/$S_3$, half2/$S_2$, half4/$S_4$}
+  \tnconnect{C}
+  \tnopen{around}{C}
+  \tnframe[label=$T&#x27;$]{C-1-1-bottom, C-2-1-left, C-1-2-right, C-2-2-top}
+  \tneq
+  \tnstack[scale=0.8]{Q}{2}{a, b}
+  \tnlayer{Q}{a}{2*coarse/$T&#x27;$}
+  \tnlayer{Q}{b}{2*coarse/$T&#x27;$}
+  \tnconnect{Q}
+  \tnopen{up}{Q}
+  \tnopen{down}{Q}
+  \tnopen{left}{Q}
+  \tnopen{right}{Q}
+\end{tikzpicture}</textarea>
+<p class="small live-status" hidden></p>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="ln" data-line="28"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span></span><span class="ln" data-line="29"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span></span><span class="ln" data-line="30"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span></span><span class="ln" data-line="31"><span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span></span><span class="ln" data-line="32"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span><span class="ln" data-line="33"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>A<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>coef/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>A<span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>A<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnframe"><span class="tx-cmd">\tnframe</span></a><span class="tx-brace">[</span>label=unit cell<span class="tx-brace">]</span><span class="tx-brace">{</span>A-1-1, A-2-1<span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tnapprox</span></a></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>split, scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>B<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>half1/<span class="tx-math">$S_1$</span>, half3/<span class="tx-math">$S_3$</span>, half2/<span class="tx-math">$S_2$</span>, half4/<span class="tx-math">$S_4$</span><span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>B<span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>B<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnbreak"><span class="tx-cmd">\tnbreak</span></a></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tngrid"><span class="tx-cmd">\tngrid</span></a><span class="tx-brace">[</span>split, scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>C<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>half1/<span class="tx-math">$S_1$</span>, half3/<span class="tx-math">$S_3$</span>, half2/<span class="tx-math">$S_2$</span>, half4/<span class="tx-math">$S_4$</span><span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>C<span class="tx-brace">}</span></span><span class="ln" data-line="45">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>around<span class="tx-brace">}</span><span class="tx-brace">{</span>C<span class="tx-brace">}</span></span><span class="ln" data-line="46">  <a class="ref" href="../commands.html#tnframe"><span class="tx-cmd">\tnframe</span></a><span class="tx-brace">[</span>label=<span class="tx-math">$T&#x27;$</span><span class="tx-brace">]</span><span class="tx-brace">{</span>C-1-1-bottom, C-2-1-left, C-1-2-right, C-2-2-top<span class="tx-brace">}</span></span><span class="ln" data-line="47">  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a></span><span class="ln" data-line="48">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.8<span class="tx-brace">]</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>a, b<span class="tx-brace">}</span></span><span class="ln" data-line="49">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>a<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coarse/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span></span><span class="ln" data-line="50">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span><span class="tx-brace">{</span>b<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coarse/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span></span><span class="ln" data-line="51">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="52">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="53">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="54">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="55">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>Q<span class="tx-brace">}</span></span><span class="ln" data-line="56"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="57"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/24-trg.tex">examples/24-trg.tex</a></p>
+</div>
+</div>
+</div>
+<nav class="pager"><a href="23-ctmrg.html">← CTMRG environment</a><a href="25-hotrg.html">A HOTRG step →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.15.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
