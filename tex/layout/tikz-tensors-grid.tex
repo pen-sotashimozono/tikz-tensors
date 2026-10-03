@@ -175,7 +175,9 @@
     \ifnum\tn@i<\tn@gc\relax \ifnum\tn@gok=1
       \tn@use{#1-\tn@i-\tn@j}{se}{0}\tn@use{#1-\tn@in-\tn@j}{nw}{0}%
       \tn@gport{#1}{\tn@i}{\tn@j}{se}\let\tn@xa\tn@px \let\tn@ya\tn@py
-      \tn@gport{#1}{\tn@in}{\tn@j}{nw}\tn@line{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
+      \tn@gport{#1}{\tn@in}{\tn@j}{nw}%
+      \tn@orient{#1-\tn@i-\tn@j}{se}{0}{#1-\tn@in-\tn@j}{nw}{0}{\string\tnconnect}%
+      \tn@dline{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
     \fi\fi
     \ifnum\tn@j<\tn@gr
       \pgfmathtruncatemacro\tn@jn{\tn@j+1}%
@@ -184,7 +186,9 @@
     \ifnum\tn@j<\tn@gr\relax \ifnum\tn@gok=1
       \tn@use{#1-\tn@i-\tn@j}{sw}{0}\tn@use{#1-\tn@i-\tn@jn}{ne}{0}%
       \tn@gport{#1}{\tn@i}{\tn@j}{sw}\let\tn@xa\tn@px \let\tn@ya\tn@py
-      \tn@gport{#1}{\tn@i}{\tn@jn}{ne}\tn@line{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
+      \tn@gport{#1}{\tn@i}{\tn@jn}{ne}%
+      \tn@orient{#1-\tn@i-\tn@j}{sw}{0}{#1-\tn@i-\tn@jn}{ne}{0}{\string\tnconnect}%
+      \tn@dline{\tn@along}{\tn@xa}{\tn@ya}{\tn@px}{\tn@py}%
     \fi\fi
     \ifnum\tn@get{#1@split}=1
       \pgfmathtruncatemacro\tn@gpar{mod(\tn@i+\tn@j,2)}%
@@ -204,7 +208,8 @@
   \tn@use{#2}{down}{0}%
   \tn@anc{#2}{center}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
   \tn@len\tn@yb{\tn@ya-\tn@slot/2-\tn@stub}%
-  \tn@line{#1}{\tn@xa}{\tn@ya}{\tn@xa}{\tn@yb}%
+  \tn@fluxof{#2}{down}{0}\ifx\tn@fx\tn@sin \def\tn@rev{1}\else \def\tn@rev{0}\fi
+  \tn@dline{#1}{\tn@xa}{\tn@ya}{\tn@xa}{\tn@yb}%
   \coordinate (#3) at (\tn@xa,\tn@yb);
   \tn@openlabel{#3}}
 % An index of the lattice toward <#5> from site (<#3>, <#4>) of grid <#2>,
@@ -219,7 +224,8 @@
   \else \tn@len\tn@gl{(\tn@slot/2+\tn@stub)*0.7071068}\fi
   \tn@len\tn@xb{\tn@px\if w\tn@gwe -\else +\fi\tn@gl}%
   \tn@len\tn@yb{\tn@py\if n\tn@gns +\else -\fi\tn@gl}%
-  \tn@line{#1}{\tn@px}{\tn@py}{\tn@xb}{\tn@yb}%
+  \tn@fluxof{#2-#3-#4}{#5}{0}\ifx\tn@fx\tn@sin \def\tn@rev{1}\else \def\tn@rev{0}\fi
+  \tn@dline{#1}{\tn@px}{\tn@py}{\tn@xb}{\tn@yb}%
   \coordinate (#2-#3-#4-#5) at (\tn@xb,\tn@yb);
   \tn@reach{\tn@xb}%
   \begingroup\let\tn@dir\tn@gd \tn@openlabel{#2-#3-#4-#5}\endgroup}

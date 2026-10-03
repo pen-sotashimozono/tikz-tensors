@@ -11,11 +11,18 @@
 %     tn leg anchor=<anchor>  the point its index down the site leaves from,
 %                             and the point a stack puts on the site's line
 %                             (center unless the shape says otherwise)
-%     tn points=left|right    which way the shape points; an index that carries
-%                             a direction (tn arrow) takes it from here
+%     tn flux={<side>=in|out, ...}
+%                             which way its indices on a side run: into the
+%                             tensor or out of it. A bond runs from the end
+%                             that is out to the end that is in -- the way an
+%                             arrow on it points (tn arrow) -- and two ends
+%                             both in, or both out, are an error. A triangle
+%                             leans one way by itself -- in at its flat side,
+%                             out at its apex -- which the other end of a bond,
+%                             or a type's own tn flux, may overrule.
 %     tn single=up|down       the side on which it has one index however many
 %                             sites it spans (the apex of a triangle)
-%     tn index={<name>:<side>, ...}
+%     tn index={<name>:<side>[:in|out], ...}
 %                             its indices, each named and leaving on a side --
 %                             up, down, left, right (on a grid: nw, ne, se,
 %                             sw, down) -- in an order, which is how a figure
@@ -25,6 +32,8 @@
 %                             on each side per site or layer it covers; said,
 %                             it has these and no others, and a picture that
 %                             ends with one of them not drawn is an error.
+%                             An index may say which way it runs, which comes
+%                             before its side's (tn flux).
 % A user's own type is a style of the same kind and is a type like these: a
 % kite pointing up is {tn node, kite, tn fill=green3, tn single=up}.
 % The package's types are named for their shape and never for what they mean;
@@ -47,28 +56,39 @@
     \pgfmathsetlengthmacro\tn@szr{(\tn@rad)*(#1)}\tikzset{rounded corners=\tn@szr}\fi}}
 \def\tn@rad{}
 \gdef\tn@legat{center}
-\gdef\tn@pts{}
+\gdef\tn@flux{}
+\gdef\tn@fluxw{}
+\gdef\tn@ixdirs{}
 \gdef\tn@single{}
 \gdef\tn@legs{}
 \gdef\tn@rank{}
 \gdef\tn@index{}
 \gdef\tn@tname{}
 \tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
-         tn points/.code={\gdef\tn@pts{#1}},
+         tn flux/.code={\xdef\tn@flux{\zap@space#1 \@empty}},
+         tn@lean/.code={\xdef\tn@fluxw{\zap@space#1 \@empty}},
          tn single/.code={\gdef\tn@single{#1}},
          tn index/.code={\tn@indexkey{#1}},
          tn@tname/.code={\gdef\tn@tname{#1}}}
 % tn index: the list as \tn@index (<name>:<side>,...), the sides it names as
 % \tn@legs, each once, and how many indices as \tn@rank.
 \def\tn@indexkey#1{%
-  \xdef\tn@index{\zap@space#1 \@empty}\gdef\tn@legs{}\gdef\tn@ixnames{}%
-  \global\tn@ixn=0
-  \foreach \tn@ii in \tn@index{\expandafter\tn@indexone\tn@ii:\tn@end}%
+  \xdef\tn@ixall{\zap@space#1 \@empty}\gdef\tn@legs{}\gdef\tn@ixnames{}%
+  \gdef\tn@index{}\gdef\tn@ixdirs{}\global\tn@ixn=0
+  \foreach \tn@ii in \tn@ixall{\expandafter\tn@indexone\tn@ii::\tn@end}%
   \xdef\tn@rank{\the\tn@ixn}}
 \newcount\tn@ixn
-\def\tn@indexone#1:#2:#3\tn@end{%
+% an index <name>:<side>[:<way>], kept as <name>:<side> in \tn@index and
+% <name>=<way> in \tn@ixdirs
+\def\tn@indexone#1:#2:#3:#4\tn@end{%
   \global\advance\tn@ixn by 1
   \def\tn@ixs{#2}%
+  \ifx\tn@index\@empty \xdef\tn@index{#1:#2}\else \xdef\tn@index{\tn@index,#1:#2}\fi
+  \def\tn@ixw{#3}%
+  \ifx\tn@ixw\@empty\else
+    \tn@checkway{#3}{tn index: index `#1'}%
+    \ifx\tn@ixdirs\@empty \xdef\tn@ixdirs{#1=#3}\else \xdef\tn@ixdirs{\tn@ixdirs,#1=#3}\fi
+  \fi
   \ifx\tn@ixs\@empty
     \PackageError{tikz-tensors}{tn index: `#1' says no side; an index is
       <name>:<side>}{}\fi
@@ -77,12 +97,17 @@
   \xdef\tn@ixnames{\tn@ixnames,#1}%
   \edef\tn@ixt{\noexpand\in@{,#2,}{,\tn@legs,}}\tn@ixt
   \ifin@\else \ifx\tn@legs\@empty \xdef\tn@legs{#2}\else \xdef\tn@legs{\tn@legs,#2}\fi\fi}
-% Read a type's index properties without drawing it: \tn@legat, \tn@pts,
-% \tn@single, \tn@index (and from it \tn@legs and \tn@rank) and \tn@tname
-% afterwards hold what the style <#1> sets.
+\def\tn@sin{in}\def\tn@sout{out}
+\def\tn@checkway#1#2{\def\tn@cw{#1}%
+  \ifx\tn@cw\tn@sin\else\ifx\tn@cw\tn@sout\else
+    \PackageError{tikz-tensors}{#2 runs `#1'; an index runs in or out}{}\fi\fi}
+% Read a type's index properties without drawing it: \tn@legat, \tn@flux,
+% \tn@single, \tn@index (and from it \tn@legs, \tn@rank and \tn@ixdirs)
+% and \tn@tname afterwards hold what the style <#1> sets.
 \def\tn@props#1{%
-  \gdef\tn@legat{center}\gdef\tn@pts{}\gdef\tn@single{}\gdef\tn@legs{}%
-  \gdef\tn@rank{}\gdef\tn@tname{}\gdef\tn@index{}%
+  \gdef\tn@legat{center}\gdef\tn@flux{}\gdef\tn@fluxw{}\gdef\tn@single{}%
+  \gdef\tn@legs{}%
+  \gdef\tn@rank{}\gdef\tn@tname{}\gdef\tn@index{}\gdef\tn@ixdirs{}%
   \begingroup\tikzset{#1}\endgroup}
 
 % Each shape carries the size at which it reads as the same weight as the
@@ -104,15 +129,18 @@
   tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
                               shape border rotate=-90, fill=grey1,
                               minimum size=10.5mm, font=\small,
-                              tn leg anchor=corner 3, tn points=right},
+                              tn leg anchor=corner 3,
+                              tn@lean={left=in, right=out}},
   tn triangle left/.style  = {tn triangle right, shape border rotate=90,
-                              tn leg anchor=corner 2, tn points=left},
+                              tn leg anchor=corner 2,
+                              tn@lean={right=in, left=out}},
   tn triangle up/.style    = {tn node, isosceles triangle,
                               isosceles triangle stretches, shape border rotate=90,
                               fill=grey1, minimum width=10.5mm, minimum height=9mm,
-                              font=\small, tn single=up},
+                              font=\small, tn single=up,
+                              tn@lean={down=in, up=out}},
   tn triangle down/.style  = {tn triangle up, shape border rotate=-90,
-                              tn single=down},
+                              tn single=down, tn@lean={up=in, down=out}},
   tn diamond/.style        = {tn node, diamond, fill=grey1, minimum size=9.5mm,
                               font=\small},
   tn wide/.style           = {minimum width=17mm},
@@ -142,16 +170,29 @@
   tn env/.style  = {tn box, minimum width=\tn@envw, font=\small},
 }
 
+% The way each side of tensor <#1> runs, n@<t>@fx@<side>, from \tn@flux, and
+% the way its shape leans, n@<t>@wfx@<side>, from \tn@fluxw (tn@lean); and
+% each named index's own, n@<t>@ifx@<name>, from \tn@ixdirs.
+\def\tn@setflux#1{%
+  \foreach \tn@fs in {left,right,up,down,nw,ne,se,sw}{\tn@set{n@#1@fx@\tn@fs}{}%
+    \tn@set{n@#1@wfx@\tn@fs}{}}%
+  \foreach \tn@fp in \tn@fluxw{\expandafter\tn@fluxone\tn@fp=\tn@end{#1}{wfx}}%
+  \foreach \tn@fp in \tn@flux{\expandafter\tn@fluxone\tn@fp=\tn@end{#1}{fx}}%
+  \foreach \tn@fp in \tn@ixdirs{\expandafter\tn@fluxone\tn@fp=\tn@end{#1}{ifx}}}
+\def\tn@fluxone#1=#2=#3\tn@end#4#5{%
+  \tn@checkway{#2}{tn flux: side `#1'}\tn@set{n@#4@#5@#1}{#2}}
+
 % ---- placing a node ----------------------------------------------------------
 % \tn@place{<type>}{<name>}{<x>}{<y>}{<label>}
 % How every layout puts a tensor down: at (<x>,<y>), or, when its type gives
 % its index an anchor of its own, moved across so that the anchor is there --
-% a probe of the same type, drawn nowhere, measures how far. Which way it points
-% and its single side are kept with the node (n@<name>@pt, n@<name>@one), for
-% the routes that later meet it.
+% a probe of the same type, drawn nowhere, measures how far. The way its sides
+% run and its single side are kept with the node (n@<name>@fx@<side>,
+% n@<name>@one), for the routes that later meet it.
 \def\tn@place#1#2#3#4#5{%
   \tn@props{#1}%
-  \tn@set{n@#2@pt}{\tn@pts}\tn@set{n@#2@one}{\tn@single}\tn@set{n@#2@legs}{\tn@legs}%
+  \tn@set{n@#2@one}{\tn@single}\tn@set{n@#2@legs}{\tn@legs}%
+  \tn@setflux{#2}%
   \tn@set{n@#2@type}{\detokenize{#1}}\tn@set{n@#2@rank}{\tn@rank}%
   \tn@set{n@#2@tname}{\tn@tname}\tn@set{n@#2@index}{\tn@index}%
   \ifx\tn@legat\tn@center

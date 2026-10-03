@@ -107,7 +107,7 @@
   % it points; the next, two indices exchanged on their way down.
   \tnbreak
   \tnstack{W}{5}{a, b, c}
-  \tnlayer{W}{a}{tn box/$Z$/1/2, tn box, dots, tn dot/, {tn box, tn points=left}/$P$}
+  \tnlayer{W}{a}{tn box/$Z$/1/2, tn box, dots, tn dot/, {tn box, tn flux={left=out}}/$P$}
   \tnlayer{W}{b}{., tn rounded, |, |, tn box}
   \tnlayer{W}{c}{|, |, |, |, |}
   \tnconnect[along=tn arrow, apart=c]{W}
@@ -129,7 +129,7 @@
   \tnopen{down}{R}
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
     at (current bounding box.south) {\textbackslash tnbreak, tn box/\$Z\$/1/2, dots,
-    tn dot, |, apart=, tn points=,\\\textbackslash tnopenswap, tn double, tn triangle up, tn triangle down, tn single};
+    tn dot, |, apart=, tn flux=,\\\textbackslash tnopenswap, tn double, tn triangle up, tn triangle down, tn single};
 
   % ---- a third row: a chain repeated, labels, and joins ------------------
   % <n>* repeats an entry; \tnjoin closes the chain into a ring, round the

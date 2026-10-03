@@ -3,19 +3,21 @@
 % What a type says about its indices, read back by the layouts: where its
 % index down the site leaves -- T's from its corner, and the stack moves T
 % across so that the corner is on the site's line (tn leg anchor); which way
-% it points, which the arrow on its bond follows (tn points); and the
-% side on which it has one index however many sites it spans -- S, below
+% its indices run, in or out -- P's left one out, which the arrow on its
+% bond follows (tn flux); the side on which it has one index however many
+% sites it spans -- S, below
 % (tn single); and its indices, named, each on a side -- M, with an index
 % left, l, and two down, s and t, and none right or up, so that it is joined
 % to nothing on its right and opened nowhere above; s and t, two on one side
-% of one site, leave it apart (tn index). The triangles have the first three
-% built in; any outline can be given them.
+% of one site, leave it apart (tn index), and an index there may say its own
+% way, s:down:out. The triangles have the first three built in; any outline
+% can be given them.
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{2}{a, b}
-  \tnlayer{S}{a}{{tn box, tn leg anchor=south west}/$T$, {tn box, tn points=left}/$P$}
+  \tnlayer{S}{a}{{tn box, tn leg anchor=south west}/$T$, {tn box, tn flux={left=out}}/$P$}
   \tnlayer{S}{b}{2*tn box/$A$}
   \tnconnect[along=tn arrow]{S}
   \tnstack{R}{2}{a}
