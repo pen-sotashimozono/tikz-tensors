@@ -74,7 +74,7 @@ decompositions). "Needs" is what the package lacks for that picture.
 | SVD, QR | T = U S V†, T = Q R | `iso` at any angle; equation layout |
 | canonical form | `08-canonical`, `09-center` | — (done) |
 | DMRG (two-site) | H_eff, `14-heff-two-site` | **stack**, **env**, open stubs |
-| TEBD | `17-trotter-sweep` | gate drop as a token, not `9 ... 79 mm` |
+| TEBD | `17-trotter` | gate drop as a token, not `9 ... 79 mm` |
 | TDVP | forward on AC, backward on C | stack, env, `centerbond` in a stack |
 | MPO × MPS, naive | two layers fused | stack, **fused index** |
 | zip-up | left: new MPS, zipper, right: two layers | stack, fused index, SVD split |

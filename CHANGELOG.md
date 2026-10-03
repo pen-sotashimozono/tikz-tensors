@@ -15,6 +15,16 @@ In the notation of the examples the styles `centre` and `centrebond` are
 comments, the docs and the reference use the American spelling as well. Every
 picture is drawn as before; the palette's label for green1 reads `center`.
 
+Stacks with layers at their own heights: `\tnstack[close={<layer>, ...}]`
+sets those layers `closerise` under the layer above them instead of a rise --
+the layers of a circuit of gates, drawn as one. `closerise` is a token
+(`\tnset{closerise=...}`), by default the gap between two slots halved. A
+figure says which layers; a notation says how close.
+
+`17-trotter-sweep` is `17-trotter`, "Trotter steps": its first order is now
+the even/odd splitting -- the gates on the even bonds as one layer, then those
+on the odd bonds -- and the layers of gates in both of its steps are close.
+
 ## v0.10.0 — 2026-10-02
 
 Folders, and the abstract layout: stack, tree and grid as layouts of one kind.

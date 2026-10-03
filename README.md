@@ -132,6 +132,9 @@ layer has one spelling.
 - `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
   one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
   `\tnopen{down}{P}` its physical indices, straight down.
+- `\tnstack[close={g2, g3}]` sets those layers closer under the one above —
+  the layers of a circuit of gates; how close is the token `closerise`, set
+  once in a notation (`\tnset`).
 - `\tneq[factor=$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side

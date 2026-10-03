@@ -11,9 +11,26 @@
 
 % The center of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
 % \tn@ly. Column 0 and column n+1 are the slots just beyond the ends; a
-% fraction is a line between two.
+% fraction is a line between two. Layers are a rise apart, or closer where the
+% stack says so (close=), so each one's height is kept (@y@<k>); beyond the
+% first and the last the stack goes on at a rise.
 \def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
-\def\tn@layy#1#2{\tn@len\tn@ly{\tn@get{#1@y0}+((\tn@get{#1@L}+1)/2-(#2))*\tn@get{#1@rise}}}
+\def\tn@layint#1#2{% the height of whole layer number <#2>, as \tn@lyi
+  \pgfmathtruncatemacro\tn@lyn{#2}%
+  \ifnum\tn@lyn<1
+    \tn@len\tn@lyi{\tn@get{#1@y@1}+(1-\tn@lyn)*\tn@get{#1@rise}}%
+  \else\ifnum\tn@lyn>\tn@get{#1@L}
+    \tn@len\tn@lyi{\tn@get{#1@y@\tn@get{#1@L}}-(\tn@lyn-\tn@get{#1@L})*\tn@get{#1@rise}}%
+  \else \edef\tn@lyi{\tn@get{#1@y@\tn@lyn}}\fi\fi}
+\def\tn@layy#1#2{%
+  \pgfmathsetmacro\tn@lyk{#2}%
+  \pgfmathtruncatemacro\tn@lyf{floor(\tn@lyk)}%
+  \pgfmathsetmacro\tn@lyr{\tn@lyk-\tn@lyf}%
+  \tn@layint{#1}{\tn@lyf}\let\tn@ly\tn@lyi
+  \ifdim\tn@lyr pt=0pt \else
+    \let\tn@lyA\tn@lyi \tn@layint{#1}{\tn@lyf+1}%
+    \tn@len\tn@ly{\tn@lyA+\tn@lyr*(\tn@lyi-\tn@lyA)}%
+  \fi}
 
 % ---- placing ----------------------------------------------------------------
 % \tnstack[left=<label>, right=<label>, tree]{<name>}{<sites>}{<layers>}
@@ -24,20 +41,23 @@
 % either end. Without one, the stack keeps the slot beyond its end as far as
 % that slot's border, which is where an open index there ends -- so an index
 % opened later never runs into the equals sign before it. [tree] makes it the
-% tree layout.
+% tree layout. close= names layers that sit closer under the layer above them
+% than a rise -- `closerise' (\tnset), which halves the gap between two slots
+% -- as the layers of a circuit of gates are drawn.
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
+%   \tnstack[close={g2}]{S}{5}{ket, g1, g2}
 %
 % The environment is the node <name>-left or <name>-right. Every slot, and the
 % ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
 % is what a label for something that is not a tensor is placed on.
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
-         /tn/stack/right/.initial=,
+         /tn/stack/right/.initial=, /tn/stack/close/.initial=,
          /tn/stack/tree/.code={\def\tn@stkind{tree}}}
 \def\tn@stack@geometry#1{\tn@set{#1@pitch}{\tn@pitch}\tn@set{#1@rise}{\tn@rise}}
 \newcommand{\tnstack}[4][]{%
   \def\tn@stkind{stack}%
-  \pgfkeys{/tn/stack/.cd, left=, right=, #1}%
+  \pgfkeys{/tn/stack/.cd, left=, right=, close=, #1}%
   \tn@newblock{#2}{\tn@stkind}%
   \tn@op{#2}{geometry}{#2}%
   \pgfkeysgetvalue{/tn/stack/left}\tn@envl
@@ -49,11 +69,33 @@
     \global\advance\tn@c by 1
     \tn@set{#2@k@\tn@l}{\the\tn@c}\tn@set{#2@name@\the\tn@c}{\tn@l}}%
   \tn@set{#2@L}{\the\tn@c}%
+  % how far each layer is under the first, and the stack's height
+  \pgfkeysgetvalue{/tn/stack/close}\tn@close
+  \foreach \tn@l in \tn@close{%
+    \ifcsname tn@#2@k@\tn@l\endcsname\else
+      \PackageError{tikz-tensors}{close=: stack `#2' has no layer `\tn@l'}{}\fi
+    \ifnum\tn@get{#2@k@\tn@l}=1
+      \PackageError{tikz-tensors}{close=: `\tn@l' is the first layer of `#2';
+        a layer is close to the one above it}{}\fi
+    \tn@set{#2@close@\tn@l}{1}}%
+  \tn@set{#2@off@1}{0pt}%
+  \ifnum\tn@get{#2@L}>1
+    \foreach \tn@k in {2,...,\tn@get{#2@L}}{%
+      \edef\tn@kl{\tn@get{#2@name@\tn@k}}%
+      \ifcsname tn@#2@close@\tn@kl\endcsname \let\tn@step\tn@closerise
+      \else \edef\tn@step{\tn@get{#2@rise}}\fi
+      \tn@len\tn@o{\tn@get{#2@off@\the\numexpr\tn@k-1\relax}+\tn@step}%
+      \tn@set{#2@off@\tn@k}{\tn@o}}%
+  \fi
+  \tn@set{#2@H}{\tn@get{#2@off@\tn@get{#2@L}}}%
   % A row after \tnbreak hangs a gap under everything drawn so far, keeping the
   % slot above its top layer as far as that slot's border -- where an index
   % opened upward ends -- as a stack keeps the slots beyond its ends.
-  \tn@block{0pt}{\tn@gap+(\tn@get{#2@L}+1)/2*\tn@get{#2@rise}-\tn@slot/2}%
+  \tn@block{0pt}{\tn@gap+\tn@get{#2@H}/2+\tn@get{#2@rise}-\tn@slot/2}%
   \tn@set{#2@y0}{\the\tn@line@y}%
+  \foreach \tn@k in {1,...,\tn@get{#2@L}}{%
+    \tn@len\tn@o{\the\tn@line@y+\tn@get{#2@H}/2-\tn@get{#2@off@\tn@k}}%
+    \tn@set{#2@y@\tn@k}{\tn@o}}%
   \ifx\tn@envl\@empty
     \tn@set{#2@hasl}{0}%
     \tn@len\tn@xz{\the\tn@cursor-\tn@slot/2}%
@@ -62,7 +104,7 @@
     \tn@len\tn@xz{\the\tn@cursor+\tn@envw/2}%
   \fi
   \tn@set{#2@x0}{\tn@xz}%
-  \tn@len\tn@h{(\tn@get{#2@L}-1)*\tn@get{#2@rise}+\tn@slot}%
+  \tn@len\tn@h{\tn@get{#2@H}+\tn@slot}%
   \ifx\tn@envl\@empty\else
     \node[tn env, minimum height=\tn@h] (#2-left) at (\tn@xz,\the\tn@line@y) {\tn@envl};
   \fi
@@ -152,10 +194,12 @@
       \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
       \node[tn label] at (\tn@cx,\tn@ly) {$\cdots$};
     \else
-      \tn@layy{#1}{\tn@k+(\tn@vspan-1)/2}%
+      \tn@layy{#1}{\tn@k}\let\tn@ytop\tn@ly
+      \tn@layy{#1}{\tn@k+\tn@vspan-1}%
+      \tn@len\tn@hh{\tn@ytop-\tn@ly+\tn@slot}%
+      \tn@len\tn@ly{(\tn@ytop+\tn@ly)/2}%
       \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
       \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
-      \tn@len\tn@hh{(\tn@vspan-1)*\tn@get{#1@rise}+\tn@slot}%
       \tn@op{#1}{spanwidth}%
       \edef\tn@opt{\tn@sty\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
                    \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%

@@ -55,6 +55,7 @@ canvas after what is on the row.
 |---|---|
 | `left=<label>`, `right=<label>` | an environment block at that end, drawn in `tn env` |
 | `tree` | the tree layout: tree pitch, tensors at their own size, indices that turn corners |
+| `close={<layer>, ...}` | layers that sit `closerise` under the layer above them instead of a rise, as the layers of a circuit of gates |
 
 ### `\tnlayer{<stack>}{<layer>}{<entry>, ...}`
 The layer's slots, left to right: `<type>/<label>`, `<type>/<label>/<span>`,
@@ -119,6 +120,7 @@ The tokens, for a notation file (a figure may not use it).
 | key | |
 |---|---|
 | `pitch=`, `rise=` | between sites, between layers of a stack |
+| `closerise=` | between a layer and the one above where a stack names it `close` (the gap between two slots, halved) |
 | `treepitch=`, `treerise=` | the same, in a tree |
 | `gpitch=` | along a bond of a grid |
 | `slot=` | the size of a tensor that is not there, where an open index ends |
