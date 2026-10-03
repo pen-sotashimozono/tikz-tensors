@@ -10,8 +10,8 @@ dark under prefers-color-scheme and [data-theme="dark"], so a page switches by
 tokens alone; the TeX file defines one xcolor per token as tt<name>, plus the
 physics colours under their short names (ele, nuc, ...) that diagrams use.
 
-A value names a step of [ramp], optionally mixed: "blue2", "blue3 +35% black",
-"green1 +90% white". A literal "#rrggbb" outside [ramp] is an error. That is
+A value names a step of [ramp], optionally mixed: "blue4", "blue5 +35% black",
+"green3 +90% white". A literal "#rrggbb" outside [ramp] is an error. That is
 what lets a colour code be written once: the scales hold the codes, everything
 else is an assignment onto them, and moving a scale moves every figure and
 every page that named it.

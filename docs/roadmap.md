@@ -120,7 +120,7 @@ are these:
 
 | new role | used by | proposal | open question |
 |---|---|---|---|
-| env | DMRG, TDVP, fitting, VUMPS, CTMRG | **decided**: `purple1` at 25%, one colour for L and R; the gate moved to `yellow1` | — |
+| env | DMRG, TDVP, fitting, VUMPS, CTMRG | **decided**: `purple3` at 25%, one colour for L and R; the gate moved to `yellow3` | — |
 | isometry, not on a chain | TTN, MERA w, TRG S, HOTRG U, CTMRG P | `canl`'s colour for "isometric toward the center", whatever the angle | in a tree there is no left and right, so one colour; is `canr` then only the 1D mirror? |
 | disentangler | MERA u, TNR | `gate` (it is a unitary on two indices) | — |
 | partition-function T | TRG, HOTRG | `coef` (a plain array) | — |
@@ -128,7 +128,7 @@ are these:
 | updated vs not yet | zip-up, fitting sweeps | a step darker on the same scale | worth showing, or left to the caption? |
 
 Also to settle: `coef` draws in `black!6`, not in the `coef` colour token, which
-`tokens.toml` defines as `blue1` (the same as `canl`). One of the two should go.
+`tokens.toml` defines as `blue3` (the same as `canl`). One of the two should go.
 
 ## Phases
 

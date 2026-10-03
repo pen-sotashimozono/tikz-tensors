@@ -99,7 +99,7 @@
 % them, and a diagram that has no use for the rest can be drawn out of these
 % alone:
 %
-%   \node[tn node, tn fill=blue1, circle] (a) at (0,0) {$A$};
+%   \node[tn node, tn fill=blue3, circle] (a) at (0,0) {$A$};
 %   \node[tn node] (b) at (2,0) {$B$};            % a box: the plain tensor
 %   \tnbond{(a) -- (b)}                           % an index between them
 %   \tnbond[tn edge=exact]{(b) -- ++(1,0)}        % one in a colour of its own
@@ -126,7 +126,7 @@
   tn node/.style   = {tn line, draw=stroke, minimum size=9mm, inner sep=0pt,
                       outer sep=0pt, text=ttfg},
   tn fill/.style   = {draw=stroke, fill=#1},
-  tn fill/.default = grey2,
+  tn fill/.default = grey3,
   tn edge/.style   = {tn line, draw=#1},
   tn edge/.default = stroke,
 }

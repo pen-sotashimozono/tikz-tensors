@@ -4,40 +4,52 @@
 %   \tnpalette       step / hex / figure styles / dark tokens / column / row
 %   \tnpalettechips  light colour / token / its mix / column / row / index
 \def\tnpalette{%
-    blue1/809EAB/{coef, canl}/{dark: fg +80\% white, muted +25\% white, faint pure}/0/0,
-    blue2/0082A9/{ele}/{dark: accent +35\% white}/6/0,
-    blue3/005077/{exact}/{dark: bg +90\% black, card +84\% black, soft +78\% black, line +55\% black}/12/0,
-    warm1/CE7E60/{canr}/{}/0/1,
-    warm2/B65C24/{nuc}/{}/6/1,
-    warm3/88451B/{exchange}/{dark: bad +25\% white, bad-bg +86\% black}/12/1,
-    green1/6ABE92/{center}/{dark: good pure}/0/2,
-    green2/2F9262/{}/{}/6/2,
-    green3/1E6543/{}/{dark: good-bg +72\% black}/12/2,
-    yellow1/CBB387/{gate}/{}/0/3,
-    yellow2/AE8C3D/{}/{dark: warn +15\% white, warn-bg +86\% black}/6/3,
-    yellow3/7A601E/{}/{}/12/3,
-    purple1/A494C1/{env}/{}/0/4,
-    purple2/816AB7/{}/{}/6/4,
-    purple3/5A4887/{}/{}/12/4,
+    blue1/D5E2E7/{}/{}/0/0,
+    blue2/AABFC9/{}/{}/6/0,
+    blue3/809EAB/{coef, canl}/{dark: fg +80\% white, muted +25\% white, faint pure}/12/0,
+    blue4/0082A9/{ele}/{dark: accent +35\% white}/18/0,
+    blue5/005077/{exact}/{dark: bg +90\% black, card +84\% black, soft +78\% black, line +55\% black}/24/0,
+    warm1/FDD8CB/{}/{}/0/1,
+    warm2/E9AA92/{}/{}/6/1,
+    warm3/CE7E60/{canr}/{}/12/1,
+    warm4/B65C24/{nuc}/{}/18/1,
+    warm5/88451B/{exchange}/{dark: bad +25\% white, bad-bg +86\% black}/24/1,
+    green1/C5E8D4/{}/{}/0/2,
+    green2/98D3B2/{}/{}/6/2,
+    green3/6ABE92/{center}/{dark: good pure}/12/2,
+    green4/2F9262/{}/{}/18/2,
+    green5/1E6543/{}/{dark: good-bg +72\% black}/24/2,
+    yellow1/EADECB/{}/{}/0/3,
+    yellow2/DBC8A8/{}/{}/6/3,
+    yellow3/CBB387/{gate}/{}/12/3,
+    yellow4/AE8C3D/{}/{dark: warn +15\% white, warn-bg +86\% black}/18/3,
+    yellow5/7A601E/{}/{}/24/3,
+    purple1/E4DCF0/{}/{}/0/4,
+    purple2/C4B7D9/{}/{}/6/4,
+    purple3/A494C1/{env}/{}/12/4,
+    purple4/816AB7/{}/{}/18/4,
+    purple5/5A4887/{}/{}/24/4,
     grey1/FFFFFF/{}/{}/0/5,
-    grey2/D2D2D3/{mpo}/{}/6/5,
-    grey3/333333/{stroke}/{}/12/5%
+    grey2/E9E9EA/{}/{}/6/5,
+    grey3/D2D2D3/{mpo}/{}/12/5,
+    grey4/7B7B7C/{}/{}/18/5,
+    grey5/333333/{stroke}/{}/24/5%
 }
 \def\tnpalettechips{%
-    ttsoft/{soft}/{+90\% white}/0/0/0,
-    ttmuted/{muted}/{+25\% black}/0/0/1,
-    ttfaint/{faint}/{+6\% black}/0/0/2,
-    ttaccent/{accent}/{+4\% black}/6/0/0,
-    ttfg/{fg}/{+35\% black}/12/0/0,
-    ttbad/{bad}/{pure}/12/1/0,
-    ttbadbg/{bad-bg}/{+88\% white}/12/1/1,
-    ttgoodbg/{good-bg}/{+90\% white}/0/2/0,
-    ttgood/{good}/{pure}/12/2/0,
-    ttwarn/{warn}/{pure}/12/3/0,
-    ttwarnbg/{warn-bg}/{+88\% white}/12/3/1,
+    ttsoft/{soft}/{+90\% white}/12/0/0,
+    ttmuted/{muted}/{+25\% black}/12/0/1,
+    ttfaint/{faint}/{+6\% black}/12/0/2,
+    ttaccent/{accent}/{+4\% black}/18/0/0,
+    ttfg/{fg}/{+35\% black}/24/0/0,
+    ttbad/{bad}/{pure}/24/1/0,
+    ttbadbg/{bad-bg}/{+88\% white}/24/1/1,
+    ttgoodbg/{good-bg}/{+90\% white}/12/2/0,
+    ttgood/{good}/{pure}/24/2/0,
+    ttwarn/{warn}/{pure}/24/3/0,
+    ttwarnbg/{warn-bg}/{+88\% white}/24/3/1,
     ttcard/{card}/{pure}/0/5/0,
-    ttbg/{bg}/{+88\% white}/6/5/0,
-    ttline/{line}/{pure}/6/5/1%
+    ttbg/{bg}/{+88\% white}/12/5/0,
+    ttline/{line}/{pure}/12/5/1%
 }
 \def\tnpalettescales{%
     blue/0,
@@ -47,4 +59,4 @@
     purple/4,
     grey/5%
 }
-\def\tnpalettecount{18 steps defined, 15 of them named by something; green2, purple2, purple3 not.}
+\def\tnpalettecount{30 steps defined, 15 of them named by something; blue1, blue2, warm1, warm2, green1, green2, green4, yellow1, yellow2, purple1, purple2, purple4, purple5, grey2, grey4 not.}

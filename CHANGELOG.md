@@ -7,6 +7,19 @@ section as its notes.
 
 ## v0.12.0 — 2026-10-03
 
+Breaking: every scale of the palette runs in five steps, pale to dark, and
+the steps that were there are renamed so that they keep their colours: on
+blue, warm, green, yellow and purple, steps 1, 2, 3 are now 3, 4, 5 (`blue1`
+is `blue3`, `warm3` is `warm5`), and steps 1 and 2 are new, the pale end of
+each hue for fills that should recede. They carry the ladder of the given
+steps on upward at each scale's own hue, so a scale greyish at its light step
+stays greyish when pale (blue) and a clear one stays clear (green, warm). grey
+cannot go paler than paper: its steps are paper `grey1`, a pale grey
+`grey2`, the hairline `grey3` (was `grey2`), a middle grey `grey4` and ink
+`grey5` (was `grey3`). Every figure draws as it did; a notation of one's own
+that names a step moves its name the same way. `examples/00-palette.tex`
+draws the five columns.
+
 A block can be drawn at factors of the notation's distances and sizes, said
 where it is placed: `\tnstack[scale=0.7, rise=0.6]`, and `pitch=`, `size=`,
 `stub=`; `\tngrid` the same but `rise=`. A factor is a number, never a

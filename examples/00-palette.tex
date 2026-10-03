@@ -3,7 +3,7 @@
 % The whole theme: the scales, their steps, and every value derived from a step.
 %
 % There is no blend of one step into the next on this page, because the theme
-% has no such colour. A bar running blue1 through blue2 to blue3 looks like a
+% has no such colour. A bar running blue3 through blue4 to blue5 looks like a
 % continuous scale and would be lying: what lies between two steps is nothing.
 % What does exist beside a step is a tint or a shade of it -- the page tokens --
 % and those are the small chips, each drawn in the colour it actually is and
@@ -16,11 +16,11 @@
 % they describe can claim a role the theme does not assign, and the reader has
 % no way to tell. `scripts/theme.py --check` fails in CI if the two drift.
 %
-% The codes are scales: each runs light to dark in three steps, and that
-% ordering is the thing being specified. A pair that should read as a pair takes
-% the same step on two scales -- canl and canr at step 1, edge and edgec at step
-% 3 -- and a figure that needs a stronger or weaker version of a colour moves
-% along its own scale rather than reaching for a new one.
+% The codes are scales: each runs pale to dark in five steps, and that order
+% is the thing being specified. A pair that should read as a pair takes the same
+% step on two scales -- canl and canr at step 3, edge and edgec at step 5 -- and
+% a figure that needs a stronger or paler version of a colour moves along its
+% own scale rather than reaching for a new one.
 %
 % Under each step: its name, its hex, the figure styles that name it, then the
 % light page tokens made from it as chips, then the dark ones as text. The dark
