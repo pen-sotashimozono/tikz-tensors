@@ -56,8 +56,12 @@ every figure keeps working.</p>
 <span class="tx-comment">%   the environment of a two-dimensional network, contracted from its</span>
 <span class="tx-comment">%   boundary, is the environment&#x27;s colour: a corner as a rounded box, a side</span>
 <span class="tx-comment">%   as a circle;</span>
-<span class="tx-comment">%   a factor of a tensor split in two -- a half of a site of the tensor</span>
-<span class="tx-comment">%   renormalization group -- is the array colour, its shape the split&#x27;s;</span>
+<span class="tx-comment">%   in the tensor renormalization group, the tensor of the coarser lattice</span>
+<span class="tx-comment">%   is the array&#x27;s shape a step paler, and the four halves a split leaves</span>
+<span class="tx-comment">%   are four tensors, so four colours: the two factors of one decomposition</span>
+<span class="tx-comment">%   two steps of one hue (warm for the halves above and below, green for</span>
+<span class="tx-comment">%   those to the left and right), the first factor the stronger -- one</span>
+<span class="tx-comment">%   colour, one tensor;</span>
 <span class="tx-comment">%   in a quantum circuit, a gate on one qubit is a gate, and a controlled NOT</span>
 <span class="tx-comment">%   is its control, an ink dot, joined to its target, a circled plus.</span>
 <span class="tx-comment">% The colours are the theme&#x27;s (theme/tokens.toml). Shape carries the meaning</span>
@@ -92,7 +96,11 @@ every figure keeps working.</p>
   isodown/.style    = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-triangle-right">tn triangle down</a>, <a class="ref" href="styles.html#tn-wide">tn flat</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=canl<span class="tx-brace">}</span>,
   corner/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn rounded</a>, fill=env!25<span class="tx-brace">}</span>,
   side/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn circle</a>, fill=env!25<span class="tx-brace">}</span>,
-  factor/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=coef<span class="tx-brace">}</span>,
+  coarse/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=blue2<span class="tx-brace">}</span>,
+  half1/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=warm2<span class="tx-brace">}</span>,
+  half2/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=green2<span class="tx-brace">}</span>,
+  half3/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=warm1<span class="tx-brace">}</span>,
+  half4/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=green1<span class="tx-brace">}</span>,
   ctrl/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-dot">tn dot</a><span class="tx-brace">}</span>,
   targ/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-dot">tn oplus</a><span class="tx-brace">}</span>,
 <span class="tx-brace">}</span>
