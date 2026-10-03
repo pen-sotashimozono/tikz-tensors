@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sampling an amplitude · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.12.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 10</p>
+<h1>Sampling an amplitude</h1>
+<figure class="paper"><img style="width:389pt" src="../figures/10-sampling.svg" alt="Sampling an amplitude: An amplitude of a matrix product state"></figure>
+<div class="split">
+<div class="prose"><p>An amplitude of a matrix product state: psi(s_1, ..., s_5), every physical index closed by a basis vector.</p><p>This is what sampling evaluates. With the center on the first site and every tensor to its right isometric, the marginal of s_1 needs only C – the rest of the chain contracts to the identity – so s_1 is drawn first, fixed, and the center moves on; each later s_i is conditioned on the ones before it in the same way, and the sample costs one sweep.</p><p>The basis vectors are a layer of their own, small circles, each closing the index above it.</p></div>
+<div>
+<h2>The picture</h2>
+<pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>5<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, basis<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>center/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>basis<span class="tx-brace">}</span><span class="tx-brace">{</span>basis/<span class="tx-math">$s_1$</span>, basis/<span class="tx-math">$s_2$</span>, basis/<span class="tx-math">$s_3$</span>, basis/<span class="tx-math">$s_4$</span>,
+                     basis/<span class="tx-math">$s_5$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></pre>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span>
+<span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>5<span class="tx-brace">}</span><span class="tx-brace">{</span>ket, basis<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>ket<span class="tx-brace">}</span><span class="tx-brace">{</span>center/<span class="tx-math">$C$</span>, 4*canr/<span class="tx-math">$B$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>S<span class="tx-brace">}</span><span class="tx-brace">{</span>basis<span class="tx-brace">}</span><span class="tx-brace">{</span>basis/<span class="tx-math">$s_1$</span>, basis/<span class="tx-math">$s_2$</span>, basis/<span class="tx-math">$s_3$</span>, basis/<span class="tx-math">$s_4$</span>,
+                     basis/<span class="tx-math">$s_5$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>along=gauge<span class="tx-brace">]</span><span class="tx-brace">{</span>S<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/10-sampling.tex">examples/10-sampling.tex</a></p>
+</div>
+</div>
+<nav class="pager"><a href="09-center.html">← The orthogonality center</a><a href="11-mpo-mps.html">MPO applied to an MPS →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.12.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>

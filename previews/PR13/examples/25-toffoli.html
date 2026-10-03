@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toffoli gate · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.12.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 25</p>
+<h1>Toffoli gate</h1>
+<figure class="paper"><img style="width:373pt" src="../figures/25-toffoli.svg" alt="Toffoli gate: The Toffoli gate"></figure>
+<div class="split">
+<div class="prose"><p>The Toffoli gate – a NOT on the third qubit controlled by the first two, the gate the modular arithmetic of Shor's algorithm is built from – and its decomposition into gates of one qubit and controlled NOTs: H, T and its adjoint, and six CNOTs, in thirteen steps.</p><p>Time runs down: a qubit is a site and a step of the circuit a layer, so a gate on one qubit is a tensor in a slot, and a controlled NOT a dot and a circled plus in one layer, joined along it. Where a CNOT acts on the first and the third qubit, the second qubit's wire crosses its line (+). The layers of gates on one qubit are apart, with nothing along them.</p><p>Thirteen steps would be half a page tall at the notation's distances; the circuit is drawn compact instead – both stacks at 0.7 of the notation's distances and sizes, the decomposition's layers closer still – by factors, not lengths.</p></div>
+<div>
+<h2>The picture</h2>
+<pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7<span class="tx-brace">]</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span><span class="tx-brace">{</span>2*ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7, rise=0.6<span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>h1, x1, t1, x2, t2, x3, t3, x4, t4, h2, x5, t5, x6<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x1<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x2<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x3<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x4<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t4<span class="tx-brace">}</span><span class="tx-brace">{</span>|, 2*gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x5<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t5<span class="tx-brace">}</span><span class="tx-brace">{</span>gate/<span class="tx-math">$T$</span>, gate/<span class="tx-math">$T^\dagger$</span>, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x6<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>h1, t1, t2, t3, t4, h2, t5<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></pre>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span>
+<span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7<span class="tx-brace">]</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span><span class="tx-brace">{</span>x<span class="tx-brace">}</span><span class="tx-brace">{</span>2*ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>G<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tneq"><span class="tx-cmd">\tneq</span></a>
+  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>scale=0.7, rise=0.6<span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>h1, x1, t1, x2, t2, x3, t3, x4, t4, h2, x5, t5, x6<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x1<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t1<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x2<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x3<span class="tx-brace">}</span><span class="tx-brace">{</span>|, ctrl/, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$T^\dagger$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x4<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, +, targ/<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t4<span class="tx-brace">}</span><span class="tx-brace">{</span>|, 2*gate/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>h2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*|, gate/<span class="tx-math">$H$</span><span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x5<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>t5<span class="tx-brace">}</span><span class="tx-brace">{</span>gate/<span class="tx-math">$T$</span>, gate/<span class="tx-math">$T^\dagger$</span>, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>D<span class="tx-brace">}</span><span class="tx-brace">{</span>x6<span class="tx-brace">}</span><span class="tx-brace">{</span>ctrl/, targ/, |<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>h1, t1, t2, t3, t4, h2, t5<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">[</span>labels=<span class="tx-brace">{</span><span class="tx-math">$a$</span>, <span class="tx-math">$b$</span>, <span class="tx-math">$c$</span><span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>D<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/25-toffoli.tex">examples/25-toffoli.tex</a></p>
+</div>
+</div>
+<nav class="pager"><a href="24-hotrg.html">← A HOTRG step</a><span></span></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.12.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>

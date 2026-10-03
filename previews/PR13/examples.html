@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examples · tikz-tensors</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.12.0</span></a>
+  <nav><a href="index.html">Overview</a><a href="examples.html" aria-current=page>Examples</a><a href="api.html">Reference</a><a href="notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<h1>Examples</h1>
+<p>Each one draws one object an algorithm uses and is named for that object,
+in order from single tensors up to two-dimensional networks. Every page shows
+the file as it is in <code>examples/</code> and the picture CI checks it
+draws.</p>
+<h2>The theme</h2><ul class="list"><li><a href="examples/00-palette.html"><span class="num">00</span> The palette</a><span class="lead">The whole theme</span></li></ul><h2>Single tensors and decompositions</h2><ul class="list"><li><a href="examples/01-expansion.html"><span class="num">01</span> Expansion in a basis</a><span class="lead">The two-electron expansion and its Hartree-Fock restriction</span></li><li><a href="examples/02-swap.html"><span class="num">02</span> Exchanging two fermions</a><span class="lead">Exchanging two fermions flips the sign of the amplitude</span></li><li><a href="examples/03-svd-qr.html"><span class="num">03</span> SVD and QR</a><span class="lead">The two decompositions every algorithm here is made of, applied to one tensor of a chain</span></li><li><a href="examples/04-cp.html"><span class="num">04</span> CP decomposition</a><span class="lead">A rank-R CP decomposition of a three-index tensor</span></li><li><a href="examples/05-low-rank.html"><span class="num">05</span> Low-rank approximation</a><span class="lead">A state on five sites, and its approximation by a matrix product state of bond dimension D</span></li></ul><h2>Matrix product states</h2><ul class="list"><li><a href="examples/06-mps.html"><span class="num">06</span> Matrix product state</a><span class="lead">A matrix product state</span></li><li><a href="examples/07-periodic-mps.html"><span class="num">07</span> Periodic MPS</a><span class="lead">A matrix product state with periodic boundaries</span></li><li><a href="examples/08-canonical.html"><span class="num">08</span> Mixed canonical form</a><span class="lead">A finite matrix product state in mixed canonical form, with a two-site gate about to be applied</span></li><li><a href="examples/09-center.html"><span class="num">09</span> The orthogonality center</a><span class="lead">The orthogonality center sits on a site or on a bond, and the notation has to say both, because the two are one SVD apart and a method moves between them every sweep</span></li><li><a href="examples/10-sampling.html"><span class="num">10</span> Sampling an amplitude</a><span class="lead">An amplitude of a matrix product state</span></li><li><a href="examples/11-mpo-mps.html"><span class="num">11</span> MPO applied to an MPS</a><span class="lead">An MPO applied to an MPS, the naive way</span></li><li><a href="examples/12-zip-up.html"><span class="num">12</span> Zip-up</a><span class="lead">Zip-up</span></li></ul><h2>Algorithms on a chain</h2><ul class="list"><li><a href="examples/13-expectation.html"><span class="num">13</span> Expectation value after a step</a><span class="lead">An expectation value after a TEBD step</span></li><li><a href="examples/14-heff-two-site.html"><span class="num">14</span> Two-site effective Hamiltonian</a><span class="lead">The two-site effective Hamiltonian</span></li><li><a href="examples/15-heff-single-site.html"><span class="num">15</span> Single-site effective Hamiltonian</a><span class="lead">The single-site effective Hamiltonian, applied to the center</span></li><li><a href="examples/16-heff-bond.html"><span class="num">16</span> Bond effective Hamiltonian</a><span class="lead">The bond (zero-site) effective Hamiltonian, applied to the center on a bond</span></li><li><a href="examples/17-trotter.html"><span class="num">17</span> Trotter steps</a><span class="lead">A step of TEBD, written two ways</span></li><li><a href="examples/18-fixed-point.html"><span class="num">18</span> Fixed points of a uniform MPS</a><span class="lead">Fixed-point equations for a uniform MPS</span></li></ul><h2>Trees and MERA</h2><ul class="list"><li><a href="examples/19-ttn.html"><span class="num">19</span> Tree tensor network</a><span class="lead">A tree tensor network on sixteen sites</span></li><li><a href="examples/20-mera.html"><span class="num">20</span> MERA</a><span class="lead">A binary MERA on sixteen sites, all the way up</span></li></ul><h2>Two dimensions</h2><ul class="list"><li><a href="examples/21-peps.html"><span class="num">21</span> PEPS</a><span class="lead">A projected entangled pair state on a four-by-four lattice</span></li><li><a href="examples/22-simple-update.html"><span class="num">22</span> Simple update</a><span class="lead">A PEPS in the form simple update keeps it</span></li><li><a href="examples/23-ctmrg.html"><span class="num">23</span> CTMRG environment</a><span class="lead">The corner transfer matrix environment of one site of an infinite two-dimensional network</span></li><li><a href="examples/24-hotrg.html"><span class="num">24</span> A HOTRG step</a><span class="lead">One step of the higher-order tensor renormalisation group, along one direction</span></li></ul><h2>Quantum circuits</h2><ul class="list"><li><a href="examples/25-toffoli.html"><span class="num">25</span> Toffoli gate</a><span class="lead">The Toffoli gate</span></li></ul>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.12.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
