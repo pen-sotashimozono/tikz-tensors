@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A HOTRG step · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.10.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 23</p>
+<h1>A HOTRG step</h1>
+<figure class="paper"><img style="width:366pt" src="../figures/23-hotrg.svg" alt="A HOTRG step: One step of the higher-order tensor renormalisation group, along one direction"></figure>
+<div class="split">
+<div class="prose"><p>One step of the higher-order tensor renormalisation group, along one direction.</p><p>Two tensors T of a two-dimensional network are contracted side by side, and the two indices that point up – and the two that point down – are fused into one by an isometry U from a higher-order SVD of the pair, truncated to the bond dimension kept. U-dagger closes the other side. What is left has one index in each direction again: the coarse-grained tensor T', one site of a lattice half as long in this direction. The next step does the other direction.</p></div>
+<div>
+<h2>The picture</h2>
+<pre class="code"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$U$</span>/2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coef/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>isodown/<span class="tx-math">$U^{\dagger}$</span>/2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>top, bot<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>H-top-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>H-bot-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>H-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>H-mid-2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tneq</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>coef/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></pre>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span>
+<span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span>
+<span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span>
+<span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>2<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$U$</span>/2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>2*coef/<span class="tx-math">$T$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>isodown/<span class="tx-math">$U^{\dagger}$</span>/2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>top, bot<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>H<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>H-top-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>H-bot-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>H-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>H-mid-2<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tneq</span>
+  <span class="tx-cmd">\tnstack</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>1<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnlayer</span><span class="tx-brace">{</span>K<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>coef/<span class="tx-math">$T&#x27;$</span><span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>up<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>left<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+  <span class="tx-cmd">\tnopen</span><span class="tx-brace">{</span>right<span class="tx-brace">}</span><span class="tx-brace">{</span>K-mid-1<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span>
+<span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/23-hotrg.tex">examples/23-hotrg.tex</a></p>
+</div>
+</div>
+<nav class="pager"><a href="22-ctmrg.html">← CTMRG environment</a><a href="24-periodic-mps.html">Periodic MPS →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<footer>tikz-tensors v0.10.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
