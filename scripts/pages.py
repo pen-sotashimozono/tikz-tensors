@@ -289,8 +289,6 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
   <a class="brand" href="{up}index.html">tikz-tensors <span class="ver">v{version.version()}</span></a>
   <nav>{nav}<a href="{REPO}">GitHub</a></nav>
   <select class="versions" aria-label="Version" hidden></select>
-  <button class="mode" type="button" aria-label="Code beside the picture" title="Code beside the picture"
-    onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{{localStorage.setItem('layout',s?'':'side')}}catch(e){{}}">⇆</button>
   <button class="mode" type="button" aria-label="Switch light or dark"
     onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{{localStorage.setItem('theme',r.dataset.theme)}}catch(e){{}}">◐</button>
 </header>
@@ -417,6 +415,13 @@ def traced_figure(name: str, up: str, scale: float, alt: str) -> str:
 # not with the page. Without it the site is the same, less those two.
 ENGINE = ROOT / ".engine"
 LIVE = False
+# Side by side: the example's code on the left and its picture on the right,
+# the picture kept in view, so that a line and what it draws are pointed at
+# together. Remembered, as the theme is.
+SIDE_BUTTON = ('<button class="pill side-btn" type="button" title="Code on the left, '
+               'the picture on the right, kept in view" onclick="const r=document.documentElement,'
+               's=r.dataset.layout===\'side\';if(s)delete r.dataset.layout;else r.dataset.layout=\'side\';'
+               'try{localStorage.setItem(\'layout\',s?\'\':\'side\')}catch(e){}">⇆ Side by side</button>')
 LIVE_BUTTON = '<button class="pill live-btn" type="button">Edit live</button>'
 # What every live figure is drawn with: the examples' preamble, so that a
 # figure is the file it is on the page.
@@ -652,7 +657,7 @@ def example_page(exs: list[Example], i: int) -> str:
     text = "".join(f"<p>{autolink(html.escape(prose(p), quote=False))}</p>" for p in e.paras)
     source = e.path.read_text()
     body = f"""<p class="crumb"><a href="../examples.html">Examples</a> / {e.number}</p>
-<h1>{html.escape(e.title)}</h1>
+<h1 class="with-button">{html.escape(e.title)}{SIDE_BUTTON}</h1>
 <div class="traced example">
 {traced_figure(e.name, "../", 1.5, f"{e.title}: {e.lead}")}
 <div class="split">
@@ -958,7 +963,11 @@ pre.code .ln.live{cursor:default}
 pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
   box-shadow:inset 3px 0 #cf222e}
 .hint{margin:-.2em 0 .4em}
-/* Code beside the picture (the ⇆ button, kept like the theme): an example's
+h1.with-button{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+h1 .side-btn{font-size:14px}
+:root[data-layout=side] .side-btn{background:var(--accent);color:var(--card);border-color:var(--accent)}
+@media (max-width:820px){.side-btn{display:none}}
+/* Side by side (SIDE_BUTTON, kept like the theme): an example's
    code on the left and its picture on the right, the picture staying in view
    while the code scrolls, so that pointing at a line shows what it draws. */
 @media (min-width:821px){

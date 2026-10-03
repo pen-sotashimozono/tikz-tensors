@@ -33,8 +33,8 @@ one colour is one tensor: T, T' a step paler, and the four halves S1 to S4,
 each pair from one decomposition two steps of one hue (the examples'
 notation names them `half1` to `half4`, and `coarse`).
 
-On the documentation site, the ⇆ button beside the light-and-dark one puts an
-example's code beside its picture, the picture staying in view as the code
+On the documentation site, *Side by side*, beside an example's title, puts its
+code beside its picture, the picture staying in view as the code
 scrolls, so that pointing at a line lights up what it draws without the two
 being a screen apart; the page remembers it, as it does the theme.
 
