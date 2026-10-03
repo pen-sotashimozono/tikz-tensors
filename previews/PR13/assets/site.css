@@ -31,13 +31,13 @@ h3{font-size:17px;margin:1.6em 0 .4em}
 pre.code{background:var(--card);border:1px solid var(--line);border-radius:8px;
   padding:12px 14px;overflow-x:auto;margin:.6em 0}
 .tx-comment{color:var(--muted);font-style:italic}
-.tx-math{color:var(--green3)}
+.tx-math{color:var(--green5)}
 .tx-cmd{color:var(--accent)}
-.tx-brace{color:var(--warm2)}
+.tx-brace{color:var(--warm4)}
 a.ref{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
 a.ref:hover{border-bottom-color:var(--accent);text-decoration:none}
-:root[data-theme=dark] .tx-math{color:var(--green1)}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green1)}}
+:root[data-theme=dark] .tx-math{color:var(--green3)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green3)}}
 figure.paper{margin:12px 0;padding:16px;background:#fff;border:1px solid var(--line);
   border-radius:8px;text-align:center;overflow-x:auto}
 figure.paper img{max-width:100%;height:auto}
