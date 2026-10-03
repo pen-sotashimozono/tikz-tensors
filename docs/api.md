@@ -31,8 +31,6 @@ predicts the rest.
 
 ## Names a figure can refer to
 
-What the layouts name, so that a label or a join can find it.
-
 | name | is |
 |---|---|
 | `<stack>-<layer>-<i>` | the tensor in slot i of a layer (one that spans is named by its first slot and top layer) |
@@ -48,9 +46,6 @@ What the layouts name, so that a label or a join can find it.
 | `<tensor>:<side>[:<n>]` | a port, for `\tnjoin` |
 
 ## Commands
-
-In the order a figure uses them: place, connect, open, then label;
-the two after them are for a notation file and for extending the package.
 
 ### `\tnstack[<keys>]{<name>}{<sites>}{<layers>}`
 A stack: `<sites>` slots across, the named `<layers>` down, placed on the
@@ -141,9 +136,6 @@ the package and for pictures that are not on a layout; a figure may not use
 it.
 
 ## Styles
-
-The TikZ styles the package defines, for a notation file to build its types
-on.
 
 | style | |
 |---|---|
