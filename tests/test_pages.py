@@ -114,6 +114,44 @@ class Site(unittest.TestCase):
         self.assertEqual(cards[-1].count('class="ln add"'), 7)
 
 
+class Live(unittest.TestCase):
+    """With the engine fetched (scripts/engine.py), the site carries it and the
+    package's files as it fetches them; without it, the same site less that."""
+
+    def test_the_engine_and_the_package_go_into_live(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = pathlib.Path(tmp)
+            engine = tmp / "engine"
+            (engine / "tex_files").mkdir(parents=True)
+            (engine / "tikzjax.js").write_text("// engine")
+            saved, docsite.ENGINE = docsite.ENGINE, engine
+            try:
+                pages = docsite.build(tmp / "site")
+            finally:
+                docsite.ENGINE = saved
+            live = tmp / "site" / "live"
+            self.assertTrue((live / "tikzjax.js").is_file())
+            for name in ("tikz-tensors.sty", "tikz-tensors-stack.tex", "notation.tex"):
+                self.assertTrue((live / "tex_files" / f"{name}.gz").is_file(), name)
+            self.assertIn("live.html", pages)
+            text = (tmp / "site" / "examples" / "08-canonical.html").read_text()
+            self.assertIn("Edit live", text)
+            self.assertIn('class="live-code"', text)
+            self.assertIn("tt-pictures", (tmp / "site" / "live.html").read_text())
+
+    def test_without_the_engine_nothing_is_live(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = pathlib.Path(tmp)
+            saved, docsite.ENGINE = docsite.ENGINE, tmp / "none"
+            try:
+                docsite.build(tmp / "site")
+            finally:
+                docsite.ENGINE = saved
+            self.assertFalse((tmp / "site" / "live").exists())
+            self.assertNotIn("Edit live", (tmp / "site" / "examples" / "08-canonical.html").read_text())
+            self.assertIn("scripts/engine.py", (tmp / "site" / "live.html").read_text())
+
+
 class Publish(unittest.TestCase):
     def test_versions_side_by_side_and_previews_come_and_go(self):
         with tempfile.TemporaryDirectory() as tmp:
