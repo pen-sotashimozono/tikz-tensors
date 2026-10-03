@@ -1,7 +1,9 @@
-%% tn dot
+%% tn dot, tn oplus
 %
 % A copy tensor: an ink dot, diagonal in all its indices, which a layout
-% meets at its center from every side.
+% meets at its center from every side. And a circled plus, the other half of
+% a controlled NOT: a dot joined to one along a layer, the wire of the site
+% between them crossing the line (+).
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
@@ -10,5 +12,11 @@
   \tnlayer{S}{a}{tn box/$A$, tn dot/, tn box/$B$}
   \tnconnect{S}
   \tnopen{down}{S-a-2}
+  \tnstack{X}{3}{a, b}
+  \tnlayer{X}{a}{tn dot/, +, tn oplus/}
+  \tnlayer{X}{b}{|, tn box/$U$, |}
+  \tnconnect[apart=b]{X}
+  \tnopen{up}{X}
+  \tnopen{down}{X}
 \end{tikzpicture}
 \end{document}

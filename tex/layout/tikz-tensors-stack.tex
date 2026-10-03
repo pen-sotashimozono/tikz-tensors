@@ -43,10 +43,13 @@
 % opened later never runs into the equals sign before it. [tree] makes it the
 % tree layout. close= names layers that sit closer under the layer above them
 % than a rise -- `closerise' (\tnset), which halves the gap between two slots
-% -- as the layers of a circuit of gates are drawn.
+% -- as the layers of a circuit of gates are drawn. scale=, pitch=, rise=,
+% size= and stub= draw it at factors of the notation's distances and sizes
+% (tikz-tensors-layout.tex): a circuit of many layers, drawn compact.
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
 %   \tnstack[close={g2}]{S}{5}{ket, g1, g2}
+%   \tnstack[scale=0.6, rise=0.8]{C}{3}{g1, g2, g3}
 %
 % The environment is the node <name>-left or <name>-right. Every slot, and the
 % ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
@@ -54,11 +57,17 @@
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
          /tn/stack/right/.initial=, /tn/stack/close/.initial=,
          /tn/stack/tree/.code={\def\tn@stkind{tree}}}
+\pgfkeys{/tn/stack/scale/.forward to=/tn@factor/scale,
+  /tn/stack/pitch/.forward to=/tn@factor/pitch,
+  /tn/stack/rise/.forward to=/tn@factor/rise,
+  /tn/stack/size/.forward to=/tn@factor/size,
+  /tn/stack/stub/.forward to=/tn@factor/stub}
 \def\tn@stack@geometry#1{\tn@set{#1@pitch}{\tn@pitch}\tn@set{#1@rise}{\tn@rise}}
 \newcommand{\tnstack}[4][]{%
   \def\tn@stkind{stack}%
   \pgfkeys{/tn/stack/.cd, left=, right=, close=, #1}%
   \tn@newblock{#2}{\tn@stkind}%
+  \tn@scaleblock{#2}%
   \tn@op{#2}{geometry}{#2}%
   \pgfkeysgetvalue{/tn/stack/left}\tn@envl
   \pgfkeysgetvalue{/tn/stack/right}\tn@envr
@@ -139,18 +148,22 @@
 %                                  through, along the layer
 %   |                              nothing, but the site's index runs
 %                                  through, down the site
+%   +                              nothing, but both run through, crossing:
+%                                  a site's wire under the line of a gate
+%                                  that acts on the sites either side
 %   dots                           the dots of a chain that goes on (not `...'
 %                                  which \foreach reads as a range)
 %   <n>*<entry>                    any of these, <n> times over: a chain is
 %                                  its tensor repeated, 4*canl/$A$, and a run
 %                                  of empty slots is 7*.
+% [size=<f>] draws the layer's tensors at <f> times the stack's size.
 % A type with a comma in it goes in braces, {coef, circle}/$A$, and so does a
 % label with a slash in it, gate/{$U(\delta t/2)$}/2. The tensor of
 % site i is the node <stack>-<layer>-i; one that spans is named by its first
 % site and its top layer.
 \def\tn@entry#1/#2/#3/#4/#5\tn@end{\def\tn@sty{#1}\def\tn@lab{#2}%
   \def\tn@span{#3}\def\tn@vspan{#4}}
-\def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
+\def\tn@cdot{.}\def\tn@cE{-}\def\tn@cB{|}\def\tn@cX{+}\def\tn@cD{D}\def\tn@cL{L}\def\tn@cR{R}
 \def\tn@cdots{dots}
 % <n>*<entry> is <entry> <n> times, as \tn@n and \tn@rest. Only a whole number
 % before the first `*' counts, so a label with a star in it, canl/$A^*$, is a
@@ -167,9 +180,14 @@
 % How wide a tensor across <span> sites is drawn, as \tn@span@w sites: as wide
 % as them on a stack.
 \def\tn@stack@spanwidth{\let\tn@span@w\tn@span}
-\newcommand{\tnlayer}[3]{%
+\pgfkeys{/tn/layer/.is family, /tn/layer/size/.initial=1}
+\newcommand{\tnlayer}[4][]{%
+  \pgfkeys{/tn/layer/.cd, size=1, #1}\pgfkeysgetvalue{/tn/layer/size}\tn@lsize
+  \tn@layerat{#2}{#3}{#4}}
+\def\tn@layerat#1#2#3{%
   \ifcsname tn@#1@k@#2\endcsname\else
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
+  \tn@tokens{#1}%
   \edef\tn@k{\tn@get{#1@k@#2}}%
   \global\tn@c=1
   \foreach \tn@each in {#3}{%
@@ -189,6 +207,8 @@
       \tn@set{#1@o@#2@\tn@i}{-}%
     \else\ifx\tn@sty\tn@cB
       \tn@set{#1@o@#2@\tn@i}{|}%
+    \else\ifx\tn@sty\tn@cX
+      \tn@set{#1@o@#2@\tn@i}{+}%
     \else\ifx\tn@sty\tn@cdots
       \tn@set{#1@o@#2@\tn@i}{D}%
       \tn@layy{#1}{\tn@k}\tn@colx{#1}{\tn@i}%
@@ -201,7 +221,8 @@
       \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
       \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
       \tn@op{#1}{spanwidth}%
-      \edef\tn@opt{\tn@sty\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
+      \tn@sized{#1}{\tn@lsize}%
+      \edef\tn@opt{\tn@opt\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
                    \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
       \edef\tn@nm{#1-#2-\tn@i}%
       \expandafter\tn@place\expandafter{\tn@opt}{\tn@nm}{\tn@cx}{\tn@ly}{\tn@lab}%
@@ -211,7 +232,7 @@
       \foreach \tn@q in {\tn@k,...,\tn@kb}{%
         \foreach \tn@j in {\tn@i,...,\tn@last}{%
           \tn@set{#1@o@\tn@get{#1@name@\tn@q}@\tn@j}{\tn@nm}}}%
-    \fi\fi\fi\fi
+    \fi\fi\fi\fi\fi
     \global\advance\tn@c by \tn@span\relax
   }}%
 }
@@ -220,6 +241,7 @@
 % of thing that is, as \tn@kd:
 %   0 nothing  1 a tensor (\tn@o is its name)  2 `-'  3 `|'  4 `dots'
 %   5 the environment on the left (column 0)  6 on the right (column n+1)
+%   7 `+'
 \def\tn@occ#1#2#3{%
   \ifnum#3=0 \ifnum\tn@get{#1@hasl}=1 \def\tn@o{L}\else\def\tn@o{}\fi
   \else\ifnum#3>\tn@get{#1@n} \ifnum\tn@get{#1@hasr}=1 \def\tn@o{R}\else\def\tn@o{}\fi
@@ -231,9 +253,10 @@
   \else\ifx\tn@o\tn@cD\def\tn@kd{4}%
   \else\ifx\tn@o\tn@cL\def\tn@kd{5}%
   \else\ifx\tn@o\tn@cR\def\tn@kd{6}%
-  \else\def\tn@kd{1}\fi\fi\fi\fi\fi\fi}
+  \else\ifx\tn@o\tn@cX\def\tn@kd{7}%
+  \else\def\tn@kd{1}\fi\fi\fi\fi\fi\fi\fi}
 
-% From slot <#3> of site <#2>, step by <#4> through every `|' -- the site's
+% From slot <#3> of site <#2>, step by <#4> through every `|' or `+' -- the site's
 % index running through -- and leave the first layer that is not one in
 % \tn@kw, which may be just off the grid.
 \def\tn@walk#1#2#3#4{\pgfmathtruncatemacro\tn@kw{#3}\tn@walkstep{#1}{#2}{#4}}
@@ -242,6 +265,7 @@
   \ifnum\tn@kw>0 \ifnum\tn@kw>\tn@get{#1@L}\else
     \edef\tn@ln{\tn@get{#1@name@\tn@kw}}%
     \tn@occ{#1}{\tn@ln}{#2}%
+    \ifnum\tn@kd=7 \def\tn@kd{3}\fi
     \ifnum\tn@kd=3
       \pgfmathtruncatemacro\tn@kw{\tn@kw+(#3)}%
       \def\tn@next{\tn@walkstep{#1}{#2}{#3}}%
@@ -339,8 +363,10 @@
   \ifnum\tn@ka=1 \ifx\tn@oa\tn@ob \def\tn@same{1}\fi\fi
   \ifnum\tn@same=0
   \def\tn@sa{0}\def\tn@sb{0}%
-  \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\fi
-  \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\fi
+  \ifcase\tn@ka\or\def\tn@sa{1}\or\def\tn@sa{1}\or\or\or\def\tn@sa{1}\or\def\tn@sa{1}\or
+    \def\tn@sa{1}\fi
+  \ifcase\tn@kb\or\def\tn@sb{1}\or\def\tn@sb{1}\or\or\or\def\tn@sb{1}\or\def\tn@sb{1}\or
+    \def\tn@sb{1}\fi
   \ifnum\tn@sa\tn@sb=11
     % a bond: from the right border of the one to the left border of the other
     \def\tn@pa{}\def\tn@pb{}%

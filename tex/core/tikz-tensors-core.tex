@@ -66,7 +66,13 @@
 \def\tn@gap{4mm}
 \def\tn@inset{1.6pt}
 \pgfkeys{/tn/set/.is family}
-\def\tn@token#1{\pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#1\endcsname{##1}}}}
+% Each token is kept twice: as the notation set it (\tn@base@<token>), and as
+% the block being drawn uses it (\tn@<token>), which is the notation's times
+% the factors that block was placed with (tikz-tensors-layout.tex).
+\def\tn@token#1{%
+  \expandafter\let\csname tn@base@#1\expandafter\endcsname\csname tn@#1\endcsname
+  \pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#1\endcsname{##1}%
+    \expandafter\def\csname tn@base@#1\endcsname{##1}}}}
 \tn@token{pitch}\tn@token{rise}\tn@token{treepitch}\tn@token{treerise}
 \tn@token{gpitch}\tn@token{slot}\tn@token{stub}\tn@token{envw}\tn@token{gap}
 \tn@token{inset}\tn@token{closerise}

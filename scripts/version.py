@@ -105,7 +105,7 @@ def api(ref: str | None = None) -> set[str]:
                   for n in re.findall(r"(?<![\w/])(tn [\w ]+?)/\.(?:style|code|is if)", text)}
         # keys are a command's options, /tn/<command>/<key>
         names |= {f"key {c}/{k.strip()}"
-                  for c, k in re.findall(r"/tn/(\w+)/([\w ]+?)/\.(?:initial|code|is if)", text)}
+                  for c, k in re.findall(r"/tn/(\w+)/([\w ]+?)/\.(?:initial|code|is if|forward to)", text)}
         names |= {f"key set/{t}" for t in re.findall(r"\\tn@token\{(\w+)\}", text)}
         names |= {f"command \\{n}" for n in re.findall(r"\\(?:new|provide)command\*?\{\\(\w+)\}", text)}
         names |= {f"colour {n}" for n in re.findall(r"\\definecolor\{(\w+)\}", text)}

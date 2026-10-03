@@ -5,6 +5,29 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.12.0 — 2026-10-03
+
+A block can be drawn at factors of the notation's distances and sizes, said
+where it is placed: `\tnstack[scale=0.7, rise=0.6]`, and `pitch=`, `size=`,
+`stub=`; `\tngrid` the same but `rise=`. A factor is a number, never a
+length, so a figure may say it and `tests/lint.py` lets it through (a length
+in the same place is still a finding); the factors are the block's own, and
+the next block is drawn at the notation's again. Every command on the block
+-- connect, open, join -- draws at its sizes. `\tnlayer[size=<factor>]`
+draws one layer's tensors at a factor of the stack's, and the style
+`tn size=<factor>` one tensor at a factor of its type's size; a label keeps
+the size of the text.
+
+A layer's slot can be `+`: the site's wire and the layer's line both run
+through, crossing -- a gate on the sites either side of a wire. The style
+`tn oplus` is a circled plus, the target of a controlled NOT, and the
+examples' notation names `ctrl` and `targ`.
+
+New example, `25-toffoli`: the Toffoli gate of Shor's algorithm and its
+decomposition into H, T, T† and six CNOTs, in thirteen steps drawn compact,
+in a new section, quantum circuits. The styles page shows `tn oplus` and
+`tn size`; the commands page the factors.
+
 ## v0.11.0 — 2026-10-03
 
 `centre` is `center`, everywhere.

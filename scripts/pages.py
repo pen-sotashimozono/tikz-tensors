@@ -253,7 +253,8 @@ SECTIONS = [(0, "The theme"),
             (6, "Matrix product states"),
             (13, "Algorithms on a chain"),
             (19, "Trees and MERA"),
-            (21, "Two dimensions")]
+            (21, "Two dimensions"),
+            (25, "Quantum circuits")]
 
 
 def section(ex: "Example") -> str:

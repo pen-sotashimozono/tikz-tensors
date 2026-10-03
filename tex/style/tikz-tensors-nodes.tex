@@ -4,7 +4,8 @@
 % A node type is a TikZ style built on `tn node'. It says three things:
 %   its outline   a TikZ shape, a fill (paper unless a convention fills it) and
 %                 the size at which it reads as the same weight as the others
-%   its size      tn wide, tn tall, tn small, tn flat resize any outline
+%   its size      tn wide, tn tall, tn small, tn flat resize any outline,
+%                 and tn size=<factor> scales it
 %   its indices   where they leave it, as three properties a layout reads back
 %                 when it places the node:
 %     tn leg anchor=<anchor>  the point its index down the site leaves from,
@@ -18,6 +19,15 @@
 % kite pointing up is {tn node, kite, tn fill=green1, tn single=up}.
 % The package's types are named for their shape and never for what they mean;
 % a meaning is a style of the user's notation built on one of them.
+% tn size=<f> draws an outline at <f> times the size its type gives it -- a
+% factor and not a length, so a figure may say it: a tensor of a compact
+% picture, or one that is to stand out. The label keeps its size, which is the
+% size of the equations beside it. A layout says it for a block or a layer
+% drawn smaller (size=, scale=; tikz-tensors-layout.tex).
+\tikzset{tn size/.code={%
+  \pgfmathsetlengthmacro\tn@szw{(\pgfkeysvalueof{/pgf/minimum width})*(#1)}%
+  \pgfmathsetlengthmacro\tn@szh{(\pgfkeysvalueof{/pgf/minimum height})*(#1)}%
+  \pgfkeyslet{/pgf/minimum width}\tn@szw \pgfkeyslet{/pgf/minimum height}\tn@szh}}
 \gdef\tn@legat{center}
 \gdef\tn@pts{}
 \gdef\tn@single{}
@@ -65,6 +75,12 @@
   tn small/.style          = {minimum size=6mm, font=\scriptsize},
   tn flat/.style           = {minimum width=10.5mm, minimum height=6mm},
   tn dot/.style            = {tn node, circle, fill=stroke, minimum size=1.8mm},
+  tn oplus/.style          = {tn node, circle, fill=grey1, minimum size=5mm,
+                              path picture={\draw[tn line, draw=stroke]
+                                (path picture bounding box.north)
+                                  -- (path picture bounding box.south)
+                                (path picture bounding box.west)
+                                  -- (path picture bounding box.east);}},
   tn frame/.style          = {tn line, draw=black!50, dashed, rounded corners=2mm},
 }
 

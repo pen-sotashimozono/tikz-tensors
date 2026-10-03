@@ -13,12 +13,27 @@ canvas after what is on the row.
 | `left=<label>`, `right=<label>` | an environment block at that end, drawn in `tn env` |
 | `tree` | the tree layout: tree pitch, tensors at their own size, indices that turn corners |
 | `close={<layer>, ...}` | layers that sit `closerise` under the layer above them instead of a rise, as the layers of a circuit of gates |
+| `scale=<factor>` | the whole stack at that factor of the notation: its distances, its tensors, its open indices |
+| `pitch=<factor>`, `rise=<factor>` | ... or its distances alone, between sites and between layers (`closerise` with `rise`) |
+| `size=<factor>` | ... its tensors, and the slots of absent ones |
+| `stub=<factor>` | ... the least an open index of it shows |
 
-### `\tnlayer{<stack>}{<layer>}{<entry>, ...}`
+A factor is a number, never a length, and multiplies the notation's tokens
+for this stack only: `\tnstack[scale=0.7, rise=0.6]` draws a circuit of many
+layers compact, and a stack after it is drawn at the notation's again. A
+label keeps its size, which is the size of the equations beside it.
+
+### `\tnlayer[<keys>]{<stack>}{<layer>}{<entry>, ...}`
 The layer's slots, left to right: `<type>/<label>`, `<type>/<label>/<span>`,
 `<type>/<label>/<span>/<down>`, `.` (empty), `-` (the layer's index runs
-through), `|` (the site's index runs through), `dots`, and `<n>*<entry>` for
-any of them repeated. A run of like entries is always one `<n>*<entry>`.
+through), `|` (the site's index runs through), `+` (both run through,
+crossing: a wire under the line of a gate on the sites either side), `dots`,
+and `<n>*<entry>` for any of them repeated. A run of like entries is always
+one `<n>*<entry>`.
+
+| key | |
+|---|---|
+| `size=<factor>` | the layer's tensors at that factor of the stack's size |
 
 ### `\tngrid[<keys>]{<name>}{<columns>}{<rows>}{<type>/<label>}`
 A square lattice of one tensor, turned by 45 degrees.
@@ -26,6 +41,7 @@ A square lattice of one tensor, turned by 45 degrees.
 | key | |
 |---|---|
 | `bonds=<type>/<label>` | a tensor on every bond, turned with the lattice |
+| `scale=<factor>`, `pitch=<factor>`, `size=<factor>`, `stub=<factor>` | as on a stack: the grid at factors of the notation's distances and sizes |
 
 ### `\tnconnect[<keys>]{<block>}`
 Every index the block's layout implies.

@@ -47,7 +47,7 @@ if not missing:
 # to (`key=`, or `key` for one that takes no value).
 FAMILY = {"connect": [r"\tnconnect"], "open": [r"\tnopen", r"\tnopenswap"],
           "join": [r"\tnjoin"], "rel": [r"\tneq", r"\tnapprox"], "set": [r"\tnset"],
-          "stack": [r"\tnstack"], "grid": [r"\tngrid"]}
+          "stack": [r"\tnstack"], "grid": [r"\tngrid"], "layer": [r"\tnlayer"]}
 doc = "\n".join(p.read_text() for p in sorted((ROOT / "docs/reference").glob("*.md")))
 sections = re.split(r"^### ", doc, flags=re.M)
 undocumented = []
