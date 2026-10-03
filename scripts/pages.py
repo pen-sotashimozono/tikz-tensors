@@ -23,6 +23,7 @@ it and checks every link.
 from __future__ import annotations
 
 import difflib
+import gzip
 import html
 import json
 import pathlib
@@ -35,7 +36,7 @@ REPO = "https://github.com/pen-sotashimozono/tikz-tensors"
 sys.path.insert(0, str(ROOT / "scripts"))
 import version  # noqa: E402
 
-NAV = [("index.html", "Overview"), ("examples.html", "Examples"),
+NAV = [("index.html", "Overview"), ("examples.html", "Examples"), ("live.html", "Playground"),
        ("api.html", "Reference"), ("notation.html", "Notation")]
 
 
@@ -280,6 +281,7 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
 <title>{html.escape(title)} · tikz-tensors</title>
 <link rel="stylesheet" href="{up}assets/theme.css">
 <link rel="stylesheet" href="{up}assets/site.css">
+<meta name="tt-root" content="{up}">
 <script>try{{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}}catch(e){{}}</script>
 </head>
 <body>
@@ -313,7 +315,7 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
     }}).catch(() => {{}});
 }})();
 </script>
-<script>{TRACE_JS}</script>
+<script>{TRACE_JS}{LIVE_JS if LIVE else ""}</script>
 <footer>tikz-tensors v{version.version()} · <a href="{REPO}">source</a> ·
 <a href="{REPO}/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
@@ -405,6 +407,169 @@ def traced_figure(name: str, up: str, scale: float, alt: str) -> str:
             f'</span></figure>')
 
 
+# ---- drawn in the reader's browser ---------------------------------------------------
+# With the engine fetched (scripts/engine.py: TikZJax, TeX in WebAssembly), the
+# site carries it in live/ with the package's files beside it, and a figure can
+# be edited on its page and drawn again where it is: `Edit live' on an
+# example, and the playground (live.html). The engine loads on the first edit,
+# not with the page. Without it the site is the same, less those two.
+ENGINE = ROOT / ".engine"
+LIVE = False
+LIVE_BUTTON = '<button class="pill live-btn" type="button">Edit live</button>'
+# What every live figure is drawn with: the examples' preamble, so that a
+# figure is the file it is on the page.
+LIVE_PACKAGES = '{"amsmath":"","amssymb":"","tikz-tensors":""}'
+
+
+def copy_engine(out: pathlib.Path) -> bool:
+    """The engine and the package's files, gzipped as it fetches them, into
+    <out>/live/; False if the engine has not been fetched."""
+    if not (ENGINE / "tikzjax.js").is_file():
+        return False
+    shutil.copytree(ENGINE, out / "live", ignore=shutil.ignore_patterns("VERSION"))
+    files = sorted((ROOT / "tex").rglob("*.tex")) + [ROOT / "tex" / "tikz-tensors.sty",
+                                                     ROOT / "examples" / "conventions" / "notation.tex"]
+    for f in files:
+        (out / "live" / "tex_files" / f"{f.name}.gz").write_bytes(gzip.compress(f.read_bytes(), mtime=0))
+    return True
+
+
+LIVE_JS = """
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = %s;
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+""" % json.dumps(LIVE_PACKAGES)
+
+
+def live_page(exs: list[Example]) -> str:
+    if not LIVE:
+        body = """<h1>Playground</h1>
+<p>This build of the site was made without the in-browser TeX
+(<code>python3 scripts/engine.py</code> fetches it), so there is nothing to draw
+with here. The published site has it.</p>"""
+        return page("Playground", "live.html", body)
+    pictures = {e.name: e.picture for e in exs if e.name != "00-palette"}
+    data = json.dumps(pictures).replace("</", "<\\/")  # never closes the script
+    options = "".join(f'<option value="{e.name}">{e.number} {html.escape(e.title)}</option>'
+                      for e in exs if e.name in pictures)
+    body = f"""<h1>Playground</h1>
+<p>Write a figure and see it drawn, by TeX running in this page: the package
+and the examples' notation (<a href="notation.html">canl, center, gate, ...</a>)
+are loaded, so a tikzpicture of the <a href="api.html">reference</a>'s commands
+is all a figure needs. Nothing is installed and nothing leaves your browser.
+The first drawing loads TeX into the page, a few megabytes; each one after it
+takes a few seconds.</p>
+<div class="playground">
+<p><label>Start from an example: <select>{options}</select></label></p>
+<div class="split">
+<textarea class="live-code" spellcheck="false" rows="22"></textarea>
+<div><figure class="paper"><div class="live-out"></div></figure>
+<p class="small live-status" hidden></p></div>
+</div>
+</div>
+<script type="application/json" id="tt-pictures">{data}</script>
+<p class="small">Drawn by <a href="https://github.com/drgrice1/tikzjax">TikZJax</a>
+(GPL-3.0-or-later), TeX compiled to WebAssembly, served unmodified; the
+pictures elsewhere on this site are the ones the tests check, drawn by
+LuaLaTeX.</p>"""
+    return page("Playground", "live.html", body)
+
+
 def index_page(exs: list[Example]) -> str:
     gallery = ""
     for _, title in SECTIONS[1:]:
@@ -488,9 +653,11 @@ def example_page(exs: list[Example], i: int) -> str:
 <div class="split">
 <div class="prose">{text}</div>
 <div>
-<h2>The picture</h2>
+<h2 class="with-button">The picture{LIVE_BUTTON if LIVE else ""}</h2>
 <p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
 <pre class="code">{traced_code(e.picture, source, "../")}</pre>
+<textarea class="live-code" spellcheck="false" hidden>{html.escape(e.picture)}</textarea>
+<p class="small live-status" hidden></p>
 <details><summary>The whole file</summary>
 <pre class="code">{traced_code(e.body, source, "../")}</pre></details>
 <p class="small"><a href="{REPO}/blob/main/examples/{e.name}.tex">examples/{e.name}.tex</a></p>
@@ -786,6 +953,19 @@ pre.code .ln.live{cursor:default}
 pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
   box-shadow:inset 3px 0 #cf222e}
 .hint{margin:-.2em 0 .4em}
+h2.with-button{display:flex;align-items:center;gap:12px}
+button.pill{font:inherit;font-size:13px;font-weight:400;cursor:pointer;color:var(--fg);
+  background:var(--soft);border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);
+  border-radius:999px;padding:2px 12px}
+button.pill:hover{border-color:var(--accent);color:var(--accent)}
+textarea.live-code{width:100%;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:var(--card);color:var(--fg);border:1px solid var(--accent);border-radius:8px;
+  padding:12px 14px;resize:vertical;tab-size:2}
+.live-out{min-height:120px;display:flex;align-items:center;justify-content:center}
+.live-out svg{max-width:100%;height:auto}
+.live-status.bad{color:var(--bad);font-weight:600}
+.playground select{font:inherit;background:var(--card);color:var(--fg);
+  border:1px solid var(--line);border-radius:6px;padding:2px 6px}
 .stage{position:relative;display:inline-block;max-width:100%}
 .stage img{display:block;max-width:100%;height:auto}
 svg.trace{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -826,6 +1006,8 @@ def build(out: pathlib.Path) -> list[str]:
     shutil.copy(ROOT / "theme" / "theme.css", out / "assets" / "theme.css")
     (out / "assets" / "site.css").write_text(CSS)
     (out / ".nojekyll").write_text("")
+    global LIVE
+    LIVE = copy_engine(out)
     ANCHORS.clear()
     ANCHORS.update(api_anchors())
     exs = examples()
@@ -837,7 +1019,7 @@ def build(out: pathlib.Path) -> list[str]:
                        *(ROOT / "tests" / "reference").glob("step-*.svg")]):
         shutil.copy(svg, out / "figures" / svg.name)
     pages = {"index.html": index_page(exs), "examples.html": examples_page(exs),
-             "notation.html": notation_page()}
+             "notation.html": notation_page(), "live.html": live_page(exs)}
     for md, html_name, title in REF_PAGES:
         pages[html_name] = reference_page(md, html_name, "Reference" if md == "index.md" else title)
     for i, e in enumerate(exs):
