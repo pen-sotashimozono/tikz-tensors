@@ -41,15 +41,54 @@ TOKEN = re.compile(r"(?P<comment>(?<!\\)%.*)|(?P<math>(?<!\\)\$[^$\n]*\$)"
                    r"|(?P<cmd>\\(?:[A-Za-z@]+|.))|(?P<brace>[{}\[\]])")
 
 
-def latex(code: str) -> str:
-    """LaTeX source as HTML, with comments, math, commands and braces marked."""
+def api_anchors() -> dict[str, str]:
+    """Each public command, and `tn ...' for the styles, to its place in the
+    reference: the id of the heading of docs/api.md that names it."""
+    _, toc = markdown((ROOT / "docs" / "api.md").read_text(), code=False)
+    anchors = {}
+    for level, ident, text in toc:
+        if level == 3:
+            for name in re.findall(r"\\tn[a-z]+", html.unescape(re.sub(r"<[^>]+>", "", text))):
+                anchors.setdefault(name, ident)
+        elif level == 2 and slug(text) == "styles":
+            anchors["tn "] = ident
+    return anchors
+
+
+STYLE = re.compile(r"\btn (?:[a-z]+ )*?[a-z]+(?= *[,\]}=/])")
+
+
+def latex(code: str, up: str | None = None) -> str:
+    """LaTeX source as HTML, with comments, math, commands and braces marked.
+    With <up> (the way to the site's root), a command of the package links to
+    its entry in the reference, and a style of it (tn ...) to the styles."""
+    links = ANCHORS if up is not None else {}
+    styles = set(re.findall(r"`(tn [a-z ]+?)`", (ROOT / "docs" / "api.md").read_text())) \
+        if up is not None else set()
+
+    def text(t: str) -> str:
+        if not styles:
+            return html.escape(t)
+        out, pos = [], 0
+        for m in re.finditer("|".join(re.escape(n) for n in
+                                      sorted(styles, key=len, reverse=True)), t):
+            out.append(html.escape(t[pos:m.start()]))
+            out.append(f'<a class="ref" href="{up}api.html#{links["tn "]}">'
+                       f'{html.escape(m.group())}</a>')
+            pos = m.end()
+        out.append(html.escape(t[pos:]))
+        return "".join(out)
+
     out, pos = [], 0
     for m in TOKEN.finditer(code):
-        out.append(html.escape(code[pos:m.start()]))
-        kind = m.lastgroup
-        out.append(f'<span class="tx-{kind}">{html.escape(m.group())}</span>')
+        out.append(text(code[pos:m.start()]))
+        kind, word = m.lastgroup, m.group()
+        span = f'<span class="tx-{kind}">{html.escape(word)}</span>'
+        if kind == "cmd" and word in links:
+            span = f'<a class="ref" href="{up}api.html#{links[word]}">{span}</a>'
+        out.append(span)
         pos = m.end()
-    out.append(html.escape(code[pos:]))
+    out.append(text(code[pos:]))
     return "".join(out)
 
 
@@ -88,7 +127,7 @@ def slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", re.sub(r"<[^>]+>|\\", "", text.lower())).strip("-")
 
 
-def markdown(text: str) -> tuple[str, list[tuple[int, str, str]]]:
+def markdown(text: str, code: bool = True) -> tuple[str, list[tuple[int, str, str]]]:
     """HTML for the Markdown, and its headings (level, id, text) for a contents list."""
     lines, out, toc = text.splitlines(), [], []
     i = 0
@@ -100,11 +139,14 @@ def markdown(text: str) -> tuple[str, list[tuple[int, str, str]]]:
             j = i + 1
             while j < len(lines) and not lines[j].startswith("```"):
                 j += 1
-            out.append(f'<pre class="code">{latex(chr(10).join(lines[i + 1:j]))}</pre>')
+            body = chr(10).join(lines[i + 1:j])
+            out.append(f'<pre class="code">{latex(body, "") if code else html.escape(body)}</pre>')
             i = j + 1
         elif m := re.match(r"(#{1,4}) (.*)", line):
             level, body = len(m.group(1)), inline(m.group(2))
-            ident = slug(body)
+            # a command's entry is anchored at its name: api.html#tnopen
+            name = re.match(r"`\\(tn[a-z]+)", m.group(2))
+            ident = name.group(1) if name else slug(body)
             toc.append((level, ident, body))
             out.append(f'<h{level} id="{ident}">{body}</h{level}>')
             i += 1
@@ -279,7 +321,7 @@ same file.</p>
 <h2>A figure</h2>
 <p>A stack of layers, filled slot by slot, connected, and its open indices
 labelled. No number in it is a length.</p>
-<pre class="code">{latex(shown.body)}</pre>
+<pre class="code">{latex(shown.body, "")}</pre>
 </div>
 <div>
 <h2>Its picture</h2>
@@ -339,9 +381,9 @@ def example_page(exs: list[Example], i: int) -> str:
 <div class="prose">{text}</div>
 <div>
 <h2>The picture</h2>
-<pre class="code">{latex(e.picture)}</pre>
+<pre class="code">{latex(e.picture, "../")}</pre>
 <details><summary>The whole file</summary>
-<pre class="code">{latex(e.body)}</pre></details>
+<pre class="code">{latex(e.body, "../")}</pre></details>
 <p class="small"><a href="{REPO}/blob/main/examples/{e.name}.tex">examples/{e.name}.tex</a></p>
 </div>
 </div>
@@ -370,7 +412,7 @@ is a notation, and a notation belongs to whoever draws in it: a file of styles
 named for the meaning, built from the package's shapes, loaded after the
 package. This is the one the examples are drawn in. Yours can be different and
 every figure keeps working.</p>
-<pre class="code">{latex(text)}</pre>
+<pre class="code">{latex(text, "")}</pre>
 <p class="small"><a href="{REPO}/blob/main/examples/conventions/notation.tex">examples/conventions/notation.tex</a></p>"""
     return page("Notation", "notation.html", body)
 
@@ -411,6 +453,8 @@ pre.code{background:var(--card);border:1px solid var(--line);border-radius:8px;
 .tx-math{color:var(--green3)}
 .tx-cmd{color:var(--accent)}
 .tx-brace{color:var(--warm2)}
+a.ref{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
+a.ref:hover{border-bottom-color:var(--accent);text-decoration:none}
 :root[data-theme=dark] .tx-math{color:var(--green1)}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green1)}}
 figure.paper{margin:12px 0;padding:16px;background:#fff;border:1px solid var(--line);
@@ -450,6 +494,9 @@ th{color:var(--muted);font-weight:600}
 """
 
 
+ANCHORS: dict[str, str] = {}
+
+
 def build(out: pathlib.Path) -> list[str]:
     """Write the site to <out>; the pages written, relative to it."""
     if out.exists():
@@ -460,6 +507,8 @@ def build(out: pathlib.Path) -> list[str]:
     shutil.copy(ROOT / "theme" / "theme.css", out / "assets" / "theme.css")
     (out / "assets" / "site.css").write_text(CSS)
     (out / ".nojekyll").write_text("")
+    ANCHORS.clear()
+    ANCHORS.update(api_anchors())
     exs = examples()
     for e in exs:
         if not e.svg.exists():

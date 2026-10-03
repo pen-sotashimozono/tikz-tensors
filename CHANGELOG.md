@@ -23,7 +23,12 @@ figure says which layers; a notation says how close.
 
 `17-trotter-sweep` is `17-trotter`, "Trotter steps": its first order is now
 the even/odd splitting -- the gates on the even bonds as one layer, then those
-on the odd bonds -- and the layers of gates in both of its steps are close.
+on the odd bonds, two steps of it -- and the layers of gates in both of its
+orders are close.
+
+On the documentation site, every command of the package in a code block links
+to its entry in the reference (`api.html#tnopen`), and every style of it to
+the styles.
 
 ## v0.10.0 — 2026-10-02
 

@@ -6,7 +6,8 @@
 % sites, is split into the terms on the even bonds -- (1,2) and (3,4), which
 % commute with one another -- and the terms on the odd bonds -- (2,3) and
 % (4,5). Each group is applied at once, as one layer of gates: two layers a
-% step, and an error of O(dt^2) a step.
+% step, and an error of O(dt^2) a step. Two steps are drawn, so that the
+% pattern the gates make -- a brick wall -- shows.
 %
 % Second order, below. The same gates at half a step, in a sequence that is its
 % own reverse -- along the chain and back -- which is what kills the leading
@@ -31,15 +32,17 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack[close={g2}]{S}{5}{ket, g1, g2}
+  \tnstack[close={g2, g3, g4}]{S}{5}{ket, g1, g2, g3, g4}
   \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{S}{g1}{2*gate/$U(\delta t)$/2, |}
   \tnlayer{S}{g2}{|, 2*gate/$U(\delta t)$/2}
-  \tnconnect[along=gauge, apart={g1, g2}]{S}
+  \tnlayer{S}{g3}{2*gate/$U(\delta t)$/2, |}
+  \tnlayer{S}{g4}{|, 2*gate/$U(\delta t)$/2}
+  \tnconnect[along=gauge, apart={g1, g2, g3, g4}]{S}
   \tnopen[edge=gauge]{left}{S-ket-1}
   \tnopen[edge=gauge]{right}{S-ket-5}
   \tnopen{down}{S}
-  \tnmid[right]{S-g1-6-slot}{S-g2-6-slot}{$O(\delta t^2)$ a step}
+  \tnmid[right]{S-g2-6-slot}{S-g3-6-slot}{$O(\delta t^2)$ a step}
   \tnbreak
   \tnstack[close={g2, g3, g4, g5, g6, g7, g8}]{T}{5}{ket, g1, g2, g3, g4, g5, g6, g7, g8}
   \tnlayer{T}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}

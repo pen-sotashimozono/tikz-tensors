@@ -45,6 +45,21 @@ class Site(unittest.TestCase):
                 self.assertTrue((page.parent / target).resolve().exists(),
                                 f"{name} links to {target}")
 
+    def test_every_anchor_a_link_names_exists(self):
+        ids = {}
+        for name in self.pages:
+            for target in re.findall(r'href="([^"#:]*)#([^"]+)"', (self.out / name).read_text()):
+                page = ((self.out / name).parent / target[0]).resolve() if target[0] \
+                    else (self.out / name).resolve()
+                if page not in ids:
+                    ids[page] = set(re.findall(r'id="([^"]+)"', page.read_text()))
+                self.assertIn(target[1], ids[page], f"{name} links to {target[0]}#{target[1]}")
+
+    def test_code_links_every_command_to_the_reference(self):
+        text = (self.out / "examples/08-canonical.html").read_text()
+        for command in ("tnstack", "tnlayer", "tnconnect", "tnopen"):
+            self.assertIn(f'href="../api.html#{command}"', text)
+
     def test_the_reference_is_docs_api(self):
         text = (self.out / "api.html").read_text()
         for command in re.findall(r"^### `(\\tn[a-z]+)", (ROOT / "docs/api.md").read_text(), re.M):
