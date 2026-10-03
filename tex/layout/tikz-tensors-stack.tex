@@ -416,8 +416,10 @@
   \ifx\tn@spd\tn@sright \def\tn@spw{on layer \tn@spk}\else
   \ifx\tn@spd\tn@sup \def\tn@spw{at site \tn@spk}\else
   \ifx\tn@spd\tn@sdown \def\tn@spw{at site \tn@spk}\else \def\tn@spw{}\fi\fi\fi\fi
+  \tn@fluxof{#1}{#2}{#3}%
   \typeout{\space\space index \ifx\tn@pnm\@empty #2 \tn@spw\else
     \tn@pnm\space (#2\ifx\tn@spw\@empty\else\space\tn@spw\fi)\fi
+    \ifx\tn@fx\@empty\else, runs \tn@fx\ifnum\tn@fxs=0 \space(its shape)\fi\fi
     : \ifnum\tn@isused=1 drawn\else
     \ifnum\tn@iscut=1 left out (apart=)\else free\fi\fi}}
 
@@ -503,6 +505,7 @@
           \tn@use{#2}{down}{\tn@vu}\tn@use{#3}{up}{\tn@vl}%
           \tn@ixx{#2}{down}{\tn@vu}\let\tn@vxu\tn@cx
           \tn@ixx{#3}{up}{\tn@vl}\let\tn@vxl\tn@cx
+          \tn@orient{#2}{down}{\tn@vu}{#3}{up}{\tn@vl}{\string\tnconnect}%
           \tn@facingx{\tn@down}{#2}{#3}{\tn@vxu}{\tn@vxl}%
         \fi}%
     \fi\fi
@@ -533,6 +536,7 @@
   \ifnum\tn@draw=1
     \tn@colx{#1}{\tn@col}%
     \tn@use{#2}{down}{\tn@col}\tn@use{#3}{up}{\tn@col}%
+    \tn@orient{#2}{down}{\tn@col}{#3}{up}{\tn@col}{\string\tnconnect}%
     \tn@facing{\tn@down}{#2}{#3}%
   \fi}
 % From the down port of #2 to the up port of #3, under it, both in column
@@ -546,11 +550,16 @@
   \let\tn@cx\tn@fxl
   \tn@vport{#3}{up}\let\tn@xl\tn@px \let\tn@yl\tn@py
   \ifdim\tn@xu=\tn@xl
-    \tn@line{#1}{\tn@xu}{\tn@yu}{\tn@xl}{\tn@yl}%
+    \tn@dline{#1}{\tn@xu}{\tn@yu}{\tn@xl}{\tn@yl}%
   \else
     \tn@len\tn@ym{(\tn@eu+\tn@pe)/2}%
-    \tn@turns{#1}{(\tn@xu,\tn@yu) -- (\tn@xu,\tn@ym)
-      -- (\tn@xl,\tn@ym) -- (\tn@xl,\tn@yl)}%
+    \ifnum\tn@rev=1
+      \tn@turns{#1}{(\tn@xl,\tn@yl) -- (\tn@xl,\tn@ym)
+        -- (\tn@xu,\tn@ym) -- (\tn@xu,\tn@yu)}%
+    \else
+      \tn@turns{#1}{(\tn@xu,\tn@yu) -- (\tn@xu,\tn@ym)
+        -- (\tn@xl,\tn@ym) -- (\tn@xl,\tn@yl)}%
+    \fi
   \fi}
 % One pair of neighbouring slots along a layer. Between two tensors of which
 % one names its indices, \tn@hpairs; a tensor that names them meets anything
@@ -598,9 +607,8 @@
         \tn@ixy{\tn@ob}{left}{\tn@hv}\let\tn@hyb\tn@ly
         \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px
         \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px
-        \ifdim\tn@hya=\tn@hyb
-          \tn@bond{#1}{\tn@xa}{\tn@xb}{\tn@hya}{\tn@get{n@\tn@oa @pt}}{\tn@get{n@\tn@ob @pt}}%
-        \else \tn@line{#1}{\tn@xa}{\tn@hya}{\tn@xb}{\tn@hyb}\fi
+        \tn@orient{\tn@oa}{right}{\tn@hu}{\tn@ob}{left}{\tn@hv}{\string\tnconnect}%
+        \tn@dline{#1}{\tn@xa}{\tn@hya}{\tn@xb}{\tn@hyb}%
       \fi}%
   \fi\fi}
 % A tensor that names its indices, beside an environment, the dots or a slot
@@ -638,11 +646,12 @@
     \def\tn@pa{}\def\tn@pb{}%
     \ifnum\tn@ka=1
       \tn@use{\tn@oa}{right}{\tn@lk}%
-      \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px \edef\tn@pa{\tn@get{n@\tn@oa @pt}}\fi
+      \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px \let\tn@pa\tn@oa \fi
     \ifnum\tn@kb=1
       \tn@use{\tn@ob}{left}{\tn@lk}%
-      \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px \edef\tn@pb{\tn@get{n@\tn@ob @pt}}\fi
-    \tn@bond{#1}{\tn@xa}{\tn@xb}{\tn@y}{\tn@pa}{\tn@pb}%
+      \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px \let\tn@pb\tn@ob \fi
+    \tn@orient{\tn@pa}{right}{\tn@lk}{\tn@pb}{left}{\tn@lk}{\string\tnconnect}%
+    \tn@dline{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
   \else
     \ifnum\tn@ka=5 \ifnum\tn@sb=0 \ifnum\tn@kb=4 \else
       \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
@@ -658,12 +667,14 @@
     \ifnum\tn@ka\tn@kb=14
       \tn@use{\tn@oa}{right}{\tn@lk}%
       \tn@hport{\tn@oa}{right}\let\tn@xa\tn@px \tn@len\tn@xb{\tn@xb-\tn@slot/2}%
-      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \tn@orient{\tn@oa}{right}{\tn@lk}{}{}{}{\string\tnconnect}%
+      \tn@dline{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
     \fi
     \ifnum\tn@ka\tn@kb=41
       \tn@use{\tn@ob}{left}{\tn@lk}%
       \tn@hport{\tn@ob}{left}\let\tn@xb\tn@px \tn@len\tn@xa{\tn@xa+\tn@slot/2}%
-      \tn@line{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
+      \tn@orient{}{}{}{\tn@ob}{left}{\tn@lk}{\string\tnconnect}%
+      \tn@dline{#1}{\tn@xa}{\tn@y}{\tn@xb}{\tn@y}%
     \fi
   \fi\fi}
 
@@ -675,13 +686,14 @@
 % <tensor>-<direction>, or -<direction>-1, -2, ... when there are several. On
 % the stack: every site's index from its lowest tensor (down) or highest (up),
 % ending at <stack>-<i>-down / -up; or every layer's from its last tensor
-% (right) or first (left), ending at <stack>-<layer>-right / -left. A
-% horizontal index that carries a direction takes it from its triangle: an
-% open bond of a canonical form points in.
+% (right) or first (left), ending at <stack>-<layer>-right / -left. An
+% open index runs the way its tensor says (tn flux, tn index): into it, drawn
+% from the end to the tensor, or out of it, or, said neither way, outward.
 %
 % one index across, from tensor #2 on layer number #3, ending at coordinate #4
 \def\tn@hopen#1#2#3#4{%
-  \edef\tn@s{\tn@get{n@#2@s}}\edef\tn@pt{\tn@get{n@#2@pt}}%
+  \edef\tn@s{\tn@get{n@#2@s}}\tn@fluxof{#2}{\tn@dir}{#3}%
+  \ifx\tn@fx\tn@sin \def\tn@rev{1}\else \def\tn@rev{0}\fi
   \tn@use{#2}{\tn@dir}{#3}%
   \tn@ixy{#2}{\tn@dir}{#3}\let\tn@hy\tn@ly
   \tn@hport{#2}{\tn@dir}\let\tn@xa\tn@px
@@ -690,14 +702,12 @@
     \tn@colx{\tn@s}{\tn@get{n@#2@b}+1}\tn@len\tn@xb{\tn@cx-\tn@slot/2}%
     \ifdim\tn@xc>\tn@xb \let\tn@xb\tn@xc \fi
     \tn@reach{\tn@xb}%
-    \ifx\tn@pt\tn@sleft \tn@line{#1}{\tn@xb}{\tn@hy}{\tn@xa}{\tn@hy}%
-    \else \tn@line{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}\fi
+    \tn@dline{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}%
   \else
     \tn@len\tn@xc{\tn@pe-\tn@stub}%
     \tn@colx{\tn@s}{\tn@get{n@#2@a}-1}\tn@len\tn@xb{\tn@cx+\tn@slot/2}%
     \ifdim\tn@xc<\tn@xb \let\tn@xb\tn@xc \fi
-    \ifx\tn@pt\tn@sright \tn@line{#1}{\tn@xb}{\tn@hy}{\tn@xa}{\tn@hy}%
-    \else \tn@line{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}\fi
+    \tn@dline{#1}{\tn@xa}{\tn@hy}{\tn@xb}{\tn@hy}%
   \fi
   \coordinate (#4) at (\tn@xb,\tn@hy);
   \tn@openlabel{#4}}
@@ -718,12 +728,19 @@
   \fi
   \tn@ixx{#2}{\tn@dir}{#4}%
   \tn@vport{#2}{\tn@dir}%
+  \tn@fluxof{#2}{\tn@dir}{#4}%
+  \ifx\tn@fx\tn@sin \def\tn@rev{1}\else \def\tn@rev{0}\fi
   \ifdim\tn@px=\tn@cx
-    \tn@line{#1}{\tn@cx}{\tn@py}{\tn@cx}{\tn@yb}%
+    \tn@dline{#1}{\tn@cx}{\tn@py}{\tn@cx}{\tn@yb}%
   \else
     \tn@len\tn@ym{(\tn@pe+\tn@yb)/2}%
-    \tn@turns{#1}{(\tn@px,\tn@py) -- (\tn@px,\tn@ym)
-      -- (\tn@cx,\tn@ym) -- (\tn@cx,\tn@yb)}%
+    \ifnum\tn@rev=1
+      \tn@turns{#1}{(\tn@cx,\tn@yb) -- (\tn@cx,\tn@ym)
+        -- (\tn@px,\tn@ym) -- (\tn@px,\tn@py)}%
+    \else
+      \tn@turns{#1}{(\tn@px,\tn@py) -- (\tn@px,\tn@ym)
+        -- (\tn@cx,\tn@ym) -- (\tn@cx,\tn@yb)}%
+    \fi
   \fi
   \coordinate (#5) at (\tn@cx,\tn@yb);
   \tn@openlabel{#5}}
@@ -928,6 +945,7 @@
   \fi}
 \def\tn@stack@join#1#2#3#4#5#6#7{%
   \tn@jport{#2}{#3}{#4}{a}\tn@jport{#5}{#6}{#7}{b}%
+  \tn@orient{#2}{#3}{#4}{#5}{#6}{#7}{\string\tnjoin}%
   \edef\tn@s{\tn@j@as}%
   % straight: facing on one line, nothing between
   \def\tn@face{0}%
@@ -955,11 +973,11 @@
     \fi
   \fi\fi
   \ifnum\tn@face=1
-    \tn@line{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
+    \tn@dline{#1}{\tn@j@ax}{\tn@j@ay}{\tn@j@bx}{\tn@j@by}%
   \else
     % along the gutters: from (gx, gy) of the one to (gx, gy) of the other
     \ifnum\tn@j@ah\tn@j@bh=11
-      \ifdim\tn@j@agx=\tn@j@bgx \def\tn@via{}%
+      \ifdim\tn@j@agx=\tn@j@bgx \def\tn@via{}\def\tn@viar{}%
       \else
         \ifdim\tn@j@ay=\tn@j@by
           \tn@layy{\tn@s}{0.5}% round the top of the stack
@@ -967,9 +985,10 @@
           \tn@layy{\tn@s}{min(\tn@j@ac,\tn@j@bc)+0.5}% between their layers
         \fi
         \edef\tn@via{-- (\tn@j@agx,\tn@ly) -- (\tn@j@bgx,\tn@ly)}%
+        \edef\tn@viar{-- (\tn@j@bgx,\tn@ly) -- (\tn@j@agx,\tn@ly)}%
       \fi
     \else\ifnum\tn@j@ah\tn@j@bh=0
-      \ifdim\tn@j@agy=\tn@j@bgy \def\tn@via{}%
+      \ifdim\tn@j@agy=\tn@j@bgy \def\tn@via{}\def\tn@viar{}%
       \else
         \ifdim\tn@j@ax=\tn@j@bx
           \tn@colx{\tn@s}{\tn@j@ac+0.5}% beside them
@@ -978,12 +997,18 @@
         \fi
         \tn@reach{\tn@cx}%
         \edef\tn@via{-- (\tn@cx,\tn@j@agy) -- (\tn@cx,\tn@j@bgy)}%
+        \edef\tn@viar{-- (\tn@cx,\tn@j@bgy) -- (\tn@cx,\tn@j@agy)}%
       \fi
     \else\ifnum\tn@j@ah=1
-      \edef\tn@via{-- (\tn@j@agx,\tn@j@bgy)}%
+      \edef\tn@via{-- (\tn@j@agx,\tn@j@bgy)}\let\tn@viar\tn@via
     \else
-      \edef\tn@via{-- (\tn@j@bgx,\tn@j@agy)}%
+      \edef\tn@via{-- (\tn@j@bgx,\tn@j@agy)}\let\tn@viar\tn@via
     \fi\fi\fi
-    \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@agx,\tn@j@agy) \tn@via
-      -- (\tn@j@bgx,\tn@j@bgy) -- (\tn@j@bx,\tn@j@by)}%
+    \ifnum\tn@rev=1
+      \tn@turns{#1}{(\tn@j@bx,\tn@j@by) -- (\tn@j@bgx,\tn@j@bgy) \tn@viar
+        -- (\tn@j@agx,\tn@j@agy) -- (\tn@j@ax,\tn@j@ay)}%
+    \else
+      \tn@turns{#1}{(\tn@j@ax,\tn@j@ay) -- (\tn@j@agx,\tn@j@agy) \tn@via
+        -- (\tn@j@bgx,\tn@j@bgy) -- (\tn@j@bx,\tn@j@by)}%
+    \fi
   \fi}

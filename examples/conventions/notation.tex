@@ -14,7 +14,10 @@
 %   diamond;
 %   left- and right-canonical tensors are triangles pointing the way the gauge
 %   runs, each in its own colour, and the orthogonality center a green
-%   diamond -- small when it sits on a bond;
+%   diamond -- small when it sits on a bond; the gauge is said as the way
+%   their bonds run (tn flux): into a canonical tensor from the far end of
+%   the chain and out toward the center, and into the center from both
+%   sides, so that an arrow on a bond (gauge) points toward the center;
 %   an operator tensor on a chain is a neutral rounded box, a gate a light
 %   yellow one, an environment block light purple;
 %   a finite index is a plain line, and one whose direction is part of what is
@@ -64,9 +67,9 @@
 \tntype{coeftall}    {tn capsule, tn tall, tn fill=coef}
 \tntype{op}          {tn rounded}
 \tntype{opwide}      {op, tn wide}
-\tntype{canl}        {tn triangle right, tn fill=canl}
-\tntype{canr}        {tn triangle left, tn fill=canr}
-\tntype{center}      {tn diamond, tn fill=center}
+\tntype{canl}        {tn triangle right, tn fill=canl, tn flux={left=in, right=out}}
+\tntype{canr}        {tn triangle left, tn fill=canr, tn flux={right=in, left=out}}
+\tntype{center}      {tn diamond, tn fill=center, tn flux={left=in, right=in}}
 \tntype{centerbond}  {center, tn small}
 \tntype{mpo}         {tn rounded, tn fill=mpo}
 \tntype{gate}        {tn gate}

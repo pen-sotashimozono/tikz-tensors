@@ -8,7 +8,11 @@
 % named by the index's name (P-ket-1:r) or its place in order (W-a-2:3), and
 % \tnopen{rest} draws what is still free -- of a block, of each tensor whose
 % type names its indices; of a tensor, all of its own; of a port, that one.
-% A tree's site and a grid's take names the same way.
+% A tree's site and a grid's take names the same way. An index may say which
+% way it runs, name:side:in or :out, and a bond then runs from the end that is
+% out to the end that is in, which is the way its arrow points: F's chain
+% runs left to right, its physical indices out, and the bond \tnjoin closes
+% runs back from F-5 to F-1 because that is the way its ends say.
 \documentclass[border=5pt]{standalone}
 \usepackage{tikz-tensors}
 \tntype{bulk}{tn circle, tn index={l:left, r:right, s:down}}
@@ -17,6 +21,7 @@
 \tntype{pair}{tn box, tn index={a:right, b:right, p:down}}
 \tntype{split}{tn box, tn index={a:left, b:left, u:up, d:down, e:down}}
 \tntype{iso}{tn triangle up, tn index={top:up, x:down, y:down}}
+\tntype{flow}{tn circle, tn index={l:left:in, r:right:out, s:down:out}}
 \tntype{cell}{tn circle, tn index={w:nw, n:ne, e:se, s:sw, p:down}}
 \begin{document}
 \begin{tikzpicture}
@@ -39,6 +44,12 @@
   \tnconnect[apart={leaves}]{T}
   \tnopen{rest}{T}
   \tnopen{down}{T}
+  \tnbreak
+  \tnstack{F}{5}{ket}
+  \tnlayer{F}{ket}{5*flow/$F$}
+  \tnconnect[along=tn arrow]{F}
+  \tnjoin[edge=tn arrow]{F-ket-1:l}{F-ket-5:r}
+  \tnopen[edge=tn arrow]{rest}{F}
   \tnbreak
   \tngrid{G}{2}{2}{cell/$T$}
   \tnconnect{G}

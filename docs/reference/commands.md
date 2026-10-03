@@ -110,9 +110,10 @@ step contracts into one, or a part of a network set apart.
 ### `\tntype{<name>}{<options>}`
 A type of one's own: the style `<name>`, which is `<options>`, and which a
 tensor drawn in it says it is — `\tnshow` and an error name it. It says what
-a tensor is: its outline, and its indices, named (`tn index`), which the
-layout then holds a figure to. In the preamble or a notation file:
-`\tntype{site}{tn circle, tn index={l:left, r:right, s:down}}`.
+a tensor is: its outline, its indices, named (`tn index`), which the layout
+then holds a figure to, and which way they run (`tn flux`, or an index's own
+`:in`, `:out`). In the preamble or a notation file:
+`\tntype{site}{tn circle, tn index={l:left:in, r:right:out, s:down}}`.
 
 ### `\tnshow{<tensor>, ...}`
 Writes what the package made of each tensor to the log: its block, the sites

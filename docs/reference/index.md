@@ -71,6 +71,13 @@ predicts the rest.
   then named by its index, `T:l`, or its place in the type's order, `T:1`, as
   well as by its side. A type is best declared with `\tntype`, which names
   it. `\tnshow` writes out what was made of a tensor.
+- **An index runs one way, and the types say which.** A side runs in or out
+  (`tn flux={left=in, right=out}`), or an index does (`l:left:in`); a bond
+  runs from the end that is out to the end that is in, and an arrow on it
+  (`tn arrow`) points that way. Two ends that both say in, or both out, are
+  an error. A triangle leans in at its flat side and out at its apex, which a
+  type's own word overrules. A gauge is said this way: in the examples'
+  notation a canonical tensor runs toward the center.
 - **Every index is drawn once.** Opening or joining one that is drawn
   already is an error; opening a whole block skips the ones that are taken.
 - **No lengths and no coordinates in a figure.** Distances are tokens, set

@@ -1,9 +1,11 @@
 %% Triangles
 %
 % A triangle points. Pointing right or left, its index down the site leaves
-% from a corner of its flat side (tn leg anchor) and an arrow on a bond takes
-% its direction from it (tn points); pointing up or down, it has one index on
-% its apex side however many sites it spans (tn single).
+% from a corner of its flat side (tn leg anchor); pointing up or down, it has
+% one index on its apex side however many sites it spans (tn single). Its
+% indices lean one way, in at its flat side and out at its apex, which an
+% arrow on a bond follows unless the other end, or the type, says otherwise
+% (tn flux).
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}

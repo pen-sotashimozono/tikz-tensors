@@ -5,6 +5,33 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.17.0 — 2026-10-03
+
+An index runs one way, in or out of its tensor, and the types say which:
+the direction of an arrow, and of a flux of quantum numbers, is the type's
+to declare, not the shape's to imply.
+
+`tn flux={<side>=in|out, ...}` says which way a type's indices on a side
+run, and an index of `tn index` may say its own, `l:left:in`. A bond runs
+from the end that is out to the end that is in -- a bond along a layer, one
+down a site, one `\tnjoin` draws, one on a grid -- and an arrow on it
+(`tn arrow`) points that way; an open index points into its tensor or out of
+it. Two ends that both say in, or both out, are an error.
+
+A triangle leans by itself: in at its flat side, out at its apex. What a
+type says overrules the lean, so a W and a W-dagger apex to apex are no
+error. `tn arrow` follows the indices instead of the shapes, and
+`tn points` is removed (before 1.0): `tn flux` says it.
+
+The examples' notation says its gauge this way -- a canonical tensor runs
+toward the center, and the center takes from both sides -- and its arrows
+are the ones it had. `\tnshow` writes the way each index runs.
+
+No figure changes in appearance. A few lines of the tree, MERA, HOTRG and
+effective-Hamiltonian examples are drawn from their other end, which moves
+a few dozen antialiased pixels of the tree and the MERA and nothing else. `tests/cases/types.tex` adds a chain whose
+indices run left to right and out, closed by a bond that runs back.
+
 ## v0.16.0 — 2026-10-03
 
 A tensor's indices are named by its type, as an ITensor's are: which index

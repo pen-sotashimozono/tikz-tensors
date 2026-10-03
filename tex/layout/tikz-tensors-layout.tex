@@ -191,6 +191,54 @@
 \def\tn@ixordone#1#2{\global\advance\tn@ixo by 1
   \tn@set{n@\tn@ixon @io@\the\tn@ixo}{#1}}
 
+% ---- which way an index runs -------------------------------------------------------
+% \tn@fluxof{<tensor>}{<side>}{<key>}: the way its port there runs, in, out or
+% nothing said, as \tn@fx: the index's own (tn index), else its side's
+% (tn flux) -- said, \tn@fxs is 1 -- else the way its shape leans (a
+% triangle's), \tn@fxs 0. An empty <tensor> -- an environment, the dots --
+% says nothing.
+\def\tn@fluxof#1#2#3{\def\tn@fx{}\def\tn@fxs{1}\edef\tn@fxt{#1}%
+  \ifx\tn@fxt\@empty\else
+    \tn@isnamed{#1}%
+    \ifnum\tn@named=1
+      \tn@key{#3}\let\tn@fxk\tn@kk \gdef\tn@fxn{}%
+      \tn@sideindices{#1}{#2}%
+      \foreach \tn@fi in \tn@onside{\edef\tn@fik{\tn@get{n@#1@ik@\tn@fi}}%
+        \ifdim\tn@fik pt=\tn@fxk pt \xdef\tn@fxn{\tn@fi}\fi}%
+      \ifx\tn@fxn\@empty\else \ifcsname tn@n@#1@ifx@\tn@fxn\endcsname
+        \edef\tn@fx{\tn@get{n@#1@ifx@\tn@fxn}}\fi\fi
+    \fi
+    \ifx\tn@fx\@empty \ifcsname tn@n@#1@fx@#2\endcsname
+      \edef\tn@fx{\tn@get{n@#1@fx@#2}}\fi\fi
+    \ifx\tn@fx\@empty \ifcsname tn@n@#1@wfx@#2\endcsname
+      \edef\tn@fx{\tn@get{n@#1@wfx@#2}}\def\tn@fxs{0}\fi\fi
+  \fi}
+% \tn@orient{<tensor>}{<side>}{<key>}{<tensor>}{<side>}{<key>}{<command>}: an
+% index from the first port to the second runs that way (\tn@rev 0) or the
+% other (\tn@rev 1): from the end that is out to the end that is in, and from
+% the first to the second when neither says. Where the ends disagree, what a
+% type says overrules the way a shape leans; two ends that both say, both in
+% or both out, are an error -- what flows out of one tensor flows into the
+% next.
+\def\tn@orient#1#2#3#4#5#6#7{%
+  \tn@fluxof{#1}{#2}{#3}\let\tn@fxa\tn@fx \let\tn@fxsa\tn@fxs
+  \tn@fluxof{#4}{#5}{#6}%
+  % what each end asks for: 0 from the first to the second, 1 back, or none
+  \def\tn@ra{}\ifx\tn@fxa\tn@sout \def\tn@ra{0}\fi \ifx\tn@fxa\tn@sin \def\tn@ra{1}\fi
+  \def\tn@rb{}\ifx\tn@fx\tn@sin \def\tn@rb{0}\fi \ifx\tn@fx\tn@sout \def\tn@rb{1}\fi
+  \ifx\tn@ra\@empty \ifx\tn@rb\@empty \def\tn@rev{0}\else \let\tn@rev\tn@rb \fi
+  \else\ifx\tn@rb\@empty \let\tn@rev\tn@ra
+  \else\ifx\tn@ra\tn@rb \let\tn@rev\tn@ra
+  \else
+    \ifnum\tn@fxsa\tn@fxs=11
+      \PackageError{tikz-tensors}{#7: the index between `#1' (#2) and `#4' (#5)
+        runs \tn@fx\space at both ends}{An index runs out of one tensor and
+        into the other; tn flux and tn index say which way.}\def\tn@rev{0}%
+    \else\ifnum\tn@fxsa=1 \let\tn@rev\tn@ra
+    \else\ifnum\tn@fxs=1 \let\tn@rev\tn@rb
+    \else \def\tn@rev{0}\fi\fi\fi
+  \fi\fi\fi}
+
 % ---- naming a port ---------------------------------------------------------------
 % \tn@port{<tensor>:<which>[:<n>]}{<command>}: the port a figure names, as
 % \tn@pn (the tensor), \tn@ps (its side) and \tn@pkey (its key) -- and the
