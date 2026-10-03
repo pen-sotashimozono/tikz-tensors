@@ -127,6 +127,13 @@ def prose(text: str) -> str:
     return text
 
 
+def autolink(text: str) -> str:
+    """Escaped text with every web address in it a link; a full stop, comma or
+    bracket that ends a sentence after one is not part of it."""
+    return re.sub(r"https?://[^\s<>()]*[^\s<>().,;:]",
+                  lambda m: f'<a href="{m.group()}">{m.group()}</a>', text)
+
+
 def link(target: str) -> str:
     """A link in the repository's own Markdown, as one that works on the site."""
     if re.match(r"[a-z]+:", target) or target.startswith("#"):
@@ -387,7 +394,7 @@ def example_page(exs: list[Example], i: int) -> str:
             if i > 0 else "<span></span>")
     nxt = (f'<a href="{exs[i + 1].name}.html">{html.escape(exs[i + 1].title)} →</a>'
            if i + 1 < len(exs) else "<span></span>")
-    text = "".join(f"<p>{html.escape(prose(p), quote=False)}</p>" for p in e.paras)
+    text = "".join(f"<p>{autolink(html.escape(prose(p), quote=False))}</p>" for p in e.paras)
     body = f"""<p class="crumb"><a href="../examples.html">Examples</a> / {e.number}</p>
 <h1>{html.escape(e.title)}</h1>
 {figure(e, "../")}
@@ -472,7 +479,7 @@ def pictured(body: str) -> tuple[str, str]:
     pic = Picture(REFERENCE / line.group(1))
     if not pic.svg.exists():
         sys.exit(f"{pic.svg.relative_to(ROOT)}: no reference picture for {pic.path}")
-    text = "".join(f"<p>{html.escape(prose(t), quote=False)}</p>" for t in pic.paras)
+    text = "".join(f"<p>{autolink(html.escape(prose(t), quote=False))}</p>" for t in pic.paras)
     m = re.search(r'width="([\d.]+)', pic.svg.read_text()[:400])
     width = f' style="width:{float(m.group(1)) * 1.5:.0f}pt"' if m else ""
     return body.replace(line.group(), ""), (
@@ -511,7 +518,7 @@ def walkthrough() -> str:
         width = f' style="width:{float(m.group(1)) * 1.3:.0f}pt"' if m else ""
         # a picture too wide to read at half the card goes under its code
         wide = " wide" if m and float(m.group(1)) > 260 else ""
-        text = "".join(f"<p>{html.escape(prose(t), quote=False)}</p>" for t in pic.paras)
+        text = "".join(f"<p>{autolink(html.escape(prose(t), quote=False))}</p>" for t in pic.paras)
         out.append(
             f'<article class="doc step" id="step-{n}"><header><div class="sigs">'
             f'<span class="sig">Step {n}. {html.escape(title)}</span></div>'

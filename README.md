@@ -302,7 +302,7 @@ added there.
 
 The graphical notation is the field's common one — tensors as shapes, indices
 as lines, triangles for isometries — and
-[tensornetwork.org](https://tensornetwork.org/) (Apache-2.0) is where much of
+[tensornetwork.org](https://tensornetwork.org/) is where much of
 it is laid out; the algorithms the examples draw are the ones it reviews. Two
 examples take their layout from the figures on its front page:
 [`19-ttn`](examples/19-ttn.tex) (the tree tensor network) and
