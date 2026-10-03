@@ -434,7 +434,7 @@ def copy_engine(out: pathlib.Path) -> bool:
     return True
 
 
-LIVE_JS = """
+LIVE_JS = r"""
 /* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
    into an SVG; TeX's own messages come through console.log, which is how a
    mistake in the code is told from a figure still being drawn. */
@@ -479,6 +479,9 @@ const TT = (() => {
           status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
         } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
           clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
           status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
         }
       }, 200);

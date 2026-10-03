@@ -209,6 +209,14 @@ pull request's site at `previews/PR<n>/`, links it in the pull request, and
 removes it when the pull request closes. Pages serves the `gh-pages` branch. An example's first line is its title
 on the site, `%% <title>`, and the comment under it its description.
 
+With `python3 scripts/engine.py` run first, the site also draws figures in
+the reader's browser: TikZJax, TeX compiled to WebAssembly (pinned by version
+and SHA-512, GPL-3.0-or-later, served unmodified), is copied to `live/` with
+the package's files beside it. Every example then has *Edit live* — its code
+becomes editable and the figure is drawn again on the page as one types — and
+`live.html` is a playground. Nothing needs to be installed to try the
+package; the pictures the tests check are still LuaLaTeX's.
+
 `scripts/build-examples.sh` builds `examples/*.tex` into `examples/out/`
 (SVG and PDF, gitignored) with LuaLaTeX and `pdftocairo`; the pictures in this
 README are the test references, which are the same SVGs.
