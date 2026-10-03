@@ -230,10 +230,26 @@
   \tn@ifcut{#1}{#2}{0}\ifnum\tn@iscut=1 \def\tn@gok{0}\fi
   \tn@ifcut{#3}{#4}{0}\ifnum\tn@iscut=1 \def\tn@gok{0}\fi}
 \def\tn@grid@portkey#1#2#3{\def\tn@pkey{0}}
-\def\tn@grid@show#1{%
-  \foreach \tn@ss in {nw,ne,se,sw,down}{%
+% A site of a grid has a port toward each neighbour and one down -- a split
+% one none down -- each the only one on its side. A tensor on a bond, or a
+% half of a split site, has none of its own: its indices are the site's.
+\def\tn@grid@ports#1{%
+  \edef\tn@gpb{\tn@get{n@#1@s}}%
+  \edef\tn@gsn{\tn@gpb-\tn@get{n@#1@a}-\tn@get{n@#1@k}}\edef\tn@gsm{#1}%
+  \ifx\tn@gsn\tn@gsm \else \def\tn@gps{}\fi
+  \ifx\tn@gsn\tn@gsm \ifnum\tn@get{\tn@gpb @split}=1 \def\tn@gps{nw,ne,se,sw}\else
+    \def\tn@gps{nw,ne,se,sw,down}\fi\fi
+  \ifx\tn@gps\@empty\else
+  \foreach \tn@ss in \tn@gps{%
     \tn@hasleg{#1}{\tn@ss}%
-    \ifnum\tn@hasl=1 \tn@showport{#1}{\tn@ss}{0}\fi}}
+    \ifnum\tn@hasl=1 \tn@portvisit{#1}{\tn@ss}{0}\fi}\fi}
+\def\tn@grid@openport#1#2#3#4{%
+  \edef\tn@gd{#3}%
+  \ifx\tn@gd\tn@sdown \def\tn@dir{down}\tn@gopen{#1}{#2}{#2-down}%
+  \else
+    \edef\tn@gb{\tn@get{n@#2@s}}%
+    \tn@gside{#1}{\tn@gb}{\tn@get{n@#2@a}}{\tn@get{n@#2@k}}{#3}%
+  \fi}
 % the directions <#1> names: one of nw, ne, se, sw, or around (all four), as
 % \tn@gdl; down is \tn@gdl empty
 \def\tn@sides{nw,ne,se,sw}\def\tn@saround{around}

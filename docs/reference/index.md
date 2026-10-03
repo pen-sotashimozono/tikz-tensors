@@ -15,9 +15,10 @@ still be renamed or removed in a minor version, and the CHANGELOG says so; from
 A figure is made of two kinds of statement, kept in two places.
 
 - **Declarations, in a notation file, once for every figure.** What a kind of
-  tensor or index looks like: a TikZ style named for what it means, built on
-  the package's styles (`canl/.style = {tn triangle right, tn fill=canl}`),
-  and the distances, with `\tnset`. The examples' notation is
+  tensor or index looks like: a type named for what it means, built on the
+  package's styles (`\tntype{canl}{tn triangle right, tn fill=canl}`), which
+  may also say the sides and the number of its indices (`tn legs`,
+  `tn rank`); an edge type, a TikZ style; and the distances, with `\tnset`. The examples' notation is
   `examples/conventions/notation.tex`.
 - **The network, in the figure.** Which tensors there are, of which kind, and
   how they are contracted, in this order:
@@ -63,8 +64,10 @@ predicts the rest.
   stand anywhere in the name (`P-{1..4}-2`, `S-b-{1..2}:right`).
 - **What a layout decides, a type can say.** A stack joins every side of a
   tensor it can; a type that says `tn legs={left, down}` has those sides and
-  no others, and a command naming another is an error. `\tnshow` writes out
-  what was made of a tensor.
+  no others, and a command naming another is an error; one that says
+  `tn rank=3` has three indices, and a picture that ends with another number
+  of them drawn is an error. A type is best declared with `\tntype`, which
+  names it. `\tnshow` writes out what was made of a tensor.
 - **Every index is drawn once.** Opening or joining one that is drawn
   already is an error; opening a whole block skips the ones that are taken.
 - **No lengths and no coordinates in a figure.** Distances are tokens, set

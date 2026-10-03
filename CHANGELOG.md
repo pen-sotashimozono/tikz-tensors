@@ -5,6 +5,30 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.15.0 — 2026-10-03
+
+A type says how many indices a tensor has, and the figure is held to it.
+
+`tn rank=<n>` says a type's number of indices. When a picture ends, every
+tensor whose type says a rank has that many of its indices drawn, joined or
+opened, or the figure is an error naming the tensor, its type, and how many
+are drawn -- an index left out by accident is caught where it is made. Not
+said, a tensor has as many as the figure draws, as before.
+
+`\tntype{<name>}{<options>}` declares a type: the style `<name>`, which a
+tensor drawn in it says it is, in `\tnshow` and in an error. A rank smaller
+than the sides its `tn legs` names is an error at once.
+
+`\tnopen{rest}{<tensor or block>, ...}` opens every index not yet drawn, each
+toward its own side: on a tensor all of its free ones, on a block those of
+each tensor whose type says its sides. One left out by `apart=` is not.
+
+`\tnshow` also writes a tensor's rank and how many of its indices are drawn.
+
+The examples' notation declares its tensors with `\tntype`. No figure
+changes. `tests/cases/types.tex` is the specimen: a chain whose ends have
+rank 2 and bulk rank 3, a tree and a grid opened with `rest`.
+
 ## v0.14.0 — 2026-10-03
 
 What a layout decides without being told, a figure can say and read back:

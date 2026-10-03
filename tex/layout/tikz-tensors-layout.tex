@@ -18,6 +18,11 @@
 %   join{<style>}{<port>}{<port>}  one index between two ports
 %   openswap{<style>}{<tensor>}    its two indices down, crossed
 %   vport{<tensor>}{up|down}       the port up or down in column \tn@cx
+%   ports{<tensor>}                \tn@portvisit{<tensor>}{<side>}{<key>} for
+%                                  each of its ports on the sides it has
+%   openport{<style>}{<tensor>}{<side>}{<key>}
+%                                  that one port, opened outward
+%   portkey{<tensor>}{<side>}{<n>} the key of its <n>th port on <side>
 %
 % A new layout is a file that declares its kind, a command that places a block
 % (\tn@block, tikz-tensors-canvas.tex), places its tensors (\tn@place,
@@ -95,12 +100,20 @@
 % properties are kept by \tn@place. Each block placed is a new generation, so
 % that a name used again in a later picture is a new tensor with free ports.
 \newcount\tn@gen
+% The block keeps the list of its tensors (<block>@nodes), and a tensor whose
+% type says its rank goes on the list the picture checks when it ends.
 \def\tn@record#1#2#3#4#5#6{%
   \tn@set{n@#1@s}{#2}\tn@set{n@#1@a}{#3}\tn@set{n@#1@b}{#4}%
-  \tn@set{n@#1@k}{#5}\tn@set{n@#1@kb}{#6}\tn@set{n@#1@g}{\the\tn@gen}}
+  \tn@set{n@#1@k}{#5}\tn@set{n@#1@kb}{#6}\tn@set{n@#1@g}{\the\tn@gen}%
+  \edef\tn@rl{\tn@get{#2@nodes}}%
+  \ifx\tn@rl\@empty \tn@set{#2@nodes}{#1}\else \tn@set{#2@nodes}{\tn@rl,#1}\fi
+  \ifcsname tn@n@#1@rank\endcsname \edef\tn@rl{\tn@get{n@#1@rank}}%
+    \ifx\tn@rl\@empty\else
+      \ifx\tn@ranked\@empty \xdef\tn@ranked{#1}\else \xdef\tn@ranked{\tn@ranked,#1}\fi
+    \fi\fi}
 \def\tn@newblock#1#2{% block, kind
   \global\advance\tn@gen by 1
-  \tn@set{#1@kind}{#2}\tn@set{#1@g}{\the\tn@gen}}
+  \tn@set{#1@kind}{#2}\tn@set{#1@g}{\the\tn@gen}\tn@set{#1@nodes}{}}
 \def\tn@isnode#1#2{% is <#1> a tensor placed by a layout? else an error for <#2>
   \ifcsname tn@n@#1@s\endcsname\else
     \PackageError{tikz-tensors}{#2: `#1' is not a tensor on a stack, tree or
@@ -150,6 +163,66 @@
   \ifcsname tn@x@\tn@get{n@#1@g}@#1@#2@\tn@kk\endcsname
     \def\tn@iscut{1}\else\def\tn@iscut{0}\fi}
 
+% ---- a tensor's indices, counted ----------------------------------------------
+% \tn@ports{<tensor>}{<visit>}: <visit>{<tensor>}{<side>}{<key>} on each port
+% of the tensor, on the sides it has, in the order the layout gives them.
+% \tn@drawn{<tensor>} counts the ones drawn, as \tn@ndrawn; \tn@nports all.
+\newcount\tn@ndr \newcount\tn@npt
+\def\tn@ports#1#2{\let\tn@portvisit#2\tn@nop{#1}{ports}{#1}}
+\def\tn@countport#1#2#3{\global\advance\tn@npt by 1
+  \tn@ifused{#1}{#2}{#3}\ifnum\tn@isused=1 \global\advance\tn@ndr by 1 \fi}
+\def\tn@drawn#1{\global\tn@ndr=0 \global\tn@npt=0
+  \tn@ports{#1}\tn@countport
+  \edef\tn@ndrawn{\the\tn@ndr}\edef\tn@nports{\the\tn@npt}}
+
+% ---- types ------------------------------------------------------------------------
+% \tntype{<name>}{<options>}
+% A type of the figure's own: the style <name>, which is <options>, and which
+% a tensor of it says it is -- \tnshow and an error name it. What a type is
+% (tikz-tensors-nodes.tex) is said in its options: its outline, and the sides
+% it has indices on (tn legs) and how many (tn rank), which the layout then
+% holds a figure to. A type's own sides are its indices, at least one each:
+% a rank smaller than the sides it names is an error here.
+%   \tntype{site}{tn circle, tn legs={left, right, down}, tn rank=3}
+\newcommand{\tntype}[2]{%
+  \tikzset{#1/.style={#2, tn@tname={#1}}}%
+  \tn@props{#1}%
+  \ifx\tn@rank\@empty\else \ifx\tn@legs\@empty\else
+    \global\tn@npt=0 \foreach \tn@x in \tn@legs{\global\advance\tn@npt by 1 }%
+    \ifnum\tn@rank<\tn@npt
+      \PackageError{tikz-tensors}{\string\tntype{#1}: tn rank=\tn@rank, but
+        it has indices on \the\tn@npt\space sides (tn legs={\tn@legs})}{}\fi
+  \fi\fi}
+% how a tensor is named in a message: <tensor>, and (type <name>) if it has one
+\def\tn@called#1{`#1'\ifcsname tn@n@#1@tname\endcsname
+  \expandafter\ifx\csname tn@n@#1@tname\endcsname\@empty\else
+  \space(type \tn@get{n@#1@tname})\fi\fi}
+
+% When a picture ends, every tensor of it whose type says tn rank=<n> has <n>
+% of its indices drawn -- joined, or opened -- or the figure is an error: an
+% index left out by accident, or one too many, is caught where it is made
+% rather than in print. A picture inside a picture is checked with it.
+\gdef\tn@ranked{}
+\newcount\tn@depth
+\def\tn@checkranks{%
+  \foreach \tn@rn in \tn@ranked{%
+    \expandafter\tn@checkrank\expandafter{\tn@rn}}%
+  \gdef\tn@ranked{}}
+\def\tn@checkrank#1{%
+  \tn@drawn{#1}\edef\tn@rk{\tn@get{n@#1@rank}}%
+  \ifnum\tn@ndrawn=\tn@rk\else
+    \PackageError{tikz-tensors}{\tn@called{#1} has rank \tn@rk, and
+      \tn@ndrawn\space of its indices are drawn%
+      \ifnum\tn@rk>\tn@nports\space (its layout gives it only \tn@nports)\fi}{%
+      Its type says tn rank=\tn@rk. \string\tnshow{#1} writes each of its
+      indices to the log, drawn or free; \string\tnopen{rest}{#1} opens the
+      free ones.}%
+  \fi}
+\tikzset{every picture/.append style={%
+  execute at begin picture={\global\advance\tn@depth by 1 },
+  execute at end picture={\global\advance\tn@depth by -1
+    \ifnum\tn@depth=0 \tn@checkranks\fi}}}
+
 % ---- lists of names -------------------------------------------------------------
 % \tn@xlist{<list>}: the list, with every item written <pre>{<a>..<b>}<post>
 % made the items <pre>a<post>, ..., <pre>b<post> -- S-ket-{2..4}, P-{1..4}-2
@@ -189,11 +262,16 @@
     sites \tn@get{n@#1@a}..\tn@get{n@#1@b}, \tn@skr\space
     \tn@get{n@#1@k}..\tn@get{n@#1@kb}}%
   \ifcsname tn@n@#1@type\endcsname
-    \typeout{\space\space type: \tn@get{n@#1@type}}\fi
+    \edef\tn@stn{\tn@get{n@#1@tname}}%
+    \typeout{\space\space type: \ifx\tn@stn\@empty \tn@get{n@#1@type}\else
+      \tn@stn\space (\string\tntype), drawn as \tn@get{n@#1@type}\fi}\fi
+  \tn@drawn{#1}\edef\tn@srk{\tn@get{n@#1@rank}}%
+  \typeout{\space\space rank: \ifx\tn@srk\@empty not said\else \tn@srk\fi
+    ; \tn@ndrawn\space of \tn@nports\space indices drawn}%
   \ifcsname tn@n@#1@legs\endcsname \edef\tn@hl{\tn@get{n@#1@legs}}\else\def\tn@hl{}\fi
   \typeout{\space\space sides with indices: \ifx\tn@hl\@empty every side its
     layout gives it (tn legs not said)\else \tn@hl\fi}%
-  \tn@nop{#1}{show}{#1}}
+  \tn@ports{#1}\tn@showport}
 % unless it is a triangle pointing up or down, which is only as tall as its
 % middle near its apex -- then just inside its base.
 \def\tn@inner#1{%
@@ -277,10 +355,35 @@
       \PackageError{tikz-tensors}{\string\tnopen: more indices than labels}{}%
     \else \expandafter\tnput\expandafter[\tn@olpos]{#1}{\tn@lpick}\fi
   \fi\fi}
+% \tnopen{rest}{<item>, ...} opens every index of each item not yet drawn,
+% each toward its own side: on a tensor, all its free ones; on a block, those
+% of each of its tensors whose type says its sides (tn legs) -- a tensor that
+% does not say them has as many as a layout gives it, which is more than it
+% means. An index left out by apart= is not opened.
+\def\tn@srest{rest}
 \newcommand{\tnopen}[3][]{%
   \tn@openkeys{#1}%
   \edef\tn@dir{#2}%
-  \tn@xlist{#3}%
+  \ifx\tn@dir\tn@srest \expandafter\tn@openrest \else \expandafter\tn@opendir \fi
+  {#3}}
+\def\tn@openrest#1{%
+  \tn@xlist{#1}%
+  \foreach \tn@it in \tn@xl{%
+    \ifcsname tn@\tn@it @kind\endcsname
+      \edef\tn@rns{\tn@get{\tn@it @nodes}}%
+      \foreach \tn@rn in \tn@rns{%
+        \edef\tn@rl{\tn@get{n@\tn@rn @legs}}%
+        \ifx\tn@rl\@empty\else \expandafter\tn@restnode\expandafter{\tn@rn}\fi}%
+    \else
+      \tn@isnode{\tn@it}{\string\tnopen}%
+      \expandafter\tn@restnode\expandafter{\tn@it}%
+    \fi}}
+\def\tn@restnode#1{\tn@ports{#1}\tn@restport}
+\def\tn@restport#1#2#3{%
+  \tn@ifused{#1}{#2}{#3}\tn@ifcut{#1}{#2}{#3}%
+  \ifnum\tn@isused\tn@iscut=00 \tn@nop{#1}{openport}{\tn@oedge}{#1}{#2}{#3}\fi}
+\def\tn@opendir#1{%
+  \tn@xlist{#1}%
   \foreach \tn@it in \tn@xl{%
     \ifcsname tn@\tn@it @kind\endcsname
       \expandafter\tn@op\expandafter{\tn@it}{openblock}{\tn@oedge}{\tn@it}%
