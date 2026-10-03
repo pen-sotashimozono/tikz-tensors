@@ -29,7 +29,9 @@
 %   disentangler (a gate, flatter) are drawn flat, as a tree's tensors are;
 %   the environment of a two-dimensional network, contracted from its
 %   boundary, is the environment's colour: a corner as a rounded box, a side
-%   as a circle.
+%   as a circle;
+%   in a quantum circuit, a gate on one qubit is a gate, and a controlled NOT
+%   is its control, an ink dot, joined to its target, a circled plus.
 % The colours are the theme's (theme/tokens.toml). Shape carries the meaning
 % on its own and colour repeats it, so a figure survives being printed in grey.
 \tikzset{
@@ -62,4 +64,6 @@
   isodown/.style    = {tn triangle down, tn flat, tn fill=canl},
   corner/.style     = {tn rounded, fill=env!25},
   side/.style       = {tn circle, fill=env!25},
+  ctrl/.style       = {tn dot},
+  targ/.style       = {tn oplus},
 }

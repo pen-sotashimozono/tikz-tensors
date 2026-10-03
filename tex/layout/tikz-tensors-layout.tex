@@ -31,6 +31,7 @@
   \ifcsname tn@#1@kind\endcsname\else
     \PackageError{tikz-tensors}{`#1' is not a stack, tree or grid}{}\fi
   \edef\tn@opkind{\tn@get{#1@kind}}%
+  \tn@tokens{#1}%
   \expandafter\tn@resolve\expandafter{\tn@opkind}{#2}\tn@fn}
 \def\tn@resolve#1#2{%
   \ifcsname tn@#1@#2\endcsname
@@ -44,6 +45,48 @@
   \fi}
 % the operation of the block a tensor is in
 \def\tn@nop#1#2{\edef\tn@nopb{\tn@get{n@#1@s}}\tn@op{\tn@nopb}{#2}}
+
+% ---- the size of a block --------------------------------------------------------
+% A block is drawn at the notation's distances and sizes times factors of its
+% own, given when it is placed -- never a length, so a figure that is drawn
+% smaller still says nothing a notation should:
+%   pitch=<f>   between its sites (pitch, treepitch, gpitch)
+%   rise=<f>    between its layers (rise, treerise, closerise)
+%   size=<f>    its tensors, and the slot an absent one leaves (slot, envw)
+%   stub=<f>    the least an open index of it shows
+%   scale=<f>   all four at once; another key multiplies it further
+% A placing command forwards these keys to /tn@factor, which is internal;
+% \tn@scaleblock{<block>} keeps the block's tokens, its notation's times its
+% factors; \tn@tokens{<block>} makes them the ones in use, which every
+% operation on the block does first.
+\pgfkeys{/tn@factor/.is family,
+  /tn@factor/scale/.code={\def\tn@fsc{#1}}, /tn@factor/pitch/.code={\def\tn@fp{#1}},
+  /tn@factor/rise/.code={\def\tn@fr{#1}}, /tn@factor/size/.code={\def\tn@fs{#1}},
+  /tn@factor/stub/.code={\def\tn@ft{#1}}}
+\def\tn@factorsreset{\def\tn@fsc{1}\def\tn@fp{1}\def\tn@fr{1}\def\tn@fs{1}\def\tn@ft{1}}
+\tn@factorsreset
+\def\tn@scaletoken#1#2#3{% block, token, factor
+  \tn@len\tn@tv{\csname tn@base@#2\endcsname*(#3)*(\tn@fsc)}\tn@set{#1@t@#2}{\tn@tv}}
+\def\tn@scaleblock#1{%
+  \tn@scaletoken{#1}{pitch}{\tn@fp}\tn@scaletoken{#1}{treepitch}{\tn@fp}%
+  \tn@scaletoken{#1}{gpitch}{\tn@fp}%
+  \tn@scaletoken{#1}{rise}{\tn@fr}\tn@scaletoken{#1}{treerise}{\tn@fr}%
+  \tn@scaletoken{#1}{closerise}{\tn@fr}%
+  \tn@scaletoken{#1}{slot}{\tn@fs}\tn@scaletoken{#1}{envw}{\tn@fs}%
+  \tn@scaletoken{#1}{stub}{\tn@ft}%
+  \pgfmathsetmacro\tn@tv{(\tn@fs)*(\tn@fsc)}\tn@set{#1@t@size}{\tn@tv}%
+  \tn@factorsreset}
+\def\tn@tokens#1{%
+  \edef\tn@pitch{\tn@get{#1@t@pitch}}\edef\tn@treepitch{\tn@get{#1@t@treepitch}}%
+  \edef\tn@gpitch{\tn@get{#1@t@gpitch}}\edef\tn@rise{\tn@get{#1@t@rise}}%
+  \edef\tn@treerise{\tn@get{#1@t@treerise}}\edef\tn@closerise{\tn@get{#1@t@closerise}}%
+  \edef\tn@slot{\tn@get{#1@t@slot}}\edef\tn@envw{\tn@get{#1@t@envw}}%
+  \edef\tn@stub{\tn@get{#1@t@stub}}}
+% The options a tensor of block <#1> is drawn with: its type, at the block's
+% size, as \tn@opt -- and at <#2> times that, a layer's own size= (1 if none).
+\def\tn@sized#1#2{%
+  \pgfmathsetmacro\tn@sz{\tn@get{#1@t@size}*(#2)}%
+  \ifdim\tn@sz pt=1pt \edef\tn@opt{\tn@sty}\else \edef\tn@opt{\tn@sty, tn size=\tn@sz}\fi}
 
 % ---- the record of a tensor --------------------------------------------------
 % \tn@record{<tensor>}{<block>}{<a>}{<b>}{<k>}{<kb>}

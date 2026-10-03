@@ -3,23 +3,32 @@
 # tex/tikz-tensors-colors.tex from this file; edit here, never there.
 #
 # [ramp] is where the colour codes live, and they are scales rather than loose
-# colours: each runs light to dark in three steps. Everything below names a step
-# -- blue2, warm3 +25% white -- and never repeats a hex, so a code is written
+# colours: each runs light to dark in five steps. Everything below names a step
+# -- blue4, warm5 +25% white -- and never repeats a hex, so a code is written
 # once and a meaning is an assignment onto it. A pair that should read as a pair
-# takes the same step on two scales: canl/canr at step 1, edge/edgec at step 3.
-# A figure that wants a stronger version of a colour moves along its own scale
-# instead of reaching for a new one.
+# takes the same step on two scales: canl/canr at step 3, edge/edgec at step 5.
+# A figure that wants a stronger or a paler version of a colour moves along its
+# own scale instead of reaching for a new one.
 #
-# blue and warm are the given codes. grey is the neutral one: paper, a hairline
-# grey, ink. green, yellow and purple are built on the
-# ladder those two measure out, in CIELCh: step 1 near L* 62-74 at about 40% of
-# the chroma the gamut allows there, step 2 near L* 50-60 and step 3 near L* 35-42
+# blue and warm are the given codes, at steps 3 to 5. grey is the neutral one:
+# paper, a hairline grey, ink. green, yellow and purple are built on the ladder
+# those two measure out, in CIELCh: step 3 near L* 62-74 at about 40% of the
+# chroma the gamut allows there, step 4 near L* 50-60 and step 5 near L* 35-42
 # at about 85%, capped in absolute chroma as well -- purple's gamut is three
 # times blue's at the same lightness, and a fraction of it alone comes out neon.
-# green1 is the given green, which sits a little lighter than the other step 1s;
-# green2 and green3 are built under it. yellow turns gold and then ochre as it
+# green3 is the given green, which sits a little lighter than the other step 3s;
+# green4 and green5 are built under it. yellow turns gold and then ochre as it
 # darkens, which is what a yellow does: a yellow light enough to stay yellow is
 # too light to put text in.
+#
+# Steps 1 and 2 are the pale end of every hue, for fills that should recede: a
+# background block, a tint behind a group, a tensor drawn faintly. They carry
+# the ladder on upward at each scale's own hue (step 3's): step 1 at L* 89,
+# step 2 half way between it and step 3, their chroma 42% and 72% of step 3's
+# -- so a scale that is greyish at step 3 (blue) stays greyish when pale, and
+# one that is clear (green, warm) stays clear -- capped at 90% of the gamut.
+# grey cannot go paler than its paper, so its five steps are paper (1), a pale
+# grey (2), the hairline (3), a middle grey (4) and ink (5).
 #
 # The page sections take tints and shades of these steps, because a page has a
 # background and body text and a step does not always clear the contrast a
@@ -31,87 +40,94 @@
 # darkest warm rather than a red, and it is told from `warn` by hue (ochre
 # against red-brown, about 30 degrees apart) as well as by weight.
 #
-# And the honest count, so that the size of this file is not read as the size of
-# the theme. Eighteen steps are defined. Fifteen carry something:
-#
-#   blue1 blue2 blue3  warm1 warm2 warm3  green1 green3
-#   yellow1 yellow2 yellow3  purple1  grey1 grey2 grey3
-#
-# The other three -- green2, purple2, purple3 -- are defined and unused. They are scales that exist for a figure that needs a hue the
-# others do not have, not assignments; nothing in the package reads them, and
-# examples/00-palette.tex leaves their rows blank rather than filling them in.
+# The count of steps that carry something is the palette's to say:
+# examples/00-palette.tex writes it under the chart, read from this file, and
+# leaves blank the steps nothing names -- scales that exist for a figure that
+# needs a hue the others do not have, not assignments.
 
 [ramp]
-blue1   = "#809eab"   # light
-blue2   = "#0082a9"
-blue3   = "#005077"   # dark
-warm1   = "#ce7e60"   # light
-warm2   = "#b65c24"
-warm3   = "#88451b"   # dark
-green1  = "#6abe92"   # light
-green2  = "#2f9262"
-green3  = "#1e6543"   # dark
-yellow1 = "#cbb387"   # light -- sand
-yellow2 = "#ae8c3d"   #          gold
-yellow3 = "#7a601e"   # dark  -- ochre
-purple1 = "#a494c1"   # light
-purple2 = "#816ab7"
-purple3 = "#5a4887"   # dark
-grey1   = "#ffffff"   # light -- paper
-grey2   = "#d2d2d3"
-grey3   = "#333333"   # dark  -- ink
+blue1   = "#d5e2e7"   # pale
+blue2   = "#aabfc9"
+blue3   = "#809eab"   # light
+blue4   = "#0082a9"
+blue5   = "#005077"   # dark
+warm1   = "#fdd8cb"   # pale
+warm2   = "#e9aa92"
+warm3   = "#ce7e60"   # light
+warm4   = "#b65c24"
+warm5   = "#88451b"   # dark
+green1  = "#c5e8d4"   # pale
+green2  = "#98d3b2"
+green3  = "#6abe92"   # light
+green4  = "#2f9262"
+green5  = "#1e6543"   # dark
+yellow1 = "#eadecb"   # pale
+yellow2 = "#dbc8a8"
+yellow3 = "#cbb387"   # light -- sand
+yellow4 = "#ae8c3d"   #          gold
+yellow5 = "#7a601e"   # dark  -- ochre
+purple1 = "#e4dcf0"   # pale
+purple2 = "#c4b7d9"
+purple3 = "#a494c1"   # light
+purple4 = "#816ab7"
+purple5 = "#5a4887"   # dark
+grey1   = "#ffffff"   # paper
+grey2   = "#e9e9ea"
+grey3   = "#d2d2d3"   # hairline
+grey4   = "#7b7b7c"
+grey5   = "#333333"   # ink
 
 [light]
-bg      = "grey2 +88% white"    # page background
+bg      = "grey3 +88% white"    # page background
 card    = "grey1"              # cards, figure paper
-soft    = "blue1 +90% white"   # table heads, subtle fills
-fg      = "blue3 +35% black"   # text,                       12.59:1 on bg
-muted   = "blue1 +25% black"   # secondary text,              4.57:1
-faint   = "blue1 +6% black"    # captions,                    3.04:1
-line    = "grey2"              # rules, hairlines
-accent  = "blue2 +4% black"    # links, emphasis,             4.52:1
-good    = "green3"             #                              6.71:1
-good-bg = "green1 +90% white"
-warn    = "yellow3"            #                              5.72:1
-warn-bg = "yellow3 +88% white"
-bad     = "warm3"              #                              6.90:1
-bad-bg  = "warm3 +88% white"
+soft    = "blue3 +90% white"   # table heads, subtle fills
+fg      = "blue5 +35% black"   # text,                       12.59:1 on bg
+muted   = "blue3 +25% black"   # secondary text,              4.57:1
+faint   = "blue3 +6% black"    # captions,                    3.04:1
+line    = "grey3"              # rules, hairlines
+accent  = "blue4 +4% black"    # links, emphasis,             4.52:1
+good    = "green5"             #                              6.71:1
+good-bg = "green3 +90% white"
+warn    = "yellow5"            #                              5.72:1
+warn-bg = "yellow5 +88% white"
+bad     = "warm5"              #                              6.90:1
+bad-bg  = "warm5 +88% white"
 
 [dark]
-bg      = "blue3 +90% black"
-card    = "blue3 +84% black"
-soft    = "blue3 +78% black"
-fg      = "blue1 +80% white"   #                             16.92:1 on bg
-muted   = "blue1 +25% white"   #                              9.56:1
-faint   = "blue1"              #                              7.11:1
-line    = "blue3 +55% black"
-accent  = "blue2 +35% white"   #                              7.98:1
-good    = "green1"             #                              9.03:1
-good-bg = "green3 +72% black"
-warn    = "yellow2 +15% white" #                              7.75:1
-warn-bg = "yellow2 +86% black"
-bad     = "warm3 +25% white"   #                              5.05:1
-bad-bg  = "warm3 +86% black"
+bg      = "blue5 +90% black"
+card    = "blue5 +84% black"
+soft    = "blue5 +78% black"
+fg      = "blue3 +80% white"   #                             16.92:1 on bg
+muted   = "blue3 +25% white"   #                              9.56:1
+faint   = "blue3"              #                              7.11:1
+line    = "blue5 +55% black"
+accent  = "blue4 +35% white"   #                              7.98:1
+good    = "green3"             #                              9.03:1
+good-bg = "green5 +72% black"
+warn    = "yellow4 +15% white" #                              7.75:1
+warn-bg = "yellow4 +86% black"
+bad     = "warm5 +25% white"   #                              5.05:1
+bad-bg  = "warm5 +86% black"
 
 # What a diagram is drawn in when nothing says otherwise. One value for a
 # tensor's outline and for an index, because a tensor is not a different kind of
 # mark from the index it carries; a preset that means something by its colour
 # says so for itself.
 [figure]
-stroke = "grey3"
+stroke = "grey5"
 
 # Meaning, not decoration, and a step of a scale taken whole. Same in light and
 # dark (figures keep their own white paper).
 [physics]
-ele      = "blue2"   # electrons, electron density, continuous (position) legs
-nuc      = "warm2"   # nuclei
-coef     = "blue1"   # coefficient arrays (tensor boxes), finite-index legs
-exchange = "warm3"   # exchange: the term, the hole, the sign under a swap
-exact    = "blue3"   # exact / reference results
+ele      = "blue4"   # electrons, electron density, continuous (position) legs
+nuc      = "warm4"   # nuclei
+coef     = "blue3"   # coefficient arrays (tensor boxes), finite-index legs
+exchange = "warm5"   # exchange: the term, the hole, the sign under a swap
+exact    = "blue5"   # exact / reference results
 
 # Matrix-product states. The gauge is read from colour as much as from the
 # direction a triangle points, so the two canonical forms do not share one:
-# they take step 1 of the two given scales, which makes them a pair. An
+# they take step 3 of the two given scales, which makes them a pair. An
 # operator on the chain stays neutral so that the state reads through it. A
 # gate and an environment each take a light step of a hue nothing else has: a
 # gate is neither a state tensor nor an operator on the chain, and an
@@ -119,9 +135,9 @@ exact    = "blue3"   # exact / reference results
 # Purple for the environment, which is large and should recede; yellow for the
 # gate, which is small and is the thing being applied.
 [mps]
-canl   = "blue1"    # left-canonical: isometric from the left
-canr   = "warm1"    # right-canonical: isometric from the right
-center = "green1"   # the orthogonality center, on a site or on a bond
-mpo    = "grey2"    # operator tensors sitting on the chain
-gate   = "yellow1"  # a gate over one site or several
-env    = "purple1"  # an environment: the rest of the network, contracted
+canl   = "blue3"    # left-canonical: isometric from the left
+canr   = "warm3"    # right-canonical: isometric from the right
+center = "green3"   # the orthogonality center, on a site or on a bond
+mpo    = "grey3"    # operator tensors sitting on the chain
+gate   = "yellow3"  # a gate over one site or several
+env    = "purple3"  # an environment: the rest of the network, contracted

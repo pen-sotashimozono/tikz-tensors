@@ -43,13 +43,14 @@
 %% the style, never the colour. Say which you mean: color=gate, or draw=/fill=.
 %% The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/03 v0.11.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/03 v0.12.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
 \usetikzlibrary{decorations.pathmorphing,decorations.markings,shapes.geometric,
                 arrows.meta,calc}
 \input{tikz-tensors-core.tex}
+\input{tikz-tensors-trace.tex}
 \input{tikz-tensors-canvas.tex}
 \input{tikz-tensors-colors.tex}
 \input{tikz-tensors-nodes.tex}

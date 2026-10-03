@@ -22,10 +22,10 @@ and `examples/conventions/notation.tex` is the one the examples are drawn in.
 ### `tn triangle right`, `tn triangle left`, `tn triangle up`, `tn triangle down`
 [picture](styles/style-triangles.tex)
 
-### `tn dot`
+### `tn dot`, `tn oplus`
 [picture](styles/style-dot.tex)
 
-### `tn wide`, `tn tall`, `tn small`, `tn flat`
+### `tn wide`, `tn tall`, `tn small`, `tn flat`, `tn size`
 [picture](styles/style-sizes.tex)
 
 ### `tn fill`

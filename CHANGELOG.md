@@ -5,6 +5,53 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.12.0 — 2026-10-03
+
+Breaking: every scale of the palette runs in five steps, pale to dark, and
+the steps that were there are renamed so that they keep their colours: on
+blue, warm, green, yellow and purple, steps 1, 2, 3 are now 3, 4, 5 (`blue1`
+is `blue3`, `warm3` is `warm5`), and steps 1 and 2 are new, the pale end of
+each hue for fills that should recede. They carry the ladder of the given
+steps on upward at each scale's own hue, so a scale greyish at its light step
+stays greyish when pale (blue) and a clear one stays clear (green, warm). grey
+cannot go paler than paper: its steps are paper `grey1`, a pale grey
+`grey2`, the hairline `grey3` (was `grey2`), a middle grey `grey4` and ink
+`grey5` (was `grey3`). Every figure draws as it did; a notation of one's own
+that names a step moves its name the same way. `examples/00-palette.tex`
+draws the five columns.
+
+A block can be drawn at factors of the notation's distances and sizes, said
+where it is placed: `\tnstack[scale=0.7, rise=0.6]`, and `pitch=`, `size=`,
+`stub=`; `\tngrid` the same but `rise=`. A factor is a number, never a
+length, so a figure may say it and `tests/lint.py` lets it through (a length
+in the same place is still a finding); the factors are the block's own, and
+the next block is drawn at the notation's again. Every command on the block
+-- connect, open, join -- draws at its sizes. `\tnlayer[size=<factor>]`
+draws one layer's tensors at a factor of the stack's, and the style
+`tn size=<factor>` one tensor at a factor of its type's size; a label keeps
+the size of the text.
+
+A layer's slot can be `+`: the site's wire and the layer's line both run
+through, crossing -- a gate on the sites either side of a wire. The style
+`tn oplus` is a circled plus, the target of a controlled NOT, and the
+examples' notation names `ctrl` and `targ`.
+
+`\tnstack[rises={<layer>=<factor>, ...}]` sets the gap above one layer alone,
+at a factor of the stack's rise.
+
+On the documentation site, a figure lights up what a line of its code drew:
+pointing at a line of an example's code marks, in red over the picture, the
+tensors, labels and indices that line drew, and pointing at the picture
+marks the line. It is read from a trace of each reference picture,
+`tests/reference/<name>.json`, written while the tests compile (the new
+`tex/core/tikz-tensors-trace.tex`, off in a document) and compared like the
+picture. The walkthrough, the styles and the examples all have it.
+
+New example, `25-toffoli`: the Toffoli gate of Shor's algorithm and its
+decomposition into H, T, T† and six CNOTs, in thirteen steps drawn compact,
+in a new section, quantum circuits. The styles page shows `tn oplus` and
+`tn size`; the commands page the factors.
+
 ## v0.11.0 — 2026-10-03
 
 `centre` is `center`, everywhere.

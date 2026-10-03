@@ -38,6 +38,18 @@ class Rules(unittest.TestCase):
                      r"\tngate{U}{$U$}{S1-leg}{28.5mm}", r"\tnlegs{2 cm}{S1}"):
             self.assertIn("length", self.body(text), text)
 
+    def test_a_factor_is_not_a_length(self):
+        for text in (r"\tnstack[scale=0.6, rise=0.5]{S}{2}{a}",
+                     r"\tnlayer[size=0.8]{S}{a}{2*canl/$A$}",
+                     r"\tngrid[pitch=1.5]{P}{2}{2}{coef/$A$}",
+                     r"\tnlayer{S}{a}{{canl, tn size=1.2}/$A$, canr/$B$}"):
+            self.assertEqual(self.body(text), [], text)
+        for text in (r"\tnstack[pitch=5mm]{S}{2}{a}", r"\tnstack[rise=0.5 cm]{S}{2}{a}",
+                     r"\tnput[above=0.5]{S-a-1}{$x$}"):
+            self.assertIn("length", self.body(text), text)
+        # TikZ's own scale is still a key a role decides
+        self.assertIn("key", self.body(r"\tnput[scale=2]{S-a-1}{$x$}"))
+
     def test_coordinates(self):
         self.assertIn("coord", self.body(r"\tnbond{(A) -- ++(0,-1)}"))
         self.assertNotIn("coord", self.body(r"\tnbond{(A1) -- (A2)}"))

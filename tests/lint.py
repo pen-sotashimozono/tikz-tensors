@@ -81,6 +81,21 @@ def strip_comment(line):
     return re.split(r"(?<!\\)%", line, maxsplit=1)[0].rstrip()
 
 
+# A factor is not a length: the size of a block or a layer, or of one tensor,
+# said as a number times the notation's (\\tnstack[scale=0.6, rise=0.5],
+# \\tnlayer[size=0.8], tn size=1.2). These are set aside before the rules are
+# read, so a decimal there is allowed and a length there is still not.
+FACTOR = re.compile(rf"(?:\b(?:scale|pitch|rise|size|stub)|tn size)\s*=\s*\d*\.?\d+(?!\s*{UNIT}|[\d.])")
+OPTIONS = re.compile(r"\\tn(?:stack|grid|layer)\s*\[[^\]]*\]")
+
+
+def strip_factors(line):
+    """The line with every factor set aside (FACTOR): in the options of a
+    placing command, and tn size= anywhere."""
+    line = OPTIONS.sub(lambda m: FACTOR.sub("factor", m.group()), line)
+    return re.sub(rf"tn size\s*=\s*\d*\.?\d+(?!\s*{UNIT}|[\d.])", "tn size", line)
+
+
 def strip_math(line):
     """Math is a label's text, never layout, so it is not checked."""
     return re.sub(r"(?<!\\)\$[^$]*(?<!\\)\$", "$$", line)
@@ -122,7 +137,7 @@ def lint(path):
     body = [(n, s) for n, s in lines[:first] if s.strip() not in HEAD] + body
 
     for n, s in body:
-        text = strip_math(s)
+        text = strip_factors(strip_math(s))
         for rule, pattern in RULES:
             for m in pattern.finditer(text):
                 found.append((n, rule, m.group(0).strip()))
@@ -173,7 +188,7 @@ def repeats(body):
     found = []
     text = "\n".join(s for _, s in body)
     starts = [n for n, s in body for _ in [0] for _ in s + "\n"]
-    for m in re.finditer(r"\\tnlayer(?![A-Za-z@])", text):
+    for m in re.finditer(r"\\tnlayer(?![A-Za-z@])(?:\s*\[[^\]]*\])?", text):
         args, _ = groups(text, m.end(), 3)
         if args is None:
             continue

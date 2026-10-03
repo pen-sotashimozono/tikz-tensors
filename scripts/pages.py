@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import difflib
 import html
+import json
 import pathlib
 import re
 import shutil
@@ -253,7 +254,8 @@ SECTIONS = [(0, "The theme"),
             (6, "Matrix product states"),
             (13, "Algorithms on a chain"),
             (19, "Trees and MERA"),
-            (21, "Two dimensions")]
+            (21, "Two dimensions"),
+            (25, "Quantum circuits")]
 
 
 def section(ex: "Example") -> str:
@@ -311,10 +313,26 @@ def page(title: str, here: str, body: str, depth: int = 0) -> str:
     }}).catch(() => {{}});
 }})();
 </script>
+<script>{TRACE_JS}</script>
 <footer>tikz-tensors v{version.version()} · <a href="{REPO}">source</a> ·
 <a href="{REPO}/blob/main/CHANGELOG.md">changelog</a></footer>
 </body>
 </html>
+"""
+
+
+TRACE_JS = """
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
 """
 
 
@@ -323,6 +341,68 @@ def figure(ex: Example, up: str) -> str:
     width = f' style="width:{float(m.group(1)) * 1.5:.0f}pt"' if m else ""
     return (f'<figure class="paper"><img{width} src="{up}figures/{ex.name}.svg" '
             f'alt="{html.escape(ex.title)}: {html.escape(ex.lead)}"></figure>')
+
+
+# ---- what a line draws ------------------------------------------------------------
+# Each reference picture has a trace beside it, tests/reference/<name>.json
+# (tex/core/tikz-tensors-trace.tex, tests/compare.py): every tensor, label and
+# index it draws, with the line of its file that drew it. A figure drawn here
+# carries them as invisible shapes over the picture, and each line of its code
+# the line it is in the file; pointing at either lights up both (TRACE_JS).
+BP = 72 / 72.27   # TeX's pt in the SVG's units, PostScript points
+
+
+def lines_of(code: str, source: str) -> list[int]:
+    """The line of <source> (from 1) that each line of <code> is, in order; 0
+    for one that is not in it."""
+    src, out, k = source.splitlines(), [], 0
+    for line in code.splitlines():
+        j = next((j for j in range(k, len(src)) if src[j] == line), None)
+        out.append(j + 1 if j is not None else 0)
+        k = j + 1 if j is not None else k
+    return out
+
+
+def traced_code(code: str, source: str, up: str | None, added: frozenset = frozenset()) -> str:
+    """LaTeX source as HTML a line at a time, each line tagged with its line in
+    the file (data-line), the lines numbered in <added> marked as new."""
+    rows = []
+    for k, (line, n) in enumerate(zip(code.splitlines(), lines_of(code, source))):
+        cls = "ln add" if k in added else "ln"
+        tag = f' data-line="{n}"' if n else ""
+        rows.append(f'<span class="{cls}"{tag}>{latex(line, up) or " "}</span>')
+    return "".join(rows)
+
+
+def traced_figure(name: str, up: str, scale: float, alt: str) -> str:
+    """The picture tests/reference/<name>.svg at <scale>, with what each line
+    of its file drew laid over it, unseen until that line is pointed at."""
+    svg = (ROOT / "tests" / "reference" / f"{name}.svg").read_text()[:400]
+    w, h = (float(x) for x in re.search(r'width="([\d.]+)" height="([\d.]+)"', svg).groups())
+    img = (f'<img style="width:{w * scale:.0f}pt" src="{up}figures/{name}.svg" '
+           f'alt="{html.escape(alt)}">')
+    kept = ROOT / "tests" / "reference" / f"{name}.json"
+    if not kept.is_file():
+        return f'<figure class="paper">{img}</figure>'
+    data = json.loads(kept.read_text())
+    x0, y0, x1, y1 = data["frame"]
+    bx, by = (w - (x1 - x0) * BP) / 2, (h - (y1 - y0) * BP) / 2
+
+    def at(x, y):
+        return f"{(x - x0) * BP + bx:.2f},{(y1 - y) * BP + by:.2f}"
+    shapes = []
+    for line, kind, *nums in data["items"]:
+        if kind == "p":
+            pts = " ".join(at(nums[i], nums[i + 1]) for i in range(0, len(nums), 2))
+            shapes.append(f'<polyline class="hl" data-line="{line}" points="{pts}"/>')
+        else:
+            a, b = at(nums[0], nums[3]), at(nums[2], nums[1])
+            (ax, ay), (bx2, by2) = (map(float, a.split(",")), map(float, b.split(",")))
+            shapes.append(f'<rect class="hl" data-line="{line}" x="{ax - 1:.2f}" y="{ay - 1:.2f}" '
+                          f'width="{bx2 - ax + 2:.2f}" height="{by2 - ay + 2:.2f}" rx="2"/>')
+    return (f'<figure class="paper"><span class="stage">{img}'
+            f'<svg class="trace" viewBox="0 0 {w} {h}" aria-hidden="true">{"".join(shapes)}</svg>'
+            f'</span></figure>')
 
 
 def index_page(exs: list[Example]) -> str:
@@ -400,17 +480,21 @@ def example_page(exs: list[Example], i: int) -> str:
     nxt = (f'<a href="{exs[i + 1].name}.html">{html.escape(exs[i + 1].title)} →</a>'
            if i + 1 < len(exs) else "<span></span>")
     text = "".join(f"<p>{autolink(html.escape(prose(p), quote=False))}</p>" for p in e.paras)
+    source = e.path.read_text()
     body = f"""<p class="crumb"><a href="../examples.html">Examples</a> / {e.number}</p>
 <h1>{html.escape(e.title)}</h1>
-{figure(e, "../")}
+<div class="traced">
+{traced_figure(e.name, "../", 1.5, f"{e.title}: {e.lead}")}
 <div class="split">
 <div class="prose">{text}</div>
 <div>
 <h2>The picture</h2>
-<pre class="code">{latex(e.picture, "../")}</pre>
+<p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
+<pre class="code">{traced_code(e.picture, source, "../")}</pre>
 <details><summary>The whole file</summary>
-<pre class="code">{latex(e.body, "../")}</pre></details>
+<pre class="code">{traced_code(e.body, source, "../")}</pre></details>
 <p class="small"><a href="{REPO}/blob/main/examples/{e.name}.tex">examples/{e.name}.tex</a></p>
+</div>
 </div>
 </div>
 <nav class="pager">{prev}{nxt}</nav>"""
@@ -485,20 +569,12 @@ def pictured(body: str) -> tuple[str, str]:
     if not pic.svg.exists():
         sys.exit(f"{pic.svg.relative_to(ROOT)}: no reference picture for {pic.path}")
     text = "".join(f"<p>{autolink(html.escape(prose(t), quote=False))}</p>" for t in pic.paras)
-    m = re.search(r'width="([\d.]+)', pic.svg.read_text()[:400])
-    width = f' style="width:{float(m.group(1)) * 1.5:.0f}pt"' if m else ""
+    source = (ROOT / pic.path).read_text()
     return body.replace(line.group(), ""), (
-        f'{text}<figure class="paper"><img{width} src="figures/{pic.name}.svg" '
-        f'alt="{html.escape(pic.paras[0] if pic.paras else pic.name)}"></figure>'
+        f'{text}<div class="traced">'
+        f'{traced_figure(pic.name, "", 1.5, pic.paras[0] if pic.paras else pic.name)}'
         f'<p class="def-head">Drawn by <a href="{REPO}/blob/main/{pic.path}">{pic.path}</a></p>'
-        f'<pre class="code">{latex(pic.code, "")}</pre>')
-
-
-def code_lines(code: str, added: set[int]) -> str:
-    """LaTeX source as HTML a line at a time, the lines numbered in <added>
-    marked as new."""
-    return "".join(f'<span class="ln{" add" if k in added else ""}">{latex(line, "") or " "}</span>'
-                     for k, line in enumerate(code.splitlines()))
+        f'<pre class="code">{traced_code(pic.code, source, "")}</pre></div>')
 
 
 def walkthrough() -> str:
@@ -520,7 +596,6 @@ def walkthrough() -> str:
                 added.update(range(j1, j2))
         before = lines
         m = re.search(r'width="([\d.]+)', pic.svg.read_text()[:400])
-        width = f' style="width:{float(m.group(1)) * 1.3:.0f}pt"' if m else ""
         # a picture too wide to read at half the card goes under its code
         wide = " wide" if m and float(m.group(1)) > 260 else ""
         text = "".join(f"<p>{autolink(html.escape(prose(t), quote=False))}</p>" for t in pic.paras)
@@ -528,10 +603,9 @@ def walkthrough() -> str:
             f'<article class="doc step" id="step-{n}"><header><div class="sigs">'
             f'<span class="sig">Step {n}. {html.escape(title)}</span></div>'
             f'<a class="src" href="{REPO}/blob/main/{pic.path}">‹/› source</a></header>'
-            f'<div class="doc-body">{text}<div class="pair{wide}">'
-            f'<pre class="code diff">{code_lines(code, added)}</pre>'
-            f'<figure class="paper"><img{width} src="figures/{pic.name}.svg" '
-            f'alt="{html.escape(title)}"></figure></div></div></article>')
+            f'<div class="doc-body">{text}<div class="pair traced{wide}">'
+            f'<pre class="code diff">{traced_code(code, path.read_text(), "", frozenset(added))}</pre>'
+            f'{traced_figure(pic.name, "", 1.3, title)}</div></div></article>')
     return "".join(out)
 
 
@@ -646,13 +720,13 @@ h3{font-size:17px;margin:1.6em 0 .4em}
 pre.code{background:var(--card);border:1px solid var(--line);border-radius:8px;
   padding:12px 14px;overflow-x:auto;margin:.6em 0}
 .tx-comment{color:var(--muted);font-style:italic}
-.tx-math{color:var(--green3)}
+.tx-math{color:var(--green5)}
 .tx-cmd{color:var(--accent)}
-.tx-brace{color:var(--warm2)}
+.tx-brace{color:var(--warm4)}
 a.ref{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line)}
 a.ref:hover{border-bottom-color:var(--accent);text-decoration:none}
-:root[data-theme=dark] .tx-math{color:var(--green1)}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green1)}}
+:root[data-theme=dark] .tx-math{color:var(--green3)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .tx-math{color:var(--green3)}}
 figure.paper{margin:12px 0;padding:16px;background:#fff;border:1px solid var(--line);
   border-radius:8px;text-align:center;overflow-x:auto}
 figure.paper img{max-width:100%;height:auto}
@@ -707,6 +781,19 @@ article.doc .doc-body td:first-child{width:38%}
 .tabs a:hover{text-decoration:none;color:var(--fg)}
 .def-head{margin:.8em 0 0;font-size:14px;color:var(--muted)}
 span.sig{font-weight:600}
+pre.code .ln{display:block}
+pre.code .ln.live{cursor:default}
+pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
+  box-shadow:inset 3px 0 #cf222e}
+.hint{margin:-.2em 0 .4em}
+.stage{position:relative;display:inline-block;max-width:100%}
+.stage img{display:block;max-width:100%;height:auto}
+svg.trace{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+svg.trace .hl{opacity:0;transition:opacity .12s}
+svg.trace .hl.lit{opacity:1}
+svg.trace rect.hl{fill:rgba(207,34,46,.16);stroke:#cf222e;stroke-width:1}
+svg.trace polyline.hl{fill:none;stroke:#cf222e;stroke-width:2.4;stroke-linecap:round;
+  stroke-linejoin:round;stroke-opacity:.8}
 .pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center}
 .pair figure.paper{margin:.6em 0}
 .pair.wide{grid-template-columns:minmax(0,1fr)}

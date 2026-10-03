@@ -1,13 +1,16 @@
 %% Sizes
 %
 % Any outline, resized: wide, tall, small and flat. A tensor that spans sites
-% or layers is stretched by its layout; these are for one that is not.
+% or layers is stretched by its layout; these are for one that is not. And
+% tn size=<factor>, any outline at a factor of its size -- its label stays
+% the size of the text -- which is what a stack's size= and scale= give
+% every tensor of it.
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack{S}{4}{a}
-  \tnlayer{S}{a}{{tn capsule, tn wide}/$W$, {tn capsule, tn tall}/$H$, {tn box, tn small}/$s$, {tn rounded, tn flat}/$f$}
+  \tnstack{S}{6}{a}
+  \tnlayer{S}{a}{{tn capsule, tn wide}/$W$, {tn capsule, tn tall}/$H$, {tn box, tn small}/$s$, {tn rounded, tn flat}/$f$, {tn box, tn size=0.7}/$A$, {tn box, tn size=1.4}/$A$}
   \tnconnect{S}
   \tnopen{down}{S}
 \end{tikzpicture}

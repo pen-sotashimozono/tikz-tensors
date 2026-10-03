@@ -105,7 +105,7 @@ def api(ref: str | None = None) -> set[str]:
                   for n in re.findall(r"(?<![\w/])(tn [\w ]+?)/\.(?:style|code|is if)", text)}
         # keys are a command's options, /tn/<command>/<key>
         names |= {f"key {c}/{k.strip()}"
-                  for c, k in re.findall(r"/tn/(\w+)/([\w ]+?)/\.(?:initial|code|is if)", text)}
+                  for c, k in re.findall(r"/tn/(\w+)/([\w ]+?)/\.(?:initial|code|is if|forward to)", text)}
         names |= {f"key set/{t}" for t in re.findall(r"\\tn@token\{(\w+)\}", text)}
         names |= {f"command \\{n}" for n in re.findall(r"\\(?:new|provide)command\*?\{\\(\w+)\}", text)}
         names |= {f"colour {n}" for n in re.findall(r"\\definecolor\{(\w+)\}", text)}
@@ -142,9 +142,12 @@ def required(base: str, old: str) -> tuple[str | None, str]:
     # A reference picture counts as changed when what it drew is drawn by no
     # reference any more: renaming one (renumbering the examples) changes no
     # picture, and a new one is an addition, not a change.
-    now = {(ROOT / f).read_bytes() for f in files(None, "tests/reference/")}
+    # Only the pictures count: a trace beside one (<name>.json) says which line
+    # drew what, and moves with the comments of its file.
+    now = {(ROOT / f).read_bytes() for f in files(None, "tests/reference/")
+           if f.endswith(".svg")}
     refs = sorted(f for f, kind in touched.items()
-                  if f.startswith("tests/reference/") and kind != "A"
+                  if f.startswith("tests/reference/") and f.endswith(".svg") and kind != "A"
                   and (read(f, base) or "").encode() not in now)
     if not package and not refs:
         return None, "changes nothing under tex/ or theme/ and no reference image"
