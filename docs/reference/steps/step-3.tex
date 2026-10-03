@@ -1,0 +1,16 @@
+%% Connect
+%
+% Every index the layout implies, in one command: the bonds along the layer,
+% here with arrows, and the indices down the sites, through the gate.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{5}{ket, gate}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
+  \tnlayer{S}{gate}{2*|, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
+  \tnconnect[along=gauge]{S}
+\end{tikzpicture}
+\end{document}

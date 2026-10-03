@@ -30,6 +30,12 @@ class Site(unittest.TestCase):
             self.assertIn(f"examples/{path.stem}.html", self.pages)
             self.assertTrue(path.read_text().startswith("%% "), path.name)
 
+    def test_every_example_is_in_a_section_in_order(self):
+        exs = docsite.examples()
+        self.assertEqual([e.number for e in exs], sorted(e.number for e in exs))
+        for e in exs:
+            self.assertIn(docsite.section(e), [t for _, t in docsite.SECTIONS])
+
     def test_every_link_inside_the_site_resolves(self):
         for name in self.pages:
             page = self.out / name
@@ -39,10 +45,60 @@ class Site(unittest.TestCase):
                 self.assertTrue((page.parent / target).resolve().exists(),
                                 f"{name} links to {target}")
 
-    def test_the_reference_is_docs_api(self):
+    def test_every_anchor_a_link_names_exists(self):
+        ids = {}
+        for name in self.pages:
+            for target in re.findall(r'href="([^"#:]*)#([^"]+)"', (self.out / name).read_text()):
+                page = ((self.out / name).parent / target[0]).resolve() if target[0] \
+                    else (self.out / name).resolve()
+                if page not in ids:
+                    ids[page] = set(re.findall(r'id="([^"]+)"', page.read_text()))
+                self.assertIn(target[1], ids[page], f"{name} links to {target[0]}#{target[1]}")
+
+    def test_code_links_every_command_to_the_reference(self):
+        text = (self.out / "examples/08-canonical.html").read_text()
+        for command in ("tnstack", "tnlayer", "tnconnect", "tnopen"):
+            self.assertIn(f'href="../commands.html#{command}"', text)
+        styles = (self.out / "styles.html").read_text()
+        self.assertIn('href="commands.html#tnlayer"', styles)
+        self.assertIn('href="styles.html#tn-box"', styles)
+
+    def test_a_web_address_in_an_example_is_a_link(self):
+        text = (self.out / "examples/19-ttn.html").read_text()
+        self.assertIn('<a href="https://tensornetwork.org/">', text)
+        self.assertIn('<a href="https://tensornetwork.org/">tensornetwork.org</a>', text)
+        self.assertEqual(docsite.autolink("see https://a.org/x."),
+                         'see <a href="https://a.org/x">https://a.org/x</a>.')
+        self.assertEqual(docsite.autolink("on a.org, not notation.tex"),
+                         'on <a href="https://a.org/">a.org</a>, not notation.tex')
+
+    def test_the_reference_is_docs_reference(self):
+        text = (self.out / "commands.html").read_text()
+        doc = (ROOT / "docs/reference/commands.md").read_text()
+        for command in re.findall(r"^### `(\\tn[a-z]+)", doc, re.M):
+            self.assertIn(f'id="{command[1:]}"', text)
+
+    def test_every_style_has_a_definition_and_a_picture(self):
+        text = (self.out / "styles.html").read_text()
+        plain = re.sub(r"<[^>]+>", "", text)
+        for name in re.findall(r"`(tn [a-z ]+?)`", (ROOT / "docs/reference/styles.md").read_text()):
+            self.assertIn(f"{name}/.", plain, f"{name} has no definition on the page")
+        for path in (ROOT / "docs/reference/styles").glob("*.tex"):
+            self.assertIn(f"figures/{path.stem}.svg", text)
+
+    def test_the_overview_builds_a_figure_step_by_step(self):
         text = (self.out / "api.html").read_text()
-        for command in re.findall(r"^### `(\\tn[a-z]+)", (ROOT / "docs/api.md").read_text(), re.M):
-            self.assertIn(command, text)
+        steps = sorted((ROOT / "docs/reference/steps").glob("step-*.tex"))
+        self.assertGreater(len(steps), 1)
+        for path in steps:
+            self.assertIn(f'id="{path.stem}"', text)
+            self.assertIn(f"figures/{path.stem}.svg", text)
+        # every step adds something, and only what it adds is marked
+        cards = re.findall(r'<article class="doc step".*?</article>', text, re.S)
+        self.assertEqual(len(cards), len(steps))
+        for card in cards:
+            self.assertIn('class="ln add"', card)
+        self.assertEqual(cards[-1].count('class="ln add"'), 7)
 
 
 class Publish(unittest.TestCase):

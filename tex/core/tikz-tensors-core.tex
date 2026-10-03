@@ -36,6 +36,8 @@
 %   pitch      between neighbouring sites of a stack: room for a triangle set
 %              across in its slot, the bond after its apex, and an arrowhead
 %   rise       between neighbouring layers
+%   closerise  between a layer and the one above it where a stack says they
+%              are close (close=): the gap between two slots halved
 %   treepitch  pitch in a tree ([tree]): half, because a tree's leaves are
 %   treerise   tensors of one site each and nothing is set across in its slot
 %   gpitch     along a bond of a two-dimensional grid
@@ -58,6 +60,7 @@
 \def\tn@treerise{15mm}
 \def\tn@gpitch{18mm}
 \def\tn@slot{9mm}
+\def\tn@closerise{12mm}  % (rise + slot) / 2
 \def\tn@stub{4mm}
 \def\tn@envw{7mm}
 \def\tn@gap{4mm}
@@ -66,7 +69,7 @@
 \def\tn@token#1{\pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#1\endcsname{##1}}}}
 \tn@token{pitch}\tn@token{rise}\tn@token{treepitch}\tn@token{treerise}
 \tn@token{gpitch}\tn@token{slot}\tn@token{stub}\tn@token{envw}\tn@token{gap}
-\tn@token{inset}
+\tn@token{inset}\tn@token{closerise}
 \pgfkeys{/tn/set/line width/.code={\pgfkeyssetvalue{/tn/line width}{#1}}}
 \newcommand{\tnset}[1]{\pgfkeys{/tn/set/.cd, #1}}
 

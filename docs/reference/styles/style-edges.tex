@@ -1,0 +1,27 @@
+%% Edge types
+%
+% What an index looks like: plain, wavy, with an arrowhead, or two fused into
+% one. Where it goes is the layout's; a command takes the type as edge=,
+% along= or down=.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{A}{2}{a}
+  \tnlayer{A}{a}{2*tn box}
+  \tnconnect[along=tn edge]{A}
+  \tnopen[label=tn edge]{down}{A-a-1}
+  \tnstack{B}{2}{a}
+  \tnlayer{B}{a}{2*tn box}
+  \tnconnect[along=tn wavy]{B}
+  \tnopen[edge=tn wavy, label=tn wavy]{down}{B-a-1}
+  \tnstack{C}{2}{a}
+  \tnlayer{C}{a}{2*tn box}
+  \tnconnect[along=tn arrow]{C}
+  \tnopen[edge=tn arrow, label=tn arrow]{down}{C-a-1}
+  \tnstack{D}{2}{a}
+  \tnlayer{D}{a}{2*tn box}
+  \tnconnect[along=tn double]{D}
+  \tnopen[edge=tn double, label=tn double]{down}{D-a-1}
+\end{tikzpicture}
+\end{document}

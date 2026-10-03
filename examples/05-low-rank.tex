@@ -1,0 +1,33 @@
+%% Low-rank approximation
+%
+% A state on five sites, and its approximation by a matrix product state of
+% bond dimension D: the picture every MPS introduction starts from.
+%
+% Psi is one tensor with five indices. Sweep through it with truncated SVDs,
+% left to right, and each step leaves an isometry behind and carries the rest
+% on: four left-canonical tensors and the center at the end. The truncation is
+% where the approximately-equals comes from.
+%
+% Both sides are one-layer stacks of five sites, so they share everything the
+% package owns: Psi is one entry spanning the five slots, and is exactly as
+% wide as the chain it is compared with; its five indices leave it at the
+% sites' own columns, and every index on both sides ends at the same depth.
+% Nothing in this file says any of that -- it follows from both being five
+% sites wide.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{P}{5}{ket}
+  \tnlayer{P}{ket}{coef/$\Psi$/5}
+  \tnopen[label=$n_{#1}$]{down}{P-ket-1}
+  \tnapprox
+  \tnstack{M}{5}{ket}
+  \tnlayer{M}{ket}{4*canl/$A$, center/$C$}
+  \tnconnect{M}
+  \tnopen[label=$n_{#1}$]{down}{M-ket-1, M-ket-2, M-ket-3, M-ket-4, M-ket-5}
+  \tnmid{M-ket-1}{M-ket-2}{$D$}
+\end{tikzpicture}
+\end{document}

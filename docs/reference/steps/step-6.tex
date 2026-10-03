@@ -1,0 +1,20 @@
+%% Label
+%
+% Text on what is not an open index, by name: the bond dimension, midway
+% between two tensors.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{5}{ket, gate}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
+  \tnlayer{S}{gate}{2*|, gate/$e^{-i\,\delta t\,\hat h}$/2, |}
+  \tnconnect[along=gauge]{S}
+  \tnopen[edge=gauge]{left}{S-ket-1}
+  \tnopen[edge=gauge]{right}{S-ket-5}
+  \tnopen[label=$n_{#1}$]{down}{S}
+  \tnmid{S-ket-1}{S-ket-2}{$D$}
+\end{tikzpicture}
+\end{document}

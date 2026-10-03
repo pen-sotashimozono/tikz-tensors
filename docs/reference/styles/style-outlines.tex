@@ -1,0 +1,15 @@
+%% Outlines
+%
+% A box, a circle, a capsule, a rounded box and a diamond, each at the size at
+% which it reads as the same weight as the others, and filled with paper so
+% that an index drawn to its center is covered by it.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{5}{a}
+  \tnlayer{S}{a}{tn box/$A$, tn circle/$B$, tn capsule/$C$, tn rounded/$D$, tn diamond/$E$}
+  \tnconnect{S}
+  \tnopen{down}{S}
+\end{tikzpicture}
+\end{document}

@@ -4,7 +4,8 @@
     python3 tests/coverage.py
 
 The names come from scripts/version.py's `api` (what the version check guards);
-a name counts as used when a file under tests/cases/ or examples/ mentions it.
+a name counts as used when a file under tests/cases/, examples/ or
+docs/reference/styles/ (the pictures of the styles page) mentions it.
 A key that takes a value counts when it is used with one, hence the `=`, and a
 style named in a \\tnchain spec counts, hence the `/`.
 Colours and theme tokens are left out: tests/cases/styles.tex shows them as
@@ -22,7 +23,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import version  # noqa: E402
 
-text = "\n".join(p.read_text() for d in ("tests/cases", "examples")
+text = "\n".join(p.read_text() for d in ("tests/cases", "examples", "docs/reference/styles")
                  for p in sorted((ROOT / d).glob("*.tex")))
 missing = []
 for name in sorted(version.api()):
@@ -37,17 +38,17 @@ for name in sorted(version.api()):
     if not used:
         missing.append(name)
 for name in missing:
-    print(f"FAIL  coverage: {name} is used by no file in tests/cases/ or examples/")
+    print(f"FAIL  coverage: {name} is used by no file in tests/cases/, examples/ or docs/reference/styles/")
 if not missing:
     print("  ok  coverage: every style and command is drawn by a test case")
 
-# docs/api.md is the interface: every public name is on it, and every name on
-# it is public. A key is looked for in the section of the commands it belongs
+# docs/reference/ is the interface: every public name is on its pages, and
+# every name on them is public. A key is looked for in the section of the commands it belongs
 # to (`key=`, or `key` for one that takes no value).
 FAMILY = {"connect": [r"\tnconnect"], "open": [r"\tnopen", r"\tnopenswap"],
           "join": [r"\tnjoin"], "rel": [r"\tneq", r"\tnapprox"], "set": [r"\tnset"],
           "stack": [r"\tnstack"], "grid": [r"\tngrid"]}
-doc = (ROOT / "docs/api.md").read_text()
+doc = "\n".join(p.read_text() for p in sorted((ROOT / "docs/reference").glob("*.md")))
 sections = re.split(r"^### ", doc, flags=re.M)
 undocumented = []
 api = version.api()
@@ -71,9 +72,9 @@ documented = ({f"command {m}" for m in re.findall(r"`(\\tn[a-z]+)", doc)} |
               {f"style '{m}'" for m in re.findall(r"`(tn [a-z ]+?)`", doc)})
 unknown = sorted(documented - api)
 for name in undocumented:
-    print(f"FAIL  api: {name} is public and not in docs/api.md")
+    print(f"FAIL  api: {name} is public and not in docs/reference/")
 for name in unknown:
-    print(f"FAIL  api: docs/api.md names {name}, which the package does not define")
+    print(f"FAIL  api: docs/reference/ names {name}, which the package does not define")
 if not undocumented and not unknown:
-    print("  ok  api: docs/api.md lists the public names, and only them")
+    print("  ok  api: docs/reference/ lists the public names, and only them")
 sys.exit(1 if missing or undocumented or unknown else 0)

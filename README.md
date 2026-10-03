@@ -13,7 +13,7 @@ reference, and every example with its code beside its picture.
 | | |
 |---|---|
 | ![expansion](tests/reference/01-expansion.svg) | ![swap](tests/reference/02-swap.svg) |
-| ![canonical](tests/reference/04-canonical.svg) | ![mera](tests/reference/19-mera.svg) |
+| ![canonical](tests/reference/08-canonical.svg) | ![mera](tests/reference/20-mera.svg) |
 
 ## Shapes, not meanings
 
@@ -35,7 +35,7 @@ stand for.
 | `tn gate`, `tn env` | a gate, and the blocks at the ends of a stack |
 
 What a shape *means* — that a circle on a wavy leg is a function of position, a
-triangle an isometry, a diamond the orthogonality centre — is a **notation**,
+triangle an isometry, a diamond the orthogonality center — is a **notation**,
 and a notation belongs to whoever draws in it. Keep yours as a file of styles
 named for the meaning and built from the shapes, and `\input` it after the
 package:
@@ -49,7 +49,7 @@ package:
 
 [`examples/conventions/notation.tex`](examples/conventions/notation.tex) is the
 one the examples here are drawn in: `fn` a function of position on `cont` wavy
-legs, `coef` an array, `op` an operator, `canl`/`canr`/`centre` the canonical
+legs, `coef` an array, `op` an operator, `canl`/`canr`/`center` the canonical
 form, `mpo`, `gate`, `disc` and `gauge`. It is an example of a notation, not
 part of the package. A notation may also change the package's spacing, once
 for all its figures: `\tnset{pitch=20mm, rise=14mm}`.
@@ -92,7 +92,7 @@ layers down, at one pitch the package owns, with a block (the rest of the
 network, contracted) at either end. Nothing in it is a length or a coordinate:
 
 ```latex
-\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/06-heff-two-site.tex
+\tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}   % examples/14-heff-two-site.tex
 \tnlayer{H}{op}{2*mpo/$W$}
 \tnconnect{H}
 \tnopen{up}{H-op-1, H-op-2}
@@ -118,7 +118,7 @@ layer has one spelling.
 
 - `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
   a bond with an arrow takes its direction from the triangles it joins, so a
-  canonical form's arrows all point at the centre without being written.
+  canonical form's arrows all point at the center without being written.
 - `\tnopen[edge=…, label=…]{<up|down|left|right>}{<tensor or stack>, …}`
   opens indices; given a stack, every site (or layer) at once.
   `label=$\sigma_{#1}$` labels each end, `#1` its number;
@@ -128,10 +128,13 @@ layer has one spelling.
   does not: the bond that closes a periodic chain, a trace, a bond that skips
   its neighbours. Two ports facing each other with nothing between are joined
   straight; any other index runs along the gutters between columns and
-  layers, so it never passes through a tensor (example 24).
+  layers, so it never passes through a tensor (example 07).
 - `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
   one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
   `\tnopen{down}{P}` its physical indices, straight down.
+- `\tnstack[close={g2, g3}]` sets those layers closer under the one above —
+  the layers of a circuit of gates; how close is the token `closerise`, set
+  once in a notation (`\tnset`).
 - `\tneq[factor=$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side
@@ -146,8 +149,10 @@ layer has one spelling.
 
 Every example is drawn this way, and `tests/lint.py` holds them to it
 (`docs/roadmap.md`). Every optional argument is `key=value`, and
-[`docs/api.md`](docs/api.md) lists the whole interface — every command, key,
-style and name a figure can refer to — and is checked against the code.
+[`docs/reference/`](docs/reference/index.md) lists the whole interface — how
+a figure is put together, every command and key, every style with what it is
+built on and a picture, and every name a figure can refer to — and is checked
+against the code.
 
 Labels are ordinary LaTeX math, so a diagram uses exactly the glyphs of the
 equations beside it; `pdftocairo -svg` turns them into paths, so the SVG shows
@@ -195,7 +200,7 @@ figures. A figure page is a `standalone` document:
 ```
 
 `python3 scripts/pages.py` builds the documentation site into `_site/`
-(gitignored) from `docs/api.md`, `examples/` and the reference pictures. As
+(gitignored) from `docs/reference/`, `examples/` and the reference pictures. As
 Julia's Documenter does, the workflows publish it to the `gh-pages` branch
 (`scripts/publish.py`): `Documenter.yml` puts every release from `main` at
 `v<version>/` and `stable/`, which the site root redirects to, and a switcher
@@ -292,6 +297,29 @@ quarter of a point. A moved leg, a changed colour or a lost label fails, and a
 `test`, and the rendered pages are the `rendered` artifact of the run.
 `tests/cases/styles.tex` shows every style side by side — a new style is
 added there.
+
+## Acknowledgements and related work
+
+The graphical notation is the field's common one — tensors as shapes, indices
+as lines, triangles for isometries — and
+[tensornetwork.org](https://tensornetwork.org/) is where much of
+it is laid out; the algorithms the examples draw are the ones it reviews. Two
+examples take their layout from the figures on its front page:
+[`19-ttn`](examples/19-ttn.tex) (the tree tensor network) and
+[`20-mera`](examples/20-mera.tex) (the MERA). Their drawings are this
+package's own; the arrangement is theirs, and each file says so.
+
+Other tools for tensor-network diagrams:
+
+- [tikz-tensor-networks](https://ctan.org/pkg/tikz-tensor-networks)
+  ([tenkz](https://github.com/LionSR/tenkz)) — a TikZ package on CTAN that
+  draws a diagram from a description of the network: MPS, PEPS, string and
+  channel diagrams. More general than this one; this one fixes every length
+  and lints figures so that one network has one spelling.
+- [mptikz](https://github.com/arolandi97/mptikz) — TikZ functions for
+  one-dimensional networks, MPS and MPO.
+- [TensorTrace](https://www.tensortrace.com/) — an application for drawing
+  networks and generating the code that contracts them.
 
 ## Licence
 

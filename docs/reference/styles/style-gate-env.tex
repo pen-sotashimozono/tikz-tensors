@@ -1,0 +1,16 @@
+%% tn gate, tn env
+%
+% The types a gate and an environment block are drawn in. They are named for
+% the structure that draws them, so that a notation has one place to colour
+% them: a stack draws its left= and right= blocks in tn env.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack[left=$L$, right=$R$]{S}{2}{g, a}
+  \tnlayer{S}{g}{tn gate/$U$/2}
+  \tnlayer{S}{a}{tn box/$A$, tn box/$B$}
+  \tnconnect{S}
+  \tnopen{up}{S-g-1}
+\end{tikzpicture}
+\end{document}

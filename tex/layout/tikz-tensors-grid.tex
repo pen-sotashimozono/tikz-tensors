@@ -2,7 +2,7 @@
 % lattice, drawn turned by 45 degrees so that the lattice reads as a plane
 % seen from above -- a PEPS, a two-dimensional partition function. It is a
 % block of the canvas, placed as a stack is -- after what is on the row and
-% centred on it -- so it takes part in an equation like any stack, and it
+% centered on it -- so it takes part in an equation like any stack, and it
 % implements the operations of the abstract layout (tikz-tensors-layout.tex)
 % that a lattice of this kind has.
 %
@@ -21,7 +21,7 @@
 % As on a stack, \tnconnect then draws the bonds and \tnopen{down} the
 % indices out of the plane.
 \pgfkeys{/tn/grid/.is family, /tn/grid/bonds/.initial=}
-% the centre of column <#2>, row <#3> of grid <#1>, as \tn@gx, \tn@gy
+% the center of column <#2>, row <#3> of grid <#1>, as \tn@gx, \tn@gy
 \def\tn@gxy#1#2#3{%
   \tn@len\tn@gx{\tn@get{#1@gx0}+((#2)-(#3)+\tn@get{#1@rows}-1)*\tn@get{#1@gh}}%
   \tn@len\tn@gy{\tn@get{#1@gy0}+((\tn@get{#1@cols}+\tn@get{#1@rows})/2-(#2)-(#3)+1)*\tn@get{#1@gh}}}
@@ -60,7 +60,7 @@
   \expandafter\tn@place\expandafter{\tn@opt}{#1-#2-#3-#6-label}{\tn@mx}{\tn@my}{\tn@lab}%
   \tn@record{#1-#2-#3-#6}{#1}{#2}{#2}{#3}{#3}}
 
-% Every bond of the lattice, centre to centre (a tensor covers the index it
+% Every bond of the lattice, center to center (a tensor covers the index it
 % carries), through the tensor on it if there is one.
 \def\tn@grid@connect#1{%
   \ifx\tn@apart\@empty\else
@@ -81,7 +81,7 @@
     \fi}}}
 
 % An index out of the plane, drawn straight down from tensor <#2> and ending
-% at <#3>, a slot and a stub below its centre.
+% at <#3>, a slot and a stub below its center.
 \def\tn@gopen#1#2#3{%
   \tn@use{#2}{down}{0}%
   \tn@anc{#2}{center}\let\tn@xa\tn@ax \let\tn@ya\tn@ay

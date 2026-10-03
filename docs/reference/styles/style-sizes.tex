@@ -1,0 +1,14 @@
+%% Sizes
+%
+% Any outline, resized: wide, tall, small and flat. A tensor that spans sites
+% or layers is stretched by its layout; these are for one that is not.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{4}{a}
+  \tnlayer{S}{a}{{tn capsule, tn wide}/$W$, {tn capsule, tn tall}/$H$, {tn box, tn small}/$s$, {tn rounded, tn flat}/$f$}
+  \tnconnect{S}
+  \tnopen{down}{S}
+\end{tikzpicture}
+\end{document}

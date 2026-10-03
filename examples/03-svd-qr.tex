@@ -1,0 +1,52 @@
+%% SVD and QR
+%
+% The two decompositions every algorithm here is made of, applied to one
+% tensor of a chain: T with its left bond, its physical index and its right
+% bond.
+%
+% Above, the SVD with the left bond and the physical index grouped:
+% T = U S V^dagger. U keeps both of those and is isometric from the left; S is
+% the singular values, the center on a bond; V^dagger carries the right bond
+% and is isometric from the right. Truncate S and this is the step that keeps
+% a bond dimension bounded.
+%
+% Below, the QR of the same grouping: T = Q R. Q is isometric from the left
+% and R is what is left over -- not diagonal, not isometric, a plain array --
+% and it is what gets pushed into the next site when a chain is brought to
+% canonical form. QR is the cheaper of the two when nothing is truncated.
+%
+% The arrows are not written: each bond takes its direction from the triangle
+% it leaves, and an open bond of a triangle points in.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{T}{1}{ket}
+  \tnlayer{T}{ket}{coef/$T$}
+  \tnopen{left}{T}
+  \tnopen{right}{T}
+  \tnopen{down}{T}
+  \tneq
+  \tnstack{U}{3}{ket}
+  \tnlayer{U}{ket}{canl/$U$, centerbond/$S$, canr/$V^{\dagger}$}
+  \tnconnect[along=gauge]{U}
+  \tnopen[edge=gauge]{left}{U-ket-1}
+  \tnopen[edge=gauge]{right}{U-ket-3}
+  \tnopen{down}{U-ket-1}
+  \tnbreak
+  \tnstack{P}{1}{ket}
+  \tnlayer{P}{ket}{coef/$T$}
+  \tnopen{left}{P}
+  \tnopen{right}{P}
+  \tnopen{down}{P}
+  \tneq
+  \tnstack{Q}{2}{ket}
+  \tnlayer{Q}{ket}{canl/$Q$, coef/$R$}
+  \tnconnect[along=gauge]{Q}
+  \tnopen[edge=gauge]{left}{Q-ket-1}
+  \tnopen{right}{Q-ket-2}
+  \tnopen{down}{Q-ket-1}
+\end{tikzpicture}
+\end{document}

@@ -5,6 +5,41 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.11.0 — 2026-10-03
+
+`centre` is `center`, everywhere.
+
+Breaking: the colour `centre` (and the theme token `--centre`) is `center`.
+In the notation of the examples the styles `centre` and `centrebond` are
+`center` and `centerbond`, and the example `09-centre` is `09-center`. The
+comments, the docs and the reference use the American spelling as well. Every
+picture is drawn as before; the palette's label for green1 reads `center`.
+
+Stacks with layers at their own heights: `\tnstack[close={<layer>, ...}]`
+sets those layers `closerise` under the layer above them instead of a rise --
+the layers of a circuit of gates, drawn as one. `closerise` is a token
+(`\tnset{closerise=...}`), by default the gap between two slots halved. A
+figure says which layers; a notation says how close.
+
+`17-trotter-sweep` is `17-trotter`, "Trotter steps": its first order is now
+the even/odd splitting -- the gates on the even bonds as one layer, then those
+on the odd bonds, two steps of it -- and the layers of gates in both of its
+orders are close.
+
+On the documentation site, every command of the package in a code block links
+to its entry in the reference (`commands.html#tnopen`), and every style of it
+to its own (`styles.html#tn-box`). The reference is three pages, from
+`docs/reference/` (which replaces `docs/api.md`): an overview -- how a figure
+is put together from a notation's declarations and the commands, the
+conventions, the names -- then the commands and the styles. Each command and
+each group of styles is a card of its own, with a button to its source; a
+style's card shows its definition and a picture drawn with the commands
+alone, and the last shows a notation's own styles in use. The overview builds
+one figure a command at a time: each step's code, what it adds marked in red,
+beside what it draws. A web address in an example's description is a link. The pictures,
+`docs/reference/styles/` and `docs/reference/steps/`, are compiled and
+compared as the examples are.
+
 ## v0.10.0 — 2026-10-02
 
 Folders, and the abstract layout: stack, tree and grid as layouts of one kind.

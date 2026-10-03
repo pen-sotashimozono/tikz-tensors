@@ -1,0 +1,15 @@
+%% Place a block
+%
+% A stack of five sites and two layers, and the tensors of its first layer:
+% two left-canonical, the center, two right-canonical. Nothing is connected
+% yet.
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz-tensors}
+\input{notation}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{S}{5}{ket, gate}
+  \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
+\end{tikzpicture}
+\end{document}
