@@ -128,10 +128,15 @@ def prose(text: str) -> str:
 
 
 def autolink(text: str) -> str:
-    """Escaped text with every web address in it a link; a full stop, comma or
-    bracket that ends a sentence after one is not part of it."""
-    return re.sub(r"https?://[^\s<>()]*[^\s<>().,;:]",
-                  lambda m: f'<a href="{m.group()}">{m.group()}</a>', text)
+    """Escaped text with every web address in it a link -- a full one, or a
+    site named by its domain alone (tensornetwork.org), which is linked as
+    written. A full stop, comma or bracket after one is not part of it."""
+    def a(m):
+        url = m.group(1) or f"https://{m.group(2)}/"
+        return f'<a href="{url}">{m.group()}</a>'
+    return re.sub(r"(https?://[^\s<>()]*[^\s<>().,;:])"
+                  r"|(?<![\w/.@-])((?:[a-z0-9-]+\.)+(?:org|com|net|io|dev))(?![\w/-])",
+                  a, text)
 
 
 def link(target: str) -> str:

@@ -66,8 +66,11 @@ class Site(unittest.TestCase):
     def test_a_web_address_in_an_example_is_a_link(self):
         text = (self.out / "examples/19-ttn.html").read_text()
         self.assertIn('<a href="https://tensornetwork.org/">', text)
+        self.assertIn('<a href="https://tensornetwork.org/">tensornetwork.org</a>', text)
         self.assertEqual(docsite.autolink("see https://a.org/x."),
                          'see <a href="https://a.org/x">https://a.org/x</a>.')
+        self.assertEqual(docsite.autolink("on a.org, not notation.tex"),
+                         'on <a href="https://a.org/">a.org</a>, not notation.tex')
 
     def test_the_reference_is_docs_reference(self):
         text = (self.out / "commands.html").read_text()
