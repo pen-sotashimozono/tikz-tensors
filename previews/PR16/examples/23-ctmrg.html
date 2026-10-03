@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CTMRG environment · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<meta name="tt-root" content="../">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.14.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 23</p>
+<h1 class="with-button">CTMRG environment<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
+<div class="traced example">
+<figure class="paper"><span class="stage"><img style="width:200pt" src="../figures/23-ctmrg.svg" alt="CTMRG environment: The corner transfer matrix environment of one site of an infinite two-dimensional network"><svg class="trace" viewBox="0 0 133.491 116.484" aria-hidden="true"><rect class="hl" data-line="24" x="4.09" y="4.09" width="23.26" height="23.26" rx="2"/><rect class="hl" data-line="24" x="57.73" y="6.70" width="18.03" height="18.04" rx="2"/><rect class="hl" data-line="24" x="106.14" y="4.09" width="23.26" height="23.26" rx="2"/><rect class="hl" data-line="25" x="6.70" y="49.22" width="18.04" height="18.04" rx="2"/><rect class="hl" data-line="25" x="54.41" y="45.90" width="24.68" height="24.68" rx="2"/><rect class="hl" data-line="25" x="108.75" y="49.22" width="18.04" height="18.04" rx="2"/><rect class="hl" data-line="26" x="4.09" y="89.13" width="23.26" height="23.26" rx="2"/><rect class="hl" data-line="26" x="57.73" y="91.74" width="18.03" height="18.04" rx="2"/><rect class="hl" data-line="26" x="106.14" y="89.13" width="23.26" height="23.26" rx="2"/><polyline class="hl" data-line="27" points="24.76,15.72 57.01,15.72"/><polyline class="hl" data-line="27" points="76.49,15.72 108.73,15.72"/><polyline class="hl" data-line="27" points="25.47,58.24 57.01,58.24"/><polyline class="hl" data-line="27" points="76.49,58.24 108.03,58.24"/><polyline class="hl" data-line="27" points="24.76,100.76 57.01,100.76"/><polyline class="hl" data-line="27" points="76.49,100.76 108.73,100.76"/><polyline class="hl" data-line="27" points="15.72,15.72 15.72,58.24"/><polyline class="hl" data-line="27" points="15.72,58.24 15.72,100.76"/><polyline class="hl" data-line="27" points="66.75,15.72 66.75,58.24"/><polyline class="hl" data-line="27" points="66.75,58.24 66.75,100.76"/><polyline class="hl" data-line="27" points="117.77,15.72 117.77,58.24"/><polyline class="hl" data-line="27" points="117.77,58.24 117.77,100.76"/><rect class="hl" data-line="28" x="35.18" y="4.74" width="12.12" height="11.98" rx="2"/></svg></span></figure>
+<div class="split">
+<div class="prose"><p>The corner transfer matrix environment of one site of an infinite two-dimensional network.</p><p>Everything outside the site is contracted into eight tensors: four corners C, each a quarter of the plane, and four sides T, each a half-row or half-column running off to infinity. They are the environment, and drawn in its colour. CTMRG grows them by absorbing a row or column of the lattice into the sides and corners and truncating with projectors, until they stop changing; then a local expectation value is this picture with the operator put into the middle.</p><p>a is the site in the middle: for a PEPS, the tensor and its conjugate joined along the physical index, so its bonds are double – and the bonds between C and T are the environment's own, of dimension chi.</p></div>
+<div class="codecol">
+<h2 class="with-button">The picture<button class="pill live-btn" type="button">Edit live</button></h2>
+<p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
+<pre class="code"><span class="ln" data-line="22"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="23">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span></span><span class="ln" data-line="24">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span></span><span class="ln" data-line="25">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>side/<span class="tx-math">$T$</span>, coef/<span class="tx-math">$a$</span>, side/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="26">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span></span><span class="ln" data-line="27">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span></span><span class="ln" data-line="28">  <a class="ref" href="../commands.html#tnput"><span class="tx-cmd">\tnmid</span></a><span class="tx-brace">{</span>E-top-1<span class="tx-brace">}</span><span class="tx-brace">{</span>E-top-2<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$\chi$</span><span class="tx-brace">}</span></span><span class="ln" data-line="29"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span></pre>
+<textarea class="live-code" spellcheck="false" hidden>\begin{tikzpicture}
+  \tnstack{E}{3}{top, mid, bot}
+  \tnlayer{E}{top}{corner/$C$, side/$T$, corner/$C$}
+  \tnlayer{E}{mid}{side/$T$, coef/$a$, side/$T$}
+  \tnlayer{E}{bot}{corner/$C$, side/$T$, corner/$C$}
+  \tnconnect{E}
+  \tnmid{E-top-1}{E-top-2}{$\chi$}
+\end{tikzpicture}</textarea>
+<p class="small live-status" hidden></p>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="ln" data-line="17"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span></span><span class="ln" data-line="18"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span></span><span class="ln" data-line="19"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span></span><span class="ln" data-line="20"><span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span></span><span class="ln" data-line="21"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span><span class="ln" data-line="22"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="23">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>3<span class="tx-brace">}</span><span class="tx-brace">{</span>top, mid, bot<span class="tx-brace">}</span></span><span class="ln" data-line="24">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span></span><span class="ln" data-line="25">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>mid<span class="tx-brace">}</span><span class="tx-brace">{</span>side/<span class="tx-math">$T$</span>, coef/<span class="tx-math">$a$</span>, side/<span class="tx-math">$T$</span><span class="tx-brace">}</span></span><span class="ln" data-line="26">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span><span class="tx-brace">{</span>bot<span class="tx-brace">}</span><span class="tx-brace">{</span>corner/<span class="tx-math">$C$</span>, side/<span class="tx-math">$T$</span>, corner/<span class="tx-math">$C$</span><span class="tx-brace">}</span></span><span class="ln" data-line="27">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">{</span>E<span class="tx-brace">}</span></span><span class="ln" data-line="28">  <a class="ref" href="../commands.html#tnput"><span class="tx-cmd">\tnmid</span></a><span class="tx-brace">{</span>E-top-1<span class="tx-brace">}</span><span class="tx-brace">{</span>E-top-2<span class="tx-brace">}</span><span class="tx-brace">{</span><span class="tx-math">$\chi$</span><span class="tx-brace">}</span></span><span class="ln" data-line="29"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="30"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/23-ctmrg.tex">examples/23-ctmrg.tex</a></p>
+</div>
+</div>
+</div>
+<nav class="pager"><a href="22-simple-update.html">← Simple update</a><a href="24-trg.html">A TRG step →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.14.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>

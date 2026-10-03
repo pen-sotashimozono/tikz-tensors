@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notation · tikz-tensors</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/site.css">
+<meta name="tt-root" content="">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.14.0</span></a>
+  <nav><a href="index.html">Overview</a><a href="examples.html">Examples</a><a href="live.html">Playground</a><a href="api.html">Reference</a><a href="notation.html" aria-current=page>Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<h1>Notation</h1>
+<p>The package names shapes and lines, never meanings. What a shape stands for
+is a notation, and a notation belongs to whoever draws in it: a file of styles
+named for the meaning, built from the package's shapes, loaded after the
+package. This is the one the examples are drawn in. Yours can be different and
+every figure keeps working.</p>
+<pre class="code"><span class="tx-comment">% One user&#x27;s notation: what the shapes of tikz-tensors stand for in the figures</span>
+<span class="tx-comment">% of this repository. It is a convention, not part of the package -- the</span>
+<span class="tx-comment">% package draws shapes and lines and says nothing about what they mean; a</span>
+<span class="tx-comment">% project that means something else by a triangle keeps a file like this of</span>
+<span class="tx-comment">% its own. Every example loads it with \input{notation}.</span>
+<span class="tx-comment">%</span>
+<span class="tx-comment">% Read top to bottom, it is the notation:</span>
+<span class="tx-comment">%   a function of position is a circle (or capsule) in the electron colour,</span>
+<span class="tx-comment">%   and its continuous argument a wavy leg in the same colour;</span>
+<span class="tx-comment">%   an array of numbers is a circle in the array colour -- a capsule, which is</span>
+<span class="tx-comment">%   a circle at one site&#x27;s size and stretches to the sites it spans -- an</span>
+<span class="tx-comment">%   operator a plain rounded box -- no tensor is a square: a square</span>
+<span class="tx-comment">%   says nothing a circle does not, and turned on a lattice it reads as a</span>
+<span class="tx-comment">%   diamond;</span>
+<span class="tx-comment">%   left- and right-canonical tensors are triangles pointing the way the gauge</span>
+<span class="tx-comment">%   runs, each in its own colour, and the orthogonality center a green</span>
+<span class="tx-comment">%   diamond -- small when it sits on a bond;</span>
+<span class="tx-comment">%   an operator tensor on a chain is a neutral rounded box, a gate a light</span>
+<span class="tx-comment">%   yellow one, an environment block light purple;</span>
+<span class="tx-comment">%   a finite index is a plain line, and one whose direction is part of what is</span>
+<span class="tx-comment">%   being said -- which way the gauge runs -- carries an arrowhead;</span>
+<span class="tx-comment">%   two indices fused into one (a bond of dimension D times chi) are a double</span>
+<span class="tx-comment">%   line; a copy tensor, diagonal in all its indices, is an ink dot; a basis</span>
+<span class="tx-comment">%   vector closing an index is a small circle;</span>
+<span class="tx-comment">%   an isometry of a tree or a MERA is a triangle pointing up, toward the</span>
+<span class="tx-comment">%   root, in the left-canonical colour: off a chain there is no left and</span>
+<span class="tx-comment">%   right, only toward the center and away from it, and that is the colour</span>
+<span class="tx-comment">%   that already says `isometric toward the center&#x27;; both it and a MERA&#x27;s</span>
+<span class="tx-comment">%   disentangler (a gate, flatter) are drawn flat, as a tree&#x27;s tensors are;</span>
+<span class="tx-comment">%   the environment of a two-dimensional network, contracted from its</span>
+<span class="tx-comment">%   boundary, is the environment&#x27;s colour: a corner as a rounded box, a side</span>
+<span class="tx-comment">%   as a circle;</span>
+<span class="tx-comment">%   in the tensor renormalization group, the tensor of the coarser lattice</span>
+<span class="tx-comment">%   is the array&#x27;s shape a step paler, and the four halves a split leaves</span>
+<span class="tx-comment">%   are four tensors, so four colours: the two factors of one decomposition</span>
+<span class="tx-comment">%   two steps of one hue (warm for the halves above and below, green for</span>
+<span class="tx-comment">%   those to the left and right), the first factor the stronger -- one</span>
+<span class="tx-comment">%   colour, one tensor;</span>
+<span class="tx-comment">%   in a quantum circuit, a gate on one qubit is a gate, and a controlled NOT</span>
+<span class="tx-comment">%   is its control, an ink dot, joined to its target, a circled plus.</span>
+<span class="tx-comment">% The colours are the theme&#x27;s (theme/tokens.toml). Shape carries the meaning</span>
+<span class="tx-comment">% on its own and colour repeats it, so a figure survives being printed in grey.</span>
+<span class="tx-cmd">\tikzset</span><span class="tx-brace">{</span>
+  fn/.style         = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn circle</a>, draw=ele, fill=ele!12<span class="tx-brace">}</span>,
+  fnwide/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-wide">tn wide</a>, draw=ele, fill=ele!12<span class="tx-brace">}</span>,
+  fntall/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-wide">tn tall</a>, draw=ele, fill=ele!12<span class="tx-brace">}</span>,
+  coef/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=coef<span class="tx-brace">}</span>,
+  coefwide/.style   = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-wide">tn wide</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=coef<span class="tx-brace">}</span>,
+  coeftall/.style   = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-wide">tn tall</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=coef<span class="tx-brace">}</span>,
+  op/.style         = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn rounded</a><span class="tx-brace">}</span>,
+  opwide/.style     = <span class="tx-brace">{</span>op, <a class="ref" href="styles.html#tn-wide">tn wide</a><span class="tx-brace">}</span>,
+  frame/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-frame">tn frame</a><span class="tx-brace">}</span>,
+  canl/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-triangle-right">tn triangle right</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=canl<span class="tx-brace">}</span>,
+  canr/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-triangle-right">tn triangle left</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=canr<span class="tx-brace">}</span>,
+  center/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn diamond</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=center<span class="tx-brace">}</span>,
+  centerbond/.style = <span class="tx-brace">{</span>center, <a class="ref" href="styles.html#tn-wide">tn small</a><span class="tx-brace">}</span>,
+  mpo/.style        = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn rounded</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=mpo<span class="tx-brace">}</span>,
+  <a class="ref" href="styles.html#tn-gate">tn gate</a>/.append style = <span class="tx-brace">{</span>fill=gate!25<span class="tx-brace">}</span>,
+  gate/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-gate">tn gate</a><span class="tx-brace">}</span>,
+  <a class="ref" href="styles.html#tn-gate">tn env</a>/.append style  = <span class="tx-brace">{</span>fill=env!25<span class="tx-brace">}</span>,
+  cont/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-edge">tn wavy</a>, draw=ele<span class="tx-brace">}</span>,
+  disc/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-edge">tn edge</a><span class="tx-brace">}</span>,
+  gauge/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-edge">tn arrow</a><span class="tx-brace">}</span>,
+  leg/.style        = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-label">tn label</a><span class="tx-brace">}</span>,
+  fused/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-edge">tn double</a><span class="tx-brace">}</span>,
+  delta/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-dot">tn dot</a><span class="tx-brace">}</span>,
+  basis/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn circle</a>, <a class="ref" href="styles.html#tn-wide">tn small</a><span class="tx-brace">}</span>,
+  iso/.style        = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-triangle-right">tn triangle up</a>, <a class="ref" href="styles.html#tn-wide">tn flat</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=canl<span class="tx-brace">}</span>,
+  disentangler/.style = <span class="tx-brace">{</span>gate, <a class="ref" href="styles.html#tn-wide">tn flat</a><span class="tx-brace">}</span>,
+  isodown/.style    = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-triangle-right">tn triangle down</a>, <a class="ref" href="styles.html#tn-wide">tn flat</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=canl<span class="tx-brace">}</span>,
+  corner/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn rounded</a>, fill=env!25<span class="tx-brace">}</span>,
+  side/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn circle</a>, fill=env!25<span class="tx-brace">}</span>,
+  coarse/.style     = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-box">tn capsule</a>, <a class="ref" href="styles.html#tn-fill">tn fill</a>=blue2<span class="tx-brace">}</span>,
+  half1/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=warm2<span class="tx-brace">}</span>,
+  half2/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=green2<span class="tx-brace">}</span>,
+  half3/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=warm1<span class="tx-brace">}</span>,
+  half4/.style      = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-fill">tn fill</a>=green1<span class="tx-brace">}</span>,
+  ctrl/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-dot">tn dot</a><span class="tx-brace">}</span>,
+  targ/.style       = <span class="tx-brace">{</span><a class="ref" href="styles.html#tn-dot">tn oplus</a><span class="tx-brace">}</span>,
+<span class="tx-brace">}</span>
+</pre>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/conventions/notation.tex">examples/conventions/notation.tex</a></p>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.14.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
