@@ -97,6 +97,21 @@ pre.code .ln.live{cursor:default}
 pre.code .ln.lit{background:color-mix(in srgb,#cf222e 16%,transparent);
   box-shadow:inset 3px 0 #cf222e}
 .hint{margin:-.2em 0 .4em}
+/* Code beside the picture (the ⇆ button, kept like the theme): an example's
+   code on the left and its picture on the right, the picture staying in view
+   while the code scrolls, so that pointing at a line shows what it draws. */
+@media (min-width:821px){
+:root[data-layout=side] main{max-width:1480px}
+:root[data-layout=side] .example{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  gap:8px 28px;align-items:start}
+:root[data-layout=side] .example>.split{display:contents}
+:root[data-layout=side] .example .codecol{grid-column:1;grid-row:1}
+:root[data-layout=side] .example .codecol>h2{margin-top:0}
+:root[data-layout=side] .example>figure.paper{grid-column:2;grid-row:1;position:sticky;top:64px;margin:0}
+:root[data-layout=side] .example .prose{grid-column:1/-1;grid-row:2}
+:root[data-layout=side] .example>.def-head{grid-column:1;grid-row:1;align-self:start;margin:0}
+:root[data-layout=side] .example>pre.code{grid-column:1;grid-row:1;margin-top:1.6em}
+}
 h2.with-button{display:flex;align-items:center;gap:12px}
 button.pill{font:inherit;font-size:13px;font-weight:400;cursor:pointer;color:var(--fg);
   background:var(--soft);border:1px solid color-mix(in srgb,var(--fg) 22%,transparent);
