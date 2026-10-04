@@ -26,7 +26,7 @@
 \tikzset{
   tn line width/.code = {\pgfkeyssetvalue{/tn/line width}{#1}},
   tn line/.style      = {line width=\pgfkeysvalueof{/tn/line width}},
-  tn arrows/.is if    = tnarrows,
+  tn arrowheads/.is if = tnarrows,
 }
 
 % ---- the tokens --------------------------------------------------------------
@@ -35,18 +35,17 @@
 % any module uses is one of these:
 %   pitch      between neighbouring sites of a stack: room for a triangle set
 %              across in its slot, the bond after its apex, and an arrowhead
-%   rise       between neighbouring layers
-%   closerise  between a layer and the one above it where a stack says they
-%              are close (close=): the gap between two slots halved
-%   treepitch  pitch in a tree ([tree]): half, because a tree's leaves are
-%   treerise   tensors of one site each and nothing is set across in its slot
-%   gpitch     along a bond of a two-dimensional grid
+%   rise       between neighbouring layers (a stack's rises= makes one
+%              layer's a factor of it)
+%   tree pitch pitch in a tree (\tntree): half, because a tree's leaves are
+%   tree rise  tensors of one site each and nothing is set across in its slot
+%   grid pitch along a bond of a two-dimensional grid
 %   slot       the size of a tensor that is not there: an open index ends at the
 %              border an absent tensor of this size would have, so a gap in a
 %              picture is the shape of what is missing from it
 %   stub       the least an open index shows beyond its own tensor, where the
 %              border of the next slot is nearer than that
-%   envw       the width of an environment block
+%   env width  the width of an environment block
 %   gap        the space either side of an equals sign; twice it between rows
 %   inset      how far a bond runs under the tensor it meets
 %
@@ -60,7 +59,6 @@
 \def\tn@treerise{15mm}
 \def\tn@gpitch{18mm}
 \def\tn@slot{9mm}
-\def\tn@closerise{12mm}  % (rise + slot) / 2
 \def\tn@stub{4mm}
 \def\tn@envw{7mm}
 \def\tn@gap{4mm}
@@ -69,15 +67,31 @@
 % Each token is kept twice: as the notation set it (\tn@base@<token>), and as
 % the block being drawn uses it (\tn@<token>), which is the notation's times
 % the factors that block was placed with (tikz-tensors-layout.tex).
-\def\tn@token#1{%
-  \expandafter\let\csname tn@base@#1\expandafter\endcsname\csname tn@#1\endcsname
-  \pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#1\endcsname{##1}%
-    \expandafter\def\csname tn@base@#1\endcsname{##1}}}}
-\tn@token{pitch}\tn@token{rise}\tn@token{treepitch}\tn@token{treerise}
-\tn@token{gpitch}\tn@token{slot}\tn@token{stub}\tn@token{envw}\tn@token{gap}
-\tn@token{inset}\tn@token{closerise}
+% \tn@token{<key>}{<token>}: \tnset's key for token \tn@<token>.
+\def\tn@token#1#2{%
+  \expandafter\let\csname tn@base@#2\expandafter\endcsname\csname tn@#2\endcsname
+  \pgfkeys{/tn/set/#1/.code={\expandafter\def\csname tn@#2\endcsname{##1}%
+    \expandafter\def\csname tn@base@#2\endcsname{##1}}}}
+\tn@token{pitch}{pitch}\tn@token{rise}{rise}\tn@token{tree pitch}{treepitch}
+\tn@token{tree rise}{treerise}\tn@token{grid pitch}{gpitch}\tn@token{slot}{slot}
+\tn@token{stub}{stub}\tn@token{env width}{envw}\tn@token{gap}{gap}
+\tn@token{inset}{inset}
 \pgfkeys{/tn/set/line width/.code={\pgfkeyssetvalue{/tn/line width}{#1}}}
 \newcommand{\tnset}[1]{\pgfkeys{/tn/set/.cd, #1}}
+
+% ---- names that were renamed before 1.0 --------------------------------------------
+% A name a figure may still use from an earlier version is an error that says
+% what it is called now (or what does its work), rather than a key TikZ does
+% not know.
+\def\tn@renamed#1#2#3{\pgfkeys{#1/.code={\PackageError{tikz-tensors}{`#2' is
+  gone: #3}{The names were made one family before version 1.0; CHANGELOG.md
+  lists each old name and the new.}}}}
+\tn@renamed{/tn/set/treepitch}{treepitch}{it is \string\tnset{tree pitch=...}}
+\tn@renamed{/tn/set/treerise}{treerise}{it is \string\tnset{tree rise=...}}
+\tn@renamed{/tn/set/gpitch}{gpitch}{it is \string\tnset{grid pitch=...}}
+\tn@renamed{/tn/set/envw}{envw}{it is \string\tnset{env width=...}}
+\tn@renamed{/tn/set/closerise}{closerise}{a stack's rises={<layer>=<factor>, ...} says each gap}
+\tn@renamed{/tikz/tn arrows}{tn arrows}{it is tn arrowheads}
 
 % ---- storage and measurement -------------------------------------------------
 % Every module keeps what it knows about a stack or a node under a name of its

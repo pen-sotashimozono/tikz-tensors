@@ -11,11 +11,9 @@ canvas after what is on the row.
 | key | |
 |---|---|
 | `left=<label>`, `right=<label>` | an environment block at that end, drawn in `tn env` |
-| `tree` | the tree layout: tree pitch, tensors at their own size, indices that turn corners |
-| `close={<layer>, ...}` | layers that sit `closerise` under the layer above them instead of a rise, as the layers of a circuit of gates |
-| `rises={<layer>=<factor>, ...}` | the gap above each named layer alone, at that factor of the stack's rise |
+| `rises={<layer>=<factor>, ...}` | the gap above each named layer alone, at that factor of the stack's rise: `rises={g2=0.8, g3=0.8}` sets the layers of a circuit of gates closer |
 | `scale=<factor>` | the whole stack at that factor of the notation: its distances, its tensors, its open indices |
-| `pitch=<factor>`, `rise=<factor>` | ... or its distances alone, between sites and between layers (`closerise` with `rise`) |
+| `pitch=<factor>`, `rise=<factor>` | ... or its distances alone, between sites and between layers |
 | `size=<factor>` | ... its tensors, and the slots of absent ones |
 | `stub=<factor>` | ... the least an open index of it shows |
 
@@ -25,6 +23,12 @@ layers compact, and a stack after it is drawn at the notation's again. A
 label keeps its size, which is the size of the equations beside it. A gap is
 set where the stack is placed, `rises={g2=0.5}`, and not on `\tnlayer`,
 because a layer's slots are named and placed before anything is put in them.
+
+### `\tntree[<keys>]{<name>}{<sites>}{<layers>}`
+A stack in the tree layout: at the tree's pitch and rise (`tree pitch`,
+`tree rise`), each tensor its own size, centered over the sites it joins, and
+an index between two that do not line up turning a corner. Its keys and its
+layers are a stack's.
 
 ### `\tnlayer[<keys>]{<stack>}{<layer>}{<entry>, ...}`
 The layer's slots, left to right: `<type>/<label>`, `<type>/<label>/<span>`,
@@ -133,12 +137,11 @@ The tokens, for a notation file (a figure may not use it).
 | key | |
 |---|---|
 | `pitch=`, `rise=` | between sites, between layers of a stack |
-| `closerise=` | between a layer and the one above where a stack names it `close` (the gap between two slots, halved) |
-| `treepitch=`, `treerise=` | the same, in a tree |
-| `gpitch=` | along a bond of a grid |
+| `tree pitch=`, `tree rise=` | the same, in a tree |
+| `grid pitch=` | along a bond of a grid |
 | `slot=` | the size of a tensor that is not there, where an open index ends |
 | `stub=` | the least an open index shows beyond its tensor |
-| `envw=` | the width of an environment block |
+| `env width=` | the width of an environment block |
 | `gap=` | either side of a relation sign; twice it between rows |
 | `inset=` | how far a bond runs under the tensor it meets |
 | `line width=` | the one stroke of outlines and indices |

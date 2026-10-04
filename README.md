@@ -64,12 +64,12 @@ only what is loaded before it; `tikz-tensors.sty` loads them all.
 | `core/` | `core` | the stroke, the edge layer, the tokens (`\tnset`), `tn node`, `tn edge`, `\tnbond` | — |
 | | `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnbreak` | — |
 | `style/` | `colors` | the theme's named colours (generated) | `theme/tokens.toml` |
-| | `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn leg anchor` (where its index leaves), `tn points` (which way it points), `tn single` (one index on that side) | a style on `tn node` that sets those keys |
+| | `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn site anchor` (where its index leaves), `tn flux` (which way its indices run), `tn single` (one index on that side), `tn index` (its indices, named) | a style on `tn node` that sets those keys |
 | | `edges` | **edge types** (`tn wavy`, `tn arrow`, `tn double`) and the routes an edge takes | a style on `tn edge` |
 | | `labels` | `tn label`, `\tnput`, `\tnmid` | — |
 | `layout/` | `layout` | **the abstract layout**: the record of a tensor, its ports and which are taken, and `\tnconnect`, `\tnopen`, `\tnopenswap`, `\tnjoin`, which hand their work to the layout of the block | a new layout |
 | | `stack` | `\tnstack`, `\tnlayer`: sites across, layers down | — |
-| | `tree` | `\tnstack[tree]`: a stack that keeps each tensor its own size and routes with corners | — |
+| | `tree` | `\tntree`: a stack that keeps each tensor its own size and routes with corners | — |
 | | `grid` | `\tngrid`: a square lattice turned by 45° | — |
 
 A **layout** is a kind of block with a set of operations — connect, open a
@@ -117,8 +117,10 @@ always written as one `<n>*<entry>` — the linter holds figures to it, so a
 layer has one spelling.
 
 - `\tnconnect[along=…, down=…, apart={…}]` draws every index the grid implies;
-  a bond with an arrow takes its direction from the triangles it joins, so a
-  canonical form's arrows all point at the center without being written.
+  a bond runs from the tensor its index runs out of to the one it runs into
+  (`tn flux`), and an arrow on it points that way, so a notation that says
+  its canonical tensors run toward the center draws every arrow at the center
+  without one being written.
 - `\tnopen[edge=…, label=…]{<up|down|left|right>}{<tensor or stack>, …}`
   opens indices; given a stack, every site (or layer) at once.
   `label=$\sigma_{#1}$` labels each end, `#1` its number;
@@ -132,18 +134,17 @@ layer has one spelling.
 - `\tngrid[bonds=…]{P}{4}{4}{coef/$A$}` places a two-dimensional network of
   one tensor, turned 45°; `\tnconnect{P}` draws its bonds and
   `\tnopen{down}{P}` its physical indices, straight down.
-- `\tnstack[close={g2, g3}]` sets those layers closer under the one above —
-  the layers of a circuit of gates; how close is the token `closerise`, set
-  once in a notation (`\tnset`).
+- `\tnstack[rises={g2=0.8, g3=0.8}]` sets those layers closer under the one
+  above — the layers of a circuit of gates — at that factor of the rise.
 - `\tneq[factor=$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
   it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side
-  (`tn leg anchor`), and the triangle is set across so that corner is on the
+  (`tn site anchor`), and the triangle is set across so that corner is on the
   site's line.
 - Two tensors one above the other meet on every site they both cover if they
   cover the same ones, and otherwise once, in the middle of the sites they
   share — which is what places the branches of a tree (`tn triangle up`,
-  `tn single`) and the layers of a MERA. `\tnstack[tree]` keeps every tensor
+  `tn single`) and the layers of a MERA. `\tntree` keeps every tensor
   its own size and routes those indices with corners, as trees are usually
   drawn.
 

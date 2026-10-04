@@ -11,8 +11,9 @@
 
 % The center of column <#2> of stack <#1>, as \tn@cx; of layer number <#2>, as
 % \tn@ly. Column 0 and column n+1 are the slots just beyond the ends; a
-% fraction is a line between two. Layers are a rise apart, or closer where the
-% stack says so (close=), so each one's height is kept (@y@<k>); beyond the
+% fraction is a line between two. Layers are a rise apart, or another factor
+% of it where the stack says so (rises=), so each one's height is kept
+% (@y@<k>); beyond the
 % first and the last the stack goes on at a rise.
 \def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
 \def\tn@layint#1#2{% the height of whole layer number <#2>, as \tn@lyi
@@ -33,26 +34,25 @@
   \fi}
 
 % ---- placing ----------------------------------------------------------------
-% \tnstack[left=<label>, right=<label>, tree]{<name>}{<sites>}{<layers>}
+% \tnstack[left=<label>, right=<label>]{<name>}{<sites>}{<layers>}
+% \tntree[...]{<name>}{<sites>}{<layers>}
 % A grid of <sites> slots across and the <layers> down, top to bottom, placed
 % after what is already on the row (an equals sign, or another stack, whose
 % end slot and its own keep them a pitch apart) and centered on the row, so that
 % the stacks of an equation line up. left= and right= put an environment at
 % either end. Without one, the stack keeps the slot beyond its end as far as
 % that slot's border, which is where an open index there ends -- so an index
-% opened later never runs into the equals sign before it. [tree] makes it the
-% tree layout. close= names layers that sit closer under the layer above them
-% than a rise -- `closerise' (\tnset), which halves the gap between two slots
-% -- as the layers of a circuit of gates are drawn. scale=, pitch=, rise=,
+% opened later never runs into the equals sign before it. \tntree places the
+% same in the tree layout (tikz-tensors-tree.tex). scale=, pitch=, rise=,
 % size= and stub= draw it at factors of the notation's distances and sizes
 % (tikz-tensors-layout.tex): a circuit of many layers, drawn compact.
 % rises={<layer>=<factor>, ...} sets the gap above one layer alone, at a
-% factor of the stack's rise; it is said here, where the layers' heights are
-% fixed, and not in \tnlayer, because a layer's slots are named and placed
-% before anything is put in them.
+% factor of the stack's rise -- the layers of a circuit of gates, closer to
+% one another than to the state, are rises={g2=0.8, ...}; it is said here,
+% where the layers' heights are fixed, and not in \tnlayer, because a layer's
+% slots are named and placed before anything is put in them.
 %
 %   \tnstack[left=$L$, right=$R$]{H}{2}{ket, op, bra}
-%   \tnstack[close={g2}]{S}{5}{ket, g1, g2}
 %   \tnstack[scale=0.6, rise=0.8]{C}{3}{g1, g2, g3}
 %   \tnstack[rises={g2=0.5, g3=0.5}]{T}{4}{ket, g1, g2, g3}
 %
@@ -60,9 +60,11 @@
 % ones just beyond either end, is the coordinate <name>-<layer>-<i>-slot, which
 % is what a label for something that is not a tensor is placed on.
 \pgfkeys{/tn/stack/.is family, /tn/stack/left/.initial=,
-         /tn/stack/right/.initial=, /tn/stack/close/.initial=,
-         /tn/stack/rises/.initial=,
-         /tn/stack/tree/.code={\def\tn@stkind{tree}}}
+         /tn/stack/right/.initial=, /tn/stack/rises/.initial=,
+         /tn/stack/tn@tree/.code={\def\tn@stkind{tree}}}
+\tn@renamed{/tn/stack/tree}{\string\tnstack[tree]}{it is \string\tntree}
+\tn@renamed{/tn/stack/close}{close=}{it is rises={<layer>=0.8, ...}, the gap
+  above each layer a factor of the rise}
 \pgfkeys{/tn/stack/scale/.forward to=/tn@factor/scale,
   /tn/stack/pitch/.forward to=/tn@factor/pitch,
   /tn/stack/rise/.forward to=/tn@factor/rise,
@@ -73,7 +75,7 @@
 \def\tn@risepair#1=#2=#3\tn@end{\edef\tn@rl{\zap@space#1 \@empty}\def\tn@rf{#2}}
 \newcommand{\tnstack}[4][]{%
   \def\tn@stkind{stack}%
-  \pgfkeys{/tn/stack/.cd, left=, right=, close=, rises=, #1}%
+  \pgfkeys{/tn/stack/.cd, left=, right=, rises=, #1}%
   \tn@newblock{#2}{\tn@stkind}%
   \tn@scaleblock{#2}%
   \tn@op{#2}{geometry}{#2}%
@@ -87,14 +89,6 @@
     \tn@set{#2@k@\tn@l}{\the\tn@c}\tn@set{#2@name@\the\tn@c}{\tn@l}}%
   \tn@set{#2@L}{\the\tn@c}%
   % how far each layer is under the first, and the stack's height
-  \pgfkeysgetvalue{/tn/stack/close}\tn@close
-  \foreach \tn@l in \tn@close{%
-    \ifcsname tn@#2@k@\tn@l\endcsname\else
-      \PackageError{tikz-tensors}{close=: stack `#2' has no layer `\tn@l'}{}\fi
-    \ifnum\tn@get{#2@k@\tn@l}=1
-      \PackageError{tikz-tensors}{close=: `\tn@l' is the first layer of `#2';
-        a layer is close to the one above it}{}\fi
-    \tn@set{#2@close@\tn@l}{1}}%
   \pgfkeysgetvalue{/tn/stack/rises}\tn@rises
   \foreach \tn@rp in \tn@rises{%
     \expandafter\tn@risepair\tn@rp=\tn@end
@@ -109,8 +103,7 @@
     \foreach \tn@k in {2,...,\tn@get{#2@L}}{%
       \edef\tn@kl{\tn@get{#2@name@\tn@k}}%
       \ifcsname tn@#2@rises@\tn@kl\endcsname \edef\tn@step{\tn@get{#2@rises@\tn@kl}}%
-      \else\ifcsname tn@#2@close@\tn@kl\endcsname \let\tn@step\tn@closerise
-      \else \edef\tn@step{\tn@get{#2@rise}}\fi\fi
+      \else \edef\tn@step{\tn@get{#2@rise}}\fi
       \tn@len\tn@o{\tn@get{#2@off@\the\numexpr\tn@k-1\relax}+\tn@step}%
       \tn@set{#2@off@\tn@k}{\tn@o}}%
   \fi
@@ -151,6 +144,8 @@
       \tn@colx{#2}{\tn@i}%
       \path[overlay] (\tn@cx,\tn@ly) coordinate (#2-\tn@l-\tn@i-slot);}}%
 }
+% the tree layout, placed as a stack is
+\newcommand{\tntree}[1][]{\tnstack[tn@tree, #1]}
 
 % \tnlayer{<stack>}{<layer>}{<entry>, ...}
 % The layer's slots, left to right, one entry each:

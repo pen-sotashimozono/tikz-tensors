@@ -8,7 +8,7 @@
 %                 and tn size=<factor> scales it
 %   its indices   where they leave it, as properties a layout reads back
 %                 when it places the node:
-%     tn leg anchor=<anchor>  the point its index down the site leaves from,
+%     tn site anchor=<anchor> the point its index down the site leaves from,
 %                             and the point a stack puts on the site's line
 %                             (center unless the shape says otherwise)
 %     tn flux={<side>=in|out, ...}
@@ -64,7 +64,7 @@
 \gdef\tn@rank{}
 \gdef\tn@index{}
 \gdef\tn@tname{}
-\tikzset{tn leg anchor/.code={\gdef\tn@legat{#1}},
+\tikzset{tn site anchor/.code={\gdef\tn@legat{#1}},
          tn flux/.code={\xdef\tn@flux{\zap@space#1 \@empty}},
          tn@lean/.code={\xdef\tn@fluxw{\zap@space#1 \@empty}},
          tn single/.code={\gdef\tn@single{#1}},
@@ -101,6 +101,7 @@
 \def\tn@checkway#1#2{\def\tn@cw{#1}%
   \ifx\tn@cw\tn@sin\else\ifx\tn@cw\tn@sout\else
     \PackageError{tikz-tensors}{#2 runs `#1'; an index runs in or out}{}\fi\fi}
+\tn@renamed{/tikz/tn leg anchor}{tn leg anchor}{it is tn site anchor}
 % Read a type's index properties without drawing it: \tn@legat, \tn@flux,
 % \tn@single, \tn@index (and from it \tn@legs, \tn@rank and \tn@ixdirs)
 % and \tn@tname afterwards hold what the style <#1> sets.
@@ -129,10 +130,10 @@
   tn triangle right/.style = {tn node, regular polygon, regular polygon sides=3,
                               shape border rotate=-90, fill=grey1,
                               minimum size=10.5mm, font=\small,
-                              tn leg anchor=corner 3,
+                              tn site anchor=corner 3,
                               tn@lean={left=in, right=out}},
   tn triangle left/.style  = {tn triangle right, shape border rotate=90,
-                              tn leg anchor=corner 2,
+                              tn site anchor=corner 2,
                               tn@lean={right=in, left=out}},
   tn triangle up/.style    = {tn node, isosceles triangle,
                               isosceles triangle stretches, shape border rotate=90,
