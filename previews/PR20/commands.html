@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commands · tikz-tensors</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/site.css">
+<meta name="tt-root" content="">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">tikz-tensors <span class="ver">v0.18.0</span></a>
+  <nav><a href="index.html">Overview</a><a href="examples.html">Examples</a><a href="live.html">Playground</a><a href="api.html" aria-current=page>Reference</a><a href="notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<nav class="tabs"><a href="api.html">Overview</a><a href="commands.html" aria-current=page>Commands</a><a href="styles.html">Styles</a></nav><div class="with-toc"><aside><ul class="toc"><li class="l3"><a href="#tnstack"><code>\tnstack</code></a></li><li class="l3"><a href="#tntree"><code>\tntree</code></a></li><li class="l3"><a href="#tnlayer"><code>\tnlayer</code></a></li><li class="l3"><a href="#tngrid"><code>\tngrid</code></a></li><li class="l3"><a href="#tnconnect"><code>\tnconnect</code></a></li><li class="l3"><a href="#tnopen"><code>\tnopen</code></a></li><li class="l3"><a href="#tnopenswap"><code>\tnopenswap</code></a></li><li class="l3"><a href="#tnjoin"><code>\tnjoin</code></a></li><li class="l3"><a href="#tneq"><code>\tneq</code>, <code>\tnapprox</code></a></li><li class="l3"><a href="#tnbreak"><code>\tnbreak</code></a></li><li class="l3"><a href="#tnframe"><code>\tnframe</code></a></li><li class="l3"><a href="#tntype"><code>\tntype</code></a></li><li class="l3"><a href="#tnshow"><code>\tnshow</code></a></li><li class="l3"><a href="#tnput"><code>\tnput</code>, <code>\tnmid</code></a></li><li class="l3"><a href="#tnset"><code>\tnset</code></a></li><li class="l3"><a href="#tnbond"><code>\tnbond</code></a></li></ul></aside><article><h1 id="commands">Commands</h1>
+<p>Every command a figure or a notation file may use, each with its keys. The <a href="api.html">overview</a> says how they combine into a figure; the <a href="styles.html">styles</a> are what they draw in.</p><article class="doc" id="tnstack"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnstack</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;sites&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;layers&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-stack.tex">‹/› source</a></header><div class="doc-body"><p>A stack: <code>&lt;sites&gt;</code> slots across, the named <code>&lt;layers&gt;</code> down, placed on the canvas after what is on the row.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>left=&lt;label&gt;</code>, <code>right=&lt;label&gt;</code></td><td>an environment block at that end, drawn in <code>tn env</code></td></tr><tr><td><code>rises={&lt;layer&gt;=&lt;factor&gt;, ...}</code></td><td>the gap above each named layer alone, at that factor of the stack's rise: <code>rises={g2=0.8, g3=0.8}</code> sets the layers of a circuit of gates closer</td></tr><tr><td><code>scale=&lt;factor&gt;</code></td><td>the whole stack at that factor of the notation: its distances, its tensors, its open indices</td></tr><tr><td><code>pitch=&lt;factor&gt;</code>, <code>rise=&lt;factor&gt;</code></td><td>... or its distances alone, between sites and between layers</td></tr><tr><td><code>size=&lt;factor&gt;</code></td><td>... its tensors, and the slots of absent ones</td></tr><tr><td><code>stub=&lt;factor&gt;</code></td><td>... the least an open index of it shows</td></tr></tbody></table></div>
+<p>A factor is a number, never a length, and multiplies the notation's tokens for this stack only: <code>\tnstack[scale=0.7, rise=0.6]</code> draws a circuit of many layers compact, and a stack after it is drawn at the notation's again. A label keeps its size, which is the size of the equations beside it. A gap is set where the stack is placed, <code>rises={g2=0.5}</code>, and not on <code>\tnlayer</code>, because a layer's slots are named and placed before anything is put in them.</p></div></article><article class="doc" id="tntree"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tntree</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;sites&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;layers&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-stack.tex">‹/› source</a></header><div class="doc-body"><p>A stack in the tree layout: at the tree's pitch and rise (<code>tree pitch</code>, <code>tree rise</code>), each tensor its own size, centered over the sites it joins, and an index between two that do not line up turning a corner. Its keys and its layers are a stack's.</p></div></article><article class="doc" id="tnlayer"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnlayer</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;stack&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;layer&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;entry&gt;, ...<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-stack.tex">‹/› source</a></header><div class="doc-body"><p>The layer's slots, left to right: <code>&lt;type&gt;/&lt;label&gt;</code>, <code>&lt;type&gt;/&lt;label&gt;/&lt;span&gt;</code>, <code>&lt;type&gt;/&lt;label&gt;/&lt;span&gt;/&lt;down&gt;</code>, <code>.</code> (empty), <code>-</code> (the layer's index runs through), <code>|</code> (the site's index runs through), <code>+</code> (both run through, crossing: a wire under the line of a gate on the sites either side), <code>dots</code>, and <code>&lt;n&gt;*&lt;entry&gt;</code> for any of them repeated. A run of like entries is always one <code>&lt;n&gt;*&lt;entry&gt;</code>.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>size=&lt;factor&gt;</code></td><td>the layer's tensors at that factor of the stack's size</td></tr></tbody></table></div></div></article><article class="doc" id="tngrid"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tngrid</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;columns&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;rows&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;type&gt;/&lt;label&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-grid.tex">‹/› source</a></header><div class="doc-body"><p>A square lattice of one tensor, turned by 45 degrees.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>bonds=&lt;type&gt;/&lt;label&gt;</code></td><td>a tensor on every bond, turned with the lattice</td></tr><tr><td><code>split</code></td><td>every site drawn as the two halves of a singular value decomposition, as in the tensor renormalization group: triangles one above the other on the sites with i+j even, side by side on the others, their flat sides carrying the bonds of the lattice and their apexes joined; the type is the halves', four of them — <code>&lt;top&gt;, &lt;bottom&gt;, &lt;left&gt;, &lt;right&gt;</code>, the four tensors the splits leave — or one for all</td></tr><tr><td><code>scale=&lt;factor&gt;</code>, <code>pitch=&lt;factor&gt;</code>, <code>size=&lt;factor&gt;</code>, <code>stub=&lt;factor&gt;</code></td><td>as on a stack: the grid at factors of the notation's distances and sizes</td></tr></tbody></table></div></div></article><article class="doc" id="tnconnect"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnconnect</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;block&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>Every index the block's layout implies.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>along=&lt;edge type&gt;</code></td><td>the indices along the layers (on a grid, every bond)</td></tr><tr><td><code>down=&lt;edge type&gt;</code></td><td>the indices down the sites</td></tr><tr><td><code>apart={&lt;layer or port&gt;, ...}</code></td><td>layers with no index along them (a stack only), and ports whose bond is left out: <code>apart={g1, S-ket-2:right}</code></td></tr></tbody></table></div></div></article><article class="doc" id="tnopen"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnopen</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;direction&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;tensor or block&gt;, ...<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>Open indices toward <code>up</code>, <code>down</code>, <code>left</code> or <code>right</code>. On a grid, <code>down</code> (out of the plane), or the lattice's own directions <code>nw</code>, <code>ne</code>, <code>se</code>, <code>sw</code> — the indices toward that neighbour that no bond takes — or <code>around</code>, all four: the edge of a piece of a larger lattice.</p>
+<p><code>rest</code> opens every index not yet drawn, each toward its own side: on a tensor, all of its free ones; on a block, those of each tensor whose type names its indices (<code>tn index</code>) — a type that does not has every index its layout gives it, which is more than it means; on a port, that one index (<code>\tnopen{rest}{W-a-2:u}</code>). An index left out by <code>apart=</code> is not opened. A named index opened ends at the coordinate <code>&lt;tensor&gt;-&lt;name&gt;</code>.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>edge=&lt;edge type&gt;</code></td><td>the edge type</td></tr><tr><td><code>label=&lt;text&gt;</code></td><td>a label at the end of each index, beyond it; <code>#1</code> is its number among the indices this command opens</td></tr><tr><td><code>labels={&lt;text&gt;, ...}</code></td><td>the labels one by one, in the same order</td></tr></tbody></table></div></div></article><article class="doc" id="tnopenswap"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnopenswap</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;tensor&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>The two indices down from a tensor across two sites, crossed. Its keys are <code>\tnopen</code>'s: <code>edge=</code>, <code>label=</code>, <code>labels=</code>.</p></div></article><article class="doc" id="tnjoin"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnjoin</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;port&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;port&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>One index between two ports of one block; drawn from the first to the second. A port is <code>&lt;tensor&gt;:&lt;side&gt;[:&lt;n&gt;]</code>, the <code>&lt;n&gt;</code>th index on that side (the first unless said), or, of a tensor whose type names its indices, <code>&lt;tensor&gt;:&lt;name&gt;</code> or <code>&lt;tensor&gt;:&lt;n&gt;</code>, its <code>&lt;n&gt;</code>th index in the type's order.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>edge=&lt;edge type&gt;</code></td><td>the edge type</td></tr></tbody></table></div></div></article><article class="doc" id="tneq"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tneq</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span></code><code class="sig"><span class="tx-cmd">\tnapprox</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/core/tikz-tensors-canvas.tex">‹/› source</a></header><div class="doc-body"><p>A relation sign after everything on the row; the next block goes after it.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>factor=&lt;text&gt;</code></td><td>written after the sign, <code>\tneq[factor=$\lambda$]</code></td></tr></tbody></table></div></div></article><article class="doc" id="tnbreak"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnbreak</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/core/tikz-tensors-canvas.tex">‹/› source</a></header><div class="doc-body"><p>The next block starts a new row, under everything drawn so far.</p></div></article><article class="doc" id="tnframe"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnframe</span><span class="tx-brace">[</span>&lt;keys&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;tensor&gt;, ...<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/style/tikz-tensors-labels.tex">‹/› source</a></header><div class="doc-body"><p>A dashed box around the named tensors, said by what it frames: the tensors a step contracts into one, or a part of a network set apart.</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>label=&lt;text&gt;</code></td><td>written above the frame's right corner</td></tr></tbody></table></div></div></article><article class="doc" id="tntype"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tntype</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;options&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>A type of one's own: the style <code>&lt;name&gt;</code>, which is <code>&lt;options&gt;</code>, and which a tensor drawn in it says it is — <code>\tnshow</code> and an error name it. It says what a tensor is: its outline, its indices, named (<code>tn index</code>), which the layout then holds a figure to, and which way they run (<code>tn flux</code>, or an index's own <code>:in</code>, <code>:out</code>). In the preamble or a notation file: <code>\tntype{site}{tn circle, tn index={l:left:in, r:right:out, s:down}}</code>.</p></div></article><article class="doc" id="tnshow"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnshow</span><span class="tx-brace">{</span>&lt;tensor&gt;, ...<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/layout/tikz-tensors-layout.tex">‹/› source</a></header><div class="doc-body"><p>Writes what the package made of each tensor to the log: its block, the sites and layers it covers, its type, how many indices it has and how many are drawn, the sides it has them on, and each index — its name, if its type names it, its side and place, and whether it is drawn, left out by <code>apart=</code>, or free. Nothing is drawn; it is for finding out why a figure looks as it does.</p></div></article><article class="doc" id="tnput"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnput</span><span class="tx-brace">[</span>&lt;placement&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;text&gt;<span class="tx-brace">}</span></code><code class="sig"><span class="tx-cmd">\tnmid</span><span class="tx-brace">[</span>&lt;placement&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;name&gt;<span class="tx-brace">}</span><span class="tx-brace">{</span>&lt;text&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/style/tikz-tensors-labels.tex">‹/› source</a></header><div class="doc-body"><p>A label at a named point, or midway between two. A label on an open index goes in <code>\tnopen</code>'s <code>label=</code> instead.</p></div></article><article class="doc" id="tnset"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnset</span><span class="tx-brace">{</span>&lt;key&gt;=&lt;value&gt;, ...<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/core/tikz-tensors-core.tex">‹/› source</a></header><div class="doc-body"><p>The tokens, for a notation file (a figure may not use it).</p>
+<div class="table"><table><thead><tr><th>key</th><th></th></tr></thead><tbody><tr><td><code>pitch=</code>, <code>rise=</code></td><td>between sites, between layers of a stack</td></tr><tr><td><code>tree pitch=</code>, <code>tree rise=</code></td><td>the same, in a tree</td></tr><tr><td><code>grid pitch=</code></td><td>along a bond of a grid</td></tr><tr><td><code>slot=</code></td><td>the size of a tensor that is not there, where an open index ends</td></tr><tr><td><code>stub=</code></td><td>the least an open index shows beyond its tensor</td></tr><tr><td><code>env width=</code></td><td>the width of an environment block</td></tr><tr><td><code>gap=</code></td><td>either side of a relation sign; twice it between rows</td></tr><tr><td><code>inset=</code></td><td>how far a bond runs under the tensor it meets</td></tr><tr><td><code>line width=</code></td><td>the one stroke of outlines and indices</td></tr></tbody></table></div></div></article><article class="doc" id="tnbond"><header><div class="sigs"><code class="sig"><span class="tx-cmd">\tnbond</span><span class="tx-brace">[</span>&lt;edge type&gt;<span class="tx-brace">]</span><span class="tx-brace">{</span>&lt;path&gt;<span class="tx-brace">}</span></code></div><span class="kind">Command</span><a class="src" href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/tex/core/tikz-tensors-core.tex">‹/› source</a></header><div class="doc-body"><p>One edge drawn under the nodes, along a TikZ path written out. For extending the package and for pictures that are not on a layout; a figure may not use it.</p></div></article></article></div>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.18.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
