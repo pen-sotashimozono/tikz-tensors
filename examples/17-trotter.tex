@@ -20,7 +20,7 @@
 % the truncation that follows it, it sits ready for (i+1, i+2).
 %
 % Read downward: the state at the top, its gates under it, a layer at a time.
-% The layers of gates are closer to one another than to the state (close=),
+% The layers of gates are closer to one another than to the state (rises=),
 % because they are one circuit, and side by side in a layer they share no index
 % (apart=). No gate has legs of its own; a site a gate does
 % not touch is `|' in its layer, so every physical index runs the whole way
@@ -32,7 +32,7 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack[close={g2, g3, g4}]{S}{5}{ket, g1, g2, g3, g4}
+  \tnstack[rises={g2=0.8, g3=0.8, g4=0.8}]{S}{5}{ket, g1, g2, g3, g4}
   \tnlayer{S}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{S}{g1}{2*gate/$U(\delta t)$/2, |}
   \tnlayer{S}{g2}{|, 2*gate/$U(\delta t)$/2}
@@ -44,7 +44,7 @@
   \tnopen{down}{S}
   \tnmid[right]{S-g2-6-slot}{S-g3-6-slot}{$O(\delta t^2)$ a step}
   \tnbreak
-  \tnstack[close={g2, g3, g4, g5, g6, g7, g8}]{T}{5}{ket, g1, g2, g3, g4, g5, g6, g7, g8}
+  \tnstack[rises={g2=0.8, g3=0.8, g4=0.8, g5=0.8, g6=0.8, g7=0.8, g8=0.8}]{T}{5}{ket, g1, g2, g3, g4, g5, g6, g7, g8}
   \tnlayer{T}{ket}{2*canl/$A$, center/$C$, 2*canr/$B$}
   \tnlayer{T}{g1}{gate/{$U(\delta t/2)$}/2, 3*|}
   \tnlayer{T}{g2}{|, gate/{$U(\delta t/2)$}/2, 2*|}

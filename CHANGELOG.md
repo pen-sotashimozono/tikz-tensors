@@ -5,6 +5,31 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.18.0 — 2026-10-04
+
+The names, made one family before 1.0. A name that is gone is an error that
+says what replaced it.
+
+| was | is |
+|---|---|
+| `\tnstack[tree]` | `\tntree` |
+| `\tnstack[close={g2, g3}]` | `\tnstack[rises={g2=0.8, g3=0.8}]` |
+| `\tnset{closerise=…}` | gone: `rises=` says each layer's gap as a factor |
+| `\tnset{treepitch=…, treerise=…}` | `\tnset{tree pitch=…, tree rise=…}` |
+| `\tnset{gpitch=…}` | `\tnset{grid pitch=…}` |
+| `\tnset{envw=…}` | `\tnset{env width=…}` |
+| `tn leg anchor` | `tn site anchor` |
+| `tn arrows=false` | `tn arrowheads=false` |
+| `<grid>-i-j-top`, `-bottom`, `-left`, `-right` (halves) | `-n`, `-s`, `-w`, `-e` |
+| `<grid>-i-j-a`, `-b` (bond tensors) | `-se`, `-sw` |
+
+Kept as they are: `\tnbond` (the escape hatch, which figures may not use),
+`along=` and `down=`, a stack's `left=` and `right=`, `tn single`,
+`\tnopenswap`, `\tnput`, `\tnmid`, and a layer's entries.
+
+The linter takes a factor in `rises=` as it takes one in `scale=`. No figure
+changes; the specimen of styles changes the names it prints.
+
 ## v0.17.0 — 2026-10-03
 
 An index runs one way, in or out of its tensor, and the types say which:

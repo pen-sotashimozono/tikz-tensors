@@ -18,7 +18,8 @@
 % half way along -- the weights of a simple update -- turned with the lattice
 % so that the bond meets it as it would on a chain, at a vertex of a diamond
 % rather than the middle of a side, with its label upright; the one after
-% <name>-i-j along a row is <name>-i-j-a, along a column <name>-i-j-b.
+% <name>-i-j toward se (along a row) is <name>-i-j-se, toward sw (along a
+% column) <name>-i-j-sw.
 % As on a stack, \tnconnect then draws the bonds and \tnopen{down} the
 % indices out of the plane; \tnopen{nw}, {ne}, {se}, {sw} the indices of the
 % lattice toward that neighbour that no bond takes, and \tnopen{around} all
@@ -28,13 +29,13 @@
 % decomposition of it leaves, as the tensor renormalization group splits a
 % lattice: on the sites of one colour of the checkerboard (i+j even) the
 % indices toward nw and ne go to one half and those toward sw and se to the
-% other, the halves one above the other (<name>-i-j-top, -bottom); on the
+% other, the halves one above the other (<name>-i-j-n, -s, north and south); on the
 % other colour the indices toward nw and sw and toward ne and se, the halves
-% side by side (-left, -right). Each half is a triangle whose two corners on
+% side by side (-w, -e). Each half is a triangle whose two corners on
 % its flat side are its indices on the lattice and whose apex points at its
 % other half, and \tnconnect joins the two, apex to apex. The four halves are
 % four tensors -- the two factors of each colour's decomposition -- so the
-% type is four, <top>, <bottom>, <left>, <right>, each <type>/<label>, or one
+% type is four, <n>, <s>, <w>, <e>, each <type>/<label>, or one
 % for all four; a notation colours them, and the triangle is the split's.
 % scale=, pitch=, size= and stub= draw it at factors of the notation's
 % distances and sizes, as on a stack (tikz-tensors-layout.tex).
@@ -80,13 +81,13 @@
     \tn@set{#2@bonds}{1}%
     \expandafter\tn@entry\tn@gbond/////\tn@end
     \foreach \tn@i in {1,...,#3}{\foreach \tn@j in {1,...,#4}{%
-      \ifnum\tn@i<#3 \tn@gbondnode{#2}{\tn@i}{\tn@j}{\tn@i+1}{\tn@j}{a}\fi
-      \ifnum\tn@j<#4 \tn@gbondnode{#2}{\tn@i}{\tn@j}{\tn@i}{\tn@j+1}{b}\fi}}%
+      \ifnum\tn@i<#3 \tn@gbondnode{#2}{\tn@i}{\tn@j}{\tn@i+1}{\tn@j}{se}\fi
+      \ifnum\tn@j<#4 \tn@gbondnode{#2}{\tn@i}{\tn@j}{\tn@i}{\tn@j+1}{sw}\fi}}%
   \fi
   \tn@gxy{#2}{#3}{1}\tn@reach{\tn@gx+\tn@slot/2}%
 }
-% The four types of a split grid's halves, as \tn@ghs@1 .. 4 (top, bottom,
-% left, right): four entries, or one for all.
+% The four types of a split grid's halves, as \tn@ghs@1 .. 4 (n, s, w, e):
+% four entries, or one for all.
 \def\tn@gfour#1{%
   \global\tn@c=0
   \foreach \tn@ge in {#1}{\global\advance\tn@c by 1
@@ -95,7 +96,7 @@
     \foreach \tn@k in {2,3,4}{\expandafter\xdef\csname tn@ghs@\tn@k\endcsname{\tn@ghs@1}}%
   \else\ifnum\tn@c=4 \else
     \PackageError{tikz-tensors}{\string\tngrid: a split grid takes four types,
-      top, bottom, left, right, or one; not \the\tn@c}{}\fi\fi}
+      n, s, w, e, or one; not \the\tn@c}{}\fi\fi}
 \def\tn@ghtype#1{\expandafter\expandafter\expandafter\tn@entry
   \csname tn@ghs@#1\endcsname/////\tn@end}
 % The two halves of site (<#2>, <#3>) of grid <#1>: one triangle turned four
@@ -108,14 +109,14 @@
   \tn@len\tn@gg{1.2mm*\tn@get{#1@t@size}}%
   \pgfmathtruncatemacro\tn@gpar{mod(#2+#3,2)}%
   \ifnum\tn@gpar=0
-    \tn@ghtype{1}\tn@ghalf{#1}{#1-#2-#3-top}{180}{\tn@gx}{\tn@gy+\tn@gg}%
-    \tn@ghtype{2}\tn@ghalf{#1}{#1-#2-#3-bottom}{0}{\tn@gx}{\tn@gy-\tn@gg}%
+    \tn@ghtype{1}\tn@ghalf{#1}{#1-#2-#3-n}{180}{\tn@gx}{\tn@gy+\tn@gg}%
+    \tn@ghtype{2}\tn@ghalf{#1}{#1-#2-#3-s}{0}{\tn@gx}{\tn@gy-\tn@gg}%
   \else
-    \tn@ghtype{3}\tn@ghalf{#1}{#1-#2-#3-left}{-90}{\tn@gx-\tn@gg}{\tn@gy}%
-    \tn@ghtype{4}\tn@ghalf{#1}{#1-#2-#3-right}{90}{\tn@gx+\tn@gg}{\tn@gy}%
+    \tn@ghtype{3}\tn@ghalf{#1}{#1-#2-#3-w}{-90}{\tn@gx-\tn@gg}{\tn@gy}%
+    \tn@ghtype{4}\tn@ghalf{#1}{#1-#2-#3-e}{90}{\tn@gx+\tn@gg}{\tn@gy}%
   \fi
-  \tn@record{#1-#2-#3-\ifnum\tn@gpar=0 top\else left\fi}{#1}{#2}{#2}{#3}{#3}%
-  \tn@record{#1-#2-#3-\ifnum\tn@gpar=0 bottom\else right\fi}{#1}{#2}{#2}{#3}{#3}}
+  \tn@record{#1-#2-#3-\ifnum\tn@gpar=0 n\else w\fi}{#1}{#2}{#2}{#3}{#3}%
+  \tn@record{#1-#2-#3-\ifnum\tn@gpar=0 s\else e\fi}{#1}{#2}{#2}{#3}{#3}}
 \def\tn@ghalf#1#2#3#4#5{% grid, name, turned by, x, y
   \tn@len\tn@hx{#4}\tn@len\tn@hy{#5}%
   \tn@sized{#1}{0.42}%
@@ -129,18 +130,18 @@
 % corner of the half that carries that index.
 \def\tn@gdirs#1#2#3\tn@end{\def\tn@gns{#1}\def\tn@gwe{#2}}
 % which corner of a half is its index toward a direction; corner 1 is its apex
-\def\tn@gcn@top@nw{corner 3}\def\tn@gcn@top@ne{corner 2}
-\def\tn@gcn@bottom@sw{corner 2}\def\tn@gcn@bottom@se{corner 3}
-\def\tn@gcn@left@nw{corner 2}\def\tn@gcn@left@sw{corner 3}
-\def\tn@gcn@right@se{corner 2}\def\tn@gcn@right@ne{corner 3}
+\def\tn@gcn@n@nw{corner 3}\def\tn@gcn@n@ne{corner 2}
+\def\tn@gcn@s@sw{corner 2}\def\tn@gcn@s@se{corner 3}
+\def\tn@gcn@w@nw{corner 2}\def\tn@gcn@w@sw{corner 3}
+\def\tn@gcn@e@se{corner 2}\def\tn@gcn@e@ne{corner 3}
 \def\tn@gport#1#2#3#4{%
   \ifnum\tn@get{#1@split}=1
     \edef\tn@gd{#4}\expandafter\tn@gdirs\tn@gd\tn@end
     \pgfmathtruncatemacro\tn@gpar{mod(#2+#3,2)}%
     \ifnum\tn@gpar=0
-      \if n\tn@gns \def\tn@gh{top}\else \def\tn@gh{bottom}\fi
+      \if n\tn@gns \def\tn@gh{n}\else \def\tn@gh{s}\fi
     \else
-      \if w\tn@gwe \def\tn@gh{left}\else \def\tn@gh{right}\fi
+      \if w\tn@gwe \def\tn@gh{w}\else \def\tn@gh{e}\fi
     \fi
     \tn@anc{#1-#2-#3-\tn@gh}{\csname tn@gcn@\tn@gh @#4\endcsname}%
     \let\tn@px\tn@ax \let\tn@py\tn@ay
@@ -193,11 +194,11 @@
     \ifnum\tn@get{#1@split}=1
       \pgfmathtruncatemacro\tn@gpar{mod(\tn@i+\tn@j,2)}%
       \ifnum\tn@gpar=0
-        \tn@anc{#1-\tn@i-\tn@j-top}{corner 1}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
-        \tn@anc{#1-\tn@i-\tn@j-bottom}{corner 1}%
+        \tn@anc{#1-\tn@i-\tn@j-n}{corner 1}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
+        \tn@anc{#1-\tn@i-\tn@j-s}{corner 1}%
       \else
-        \tn@anc{#1-\tn@i-\tn@j-left}{corner 1}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
-        \tn@anc{#1-\tn@i-\tn@j-right}{corner 1}%
+        \tn@anc{#1-\tn@i-\tn@j-w}{corner 1}\let\tn@xa\tn@ax \let\tn@ya\tn@ay
+        \tn@anc{#1-\tn@i-\tn@j-e}{corner 1}%
       \fi
       \tn@line{\tn@along}{\tn@xa}{\tn@ya}{\tn@ax}{\tn@ay}%
     \fi}}}

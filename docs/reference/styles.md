@@ -34,7 +34,7 @@ and `examples/conventions/notation.tex` is the one the examples are drawn in.
 ### `tn gate`, `tn env`
 [picture](styles/style-gate-env.tex)
 
-### `tn leg anchor`, `tn flux`, `tn single`, `tn index`
+### `tn site anchor`, `tn flux`, `tn single`, `tn index`
 [picture](styles/style-index.tex)
 
 ## Indices
@@ -42,7 +42,7 @@ and `examples/conventions/notation.tex` is the one the examples are drawn in.
 ### `tn edge`, `tn wavy`, `tn arrow`, `tn double`
 [picture](styles/style-edges.tex)
 
-### `tn arrows`
+### `tn arrowheads`
 [picture](styles/style-arrows.tex)
 
 ### `tn label`

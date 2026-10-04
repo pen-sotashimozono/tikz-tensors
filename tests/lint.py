@@ -83,16 +83,21 @@ def strip_comment(line):
 
 # A factor is not a length: the size of a block or a layer, or of one tensor,
 # said as a number times the notation's (\\tnstack[scale=0.6, rise=0.5],
-# \\tnlayer[size=0.8], tn size=1.2). These are set aside before the rules are
-# read, so a decimal there is allowed and a length there is still not.
+# rises={g2=0.8}, \\tnlayer[size=0.8], tn size=1.2). These are set aside
+# before the rules are read, so a decimal there is allowed and a length there
+# is still not.
 FACTOR = re.compile(rf"(?:\b(?:scale|pitch|rise|size|stub)|tn size)\s*=\s*\d*\.?\d+(?!\s*{UNIT}|[\d.])")
-OPTIONS = re.compile(r"\\tn(?:stack|grid|layer)\s*\[[^\]]*\]")
+OPTIONS = re.compile(r"\\tn(?:stack|tree|grid|layer)\s*\[[^\]]*\]")
+# rises={<layer>=<factor>, ...}: a factor for each layer named
+RISES = re.compile(rf"\brises\s*=\s*\{{[^}}]*\}}")
+LAYERFACTOR = re.compile(rf"=\s*\d*\.?\d+(?!\s*{UNIT}|[\d.])")
 
 
 def strip_factors(line):
     """The line with every factor set aside (FACTOR): in the options of a
     placing command, and tn size= anywhere."""
-    line = OPTIONS.sub(lambda m: FACTOR.sub("factor", m.group()), line)
+    line = OPTIONS.sub(lambda m: RISES.sub(lambda r: LAYERFACTOR.sub("=factor", r.group()),
+                                           FACTOR.sub("factor", m.group())), line)
     return re.sub(rf"tn size\s*=\s*\d*\.?\d+(?!\s*{UNIT}|[\d.])", "tn size", line)
 
 

@@ -24,7 +24,7 @@
 
 % the tokens are the package's to set and a notation's to change; set here to
 % what they already are, so that the sheet shows \tnset without moving anything
-\tnset{stub=4mm, closerise=12mm, line width=0.8pt}
+\tnset{stub=4mm, tree pitch=9mm, line width=0.8pt}
 
 \begin{document}
 \begin{tikzpicture}
@@ -54,8 +54,8 @@
   \tnbond{(0,-4.4) -- (0.9,-4.4)}                        \spec{0.45}{-4.6}{tn edge}
   \tnbond[tn wavy]{(1.7,-4.4) -- (2.6,-4.4)}             \spec{2.15}{-4.6}{tn wavy}
   \tnbond[tn arrow]{(3.4,-4.4) -- (4.3,-4.4)}            \spec{3.85}{-4.6}{tn arrow}
-  \begin{scope}[tn arrows=false]
-    \tnbond[tn arrow]{(5.1,-4.4) -- (6.0,-4.4)}          \spec{5.55}{-4.6}{tn arrows=false}
+  \begin{scope}[tn arrowheads=false]
+    \tnbond[tn arrow]{(5.1,-4.4) -- (6.0,-4.4)}          \spec{5.55}{-4.6}{tn arrowheads=false}
   \end{scope}
   \tnbond{(7.0,-4.4) -- (7.9,-4.4) node[tn label, right] {$i$}}
                                                          \spec{7.45}{-4.6}{tn label}
@@ -93,12 +93,12 @@
   % of its flat side; any shape can, and the stack moves the tensor across so
   % that point is on the site's line
   \tnstack{Z}{1}{a, b}
-  \tnlayer{Z}{a}{{tn box, tn leg anchor=south west}/$T$}
+  \tnlayer{Z}{a}{{tn box, tn site anchor=south west}/$T$}
   \tnlayer{Z}{b}{tn box/$T$}
   \tnconnect{Z}
   \node[font=\tiny\ttfamily, text=ttmuted, anchor=north, align=center]
     at (current bounding box.south) {\textbackslash tnstack, \textbackslash tnlayer,
-    \textbackslash tnconnect, \textbackslash tnopen, \textbackslash tneq, tn leg anchor};
+    \textbackslash tnconnect, \textbackslash tnopen, \textbackslash tneq, tn site anchor};
 
   % ---- a second row of stacks: what a grid can hold ---------------------
   % \tnbreak starts a row under everything above. One stack holds a tensor two

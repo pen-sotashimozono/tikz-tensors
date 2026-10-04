@@ -15,7 +15,7 @@
 %%   style/    what a tensor and an index look like
 %%     colors    the theme's named colours (generated from theme/tokens.toml)
 %%     nodes     node types -- the shapes, their sizes, and the properties a
-%%               layout reads off a type (tn leg anchor, tn flux, tn single);
+%%               layout reads off a type (tn site anchor, tn flux, tn single);
 %%               tn gate and tn env, the two named for a structure
 %%     edges     edge types -- tn wavy, tn arrow, tn double -- and the routes
 %%     labels    tn label, \tnput, \tnmid
@@ -24,7 +24,7 @@
 %%               which are taken, and \tnconnect, \tnopen, \tnopenswap,
 %%               \tnjoin, which hand their work to the layout of the block
 %%     stack     \tnstack, \tnlayer: sites across, layers down
-%%     tree      \tnstack[tree]: a stack drawn as a tree
+%%     tree      \tntree: a stack drawn as a tree
 %%     grid      \tngrid: a square lattice turned by 45 degrees
 %%
 %% A new layout is one more file in layout/ (see tikz-tensors-layout.tex for
@@ -43,7 +43,7 @@
 %% the style, never the colour. Say which you mean: color=gate, or draw=/fill=.
 %% The version is the \ProvidesPackage line below.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{tikz-tensors}[2026/10/03 v0.17.0 tensor-network diagrams in one theme]
+\ProvidesPackage{tikz-tensors}[2026/10/04 v0.18.0 tensor-network diagrams in one theme]
 
 \RequirePackage{xcolor}
 \RequirePackage{tikz}
