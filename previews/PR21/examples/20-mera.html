@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MERA · tikz-tensors</title>
+<link rel="stylesheet" href="../assets/theme.css">
+<link rel="stylesheet" href="../assets/site.css">
+<meta name="tt-root" content="../">
+<script>try{const r=document.documentElement,t=localStorage.getItem("theme"),l=localStorage.getItem("layout");if(t)r.dataset.theme=t;if(l)r.dataset.layout=l}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html">tikz-tensors <span class="ver">v0.18.0</span></a>
+  <nav><a href="../index.html">Overview</a><a href="../examples.html" aria-current=page>Examples</a><a href="../live.html">Playground</a><a href="../api.html">Reference</a><a href="../notation.html">Notation</a><a href="https://github.com/pen-sotashimozono/tikz-tensors">GitHub</a></nav>
+  <select class="versions" aria-label="Version" hidden></select>
+  <button class="mode" type="button" aria-label="Switch light or dark"
+    onclick="const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(e){}">◐</button>
+</header>
+<main>
+<p class="crumb"><a href="../examples.html">Examples</a> / 20</p>
+<h1 class="with-button">MERA<button class="pill side-btn" type="button" title="Code on the left, the picture on the right, kept in view" onclick="const r=document.documentElement,s=r.dataset.layout==='side';if(s)delete r.dataset.layout;else r.dataset.layout='side';try{localStorage.setItem('layout',s?'':'side')}catch(e){}">⇆ Side by side</button></h1>
+<div class="traced example">
+<figure class="paper"><span class="stage"><img style="width:594pt" src="../figures/20-mera.svg" alt="MERA: A binary MERA on sixteen sites, all the way up"><svg class="trace" viewBox="0 0 395.696 346.09" aria-hidden="true"><rect class="hl" data-line="35" x="191.89" y="8.34" width="11.92" height="11.93" rx="2"/><rect class="hl" data-line="36" x="191.25" y="50.51" width="12.93" height="12.91" rx="2"/><rect class="hl" data-line="37" x="89.20" y="93.03" width="12.93" height="12.92" rx="2"/><rect class="hl" data-line="37" x="293.30" y="93.03" width="12.93" height="12.92" rx="2"/><rect class="hl" data-line="38" x="181.96" y="132.36" width="31.77" height="19.02" rx="2"/><rect class="hl" data-line="39" x="38.18" y="178.06" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="39" x="140.23" y="178.06" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="39" x="242.28" y="178.06" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="39" x="344.32" y="178.06" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="40" x="79.92" y="217.40" width="31.76" height="19.01" rx="2"/><rect class="hl" data-line="40" x="181.96" y="217.40" width="31.77" height="19.01" rx="2"/><rect class="hl" data-line="40" x="284.01" y="217.40" width="31.77" height="19.01" rx="2"/><rect class="hl" data-line="41" x="12.67" y="263.10" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="41" x="63.69" y="263.10" width="12.93" height="12.93" rx="2"/><rect class="hl" data-line="41" x="114.72" y="263.10" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="41" x="165.73" y="263.10" width="12.93" height="12.93" rx="2"/><rect class="hl" data-line="41" x="216.76" y="263.10" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="41" x="267.78" y="263.10" width="12.93" height="12.93" rx="2"/><rect class="hl" data-line="41" x="318.81" y="263.10" width="12.92" height="12.93" rx="2"/><rect class="hl" data-line="41" x="369.83" y="263.10" width="12.93" height="12.93" rx="2"/><rect class="hl" data-line="42" x="28.90" y="302.44" width="31.76" height="19.01" rx="2"/><rect class="hl" data-line="42" x="79.92" y="302.44" width="31.76" height="19.01" rx="2"/><rect class="hl" data-line="42" x="130.95" y="302.44" width="31.75" height="19.01" rx="2"/><rect class="hl" data-line="42" x="181.96" y="302.44" width="31.77" height="19.01" rx="2"/><rect class="hl" data-line="42" x="232.99" y="302.44" width="31.76" height="19.01" rx="2"/><rect class="hl" data-line="42" x="284.01" y="302.44" width="31.77" height="19.01" rx="2"/><rect class="hl" data-line="42" x="335.04" y="302.44" width="31.76" height="19.01" rx="2"/><polyline class="hl" data-line="43" points="95.80,103.35 95.80,75.18 185.86,75.18 185.86,60.83"/><polyline class="hl" data-line="43" points="44.77,188.39 44.77,138.96 83.82,138.96 83.82,103.35"/><polyline class="hl" data-line="43" points="19.27,273.43 19.27,224.00 32.80,224.00 32.80,188.39"/><polyline class="hl" data-line="43" points="32.02,311.95 32.02,273.43"/><polyline class="hl" data-line="43" points="86.87,226.91 86.87,204.19 56.76,204.19 56.76,188.39"/><polyline class="hl" data-line="43" points="70.29,273.43 70.29,246.71 86.87,246.71 86.87,226.91"/><polyline class="hl" data-line="43" points="57.53,311.95 57.53,273.43"/><polyline class="hl" data-line="43" points="83.05,311.95 83.05,273.43"/><polyline class="hl" data-line="43" points="188.92,141.87 188.92,119.15 107.79,119.15 107.79,103.35"/><polyline class="hl" data-line="43" points="146.82,188.39 146.82,161.67 188.92,161.67 188.92,141.87"/><polyline class="hl" data-line="43" points="104.73,226.91 104.73,204.19 134.84,204.19 134.84,188.39"/><polyline class="hl" data-line="43" points="121.31,273.43 121.31,246.71 104.73,246.71 104.73,226.91"/><polyline class="hl" data-line="43" points="108.55,311.95 108.55,273.43"/><polyline class="hl" data-line="43" points="134.07,311.95 134.07,273.43"/><polyline class="hl" data-line="43" points="188.92,226.91 188.92,204.19 158.80,204.19 158.80,188.39"/><polyline class="hl" data-line="43" points="172.33,273.43 172.33,246.71 188.92,246.71 188.92,226.91"/><polyline class="hl" data-line="43" points="159.58,311.95 159.58,273.43"/><polyline class="hl" data-line="43" points="197.85,60.83 197.85,14.31"/><polyline class="hl" data-line="43" points="185.10,311.95 185.10,273.43"/><polyline class="hl" data-line="43" points="299.90,103.35 299.90,75.18 209.83,75.18 209.83,60.83"/><polyline class="hl" data-line="43" points="206.77,141.87 206.77,119.15 287.91,119.15 287.91,103.35"/><polyline class="hl" data-line="43" points="248.87,188.39 248.87,161.67 206.77,161.67 206.77,141.87"/><polyline class="hl" data-line="43" points="206.77,226.91 206.77,204.19 236.89,204.19 236.89,188.39"/><polyline class="hl" data-line="43" points="223.36,273.43 223.36,246.71 206.77,246.71 206.77,226.91"/><polyline class="hl" data-line="43" points="210.60,311.95 210.60,273.43"/><polyline class="hl" data-line="43" points="236.11,311.95 236.11,273.43"/><polyline class="hl" data-line="43" points="290.97,226.91 290.97,204.19 260.85,204.19 260.85,188.39"/><polyline class="hl" data-line="43" points="274.38,273.43 274.38,246.71 290.97,246.71 290.97,226.91"/><polyline class="hl" data-line="43" points="261.63,311.95 261.63,273.43"/><polyline class="hl" data-line="43" points="287.14,311.95 287.14,273.43"/><polyline class="hl" data-line="43" points="350.91,188.39 350.91,138.96 311.88,138.96 311.88,103.35"/><polyline class="hl" data-line="43" points="308.82,226.91 308.82,204.19 338.94,204.19 338.94,188.39"/><polyline class="hl" data-line="43" points="325.41,273.43 325.41,246.71 308.82,246.71 308.82,226.91"/><polyline class="hl" data-line="43" points="312.65,311.95 312.65,273.43"/><polyline class="hl" data-line="43" points="338.16,311.95 338.16,273.43"/><polyline class="hl" data-line="43" points="376.43,273.43 376.43,224.00 362.90,224.00 362.90,188.39"/><polyline class="hl" data-line="43" points="363.68,311.95 363.68,273.43"/><polyline class="hl" data-line="44" points="6.51,299.19 6.51,273.43"/><polyline class="hl" data-line="44" points="32.02,311.95 32.02,341.71"/><polyline class="hl" data-line="44" points="57.53,311.95 57.53,341.71"/><polyline class="hl" data-line="44" points="83.05,311.95 83.05,341.71"/><polyline class="hl" data-line="44" points="108.55,311.95 108.55,341.71"/><polyline class="hl" data-line="44" points="134.07,311.95 134.07,341.71"/><polyline class="hl" data-line="44" points="159.58,311.95 159.58,341.71"/><polyline class="hl" data-line="44" points="185.10,311.95 185.10,341.71"/><polyline class="hl" data-line="44" points="210.60,311.95 210.60,341.71"/><polyline class="hl" data-line="44" points="236.11,311.95 236.11,341.71"/><polyline class="hl" data-line="44" points="261.63,311.95 261.63,341.71"/><polyline class="hl" data-line="44" points="287.14,311.95 287.14,341.71"/><polyline class="hl" data-line="44" points="312.65,311.95 312.65,341.71"/><polyline class="hl" data-line="44" points="338.16,311.95 338.16,341.71"/><polyline class="hl" data-line="44" points="363.68,311.95 363.68,341.71"/><polyline class="hl" data-line="44" points="389.19,299.19 389.19,273.43"/></svg></span></figure>
+<div class="split">
+<div class="prose"><p>A binary MERA on sixteen sites, all the way up: four tiers of coarse-graining – sixteen sites, eight, four, two, one – and the top tensor that closes it.</p><p>Read upward. In each of the first three tiers the disentanglers u act first, on pairs that straddle the blocks the isometries are about to join, and remove the entanglement across those block boundaries; then each isometry w takes a block of two sites to one. The fourth tier has two sites left and only joins them: a disentangler there would act on the same pair the isometry does, and has nothing to straddle. The top tensor is the state on the one site that remains – the one tensor of the network that is neither an isometry nor a unitary, so it is the center.</p><p>Every index here is placed by one rule: two tensors of different extent meet once, in the middle of the sites they share. So a disentangler meets the isometries under it at their apexes, an isometry meets the disentangler it overlaps by half in the middle of that half, and the top tensor, two sites wide in the middle of the network, meets the last isometry at its apex. The layers are ‘apart’: nothing joins two tensors side by side, and the stack is drawn as a tree ([tree]), every tensor its own size and every index that does not line up turning a corner on its way.</p><p>The layout – tiers of isometries and disentanglers, the disentanglers flat boxes between the triangles, each index turning a corner on its way up – is modelled on the MERA in the figures on the front page of <a href="https://tensornetwork.org/">tensornetwork.org</a>. The drawing is this package's own; the arrangement is theirs.</p></div>
+<div class="codecol">
+<h2 class="with-button">The picture<button class="pill live-btn" type="button">Edit live</button></h2>
+<p class="small hint">Point at a line to see what it draws, or at the picture to see which line drew it.</p>
+<pre class="code"><span class="ln" data-line="33"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>tree<span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>16<span class="tx-brace">}</span><span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., center/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w4<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$w$</span>/16<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*iso/<span class="tx-math">$w$</span>/8<span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u3<span class="tx-brace">}</span><span class="tx-brace">{</span>4*., disentangler/<span class="tx-math">$u$</span>/8, 4*.<span class="tx-brace">}</span></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w2<span class="tx-brace">}</span><span class="tx-brace">{</span>4*iso/<span class="tx-math">$w$</span>/4<span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*., 3*disentangler/<span class="tx-math">$u$</span>/4, 2*.<span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w1<span class="tx-brace">}</span><span class="tx-brace">{</span>8*iso/<span class="tx-math">$w$</span>/2<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u1<span class="tx-brace">}</span><span class="tx-brace">{</span>., 7*disentangler/<span class="tx-math">$u$</span>/2, .<span class="tx-brace">}</span></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span></span><span class="ln" data-line="45"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span></pre>
+<textarea class="live-code" spellcheck="false" hidden>\begin{tikzpicture}
+  \tnstack[tree]{M}{16}{top, w4, w3, u3, w2, u2, w1, u1}
+  \tnlayer{M}{top}{7*., center/$\tau$/2, 7*.}
+  \tnlayer{M}{w4}{iso/$w$/16}
+  \tnlayer{M}{w3}{2*iso/$w$/8}
+  \tnlayer{M}{u3}{4*., disentangler/$u$/8, 4*.}
+  \tnlayer{M}{w2}{4*iso/$w$/4}
+  \tnlayer{M}{u2}{2*., 3*disentangler/$u$/4, 2*.}
+  \tnlayer{M}{w1}{8*iso/$w$/2}
+  \tnlayer{M}{u1}{., 7*disentangler/$u$/2, .}
+  \tnconnect[apart={top, w4, w3, u3, w2, u2, w1, u1}]{M}
+  \tnopen{down}{M}
+\end{tikzpicture}</textarea>
+<p class="small live-status" hidden></p>
+<details><summary>The whole file</summary>
+<pre class="code"><span class="ln" data-line="28"><span class="tx-cmd">\documentclass</span><span class="tx-brace">[</span>border=4pt<span class="tx-brace">]</span><span class="tx-brace">{</span>standalone<span class="tx-brace">}</span></span><span class="ln" data-line="29"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>amsmath,amssymb<span class="tx-brace">}</span></span><span class="ln" data-line="30"><span class="tx-cmd">\usepackage</span><span class="tx-brace">{</span>tikz-tensors<span class="tx-brace">}</span></span><span class="ln" data-line="31"><span class="tx-cmd">\input</span><span class="tx-brace">{</span>notation<span class="tx-brace">}</span></span><span class="ln" data-line="32"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span><span class="ln" data-line="33"><span class="tx-cmd">\begin</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="34">  <a class="ref" href="../commands.html#tnstack"><span class="tx-cmd">\tnstack</span></a><span class="tx-brace">[</span>tree<span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>16<span class="tx-brace">}</span><span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span></span><span class="ln" data-line="35">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>top<span class="tx-brace">}</span><span class="tx-brace">{</span>7*., center/<span class="tx-math">$\tau$</span>/2, 7*.<span class="tx-brace">}</span></span><span class="ln" data-line="36">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w4<span class="tx-brace">}</span><span class="tx-brace">{</span>iso/<span class="tx-math">$w$</span>/16<span class="tx-brace">}</span></span><span class="ln" data-line="37">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w3<span class="tx-brace">}</span><span class="tx-brace">{</span>2*iso/<span class="tx-math">$w$</span>/8<span class="tx-brace">}</span></span><span class="ln" data-line="38">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u3<span class="tx-brace">}</span><span class="tx-brace">{</span>4*., disentangler/<span class="tx-math">$u$</span>/8, 4*.<span class="tx-brace">}</span></span><span class="ln" data-line="39">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w2<span class="tx-brace">}</span><span class="tx-brace">{</span>4*iso/<span class="tx-math">$w$</span>/4<span class="tx-brace">}</span></span><span class="ln" data-line="40">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u2<span class="tx-brace">}</span><span class="tx-brace">{</span>2*., 3*disentangler/<span class="tx-math">$u$</span>/4, 2*.<span class="tx-brace">}</span></span><span class="ln" data-line="41">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>w1<span class="tx-brace">}</span><span class="tx-brace">{</span>8*iso/<span class="tx-math">$w$</span>/2<span class="tx-brace">}</span></span><span class="ln" data-line="42">  <a class="ref" href="../commands.html#tnlayer"><span class="tx-cmd">\tnlayer</span></a><span class="tx-brace">{</span>M<span class="tx-brace">}</span><span class="tx-brace">{</span>u1<span class="tx-brace">}</span><span class="tx-brace">{</span>., 7*disentangler/<span class="tx-math">$u$</span>/2, .<span class="tx-brace">}</span></span><span class="ln" data-line="43">  <a class="ref" href="../commands.html#tnconnect"><span class="tx-cmd">\tnconnect</span></a><span class="tx-brace">[</span>apart=<span class="tx-brace">{</span>top, w4, w3, u3, w2, u2, w1, u1<span class="tx-brace">}</span><span class="tx-brace">]</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span></span><span class="ln" data-line="44">  <a class="ref" href="../commands.html#tnopen"><span class="tx-cmd">\tnopen</span></a><span class="tx-brace">{</span>down<span class="tx-brace">}</span><span class="tx-brace">{</span>M<span class="tx-brace">}</span></span><span class="ln" data-line="45"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>tikzpicture<span class="tx-brace">}</span></span><span class="ln" data-line="46"><span class="tx-cmd">\end</span><span class="tx-brace">{</span>document<span class="tx-brace">}</span></span></pre></details>
+<p class="small"><a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/examples/20-mera.tex">examples/20-mera.tex</a></p>
+</div>
+</div>
+</div>
+<nav class="pager"><a href="19-ttn.html">← Tree tensor network</a><a href="21-peps.html">PEPS →</a></nav>
+</main>
+<script>
+/* The versions published beside this one (scripts/publish.py writes
+   versions.json next to them); hidden where there is none -- a local build,
+   a preview. Switching keeps the page. */
+(() => {
+  const root = new URL("../", location.href);
+  const here = root.pathname.split("/").filter(Boolean).pop();
+  fetch(new URL("../versions.json", root)).then(r => r.ok ? r.json() : Promise.reject())
+    .then(versions => {
+      const s = document.querySelector(".versions");
+      if (!versions.includes(here)) return;
+      for (const v of versions) s.add(new Option(v, v, false, v === here));
+      s.hidden = false;
+      s.onchange = () => {
+        const rest = location.href.slice(root.href.length);
+        location.href = new URL("../" + s.value + "/" + rest, root).href;
+      };
+    }).catch(() => {});
+})();
+</script>
+<script>
+/* A line of code and what it drew light up together (traced_figure). */
+document.querySelectorAll(".traced").forEach(box => {
+  const all = n => box.querySelectorAll(`[data-line="${n}"]`);
+  box.querySelectorAll("[data-line]").forEach(el => {
+    const n = el.dataset.line;
+    if (!box.querySelector(`.hl[data-line="${n}"]`)) return;
+    el.classList.add("live");
+    el.addEventListener("mouseenter", () => all(n).forEach(x => x.classList.add("lit")));
+    el.addEventListener("mouseleave", () => all(n).forEach(x => x.classList.remove("lit")));
+  });
+});
+
+/* Live figures (scripts/engine.py). TikZJax turns a <script type="text/tikz">
+   into an SVG; TeX's own messages come through console.log, which is how a
+   mistake in the code is told from a figure still being drawn. */
+const TT = (() => {
+  const root = document.querySelector('meta[name="tt-root"]').content;
+  let engine = null, log = [];
+  const say = console.log.bind(console);
+  console.log = (...a) => { log.push(a.join(" ")); say(...a); };
+  function load() {
+    if (!engine) engine = new Promise(done => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet"; l.href = root + "live/fonts.css"; document.head.append(l);
+      const s = document.createElement("script");
+      s.src = root + "live/tikzjax.js"; s.onload = done; document.head.append(s);
+    });
+    return engine;
+  }
+  function draw(code, out, status) {
+    const t0 = performance.now(), mine = {};
+    out.dataset.turn = String(Number(out.dataset.turn || 0) + 1);
+    const turn = out.dataset.turn;
+    status.hidden = false; status.className = "small live-status";
+    status.textContent = engine ? "Drawing…" : "Loading TeX into the page (once)…";
+    load().then(() => {
+      if (out.dataset.turn !== turn) return;
+      log = [];
+      const s = document.createElement("script");
+      s.type = "text/tikz";
+      s.dataset.texPackages = "{\"amsmath\":\"\",\"amssymb\":\"\",\"tikz-tensors\":\"\"}";
+      s.dataset.addToPreamble = "\\input{notation.tex}";
+      s.dataset.showConsole = "true";
+      s.textContent = code;
+      out.replaceChildren(s);
+      const watch = setInterval(() => {
+        if (out.dataset.turn !== turn) return clearInterval(watch);
+        const svg = out.querySelector("svg");
+        const bad = log.findIndex(l => /^! /.test(l));
+        if (bad >= 0) {
+          clearInterval(watch);
+          const at = log.slice(bad).find(l => /^l\.\d+/.test(l)) || "";
+          status.className = "small live-status bad";
+          status.textContent = "TeX stopped: " + log[bad].slice(2) + (at ? "  (" + at.split(" ")[0] + " of the picture)" : "");
+        } else if (svg && svg.querySelectorAll("path,use,text").length > 2) {
+          clearInterval(watch);
+          /* at the size the site shows its pictures, half again TeX's */
+          svg.style.width = (parseFloat(svg.getAttribute("width")) * 1.5) + "pt";
+          svg.style.height = "auto";
+          status.textContent = "Drawn in your browser in " + ((performance.now() - t0) / 1000).toFixed(1) + " s.";
+        }
+      }, 200);
+    });
+  }
+  return {draw};
+})();
+
+/* `Edit live' on an example: the code becomes editable and the figure is
+   drawn again, a moment after the typing stops. */
+document.querySelectorAll(".live-btn").forEach(btn => {
+  const main = btn.closest("main");
+  const area = main.querySelector("textarea.live-code");
+  const status = main.querySelector(".live-status");
+  const fig = main.querySelector(".traced figure.paper");
+  let timer = null;
+  btn.addEventListener("click", () => {
+    const box = main.querySelector(".traced");
+    box.classList.remove("traced");
+    box.querySelectorAll("svg.trace").forEach(s => s.remove());
+    area.previousElementSibling.previousElementSibling.hidden = true;  /* the hint */
+    area.previousElementSibling.hidden = true;                         /* the code */
+    area.hidden = false; area.rows = area.value.split("\n").length + 1;
+    btn.hidden = true;
+    const out = document.createElement("div");
+    out.className = "live-out";
+    fig.replaceChildren(out);
+    TT.draw(area.value, out, status);
+    area.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+    });
+  });
+});
+
+/* The playground. */
+const pg = document.querySelector(".playground");
+if (pg) {
+  const area = pg.querySelector("textarea"), out = pg.querySelector(".live-out");
+  const status = pg.querySelector(".live-status"), pick = pg.querySelector("select");
+  const pictures = JSON.parse(document.getElementById("tt-pictures").textContent);
+  let timer = null;
+  const start = location.hash.slice(1) in pictures ? location.hash.slice(1) : pick.value;
+  pick.value = start; area.value = pictures[start];
+  pick.addEventListener("change", () => {
+    area.value = pictures[pick.value]; history.replaceState(null, "", "#" + pick.value);
+    TT.draw(area.value, out, status);
+  });
+  area.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => TT.draw(area.value, out, status), 900);
+  });
+  TT.draw(area.value, out, status);
+}
+</script>
+<footer>tikz-tensors v0.18.0 · <a href="https://github.com/pen-sotashimozono/tikz-tensors">source</a> ·
+<a href="https://github.com/pen-sotashimozono/tikz-tensors/blob/main/CHANGELOG.md">changelog</a></footer>
+</body>
+</html>
