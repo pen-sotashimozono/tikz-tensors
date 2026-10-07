@@ -5,6 +5,26 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.18.0 — 2026-10-07
+
+A diamond is 7mm, and a frame stands framesep clear of its tensors.
+
+`tn diamond` is 7mm from corner to corner, where it was 9.5mm. At 9.5mm a
+center tensor reached further than the circles and triangles beside it, so
+that the bond to its neighbour all but disappeared; at the 6mm of `tn small`,
+which the examples' notation used for the diamond on a bond, the singular
+values were hard to see. 7mm is the size of both now: the examples'
+`centerbond` is `center` with a smaller label, and differs from it by having
+no index down.
+
+`\tnset{framesep=<length>}` is the distance between a frame (`\tnframe`) and
+the tensors it encloses, 3.2mm. It was half a `gap`, 2mm, which made a frame
+hug its tensors and read as part of them, and tied it to the space beside an
+equals sign.
+
+Every example with a diamond or a frame changes in appearance, 25 reference
+pictures in all; nothing else moves, and every figure still compiles.
+
 ## v0.17.0 — 2026-10-03
 
 An index runs one way, in or out of its tensor, and the types say which:

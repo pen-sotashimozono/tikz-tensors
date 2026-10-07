@@ -100,8 +100,9 @@ A relation sign after everything on the row; the next block goes after it.
 The next block starts a new row, under everything drawn so far.
 
 ### `\tnframe[<keys>]{<tensor>, ...}`
-A dashed box around the named tensors, said by what it frames: the tensors a
-step contracts into one, or a part of a network set apart.
+A dashed box around the named tensors, `framesep` clear of them and said by
+what it frames: the tensors a step contracts into one, or a part of a network
+set apart.
 
 | key | |
 |---|---|
@@ -140,6 +141,7 @@ The tokens, for a notation file (a figure may not use it).
 | `stub=` | the least an open index shows beyond its tensor |
 | `envw=` | the width of an environment block |
 | `gap=` | either side of a relation sign; twice it between rows |
+| `framesep=` | between a frame and the tensors it encloses |
 | `inset=` | how far a bond runs under the tensor it meets |
 | `line width=` | the one stroke of outlines and indices |
 
