@@ -89,12 +89,26 @@ second. A port is `<tensor>:<side>[:<n>]`, the `<n>`th index on that side
 |---|---|
 | `edge=<edge type>` | the edge type |
 
-### `\tneq[<keys>]`, `\tnapprox[<keys>]`
-A relation sign after everything on the row; the next block goes after it.
+### `\tneq[<keys>]`, `\tnapprox[<keys>]`, `\tnplus[<keys>]`, `\tnminus[<keys>]`, `\tnto[<keys>]`
+A sign after everything on the row; the next block goes after it: equals,
+approximately equals, plus and minus for a sum of networks, and an arrow for
+the step from one network to the next. A stack after a sign starts far enough
+on for an index opened to its left to end clear of the sign.
 
 | key | |
 |---|---|
 | `factor=<text>` | written after the sign, `\tneq[factor=$\lambda$]` |
+
+### `\tnclose[<keys>]{left|right}{<tensor>}{<tensor>}`
+The index of the two tensors on that side is one index, summed: a line leaves
+each, turns `closesep` away from them and joins the two. It is how a tensor
+and its conjugate share a bond at the end of a network, as in the condition
+of an isometry. The two indices count as drawn.
+
+| key | |
+|---|---|
+| `label=<text>` | written beside the line, outside |
+| `edge=<edge type>` | the edge type |
 
 ### `\tnbreak`
 The next block starts a new row, under everything drawn so far.
@@ -142,6 +156,7 @@ The tokens, for a notation file (a figure may not use it).
 | `envw=` | the width of an environment block |
 | `gap=` | either side of a relation sign; twice it between rows |
 | `framesep=` | between a frame and the tensors it encloses |
+| `closesep=` | between two tensors and the line that closes an index of theirs |
 | `inset=` | how far a bond runs under the tensor it meets |
 | `line width=` | the one stroke of outlines and indices |
 

@@ -30,7 +30,7 @@ stand for.
 | `tn wide`, `tn tall`, `tn small`, `tn flat` | the same shape, resized |
 | `tn fill=<colour>` | solid fill, outline in ink |
 | `tn frame` | a dashed box around nodes |
-| `tn edge`, `tn wavy`, `tn arrow`, `tn double` | an index: plain, wavy, with an arrowhead, two fused |
+| `tn edge`, `tn wavy`, `tn arrow`, `tn double`, `tn hidden` | an index: plain, wavy, with an arrowhead, two fused, not drawn |
 | `tn label` | the text on an index |
 | `tn gate`, `tn env` | a gate, and the blocks at the ends of a stack |
 
@@ -62,7 +62,7 @@ only what is loaded before it; `tikz-tensors.sty` loads them all.
 | folder | module | defines | extended by |
 |---|---|---|---|
 | `core/` | `core` | the stroke, the edge layer, the tokens (`\tnset`), `tn node`, `tn edge`, `\tnbond` | — |
-| | `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnbreak` | — |
+| | `canvas` | where a block goes: a row, `\tneq`, `\tnapprox`, `\tnplus`, `\tnminus`, `\tnto`, `\tnbreak` | — |
 | `style/` | `colors` | the theme's named colours (generated) | `theme/tokens.toml` |
 | | `nodes` | **node types**: the shapes and sizes above, and what a layout reads off a type — `tn leg anchor` (where its index leaves), `tn points` (which way it points), `tn single` (one index on that side) | a style on `tn node` that sets those keys |
 | | `edges` | **edge types** (`tn wavy`, `tn arrow`, `tn double`) and the routes an edge takes | a style on `tn edge` |
@@ -135,8 +135,8 @@ layer has one spelling.
 - `\tnstack[close={g2, g3}]` sets those layers closer under the one above —
   the layers of a circuit of gates; how close is the token `closerise`, set
   once in a notation (`\tnset`).
-- `\tneq[factor=$\lambda$]`, `\tnapprox` write a relation and the next stack goes after
-  it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
+- `\tneq[factor=$\lambda$]`, `\tnapprox`, `\tnplus`, `\tnminus`, `\tnto` write a sign
+  and the next stack goes after it; a stack after a stack stands beside it; `\tnbreak` starts a row below.
 - A triangle's physical index leaves from the corner of its flat side
   (`tn leg anchor`), and the triangle is set across so that corner is on the
   site's line.

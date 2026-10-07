@@ -118,6 +118,13 @@
   % A row after \tnbreak hangs a gap under everything drawn so far, keeping the
   % slot above its top layer as far as that slot's border -- where an index
   % opened upward ends -- as a stack keeps the slots beyond its ends.
+  % After a relation sign the first tensor stands at least a stub from where
+  % the block starts, so that an index opened to its left ends there and not
+  % in the sign: the sign is drawn already and cannot move.
+  \ifnum\tn@afterrel=1 \ifx\tn@envl\@empty
+    \tn@len\tn@o{max(0pt, \tn@stub-(\tn@pitch-\tn@slot))}%
+    \global\advance\tn@cursor by \tn@o\relax
+  \fi\fi
   \tn@block{0pt}{\tn@gap+\tn@get{#2@H}/2+\tn@get{#2@rise}-\tn@slot/2}%
   \tn@set{#2@y0}{\the\tn@line@y}%
   \foreach \tn@k in {1,...,\tn@get{#2@L}}{%
@@ -883,6 +890,47 @@
   \coordinate (#2-down-1) at (\tn@xa,\tn@yb);
   \coordinate (#2-down-2) at (\tn@xb,\tn@yb);
   \tn@openlabel{#2-down-1}\tn@openlabel{#2-down-2}}
+
+% ---- close -------------------------------------------------------------------
+% \tnclose[label=<text>, edge=<edge type>]{left|right}{<tensor>}{<tensor>}
+% The index of two tensors on that side is one index, summed: a line leaves
+% each of them, turns closesep away from the one that reaches furthest, and
+% joins the two. It is how a tensor and its conjugate share a bond at the end
+% of a network -- the condition of an isometry, the norm of a center tensor --
+% where a bond drawn at a full pitch would be read as a tensor that is not
+% there. <text> stands beside the line, outside. The two indices count as
+% drawn, and the way they run is not compared: a conjugate runs the other way.
+\pgfkeys{/tn/close/.is family, /tn/close/label/.initial=,
+  /tn/close/edge/.initial=tn edge}
+\newcommand{\tnclose}[4][]{%
+  \pgfkeys{/tn/close/.cd, label=, edge=tn edge, #1}%
+  \pgfkeysgetvalue{/tn/close/label}\tn@clab
+  \pgfkeysgetvalue{/tn/close/edge}\tn@cedge
+  \edef\tn@dir{#2}%
+  \ifx\tn@dir\tn@sright\else\ifx\tn@dir\tn@sleft\else
+    \PackageError{tikz-tensors}{\string\tnclose: `#2' is not a side; an index
+      is closed on the left or on the right}{}\fi\fi
+  \tn@free{#3}{\tn@dir}{\tn@get{n@#3@k}}{\string\tnclose}%
+  \tn@free{#4}{\tn@dir}{\tn@get{n@#4@k}}{\string\tnclose}%
+  \tn@use{#3}{\tn@dir}{\tn@get{n@#3@k}}\tn@use{#4}{\tn@dir}{\tn@get{n@#4@k}}%
+  \tn@ixy{#3}{\tn@dir}{\tn@get{n@#3@k}}\let\tn@cya\tn@ly
+  \tn@hport{#3}{\tn@dir}\let\tn@cxa\tn@px \let\tn@cea\tn@pe
+  \tn@ixy{#4}{\tn@dir}{\tn@get{n@#4@k}}\let\tn@cyb\tn@ly
+  \tn@hport{#4}{\tn@dir}\let\tn@cxb\tn@px \let\tn@ceb\tn@pe
+  \ifx\tn@dir\tn@sright
+    \tn@len\tn@cxc{max(\tn@cea,\tn@ceb)+\tn@closesep}\tn@reach{\tn@cxc}%
+    \def\tn@cside{right}%
+  \else
+    \tn@len\tn@cxc{min(\tn@cea,\tn@ceb)-\tn@closesep}%
+    \def\tn@cside{left}%
+  \fi
+  \tn@turns{\tn@cedge}{(\tn@cxa,\tn@cya) -- (\tn@cxc,\tn@cya)
+    -- (\tn@cxc,\tn@cyb) -- (\tn@cxb,\tn@cyb)}%
+  \ifx\tn@clab\@empty\else
+    \tn@len\tn@cym{(\tn@cya+\tn@cyb)/2}%
+    \edef\tn@cat{\tn@cxc,\tn@cym}%
+    \expandafter\tnput\expandafter[\tn@cside=1pt]{\tn@cat}{\tn@clab}%
+  \fi}
 
 % ---- join --------------------------------------------------------------------
 % <side> is up, down, left or right; <n> is the <n>th site the tensor spans

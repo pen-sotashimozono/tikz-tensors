@@ -39,7 +39,7 @@ and `examples/conventions/notation.tex` is the one the examples are drawn in.
 
 ## Indices
 
-### `tn edge`, `tn wavy`, `tn arrow`, `tn double`
+### `tn edge`, `tn wavy`, `tn arrow`, `tn double`, `tn hidden`
 [picture](styles/style-edges.tex)
 
 ### `tn arrows`

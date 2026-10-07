@@ -1,0 +1,48 @@
+% A specimen of an index closed on itself and of the signs between blocks,
+% not a diagram.
+%
+% \tnclose joins the index of two tensors on one side by a line that turns
+% closesep away from them: here the condition of an isometry, a tensor and
+% its conjugate summed over the bond on the left and the index between the
+% layers, which leaves the identity on the right. The label stands beside the
+% line. The block after the equals sign opens its indices to the left, and
+% the sign keeps clear of them although they are longer than the default:
+% after a relation sign a block starts a stub further on. The second row is
+% a sum, a difference and a step, \tnplus, \tnminus and \tnto, and its last
+% tensor has an index down that is there and is not drawn, tn hidden.
+\documentclass[border=5pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack[pitch=0.8, stub=1.6]{A}{1}{ket, bra}
+  \tnlayer{A}{ket}{tn triangle right/$A$}
+  \tnlayer{A}{bra}{tn triangle right/$A^{*}$}
+  \tnconnect{A}
+  \tnopen{right}{A-ket-1}
+  \tnopen{right}{A-bra-1}
+  \tnclose[label=$\chi$]{left}{A-ket-1}{A-bra-1}
+  \tneq
+  \tnstack[pitch=0.8, stub=1.6]{I}{1}{ket, bra}
+  \tnlayer{I}{ket}{tn dot/}
+  \tnlayer{I}{bra}{tn dot/}
+  \tnconnect{I}
+  \tnopen{left}{I-ket-1}
+  \tnopen{left}{I-bra-1}
+  \tnbreak
+  \tnstack{P}{1}{a}
+  \tnlayer{P}{a}{tn circle/$A$}
+  \tnopen{down}{P-a-1}
+  \tnplus
+  \tnstack{Q}{1}{a}
+  \tnlayer{Q}{a}{tn circle/$B$}
+  \tnopen{down}{Q-a-1}
+  \tnminus[factor=$\lambda$]
+  \tnstack{R}{1}{a}
+  \tnlayer{R}{a}{tn circle/$C$}
+  \tnopen{down}{R-a-1}
+  \tnto
+  \tnstack{S}{1}{a}
+  \tnlayer{S}{a}{tn circle/$D$}
+  \tnopen[edge=tn hidden]{down}{S-a-1}
+\end{tikzpicture}
+\end{document}
