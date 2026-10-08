@@ -5,6 +5,29 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.18.1 — 2026-10-08
+
+A frame drawn after an index joined by hand: `\tnframe` no longer stops
+after `\tnjoin`.
+
+`\tnjoin` works out which way its index runs and kept one end's answer in
+`\tn@fxa`, which was also the name of the register `\tnframe` measured its
+tensors with. After a `\tnjoin` at the top level of a picture the name was a
+macro, and the next `\tnframe` stopped with "You can't use a prefix with
+`the character ='". `\tnconnect` did not show it, because it draws its
+indices inside a loop, whose group ended the definition. A figure places,
+connects, opens and joins, and only then labels, so the order that failed is
+the order the reference asks for: an operator across two layers, joined index
+by index to the tensors beside it, with a frame around them.
+
+The frame's measures are named `\tn@fm...` now, and `\tn@fx...` is the way an
+index runs and nothing else. No other register of the package is also defined
+as a macro.
+
+`tests/cases/frame.tex` draws a frame after a `\tnjoin` twice, around an
+operator joined by hand and beside the index that closes a ring. No picture
+changes.
+
 ## v0.18.0 — 2026-10-07
 
 A diamond is 7mm, a frame stands framesep clear of its tensors, and an index
