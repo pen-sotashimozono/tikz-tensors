@@ -5,6 +5,50 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.18.0 — 2026-10-07
+
+A diamond is 7mm, a frame stands framesep clear of its tensors, and an index
+is closed on itself by `\tnclose`.
+
+`tn diamond` is 7mm from corner to corner, where it was 9.5mm. At 9.5mm a
+center tensor reached further than the circles and triangles beside it, so
+that the bond to its neighbour all but disappeared; at the 6mm of `tn small`,
+which the examples' notation used for the diamond on a bond, the singular
+values were hard to see. 7mm is the size of both now: the examples'
+`centerbond` is `center` with a smaller label, and differs from it by having
+no index down.
+
+`\tnset{framesep=<length>}` is the distance between a frame (`\tnframe`) and
+the tensors it encloses, 3.2mm. It was half a `gap`, 2mm, which made a frame
+hug its tensors and read as part of them, and tied it to the space beside an
+equals sign.
+
+`\tnclose[label=<text>, edge=<edge type>]{left|right}{<tensor>}{<tensor>}`
+closes the index of two tensors on one side: a line leaves each, turns
+`closesep` (6.5mm, `\tnset`) away from them and joins the two. It is how a
+tensor and its conjugate share a bond at the end of a network -- the condition
+of an isometry, the norm of a center tensor -- where a bond at a full pitch
+ending on two dots reads as a tensor that is not there. The two indices count
+as drawn.
+
+`\tnplus`, `\tnminus` and `\tnto` are signs between blocks beside `\tneq`
+and `\tnapprox`: a sum of networks, a difference, and the step from one
+network to the next. They take `factor=` as those do.
+
+`tn hidden` is an edge type that draws nothing. `\tnconnect[down=tn hidden]`
+leaves the indices down the sites to `\tnjoin`, where a tensor spans a site
+whose index it does not take.
+
+A stack after a sign starts at least a `stub` before its first tensor. An
+index opened to the left of that tensor used to run into the sign when the
+stack's `stub` was longer than the space its `pitch` left; the sign is drawn
+before the stack and cannot make room. No example was close enough to a sign
+to move.
+
+Every example with a diamond or a frame changes in appearance, 25 reference
+pictures in all; nothing else moves, and every figure still compiles.
+`tests/cases/closing.tex` draws the new command, the signs and the edge type.
+
 ## v0.17.0 — 2026-10-03
 
 An index runs one way, in or out of its tensor, and the types say which:

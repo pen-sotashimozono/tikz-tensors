@@ -16,7 +16,7 @@
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
 
 % \tnframe[label=<text>]{<tensor>, ...}
-% A dashed box around the named tensors, a gap/2 clear of them, with <text>
+% A dashed box around the named tensors, framesep clear of them, with <text>
 % above its right corner: the tensors a step contracts into one, or a part of
 % a network set apart. Said by what it frames and never by a coordinate, like
 % a label. It counts as drawn when the next equals sign is placed.
@@ -34,8 +34,8 @@
     \tn@anc{\tn@fn}{north east}%
     \ifdim\tn@ax>\tn@fxb \global\tn@fxb=\tn@ax\fi
     \ifdim\tn@ay>\tn@fyb \global\tn@fyb=\tn@ay\fi}%
-  \tn@len\tn@fw{\the\tn@fxb-\the\tn@fxa+\tn@gap}%
-  \tn@len\tn@fh{\the\tn@fyb-\the\tn@fya+\tn@gap}%
+  \tn@len\tn@fw{\the\tn@fxb-\the\tn@fxa+2*\tn@framesep}%
+  \tn@len\tn@fh{\the\tn@fyb-\the\tn@fya+2*\tn@framesep}%
   \tn@len\tn@fx{(\the\tn@fxa+\the\tn@fxb)/2}\tn@len\tn@fy{(\the\tn@fya+\the\tn@fyb)/2}%
   \node[tn frame, rectangle, inner sep=0pt, minimum width=\tn@fw, minimum height=\tn@fh]
     (tn@frame) at (\tn@fx,\tn@fy) {};\tn@tracenode{tn@frame}%

@@ -7,6 +7,9 @@
 %              the tensor it runs out of to the one it runs into (tn flux,
 %              tn index); `tn arrows=false' turns every one off
 %   tn double  two indices fused into one
+%   tn hidden  an index that is there and is not drawn: \tnconnect[down=tn
+%              hidden] leaves the indices down the sites to \tnjoin, where a
+%              tensor spans a site whose index it does not take
 % A user's own type is a style of the same kind. Where an edge goes is not the
 % type's business: a route below takes any type, and the layouts choose the
 % route -- a figure never does.
@@ -19,6 +22,7 @@
                       decoration={markings, mark=at position 0.58 with
                         {\iftnarrows\arrow{Latex[length=1.7mm]}\fi}}},
   tn double/.style = {tn edge, double=grey1, double distance=1.2pt},
+  tn hidden/.style = {tn edge, draw=none},
 }
 
 % ---- routes -----------------------------------------------------------------
