@@ -46,6 +46,9 @@
 
 % \tneq[factor=<text>]       an equals sign
 % \tnapprox[factor=<text>]   an approximately-equals sign
+% \tnplus[factor=<text>]     a plus sign: a sum of networks
+% \tnminus[factor=<text>]    a minus sign
+% \tnto[factor=<text>]       an arrow: the step from one network to the next
 % After everything drawn so far, centered on the row like the blocks, with
 % <factor> after it if there is one (\tneq[factor=$\lambda$]); the next block
 % starts after it.
@@ -61,3 +64,6 @@
 }
 \newcommand{\tneq}[1][]{\tn@rel{=}{#1}}
 \newcommand{\tnapprox}[1][]{\tn@rel{\approx}{#1}}
+\newcommand{\tnplus}[1][]{\tn@rel{+}{#1}}
+\newcommand{\tnminus}[1][]{\tn@rel{-}{#1}}
+\newcommand{\tnto}[1][]{\tn@rel{\to}{#1}}

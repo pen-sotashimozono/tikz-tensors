@@ -29,7 +29,7 @@ A figure is made of two kinds of statement, kept in two places.
 | connect | `\tnconnect` | every index the block's layout implies |
 | open, join | `\tnopen`, `\tnopenswap`, `\tnjoin` | the other indices: open ones, crossed ones, ones between two ports |
 | label | `\tnput`, `\tnmid`, `\tnframe` | text on what is not an open index, a frame around a group |
-| between blocks | `\tneq`, `\tnapprox`, `\tnbreak` | a relation sign, or a new row |
+| between blocks | `\tneq`, `\tnapprox`, `\tnplus`, `\tnminus`, `\tnto`, `\tnbreak` | a sign between two blocks, or a new row |
 
 ## Step by step
 

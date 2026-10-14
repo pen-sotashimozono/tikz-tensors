@@ -5,7 +5,7 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
-## v0.18.0 — 2026-10-04
+## v0.19.0 — 2026-10-14
 
 The names, made one family before 1.0. A name that is gone is an error that
 says what replaced it.
@@ -25,10 +25,78 @@ says what replaced it.
 
 Kept as they are: `\tnbond` (the escape hatch, which figures may not use),
 `along=` and `down=`, a stack's `left=` and `right=`, `tn single`,
-`\tnopenswap`, `\tnput`, `\tnmid`, and a layer's entries.
+`\tnopenswap`, `\tnput`, `\tnmid`, a layer's entries, and the tokens
+`framesep` and `closesep` of v0.18.0.
 
 The linter takes a factor in `rises=` as it takes one in `scale=`. No figure
 changes; the specimen of styles changes the names it prints.
+
+## v0.18.1 — 2026-10-08
+
+A frame drawn after an index joined by hand: `\tnframe` no longer stops
+after `\tnjoin`.
+
+`\tnjoin` works out which way its index runs and kept one end's answer in
+`\tn@fxa`, which was also the name of the register `\tnframe` measured its
+tensors with. After a `\tnjoin` at the top level of a picture the name was a
+macro, and the next `\tnframe` stopped with "You can't use a prefix with
+`the character ='". `\tnconnect` did not show it, because it draws its
+indices inside a loop, whose group ended the definition. A figure places,
+connects, opens and joins, and only then labels, so the order that failed is
+the order the reference asks for: an operator across two layers, joined index
+by index to the tensors beside it, with a frame around them.
+
+The frame's measures are named `\tn@fm...` now, and `\tn@fx...` is the way an
+index runs and nothing else. No other register of the package is also defined
+as a macro.
+
+`tests/cases/frame.tex` draws a frame after a `\tnjoin` twice, around an
+operator joined by hand and beside the index that closes a ring. No picture
+changes.
+
+## v0.18.0 — 2026-10-07
+
+A diamond is 7mm, a frame stands framesep clear of its tensors, and an index
+is closed on itself by `\tnclose`.
+
+`tn diamond` is 7mm from corner to corner, where it was 9.5mm. At 9.5mm a
+center tensor reached further than the circles and triangles beside it, so
+that the bond to its neighbour all but disappeared; at the 6mm of `tn small`,
+which the examples' notation used for the diamond on a bond, the singular
+values were hard to see. 7mm is the size of both now: the examples'
+`centerbond` is `center` with a smaller label, and differs from it by having
+no index down.
+
+`\tnset{framesep=<length>}` is the distance between a frame (`\tnframe`) and
+the tensors it encloses, 3.2mm. It was half a `gap`, 2mm, which made a frame
+hug its tensors and read as part of them, and tied it to the space beside an
+equals sign.
+
+`\tnclose[label=<text>, edge=<edge type>]{left|right}{<tensor>}{<tensor>}`
+closes the index of two tensors on one side: a line leaves each, turns
+`closesep` (6.5mm, `\tnset`) away from them and joins the two. It is how a
+tensor and its conjugate share a bond at the end of a network -- the condition
+of an isometry, the norm of a center tensor -- where a bond at a full pitch
+ending on two dots reads as a tensor that is not there. The two indices count
+as drawn.
+
+`\tnplus`, `\tnminus` and `\tnto` are signs between blocks beside `\tneq`
+and `\tnapprox`: a sum of networks, a difference, and the step from one
+network to the next. They take `factor=` as those do.
+
+`tn hidden` is an edge type that draws nothing. `\tnconnect[down=tn hidden]`
+leaves the indices down the sites to `\tnjoin`, where a tensor spans a site
+whose index it does not take.
+
+A stack after a sign starts at least a `stub` before its first tensor. An
+index opened to the left of that tensor used to run into the sign when the
+stack's `stub` was longer than the space its `pitch` left; the sign is drawn
+before the stack and cannot make room. No example was close enough to a sign
+to move.
+
+Every example with a diamond or a frame changes in appearance, 25 reference
+pictures in all; nothing else moves, and every figure still compiles.
+`tests/cases/closing.tex` draws the new command, the signs and the edge type.
 
 ## v0.17.0 — 2026-10-03
 

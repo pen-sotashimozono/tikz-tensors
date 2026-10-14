@@ -47,6 +47,9 @@
 %              border of the next slot is nearer than that
 %   env width  the width of an environment block
 %   gap        the space either side of an equals sign; twice it between rows
+%   framesep   between a frame (\tnframe) and the tensors it encloses
+%   closesep   between two tensors and the line that closes an index of
+%              theirs (\tnclose)
 %   inset      how far a bond runs under the tensor it meets
 %
 % \tnset{<token>=<length>, ...}
@@ -62,6 +65,8 @@
 \def\tn@stub{4mm}
 \def\tn@envw{7mm}
 \def\tn@gap{4mm}
+\def\tn@framesep{3.2mm}
+\def\tn@closesep{6.5mm}
 \def\tn@inset{1.6pt}
 \pgfkeys{/tn/set/.is family}
 % Each token is kept twice: as the notation set it (\tn@base@<token>), and as
@@ -75,7 +80,7 @@
 \tn@token{pitch}{pitch}\tn@token{rise}{rise}\tn@token{tree pitch}{treepitch}
 \tn@token{tree rise}{treerise}\tn@token{grid pitch}{gpitch}\tn@token{slot}{slot}
 \tn@token{stub}{stub}\tn@token{env width}{envw}\tn@token{gap}{gap}
-\tn@token{inset}{inset}
+\tn@token{inset}{inset}\tn@token{framesep}{framesep}\tn@token{closesep}{closesep}
 \pgfkeys{/tn/set/line width/.code={\pgfkeyssetvalue{/tn/line width}{#1}}}
 \newcommand{\tnset}[1]{\pgfkeys{/tn/set/.cd, #1}}
 

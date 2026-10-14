@@ -1,0 +1,32 @@
+% A specimen of a frame drawn after an index joined by hand, not a diagram.
+%
+% A figure places, connects, opens and joins, and only then labels, so a
+% \tnframe comes after the \tnjoin of its block. An operator across two layers
+% is joined to the tensors either side of it, one index a layer, and the frame
+% is drawn around all five afterwards; then the same once more, the frame
+% after a \tnjoin that closes a ring. Up to v0.18.0 either stopped with
+% "You can't use a prefix with `the character ='": \tnjoin left \tn@fxa, the
+% name of the register \tnframe measured with, defined as a macro.
+\documentclass[border=5pt]{standalone}
+\usepackage{tikz-tensors}
+\begin{document}
+\begin{tikzpicture}
+  \tnstack{X}{3}{a, b}
+  \tnlayer{X}{a}{tn circle/$A$, {tn capsule, tn tall}/$H$/1/2, tn circle/$B$}
+  \tnlayer{X}{b}{tn circle/$A$, ., tn circle/$B$}
+  \tnjoin{X-a-1:right}{X-a-2:left:1}
+  \tnjoin{X-b-1:right}{X-a-2:left:2}
+  \tnjoin{X-a-2:right:1}{X-a-3:left}
+  \tnjoin{X-a-2:right:2}{X-b-3:left}
+  \tnopen{left}{X-a-1, X-b-1}
+  \tnopen{right}{X-a-3, X-b-3}
+  \tnframe[label=$M$]{X-a-1, X-b-1, X-a-2, X-a-3, X-b-3}
+  \tneq
+  \tnstack{R}{3}{a}
+  \tnlayer{R}{a}{3*tn circle/$T$}
+  \tnconnect{R}
+  \tnjoin{R-a-3:right}{R-a-1:left}
+  \tnopen{down}{R}
+  \tnframe{R-a-1, R-a-2}
+\end{tikzpicture}
+\end{document}
