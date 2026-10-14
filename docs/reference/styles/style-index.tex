@@ -2,7 +2,7 @@
 %
 % What a type says about its indices, read back by the layouts: where its
 % index down the site leaves -- T's from its corner, and the stack moves T
-% across so that the corner is on the site's line (tn leg anchor); which way
+% across so that the corner is on the site's line (tn site anchor); which way
 % its indices run, in or out -- P's left one out, which the arrow on its
 % bond follows (tn flux); the side on which it has one index however many
 % sites it spans -- S, below
@@ -17,7 +17,7 @@
 \begin{document}
 \begin{tikzpicture}
   \tnstack{S}{2}{a, b}
-  \tnlayer{S}{a}{{tn box, tn leg anchor=south west}/$T$, {tn box, tn flux={left=out}}/$P$}
+  \tnlayer{S}{a}{{tn box, tn site anchor=south west}/$T$, {tn box, tn flux={left=out}}/$P$}
   \tnlayer{S}{b}{2*tn box/$A$}
   \tnconnect[along=tn arrow]{S}
   \tnstack{R}{2}{a}

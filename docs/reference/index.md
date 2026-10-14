@@ -25,7 +25,7 @@ A figure is made of two kinds of statement, kept in two places.
 
 | step | commands | what it says |
 |---|---|---|
-| place | `\tnstack` and `\tnlayer`, or `\tngrid` | a block of slots, and the tensor in each |
+| place | `\tnstack` or `\tntree`, and `\tnlayer`; or `\tngrid` | a block of slots, and the tensor in each |
 | connect | `\tnconnect` | every index the block's layout implies |
 | open, join | `\tnopen`, `\tnopenswap`, `\tnjoin` | the other indices: open ones, crossed ones, ones between two ports |
 | label | `\tnput`, `\tnmid`, `\tnframe` | text on what is not an open index, a frame around a group |
@@ -89,14 +89,15 @@ predicts the rest.
 |---|---|
 | `<stack>-<layer>-<i>` | the tensor in slot i of a layer (one that spans is named by its first slot and top layer) |
 | `<grid>-<i>-<j>` | the tensor at column i, row j of a grid |
-| `<grid>-<i>-<j>-a`, `-b` | the tensor on the bond after it along a row, along a column (`bonds=`) |
+| `<grid>-<i>-<j>-se`, `-sw` | the tensor on its bond toward se (along a row), toward sw (along a column) (`bonds=`) |
 | `<stack>-left`, `<stack>-right` | the environment blocks of a stack |
 | `<stack>-<layer>-<i>-slot` | the center of a slot, tensor or not, including columns 0 and n+1 |
 | `<stack>-<i>-<dir>` | the end of site i's index opened `up` or `down` on the whole stack |
 | `<stack>-<layer>-<dir>` | the end of a layer's index opened `left` or `right` on the whole stack, or running from an environment block into an empty slot |
 | `<tensor>-<dir>` | the end of a tensor's own index opened that way |
 | `<tensor>-<dir>-<n>` | ... the n-th, when it has several that way |
+| `<tensor>-<name>` | the end of a named index opened (`tn index`) |
 | `<grid>-<i>-<j>-down` | the end of a grid tensor's index out of the plane |
 | `<grid>-<i>-<j>-<nw/ne/se/sw>` | the end of a grid site's index of the lattice opened that way |
-| `<grid>-<i>-<j>-top`, `-bottom`, `-left`, `-right` | the halves of a site of a `split` grid: top and bottom where i+j is even, left and right where it is odd |
-| `<tensor>:<side>[:<n>]` | a port, for `\tnjoin` |
+| `<grid>-<i>-<j>-n`, `-s`, `-w`, `-e` | the halves of a site of a `split` grid: north and south where i+j is even, west and east where it is odd |
+| `<tensor>:<side>[:<n>]`, `<tensor>:<name>`, `<tensor>:<n>` | a port, for `\tnjoin`, `apart=` and `\tnopen{rest}` |

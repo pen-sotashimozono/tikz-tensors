@@ -5,7 +5,7 @@
 %
 % Each isometry W takes two indices up to one: the triangle points toward the
 % root, which is the direction it is isometric in. It is drawn as a tree is
-% drawn ([tree]): every tensor its own size, centered over the sites it joins,
+% drawn (\tntree): every tensor its own size, centered over the sites it joins,
 % its one upper index leaving the apex and turning a corner into the base of
 % the tensor above. Where the two meet is the grid's one rule -- tensors of
 % different extent meet once, in the middle of the sites they share -- so no
@@ -29,7 +29,7 @@
 \input{notation}
 \begin{document}
 \begin{tikzpicture}
-  \tnstack[tree]{T}{16}{root, w16, w8, w4, w2}
+  \tntree{T}{16}{root, w16, w8, w4, w2}
   \tnlayer{T}{root}{7*., center/$C$/2, 7*.}
   \tnlayer{T}{w16}{iso/$W$/16}
   \tnlayer{T}{w8}{2*iso/$W$/8}
