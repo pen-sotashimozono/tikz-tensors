@@ -9,7 +9,10 @@
 % the sign keeps clear of them although they are longer than the default:
 % after a relation sign a block starts a stub further on. The second row is
 % a sum, a difference and a step, \tnplus, \tnminus and \tnto, and its last
-% tensor has an index down that is there and is not drawn, tn hidden.
+% tensor has an index down that is there and is not drawn, tn hidden. The
+% third row is one tensor across a stack whose pitch is narrower than a slot,
+% its indices packed under it, and the equals sign after it stands clear of
+% its outline.
 \documentclass[border=5pt]{standalone}
 \usepackage{tikz-tensors}
 \begin{document}
@@ -44,5 +47,13 @@
   \tnstack{S}{1}{a}
   \tnlayer{S}{a}{tn circle/$D$}
   \tnopen[edge=tn hidden]{down}{S-a-1}
+  \tnbreak
+  \tnstack[pitch=0.4]{T}{4}{a}
+  \tnlayer{T}{a}{tn capsule/$T$/4}
+  \tnopen{down}{T-a-1}
+  \tneq
+  \tnstack{U}{1}{a}
+  \tnlayer{U}{a}{tn circle/$U$}
+  \tnopen{down}{U-a-1}
 \end{tikzpicture}
 \end{document}

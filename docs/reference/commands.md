@@ -26,6 +26,14 @@ label keeps its size, which is the size of the equations beside it. A gap is
 set where the stack is placed, `rises={g2=0.5}`, and not on `\tnlayer`,
 because a layer's slots are named and placed before anything is put in them.
 
+A shape placed by a corner, such as a triangle, leans off its slot. Where it
+leans toward the next tensor, the gap after its slot widens by that much, so
+that the two stand as far apart as the pitch says, and every layer of the
+stack keeps the wider gap; draw the layer with the triangles first. A stack
+whose pitch is narrower than a slot, as under one tensor across all its
+sites, reaches at least to the edge of its last slot, so that a sign after it
+stands clear of that tensor.
+
 ### `\tnlayer[<keys>]{<stack>}{<layer>}{<entry>, ...}`
 The layer's slots, left to right: `<type>/<label>`, `<type>/<label>/<span>`,
 `<type>/<label>/<span>/<down>`, `.` (empty), `-` (the layer's index runs
@@ -121,6 +129,7 @@ set apart.
 | key | |
 |---|---|
 | `label=<text>` | written above the frame's right corner |
+| `label side=left` | ... above its left corner instead, where the right one would crowd the sign after it |
 
 ### `\tntype{<name>}{<options>}`
 A type of one's own: the style `<name>`, which is `<options>`, and which a
