@@ -32,11 +32,15 @@ did.
 
 Pictures that change: every figure with triangles beside other tensors
 (`03-svd-qr`, `05-low-rank`, `08-canonical`, `09-center`, `10-sampling`,
-`12-zip-up`, `17-trotter`, the reference steps, `style-arrows`, `style-index`
-and `style-triangles`) is wider
-by the widened gaps, and `frame` draws the left-side label. No figure of the
-examples has a sign after a packed stack; the third row of `closing` draws
-one.
+`12-zip-up`, `17-trotter`, the reference steps, `style-arrows`,
+`style-index`, `style-triangles` and `styles`) is wider by the widened gaps,
+and `frame` draws the left-side label. No figure of the examples has a sign
+after a packed stack; the third row of `closing` draws one.
+
+The pdftocairo of CI's runners now writes an SVG's size with "pt", and the
+older references have it without. The site's traced figures read the size of
+a reference picture without the unit and stopped on one with it; they read
+both now. The pictures above are CI's.
 
 ## v0.18.1 — 2026-10-08
 
