@@ -14,7 +14,22 @@
 % fraction is a line between two. Layers are a rise apart, or closer where the
 % stack says so (close=), so each one's height is kept (@y@<k>); beyond the
 % first and the last the stack goes on at a rise.
-\def\tn@colx#1#2{\tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}}}
+% Column <#2> of stack <#1> is a pitch from the next, and wider where a layer
+% has widened the gap after a column (#1@ex@<j>, see \tn@stack@lean): a
+% position between two columns moves with the gap it lies in.
+\newdimen\tn@cxe
+\def\tn@colx#1#2{%
+  \global\tn@cxe=0pt
+  \ifnum\tn@get{#1@exany}=1
+    \pgfmathsetmacro\tn@ck{#2}%
+    \foreach \tn@j in {1,...,\tn@get{#1@n}}{%
+      \edef\tn@ej{\tn@get{#1@ex@\tn@j}}%
+      \ifdim\tn@ej>0pt
+        \pgfmathsetlength\tn@d{\tn@ej*min(1,max(0,\tn@ck-\tn@j))}%
+        \global\advance\tn@cxe by \tn@d
+      \fi}%
+  \fi
+  \tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}+\the\tn@cxe}}
 \def\tn@layint#1#2{% the height of whole layer number <#2>, as \tn@lyi
   \pgfmathtruncatemacro\tn@lyn{#2}%
   \ifnum\tn@lyn<1
@@ -80,6 +95,8 @@
   \pgfkeysgetvalue{/tn/stack/left}\tn@envl
   \pgfkeysgetvalue{/tn/stack/right}\tn@envr
   \tn@set{#2@n}{#3}%
+  \tn@set{#2@exany}{0}\tn@set{#2@drawn}{0}%
+  \foreach \tn@j in {0,...,\the\numexpr#3+1\relax}{\tn@set{#2@ex@\tn@j}{0pt}}%
   \tn@set{#2@layers}{#4}%
   \global\tn@c=0
   \foreach \tn@l in {#4}{%
@@ -151,13 +168,60 @@
     \node[tn env, minimum height=\tn@h] (#2-right) at (\tn@cx,\the\tn@line@y) {\tn@envr};\tn@tracenode{#2-right}%
     \tn@reach{\tn@cx+\tn@envw/2}%
   \fi
-  \pgfmathtruncatemacro\tn@nn{#3+1}%
-  \foreach \tn@l in {#4}{%
-    \tn@layy{#2}{\tn@get{#2@k@\tn@l}}%
-    \foreach \tn@i in {0,...,\tn@nn}{%
-      \tn@colx{#2}{\tn@i}%
-      \path[overlay] (\tn@cx,\tn@ly) coordinate (#2-\tn@l-\tn@i-slot);}}%
+  \tn@stack@slots{#2}%
 }
+% The slot of every layer and column of stack <#1>, as #1-<layer>-<i>-slot.
+\def\tn@stack@slots#1{%
+  \pgfmathtruncatemacro\tn@nn{\tn@get{#1@n}+1}%
+  \edef\tn@lys{\tn@get{#1@layers}}%
+  \foreach \tn@l in \tn@lys{%
+    \tn@layy{#1}{\tn@get{#1@k@\tn@l}}%
+    \foreach \tn@i in {0,...,\tn@nn}{%
+      \tn@colx{#1}{\tn@i}%
+      \path[overlay] (\tn@cx,\tn@ly) coordinate (#1-\tn@l-\tn@i-slot);}}}
+% A tensor whose index leaves from a corner (tn leg anchor) stands with that
+% corner on its column, so that its shape leans to one side: a triangle has
+% its flat side on the column and its apex in the next slot. Two neighbours of
+% one layer are kept as far apart as two centered tensors would be: the gap
+% after slot <#2-1> widens by how far the one leans right and this one leans
+% left, as \tn@lc, the center of the shape less its corner. The stack's slots
+% and its end follow; a layer drawn before keeps its places, so the layer
+% whose shapes lean is drawn first. A stack with an environment on its right
+% keeps its pitch, the environment being drawn already.
+\def\tn@stack@lean#1#2#3{%
+  \expandafter\tn@stack@leanx\expandafter{\tn@opt}{#1}{#2}{#3}}
+\def\tn@stack@leanx#1#2#3#4{%
+  \def\tn@lc{0pt}%
+  \ifnum\tn@span=1
+    \tn@props{#1}%
+    \ifx\tn@legat\tn@center\else
+      \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
+      \tn@anc{tn@probe}{\tn@legat}\let\tn@lx\tn@ax
+      \tn@anc{tn@probe}{east}\let\tn@ex\tn@ax
+      \tn@anc{tn@probe}{west}%
+      \tn@len\tn@lc{(\tn@ex+\tn@ax)/2-\tn@lx}%
+    \fi
+  \fi
+  \tn@set{#2@lc@#3@#4}{\tn@lc}%
+  \ifnum\tn@get{#2@hasr}=0 \ifnum#4>1
+    \ifcsname tn@#2@lc@#3@\the\numexpr#4-1\relax\endcsname
+      \edef\tn@plc{\tn@get{#2@lc@#3@\the\numexpr#4-1\relax}}%
+    \else \def\tn@plc{}\fi
+    \ifx\tn@plc\@empty\else
+      \tn@len\tn@gw{max(0pt,\tn@plc-\tn@lc)}%
+      \pgfmathtruncatemacro\tn@pj{#4-1}%
+      \ifdim\tn@gw>\tn@get{#2@ex@\tn@pj}\relax
+        \ifnum\tn@get{#2@drawn}=1
+          \PackageWarning{tikz-tensors}{Stack `#2': layer `#3' widens the gap
+            after slot \tn@pj, which a layer drawn before it does not follow;
+            draw this layer first}%
+        \fi
+        \tn@set{#2@ex@\tn@pj}{\tn@gw}\tn@set{#2@exany}{1}%
+        \tn@stack@slots{#2}%
+        \tn@colx{#2}{\tn@get{#2@n}+1}\tn@reach{\tn@cx-\tn@slot/2}%
+      \fi
+    \fi
+  \fi\fi}
 
 % \tnlayer{<stack>}{<layer>}{<entry>, ...}
 % The layer's slots, left to right, one entry each:
@@ -214,6 +278,7 @@
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
   \tn@tokens{#1}%
   \edef\tn@k{\tn@get{#1@k@#2}}%
+  \foreach \tn@j in {0,...,\the\numexpr\tn@get{#1@n}+1\relax}{\tn@set{#1@lc@#2@\tn@j}{}}%
   \global\tn@c=1
   \foreach \tn@each in {#3}{%
   \expandafter\tn@rep\tn@each*\tn@end
@@ -227,6 +292,7 @@
     \edef\tn@i{\the\tn@c}%
     \ifx\tn@span\@empty \def\tn@span{1}\fi
     \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
+    \tn@set{#1@lc@#2@\tn@i}{}%
     \ifx\tn@sty\tn@cdot
     \else\ifx\tn@sty\tn@cE
       \tn@set{#1@o@#2@\tn@i}{-}%
@@ -243,10 +309,14 @@
       \tn@layy{#1}{\tn@k+\tn@vspan-1}%
       \tn@len\tn@hh{\tn@ytop-\tn@ly+\tn@slot}%
       \tn@len\tn@ly{(\tn@ytop+\tn@ly)/2}%
-      \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
-      \tn@len\tn@w{(\tn@span-1)*\tn@get{#1@pitch}+\tn@slot}%
       \tn@op{#1}{spanwidth}%
       \tn@sized{#1}{\tn@lsize}%
+      \tn@stack@lean{#1}{#2}{\tn@i}%
+      % as wide as its slots are apart, a gap widened above included
+      \tn@colx{#1}{\tn@i}\let\tn@xa\tn@cx
+      \tn@colx{#1}{\tn@i+\tn@span-1}%
+      \tn@len\tn@w{\tn@cx-\tn@xa+\tn@slot}%
+      \tn@colx{#1}{\tn@i+(\tn@span-1)/2}%
       \edef\tn@opt{\tn@opt\ifnum\tn@span@w>1 , minimum width=\tn@w\fi
                    \ifnum\tn@vspan>1 , minimum height=\tn@hh\fi}%
       \edef\tn@nm{#1-#2-\tn@i}%
@@ -260,6 +330,7 @@
     \fi\fi\fi\fi\fi
     \global\advance\tn@c by \tn@span\relax
   }}%
+  \tn@set{#1@drawn}{1}%
 }
 
 % What occupies slot <#3> of layer <#2> of stack <#1>, as \tn@o, and what kind
