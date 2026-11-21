@@ -5,6 +5,44 @@ One section per version, newest first, headed by its tag. The version is the
 moves it and opens the section here, and the release on merge carries the
 section as its notes.
 
+## v0.19.0 — 2026-11-21
+
+A triangle stands a pitch from its neighbour, a frame's label can go on the
+left, and a sign clears a tensor across a packed stack.
+
+A triangle is placed by its flat-side corner, so it leans off its slot, and
+where it leans toward the next tensor the two stood closer than the pitch: in
+a left-canonical chain the apex of each triangle all but touched the next
+one, and a center tensor after a triangle sat against its apex. A stack now
+measures how far each layer's shape leans and widens the gap after a slot by
+that much, and every layer, and every column a tensor spans, follows the
+widened gap. The layer with the triangles is drawn first; a layer drawn
+before it that the gap would move is named in a warning.
+
+`\tnframe[label side=left]` writes the label above the frame's left corner.
+On the right it crowded the sign after a frame that closes its row, as in a
+product of right isometries set equal to the identity. A side other than
+`left` or `right` is an error.
+
+A stack reached a pitch past its last column, less half a slot, and a sign
+after it went there. When the pitch is narrower than a slot -- legs packed
+under one tensor across all the sites -- that point lies inside the tensor's
+outline, and the `=` stood against it. The stack now reaches at least to the
+edge of its last slot. A stack with a pitch of a slot or more reaches where it
+did.
+
+Pictures that change: every figure with triangles beside other tensors
+(`03-svd-qr`, `05-low-rank`, `08-canonical`, `09-center`, `10-sampling`,
+`12-zip-up`, `17-trotter`, the reference steps, `style-arrows`,
+`style-index`, `style-triangles` and `styles`) is wider by the widened gaps,
+and `frame` draws the left-side label. No figure of the examples has a sign
+after a packed stack; the third row of `closing` draws one.
+
+The pdftocairo of CI's runners now writes an SVG's size with "pt", and the
+older references have it without. The site's traced figures read the size of
+a reference picture without the unit and stopped on one with it; they read
+both now. The pictures above are CI's.
+
 ## v0.18.1 — 2026-10-08
 
 A frame drawn after an index joined by hand: `\tnframe` no longer stops

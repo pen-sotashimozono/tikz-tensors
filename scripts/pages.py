@@ -380,7 +380,8 @@ def traced_figure(name: str, up: str, scale: float, alt: str) -> str:
     """The picture tests/reference/<name>.svg at <scale>, with what each line
     of its file drew laid over it, unseen until that line is pointed at."""
     svg = (ROOT / "tests" / "reference" / f"{name}.svg").read_text()[:400]
-    w, h = (float(x) for x in re.search(r'width="([\d.]+)" height="([\d.]+)"', svg).groups())
+    # newer pdftocairo writes the size with "pt", older references have none
+    w, h = (float(x) for x in re.search(r'width="([\d.]+)(?:pt)?" height="([\d.]+)(?:pt)?"', svg).groups())
     img = (f'<img style="width:{w * scale:.0f}pt" src="{up}figures/{name}.svg" '
            f'alt="{html.escape(alt)}">')
     kept = ROOT / "tests" / "reference" / f"{name}.json"

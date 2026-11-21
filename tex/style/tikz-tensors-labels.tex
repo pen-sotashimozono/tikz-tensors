@@ -15,18 +15,29 @@
 \newcommand{\tnmid}[4][above]{\node[tn label, #1] (tn@lab) at ($(#2)!0.5!(#3)$) {#4};\tn@tracenode{tn@lab}%
   \tn@anc{tn@lab}{east}\tn@reach{\tn@ax}}
 
-% \tnframe[label=<text>]{<tensor>, ...}
+% \tnframe[label=<text>, label side=<right|left>]{<tensor>, ...}
 % A dashed box around the named tensors, framesep clear of them, with <text>
-% above its right corner: the tensors a step contracts into one, or a part of
-% a network set apart. Said by what it frames and never by a coordinate, like
-% a label. It counts as drawn when the next equals sign is placed.
-\pgfkeys{/tn/frame/.is family, /tn/frame/label/.initial=}
+% above its right corner, or its left one with label side=left, where the
+% right corner would push the next equals sign away: the tensors a step
+% contracts into one, or a part of a network set apart. Said by what it
+% frames and never by a coordinate, like a label. It counts as drawn when the
+% next equals sign is placed.
+\pgfkeys{/tn/frame/.is family, /tn/frame/label/.initial=,
+  /tn/frame/label side/.code={%
+    \ifcsname tn@fmside@#1\endcsname \csname tn@fmside@#1\endcsname
+    \else \PackageError{tikz-tensors}{\string\tnframe: label side=#1 is
+      neither left nor right}{}\fi}}
+% Where a frame's label goes, by its side: the label's anchor and the corner
+% of the frame it stands at.
+\def\tn@fmside@right{\def\tn@fmanchor{above right}\def\tn@fmcorner{north east}}
+\def\tn@fmside@left{\def\tn@fmanchor{above left}\def\tn@fmcorner{north west}}
 % Its measures are \tn@fm...: \tn@fx, \tn@fxa and the like are the way an
 % index runs (\tn@fluxof, \tn@orient in tikz-tensors-layout.tex), which a
 % \tnjoin before the frame has just defined.
 \newdimen\tn@fmxa \newdimen\tn@fmya \newdimen\tn@fmxb \newdimen\tn@fmyb
 \newcommand{\tnframe}[2][]{%
-  \pgfkeys{/tn/frame/.cd, label=, #1}\pgfkeysgetvalue{/tn/frame/label}\tn@flab
+  \pgfkeys{/tn/frame/.cd, label=, label side=right, #1}%
+  \pgfkeysgetvalue{/tn/frame/label}\tn@flab
   \global\tn@fmxa=\maxdimen \global\tn@fmya=\maxdimen
   \global\tn@fmxb=-\maxdimen \global\tn@fmyb=-\maxdimen
   \tn@xlist{#2}%
@@ -44,4 +55,5 @@
     (tn@frame) at (\tn@fmx,\tn@fmy) {};\tn@tracenode{tn@frame}%
   \tn@anc{tn@frame}{east}\tn@reach{\tn@ax}%
   \ifx\tn@flab\@empty\else
-    \expandafter\tnput\expandafter[above right]{tn@frame.north east}{\tn@flab}\fi}
+    \edef\tn@fmput{\noexpand\tnput[\tn@fmanchor]{tn@frame.\tn@fmcorner}}%
+    \tn@fmput{\tn@flab}\fi}
