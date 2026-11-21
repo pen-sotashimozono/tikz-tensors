@@ -21,7 +21,8 @@ before it that the gap would move is named in a warning.
 
 `\tnframe[label side=left]` writes the label above the frame's left corner.
 On the right it crowded the sign after a frame that closes its row, as in a
-product of right isometries set equal to the identity.
+product of right isometries set equal to the identity. A side other than
+`left` or `right` is an error.
 
 A stack reached a pitch past its last column, less half a slot, and a sign
 after it went there. When the pitch is narrower than a slot -- legs packed

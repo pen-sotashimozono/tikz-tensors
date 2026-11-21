@@ -23,8 +23,14 @@
 % frames and never by a coordinate, like a label. It counts as drawn when the
 % next equals sign is placed.
 \pgfkeys{/tn/frame/.is family, /tn/frame/label/.initial=,
-  /tn/frame/label side/.initial=right}
-\def\tn@fsleft{left}
+  /tn/frame/label side/.code={%
+    \ifcsname tn@fmside@#1\endcsname \csname tn@fmside@#1\endcsname
+    \else \PackageError{tikz-tensors}{\string\tnframe: label side=#1 is
+      neither left nor right}{}\fi}}
+% Where a frame's label goes, by its side: the label's anchor and the corner
+% of the frame it stands at.
+\def\tn@fmside@right{\def\tn@fmanchor{above right}\def\tn@fmcorner{north east}}
+\def\tn@fmside@left{\def\tn@fmanchor{above left}\def\tn@fmcorner{north west}}
 % Its measures are \tn@fm...: \tn@fx, \tn@fxa and the like are the way an
 % index runs (\tn@fluxof, \tn@orient in tikz-tensors-layout.tex), which a
 % \tnjoin before the frame has just defined.
@@ -32,7 +38,6 @@
 \newcommand{\tnframe}[2][]{%
   \pgfkeys{/tn/frame/.cd, label=, label side=right, #1}%
   \pgfkeysgetvalue{/tn/frame/label}\tn@flab
-  \pgfkeysgetvalue{/tn/frame/label side}\tn@fside
   \global\tn@fmxa=\maxdimen \global\tn@fmya=\maxdimen
   \global\tn@fmxb=-\maxdimen \global\tn@fmyb=-\maxdimen
   \tn@xlist{#2}%
@@ -50,8 +55,5 @@
     (tn@frame) at (\tn@fmx,\tn@fmy) {};\tn@tracenode{tn@frame}%
   \tn@anc{tn@frame}{east}\tn@reach{\tn@ax}%
   \ifx\tn@flab\@empty\else
-    \ifx\tn@fside\tn@fsleft
-      \expandafter\tnput\expandafter[above left]{tn@frame.north west}{\tn@flab}%
-    \else
-      \expandafter\tnput\expandafter[above right]{tn@frame.north east}{\tn@flab}%
-    \fi\fi}
+    \edef\tn@fmput{\noexpand\tnput[\tn@fmanchor]{tn@frame.\tn@fmcorner}}%
+    \tn@fmput{\tn@flab}\fi}

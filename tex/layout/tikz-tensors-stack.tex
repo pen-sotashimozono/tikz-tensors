@@ -14,28 +14,30 @@
 % fraction is a line between two. Layers are a rise apart, or closer where the
 % stack says so (close=), so each one's height is kept (@y@<k>); beyond the
 % first and the last the stack goes on at a rise.
-% Column <#2> of stack <#1> is a pitch from the next, and wider where a layer
-% has widened the gap after a column (#1@ex@<j>, see \tn@stack@lean): a
-% position between two columns moves with the gap it lies in.
-\newdimen\tn@cxe
+% Column <#2> of stack <#1>, as \tn@cx: a pitch from the next, plus the gaps
+% widened before it (#1@gap@<j>, the widening after column <j>, set by
+% \tn@stack@widen). A position between two columns takes the part of the gap
+% it has passed.
+\newdimen\tn@gapsum
 \def\tn@colx#1#2{%
-  \global\tn@cxe=0pt
-  \ifnum\tn@get{#1@exany}=1
-    \pgfmathsetmacro\tn@ck{#2}%
-    \foreach \tn@j in {1,...,\tn@get{#1@n}}{%
-      \edef\tn@ej{\tn@get{#1@ex@\tn@j}}%
-      \ifdim\tn@ej>0pt
-        \pgfmathsetlength\tn@d{\tn@ej*min(1,max(0,\tn@ck-\tn@j))}%
-        \global\advance\tn@cxe by \tn@d
-      \fi}%
-  \fi
-  \tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}+\the\tn@cxe}}
+  \global\tn@gapsum=0pt
+  \ifnum\tn@get{#1@gapany}=1 \tn@stack@gapsto{#1}{#2}\fi
+  \tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}+\the\tn@gapsum}}
+% The widened gaps of stack <#1> before position <#2>, added to \tn@gapsum.
+\def\tn@stack@gapsto#1#2{%
+  \pgfmathsetmacro\tn@colk{#2}%
+  \foreach \tn@j in {1,...,\tn@get{#1@n}}{%
+    \edef\tn@gapj{\tn@get{#1@gap@\tn@j}}%
+    \ifdim\tn@gapj>0pt
+      \pgfmathsetlength\tn@d{\tn@gapj*min(1,max(0,\tn@colk-\tn@j))}%
+      \global\advance\tn@gapsum by \tn@d
+    \fi}}
 % Stack <#1> reaches a pitch past its last column, less half a slot, and at
 % least to the edge of that column's slot, which lies further out when the
 % pitch is narrower than a slot (legs packed under one wide tensor).
 \def\tn@stack@reach#1{%
-  \tn@colx{#1}{\tn@get{#1@n}}\tn@len\tn@rcha{\tn@cx+\tn@slot/2}%
-  \tn@colx{#1}{\tn@get{#1@n}+1}\tn@reach{max(\tn@cx-\tn@slot/2,\tn@rcha)}}
+  \tn@colx{#1}{\tn@get{#1@n}}\tn@len\tn@slotedge{\tn@cx+\tn@slot/2}%
+  \tn@colx{#1}{\tn@get{#1@n}+1}\tn@reach{max(\tn@cx-\tn@slot/2,\tn@slotedge)}}
 \def\tn@layint#1#2{% the height of whole layer number <#2>, as \tn@lyi
   \pgfmathtruncatemacro\tn@lyn{#2}%
   \ifnum\tn@lyn<1
@@ -101,8 +103,8 @@
   \pgfkeysgetvalue{/tn/stack/left}\tn@envl
   \pgfkeysgetvalue{/tn/stack/right}\tn@envr
   \tn@set{#2@n}{#3}%
-  \tn@set{#2@exany}{0}\tn@set{#2@drawn}{0}%
-  \foreach \tn@j in {0,...,\the\numexpr#3+1\relax}{\tn@set{#2@ex@\tn@j}{0pt}}%
+  \tn@set{#2@gapany}{0}\tn@set{#2@drawn}{0}%
+  \foreach \tn@j in {0,...,\the\numexpr#3+1\relax}{\tn@set{#2@gap@\tn@j}{0pt}}%
   \tn@set{#2@layers}{#4}%
   \global\tn@c=0
   \foreach \tn@l in {#4}{%
@@ -187,47 +189,54 @@
       \path[overlay] (\tn@cx,\tn@ly) coordinate (#1-\tn@l-\tn@i-slot);}}}
 % A tensor whose index leaves from a corner (tn leg anchor) stands with that
 % corner on its column, so that its shape leans to one side: a triangle has
-% its flat side on the column and its apex in the next slot. Two neighbours of
-% one layer are kept as far apart as two centered tensors would be: the gap
-% after slot <#2-1> widens by how far the one leans right and this one leans
-% left, as \tn@lc, the center of the shape less its corner. The stack's slots
-% and its end follow; a layer drawn before keeps its places, so the layer
-% whose shapes lean is drawn first. A stack with an environment on its right
-% keeps its pitch, the environment being drawn already.
-\def\tn@stack@lean#1#2#3{%
-  \expandafter\tn@stack@leanx\expandafter{\tn@opt}{#1}{#2}{#3}}
-\def\tn@stack@leanx#1#2#3#4{%
-  \def\tn@lc{0pt}%
-  \ifnum\tn@span=1
-    \tn@props{#1}%
-    \ifx\tn@legat\tn@center\else
-      \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
-      \tn@anc{tn@probe}{\tn@legat}\let\tn@lx\tn@ax
-      \tn@anc{tn@probe}{east}\let\tn@ex\tn@ax
-      \tn@anc{tn@probe}{west}%
-      \tn@len\tn@lc{(\tn@ex+\tn@ax)/2-\tn@lx}%
-    \fi
-  \fi
-  \tn@set{#2@lc@#3@#4}{\tn@lc}%
-  \ifnum\tn@get{#2@hasr}=0 \ifnum#4>1
-    \ifcsname tn@#2@lc@#3@\the\numexpr#4-1\relax\endcsname
-      \edef\tn@plc{\tn@get{#2@lc@#3@\the\numexpr#4-1\relax}}%
-    \else \def\tn@plc{}\fi
-    \ifx\tn@plc\@empty\else
-      \tn@len\tn@gw{max(0pt,\tn@plc-\tn@lc)}%
-      \pgfmathtruncatemacro\tn@pj{#4-1}%
-      \ifdim\tn@gw>\tn@get{#2@ex@\tn@pj}\relax
-        \ifnum\tn@get{#2@drawn}=1
-          \PackageWarning{tikz-tensors}{Stack `#2': layer `#3' widens the gap
-            after slot \tn@pj, which a layer drawn before it does not follow;
-            draw this layer first}%
-        \fi
-        \tn@set{#2@ex@\tn@pj}{\tn@gw}\tn@set{#2@exany}{1}%
-        \tn@stack@slots{#2}%
-        \tn@stack@reach{#2}%
+% its flat side on the column and its apex in the next slot. Three steps keep
+% two neighbours of one layer as far apart as two centered tensors would be:
+% \tn@leanof measures the lean, \tn@stack@widen decides the gap it needs, and
+% \tn@stack@setgap widens the gap and places the stack again.
+%
+% The lean of a tensor drawn with options <#1>, as \tn@leanby: how far the
+% center of its shape lies right of the corner it stands on; 0pt for a tensor
+% that stands on its center.
+\def\tn@leanof#1{%
+  \def\tn@leanby{0pt}%
+  \tn@props{#1}%
+  \ifx\tn@legat\tn@center\else
+    \path (0,0) node[#1, overlay, draw=none, fill=none] (tn@probe) {};
+    \tn@anc{tn@probe}{\tn@legat}\let\tn@cornerx\tn@ax
+    \tn@anc{tn@probe}{east}\let\tn@eastx\tn@ax
+    \tn@anc{tn@probe}{west}%
+    \tn@len\tn@leanby{(\tn@eastx+\tn@ax)/2-\tn@cornerx}%
+  \fi}
+% Slot <#3> of layer <#2> of stack <#1> holds a tensor that leans by
+% \tn@leanby, kept as #1@lean@<layer>@<slot> (empty for a slot with no
+% tensor, which \tnlayer clears). The gap after the slot before widens by how
+% far its tensor leans right and this one leans left. A stack with an
+% environment on its right keeps its pitch, the environment being drawn
+% already.
+\def\tn@stack@widen#1#2#3{%
+  \tn@set{#1@lean@#2@#3}{\tn@leanby}%
+  \ifnum\tn@get{#1@hasr}=0 \ifnum#3>1
+    \edef\tn@prevlean{\tn@get{#1@lean@#2@\the\numexpr#3-1\relax}}%
+    \ifx\tn@prevlean\@empty\else
+      \tn@len\tn@widen{max(0pt,\tn@prevlean-\tn@leanby)}%
+      \pgfmathtruncatemacro\tn@prevslot{#3-1}%
+      \ifdim\tn@widen>\tn@get{#1@gap@\tn@prevslot}\relax
+        \tn@stack@setgap{#1}{#2}{\tn@prevslot}{\tn@widen}%
       \fi
     \fi
   \fi\fi}
+% The gap after slot <#3> of stack <#1> widens to <#4>, which layer <#2>
+% asks for, and the stack's slots and its end follow. A layer drawn before
+% keeps its places, so the layer whose tensors lean is drawn first.
+\def\tn@stack@setgap#1#2#3#4{%
+  \ifnum\tn@get{#1@drawn}=1
+    \PackageWarning{tikz-tensors}{Stack `#1': layer `#2' widens the gap
+      after slot #3, which a layer drawn before it does not follow;
+      draw this layer first}%
+  \fi
+  \tn@set{#1@gap@#3}{#4}\tn@set{#1@gapany}{1}%
+  \tn@stack@slots{#1}%
+  \tn@stack@reach{#1}}
 
 % \tnlayer{<stack>}{<layer>}{<entry>, ...}
 % The layer's slots, left to right, one entry each:
@@ -284,7 +293,7 @@
     \PackageError{tikz-tensors}{Stack `#1' has no layer `#2'}{}\fi
   \tn@tokens{#1}%
   \edef\tn@k{\tn@get{#1@k@#2}}%
-  \foreach \tn@j in {0,...,\the\numexpr\tn@get{#1@n}+1\relax}{\tn@set{#1@lc@#2@\tn@j}{}}%
+  \foreach \tn@j in {0,...,\the\numexpr\tn@get{#1@n}+1\relax}{\tn@set{#1@lean@#2@\tn@j}{}}%
   \global\tn@c=1
   \foreach \tn@each in {#3}{%
   \expandafter\tn@rep\tn@each*\tn@end
@@ -298,7 +307,6 @@
     \edef\tn@i{\the\tn@c}%
     \ifx\tn@span\@empty \def\tn@span{1}\fi
     \ifx\tn@vspan\@empty \def\tn@vspan{1}\fi
-    \tn@set{#1@lc@#2@\tn@i}{}%
     \ifx\tn@sty\tn@cdot
     \else\ifx\tn@sty\tn@cE
       \tn@set{#1@o@#2@\tn@i}{-}%
@@ -317,7 +325,9 @@
       \tn@len\tn@ly{(\tn@ytop+\tn@ly)/2}%
       \tn@op{#1}{spanwidth}%
       \tn@sized{#1}{\tn@lsize}%
-      \tn@stack@lean{#1}{#2}{\tn@i}%
+      \ifnum\tn@span=1 \expandafter\tn@leanof\expandafter{\tn@opt}%
+      \else \def\tn@leanby{0pt}\fi
+      \tn@stack@widen{#1}{#2}{\tn@i}%
       % as wide as its slots are apart, a gap widened above included
       \tn@colx{#1}{\tn@i}\let\tn@xa\tn@cx
       \tn@colx{#1}{\tn@i+\tn@span-1}%
