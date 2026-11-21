@@ -30,6 +30,12 @@
       \fi}%
   \fi
   \tn@len\tn@cx{\tn@get{#1@x0}+(#2)*\tn@get{#1@pitch}+\the\tn@cxe}}
+% Stack <#1> reaches a pitch past its last column, less half a slot, and at
+% least to the edge of that column's slot, which lies further out when the
+% pitch is narrower than a slot (legs packed under one wide tensor).
+\def\tn@stack@reach#1{%
+  \tn@colx{#1}{\tn@get{#1@n}}\tn@len\tn@rcha{\tn@cx+\tn@slot/2}%
+  \tn@colx{#1}{\tn@get{#1@n}+1}\tn@reach{max(\tn@cx-\tn@slot/2,\tn@rcha)}}
 \def\tn@layint#1#2{% the height of whole layer number <#2>, as \tn@lyi
   \pgfmathtruncatemacro\tn@lyn{#2}%
   \ifnum\tn@lyn<1
@@ -161,7 +167,7 @@
   \fi
   \ifx\tn@envr\@empty
     \tn@set{#2@hasr}{0}%
-    \tn@colx{#2}{#3+1}\tn@reach{\tn@cx-\tn@slot/2}%
+    \tn@stack@reach{#2}%
   \else
     \tn@set{#2@hasr}{1}%
     \tn@colx{#2}{#3+1}%
@@ -218,7 +224,7 @@
         \fi
         \tn@set{#2@ex@\tn@pj}{\tn@gw}\tn@set{#2@exany}{1}%
         \tn@stack@slots{#2}%
-        \tn@colx{#2}{\tn@get{#2@n}+1}\tn@reach{\tn@cx-\tn@slot/2}%
+        \tn@stack@reach{#2}%
       \fi
     \fi
   \fi\fi}
